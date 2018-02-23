@@ -21,6 +21,9 @@ hs_err_pid*
 #intelliJ
 *.iml
 *.bat
+.idea/
+target/
+dependency-reduced-pom.xml
 
 # other
 .DS_Store
