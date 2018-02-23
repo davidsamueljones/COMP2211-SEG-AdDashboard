@@ -18,6 +18,10 @@ hs_err_pid*
 .project
 .idea/
 
+#intelliJ
+*.iml
+*.bat
+
 # other
 .DS_Store
 *.zip
