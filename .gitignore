@@ -28,3 +28,4 @@ dependency-reduced-pom.xml
 # other
 .DS_Store
 *.zip
+config.properties
