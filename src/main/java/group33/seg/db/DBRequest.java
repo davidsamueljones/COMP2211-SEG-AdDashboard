@@ -37,7 +37,10 @@ public class DBRequest {
     public DBRequest setAxes (String xTable, String xAxis, String yAxis, String width) {
         this.xAxis = xTable + "." + xAxis;
         this.yAxis = yAxis;
-        this.width = width;
+
+        if (xAxis == "date") {
+            this.width = width;
+        }
 
         return this;
     }
