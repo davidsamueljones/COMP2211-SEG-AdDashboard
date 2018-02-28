@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class ClickLog implements DatabaseTables {
+public class ClickLog implements DatabaseTable {
 
     @Override
     public void createTable(Connection c) throws SQLException {
@@ -16,10 +16,11 @@ public class ClickLog implements DatabaseTables {
     }
 
     @Override
-    public void populateTable(Connection c) throws SQLException {
+    public void importFile(Connection c, String filepath) throws SQLException {
         Statement st = c.createStatement();
-        st.execute("INSERT INTO test_table VALUES (? ? ?)");
+        st.execute("COPY click_log FROM '" + filepath + "' WITH DELIMITER ',' CSV HEADER");
         st.close();
+
 
     }
 }
