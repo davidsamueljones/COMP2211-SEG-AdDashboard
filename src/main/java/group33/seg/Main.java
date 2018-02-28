@@ -7,24 +7,27 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
-
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class Main {
     public static void main(String[] args) {
         DBRequest r1 = new DBRequest(DBRequest.impression);
 
-        r1.addEqualConstraint("test", "test", "5");
-        r1.addLikeConstraint("test", "meme", "dream");
-
-        r1.setAxes("test", "test", "count(test)", null);
+        r1.setAxes(DBRequest.impression, "date", "count(*)", "day");
+        r1.addEqualConstraint(DBRequest.impression, "gender", "Male");
+        System.out.println(r1.getSql());
 
         DBInterface dbi = new DBInterface();
-        Future<HashMap<String, Integer>> theFuture = dbi.call(r1);
+        Future<LinkedHashMap<String, Integer>> theFuture = dbi.call(r1);
         try {
-            HashMap<String, Integer> result = theFuture.get();
-        } catch (Exception e) {
+            LinkedHashMap<String, Integer> result = theFuture.get();
+            for(String key : result.keySet()) {
+                System.out.println(key + " " + result.get(key));
+            }
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
        

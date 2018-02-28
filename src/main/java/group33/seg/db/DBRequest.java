@@ -111,93 +111,134 @@ public class DBRequest {
         return intermediate;
     }
 
+    @Override
+    public boolean equals (Object other) {
+        if(other instanceof DBRequest) {
+            return this.hashCode() == other.hashCode();
+        } else {
+            return false;
+        }
+    }
+
     public String getSql() {
-        String sql;
+        StringBuilder sql = new StringBuilder();
         //deal with date_trunc
         if (width != null) {
-            sql = sortDateTrunc();
-            sql += "," + this.xAxis + ") as xaxis";
+            sql.append(sortDateTrunc());
+            sql.append(",");
+            sql.append(this.xAxis);
+            sql.append(") as xaxis");
         } else {
-            sql = "select " + this.xAxis + " as xaxis";
+            sql.append("select ");
+            sql.append(this.xAxis);
+            sql.append(" as xaxis");
         }
 
-        sql += ", " + this.yAxis;
+        sql.append(", ");
+        sql.append(this.yAxis);
 
-        sql += " " + fromStatement();
+        sql.append("as yaxis ");
+        sql.append(fromStatement());
 
         //constraints
         Boolean first = true;
         for (String var : constraints.keySet()) {
             if (first) {
                 first = false;
-                sql += " where " + var + " " + constraints.get(var);
+                sql.append(" where ");
+                sql.append(var);
+                sql.append(" ");
+                sql.append(constraints.get(var));
             } else {
-                sql += " and " + var + " " + constraints.get(var);
+                sql.append(" and ");
+                sql.append(var);
+                sql.append(" ");
+                sql.append(constraints.get(var));
             }
         }
 
-        sql += " group by xaxis";
-        return sql;
+        sql.append(" group by xaxis order by xaxis");
+        return sql.toString();
     }
 
     private String sortDateTrunc() {
         String[] splitNumber = width.split(" ");
         String timeUnit = splitNumber[splitNumber.length - 1];
         
-        String sql = "select date_trunc(";
+        StringBuilder sql = new StringBuilder();
+        sql.append("select date_trunc(");
+
         switch (timeUnit) {
             case "second":
-            case "seconds": sql += "'second'";
+            case "seconds": sql.append("'second'");
                             break;
             case "minute":
-            case "minutes": sql += "'minute'";
+            case "minutes": sql.append("'minute'");
                             break;
             case "hour":
-            case "hours":   sql += "'hour'";
+            case "hours":   sql.append("'hour'");
                             break;
             case "day":
-            case "days":    sql += "'day'";
+            case "days":    sql.append("'day'");
                             break;
             case "week":
-            case "weeks":   sql += "'week'";
+            case "weeks":   sql.append("'week'");
                             break;
             case "month":
-            case "months":  sql += "'month'";
+            case "months":  sql.append("'month'");
                             break;
             case "year":
-            case "years":   sql += "'year'";
+            case "years":   sql.append("'year'");
                             break;
         }
 
-        return sql;
+        return sql.toString();
     }
 
     private String fromStatement() {
-        Boolean first = true;
-        String from = "";
+        boolean first = true;
+        StringBuilder from = new StringBuilder();
         String firstTable = "";
         Integer brackets = 0;
+        boolean needsNestedJoin = tables.size() == 3;
         for (String table : tables) {
-            if (first && tables.size() == 3) {
+            if (first && needsNestedJoin) {
                 first = false;
                 firstTable = table;
-                from = "from (" + table;
+                from.append("from (");
+                from.append(table);
                 brackets = 1;
             } else if (first) {
                 first = false;
                 firstTable = table;
-                from = "from " + table;
+                from.append("from ");
+                from.append(table);
             } else if (brackets > 1){
                 brackets--;
-                from += " inner join " + table + " on " + table + ".id = " + firstTable + ".id)";
+                from.append(" inner join ");
+                from.append(table);
+                from.append(" on ");
+                from.append(table);
+                from.append(".id = ");
+                from.append(firstTable);
+                from.append(".id)");
             } else {
-                from += " inner join " + table + " on " + table + ".id = " + firstTable + ".id";
+                from.append(" inner join ");
+                from.append(table);
+                from.append(" on ");
+                from.append(table);
+                from.append(".id = ");
+                from.append(firstTable);
+                from.append(".id");
             }
         }
 
-        return from;
+        return from.toString();
     }
 
+    /**
+     * yet to be implemented
+     */
     public HashMap<String, Integer> fixResult (HashMap<String, Integer> result) {
         return result;
     }

@@ -7,7 +7,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,7 +16,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class DBInterface {
-    private ConcurrentHashMap<Integer, HashMap<String, Integer>> previous;
+    private ConcurrentHashMap<Connection,Boolean> connections;
+    private ConcurrentHashMap<DBRequest, LinkedHashMap<String, Integer>> previous;
     private final ExecutorService pool = Executors.newFixedThreadPool(10);
 
     public DBInterface () {
@@ -26,26 +27,19 @@ public class DBInterface {
             e.printStackTrace();
         }
         
-        previous = new ConcurrentHashMap<Integer, HashMap<String, Integer>>();
+        previous = new ConcurrentHashMap<DBRequest, LinkedHashMap<String, Integer>>();
+        connections = new ConcurrentHashMap<Connection, Boolean>();
     }
 
-    public Future<HashMap<String, Integer>> call(DBRequest request) {
-        if (previous.get(request.hashCode()) != null) {
-            return pool.submit(new Callable<HashMap<String, Integer>>() {
-                public HashMap<String, Integer> call(){
-                    return previous.get(request.hashCode());
-                }
-            });
-        } else {
-            return pool.submit(new Callable<HashMap<String, Integer>>() {
-                public HashMap<String, Integer> call(){
-                    return getNewHistogram(request);
-                }
-            });
+    private synchronized Connection getConnection() {
+        for (Connection c : connections.keySet()) {
+            //true if available
+            if(connections.get(c)) {
+                connections.put(c, false);
+                return c;
+            }
         }
-    }
 
-    private HashMap<String, Integer> getNewHistogram (DBRequest request) {
         Connection connection = null;
 
         Properties prop = new Properties();
@@ -57,24 +51,57 @@ public class DBInterface {
             String password = prop.getProperty("DB_PASSWORD");
 
             connection = DriverManager.getConnection(host, user, password);
-        
-            String sql = request.getSql();
 
-            Statement cs = connection.createStatement();
-            ResultSet rs = cs.executeQuery(sql);
-
-            HashMap<String, Integer> result = new HashMap<String, Integer>();
-            while (rs.next()) {
-                result.put(rs.getString("xaxis"), rs.getInt("yaxis"));
-            }
-
-            request.fixResult(result);
-
-            previous.put(request.hashCode(), result);
-            return result;
+            connections.put(connection, false);
+            return connection;
         } catch (SQLException | IOException e){
             e.printStackTrace();
             return null;
         }
+    }
+
+    private void returnConnection(Connection c) {
+        connections.put(c, true);
+    }
+
+    public Future<LinkedHashMap<String, Integer>> call(DBRequest request) {
+        if (previous.get(request) != null) {
+            return pool.submit(new Callable<LinkedHashMap<String, Integer>>() {
+                public LinkedHashMap<String, Integer> call(){
+                    return previous.get(request);
+                }
+            });
+        } else {
+            return pool.submit(new Callable<LinkedHashMap<String, Integer>>() {
+                public LinkedHashMap<String, Integer> call(){
+                    return getNewHistogram(request);
+                }
+            });
+        }
+    }
+
+    private LinkedHashMap<String, Integer> getNewHistogram (DBRequest request) {
+            Connection connection = getConnection();
+            
+            String sql = request.getSql();
+            LinkedHashMap<String, Integer> result = new LinkedHashMap<String, Integer>();
+
+            try{
+                Statement cs = connection.createStatement();
+                ResultSet rs = cs.executeQuery(sql);
+                
+                while (rs.next()) {
+                    result.put(rs.getString("xaxis"), rs.getInt("yaxis"));
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            returnConnection(connection);
+
+            request.fixResult(result);
+
+            previous.put(request, result);
+            return result;
     }
 }
