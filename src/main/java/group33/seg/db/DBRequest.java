@@ -32,7 +32,7 @@ public class DBRequest {
      * you must specify the table when you use yAxis
      * otherwise expect weird results (ambiguous column names etc.)
      * give width as null unless it is a date, when you can use a layout like
-     * '15 minutes'
+     * '15 minute'
      */
     public DBRequest setAxes (String xTable, String xAxis, String yAxis, String width) {
         this.xAxis = xTable + "." + xAxis;
@@ -109,5 +109,96 @@ public class DBRequest {
         }
 
         return intermediate;
+    }
+
+    public String getSql() {
+        String sql;
+        //deal with date_trunc
+        if (width != null) {
+            sql = sortDateTrunc();
+            sql += "," + this.xAxis + ") as xaxis";
+        } else {
+            sql = "select " + this.xAxis + " as xaxis";
+        }
+
+        sql += ", " + this.yAxis;
+
+        sql += " " + fromStatement();
+
+        //constraints
+        Boolean first = true;
+        for (String var : constraints.keySet()) {
+            if (first) {
+                first = false;
+                sql += " where " + var + " " + constraints.get(var);
+            } else {
+                sql += " and " + var + " " + constraints.get(var);
+            }
+        }
+
+        sql += " group by xaxis";
+        return sql;
+    }
+
+    private String sortDateTrunc() {
+        String[] splitNumber = width.split(" ");
+        String timeUnit = splitNumber[splitNumber.length - 1];
+        
+        String sql = "select date_trunc(";
+        switch (timeUnit) {
+            case "second":
+            case "seconds": sql += "'second'";
+                            break;
+            case "minute":
+            case "minutes": sql += "'minute'";
+                            break;
+            case "hour":
+            case "hours":   sql += "'hour'";
+                            break;
+            case "day":
+            case "days":    sql += "'day'";
+                            break;
+            case "week":
+            case "weeks":   sql += "'week'";
+                            break;
+            case "month":
+            case "months":  sql += "'month'";
+                            break;
+            case "year":
+            case "years":   sql += "'year'";
+                            break;
+        }
+
+        return sql;
+    }
+
+    private String fromStatement() {
+        Boolean first = true;
+        String from = "";
+        String firstTable = "";
+        Integer brackets = 0;
+        for (String table : tables) {
+            if (first && tables.size() == 3) {
+                first = false;
+                firstTable = table;
+                from = "from (" + table;
+                brackets = 1;
+            } else if (first) {
+                first = false;
+                firstTable = table;
+                from = "from " + table;
+            } else if (brackets > 1){
+                brackets--;
+                from += " inner join " + table + " on " + table + ".id = " + firstTable + ".id)";
+            } else {
+                from += " inner join " + table + " on " + table + ".id = " + firstTable + ".id";
+            }
+        }
+
+        return from;
+    }
+
+    public HashMap<String, Integer> fixResult (HashMap<String, Integer> result) {
+        return result;
     }
 }

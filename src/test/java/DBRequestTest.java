@@ -21,6 +21,7 @@ public class DBRequestTest {
         assertTrue(r1.hashCode() != r2.hashCode());
 
         r2.setAxes("test", "test", "count(test)", null);
+        System.out.println(r2.getSql());
         assertTrue(r1.hashCode() == r2.hashCode());
     }
 }

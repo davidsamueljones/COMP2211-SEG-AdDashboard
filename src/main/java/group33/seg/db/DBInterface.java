@@ -20,6 +20,13 @@ public class DBInterface {
     private final ExecutorService pool = Executors.newFixedThreadPool(10);
 
     public DBInterface () {
+        try {
+            Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        
+        previous = new ConcurrentHashMap<Integer, HashMap<String, Integer>>();
     }
 
     public Future<HashMap<String, Integer>> call(DBRequest request) {
@@ -44,30 +51,30 @@ public class DBInterface {
         Properties prop = new Properties();
         try {
             prop.load(new FileInputStream("config.properties"));
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(0);
-        }
-        String host = prop.getProperty("DB_HOST");
-        String user = prop.getProperty("DB_USER");
-        String password = prop.getProperty("DB_PASSWORD");
+        
+            String host = prop.getProperty("DB_HOST");
+            String user = prop.getProperty("DB_USER");
+            String password = prop.getProperty("DB_PASSWORD");
 
-        try {
             connection = DriverManager.getConnection(host, user, password);
-        } catch (SQLException e) {
+        
+            String sql = request.getSql();
+
+            Statement cs = connection.createStatement();
+            ResultSet rs = cs.executeQuery(sql);
+
+            HashMap<String, Integer> result = new HashMap<String, Integer>();
+            while (rs.next()) {
+                result.put(rs.getString("xaxis"), rs.getInt("yaxis"));
+            }
+
+            request.fixResult(result);
+
+            previous.put(request.hashCode(), result);
+            return result;
+        } catch (SQLException | IOException e){
             e.printStackTrace();
-            System.exit(0);
+            return null;
         }
-
-        String sql = request.getSql();
-        Statement cs = connection.createStatement();
-        ResultSet rs = cs.executeQuery(sql);
-
-        HashMap<String, Integer> result = new HashMap<String, Integer>();
-        while (rs.next()) {
-            result.put(rs.getString("xAxis"), rs.getInt("yAxis"));
-        }
-
-        return result;
     }
 }
