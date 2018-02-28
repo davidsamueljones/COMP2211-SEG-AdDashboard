@@ -32,10 +32,12 @@ public class ImpressionLog implements DatabaseTable {
                     .map(s -> s.replace(",Male,", ",false,"))
                     .map(s -> s.replace(",Female,", ",true,"));
             Files.write(Paths.get(filepath + ".tmp"), (Iterable<String>) stream::iterator, StandardOpenOption.CREATE);
-
+            stream.close();
+            
             Statement st = c.createStatement();
             st.execute("COPY impression_log FROM '" + filepath + ".tmp' WITH DELIMITER ',' CSV HEADER");
             st.close();
+            
             Files.delete(Paths.get(filepath + ".tmp"));
         } catch (IOException e) {
             e.printStackTrace();
