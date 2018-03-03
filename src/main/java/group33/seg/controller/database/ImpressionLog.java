@@ -27,12 +27,13 @@ public class ImpressionLog implements DatabaseTable {
     @Override
     public void importFile(Connection c, String filepath) throws SQLException {
         try {
-            Stream<String> stream = Files.lines(Paths.get(filepath));
-            stream = stream
+            Stream<String> linesIn = Files.lines(Paths.get(filepath));
+            Stream<String> linesOut = linesIn
                     .map(s -> s.replace(",Male,", ",false,"))
                     .map(s -> s.replace(",Female,", ",true,"));
-            Files.write(Paths.get(filepath + ".tmp"), (Iterable<String>) stream::iterator, StandardOpenOption.CREATE);
-            stream.close();
+            linesIn.close();
+            Files.write(Paths.get(filepath + ".tmp"), (Iterable<String>) linesOut::iterator, StandardOpenOption.CREATE);
+            linesOut.close();
             
             Statement st = c.createStatement();
             st.execute("COPY impression_log FROM '" + filepath + ".tmp' WITH DELIMITER ',' CSV HEADER");
