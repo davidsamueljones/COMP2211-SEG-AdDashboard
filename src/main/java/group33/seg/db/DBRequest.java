@@ -2,6 +2,7 @@ package group33.seg.db;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 
 public class DBRequest {
     private HashSet<String> tables;
@@ -239,7 +240,37 @@ public class DBRequest {
     /**
      * yet to be implemented
      */
-    public HashMap<String, Integer> fixResult (HashMap<String, Integer> result) {
-        return result;
+    public LinkedHashMap<String, Integer> fixResult (LinkedHashMap<String, Integer> result) {
+        if (width == null) {
+            return result;
+        }
+
+        String[] splitNumber = width.split(" ");
+        String amount = splitNumber[0];
+
+        try {
+            int group = Integer.parseInt(amount);
+            LinkedHashMap<String, Integer> grouped = new LinkedHashMap<String, Integer>();
+            
+            int counter = 0;
+            String index = "";
+            for (String xValue : result.keySet()) {
+                if (counter == 0) {
+                    index = xValue;
+                    grouped.put(index, result.get(xValue));
+                } else {
+                    if (counter == group - 1) {
+                        counter = -1;
+                    }
+
+                    grouped.put(index, result.get(xValue) + grouped.get(index));
+                }
+                counter++;
+            }
+
+            return grouped;
+        } catch (NumberFormatException e) {
+            return result;
+        }
     }
 }

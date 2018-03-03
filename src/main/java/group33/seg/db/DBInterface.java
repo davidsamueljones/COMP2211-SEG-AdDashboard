@@ -99,7 +99,7 @@ public class DBInterface {
 
             returnConnection(connection);
 
-            request.fixResult(result);
+            result = request.fixResult(result);
 
             previous.put(request, result);
             return result;
