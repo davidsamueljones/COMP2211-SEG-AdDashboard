@@ -6,12 +6,12 @@ public class GraphChangeEvents {
   // model being used 
   // graph object being manipulated
   
-  public void xAxisChange(Range range) {
+  public void xAxisChange(Range<Double> range) {
     // TODO:
     // 1. Update x axis on graph
   }
   
-  public void yAxisChange(Range range) {
+  public void yAxisChange(Range<Double> range) {
     // TODO:
     // 1. Update y axis on graph
   }
