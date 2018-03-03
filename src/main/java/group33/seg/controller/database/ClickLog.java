@@ -1,4 +1,4 @@
-package group33.seg.database;
+package group33.seg.controller.database;
 
 import java.sql.Connection;
 import java.sql.SQLException;
