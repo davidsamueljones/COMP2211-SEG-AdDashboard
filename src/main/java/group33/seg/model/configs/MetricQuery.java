@@ -32,7 +32,7 @@ public class MetricQuery {
     return filterConfig;
   }
 
->>>>>>> Stashed changes
+
   // metric (null == all metrics)
   // filter
   // bounce rate definition (ignored if not relevant to metric)

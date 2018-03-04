@@ -14,13 +14,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class DatabaseInterface {
+// TODO think of a better class name that is not DatabaseInterface, since it's not an interface
+public class Database {
   private ConcurrentHashMap<DatabaseConnection, Boolean> connections;
   private ConcurrentHashMap<MetricQuery, MetricQueryResponse> previous;
   private final ExecutorService pool = Executors.newFixedThreadPool(10);
   private CampaignConfig campaignConfig;
 
-  public DatabaseInterface(CampaignConfig campaignConfig) {
+  public Database(CampaignConfig campaignConfig) {
     this.campaignConfig = campaignConfig;
     previous = new ConcurrentHashMap<>();
     connections = new ConcurrentHashMap<>();
@@ -50,14 +51,14 @@ public class DatabaseInterface {
       return previous.get(request);
     } else {
       MetricQueryResponse response =
-          new MetricQueryResponse(request, pool.submit(() -> getNewHistogram(request)));
+          new MetricQueryResponse(request, pool.submit(() -> getGraphData(request)));
 
       previous.put(request, response);
       return response;
     }
   }
 
-  private List<Pair<String, Integer>> getNewHistogram(MetricQuery request) {
+  private List<Pair<String, Integer>> getGraphData(MetricQuery request) {
     DatabaseConnection connection = getConnection();
     String sql = new DatabaseQueryFactory().generateSql(request);
     List<Pair<String, Integer>> result = new LinkedList<>();
