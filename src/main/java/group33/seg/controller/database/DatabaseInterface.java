@@ -74,7 +74,7 @@ public class DatabaseInterface {
   private List<Pair<String, Integer>> getNewHistogram(MetricQuery request) {
     DatabaseConnection connection = getConnection();
 
-    String sql = getSql(request);
+    String sql = new DatabaseQueryFactory().generateSql(request);
     List<Pair<String, Integer>> result = new LinkedList<Pair<String, Integer>>();
 
     try {
@@ -91,10 +91,5 @@ public class DatabaseInterface {
     returnConnection(connection);
 
     return result;
-  }
-
-  //needs implementation
-  private String getSql(MetricQuery request) {
-    return "";
   }
 }
