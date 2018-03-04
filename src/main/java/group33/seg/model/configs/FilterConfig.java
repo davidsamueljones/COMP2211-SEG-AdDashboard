@@ -5,6 +5,7 @@ public class FilterConfig {
   // income filter (null == ignored)
   // context filter (null == ignored)
   // gender filter (null == ignored)
-  
-  // TODO: Do we want to use enums for filter options or generate based off table data? (probably enums)
+
+  // TODO: Do we want to use enums for filter options or generate based off table data? (probably
+  // enums)
 }

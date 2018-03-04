@@ -20,13 +20,12 @@ public class DatabaseQueryFactory {
     String sql = metricQueries.get(request.getMetric());
 
     if (request.getInterval() != null) {
-      sql.replace("<interval>", request.getInterval().getValue());
+      sql = sql.replace("<interval>", request.getInterval().getValue());
     } else {
-      sql.replace("<interval>", "millennium");
+      sql = sql.replace("<interval>", "millennium");
     }
 
     // todo add filters
-
     return sql;
   }
 }

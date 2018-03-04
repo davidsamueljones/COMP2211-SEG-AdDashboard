@@ -20,10 +20,11 @@ public class MetricQueryResponse {
     return query;
   }
 
-  public List<Pair<String, Integer>> getResult(){
-    try{
+  public List<Pair<String, Integer>> getResult() {
+    try {
       return result.get();
     } catch (InterruptedException | ExecutionException e) {
+      e.printStackTrace();
       return null;
     }
   }

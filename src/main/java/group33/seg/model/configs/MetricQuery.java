@@ -9,10 +9,11 @@ public class MetricQuery {
   private Interval interval;
   private FilterConfig filterConfig;
 
-  public MetricQuery(CampaignConfig campaignConfig, Metric metric, Interval grouping, FilterConfig filterConfig) {
+  public MetricQuery(
+      CampaignConfig campaignConfig, Metric metric, Interval time, FilterConfig filterConfig) {
     this.campaignConfig = campaignConfig;
     this.metric = metric;
-    this.interval = grouping;
+    this.interval = time;
     this.filterConfig = filterConfig;
   }
 
@@ -31,7 +32,6 @@ public class MetricQuery {
   public FilterConfig getFilterConfig() {
     return filterConfig;
   }
-
 
   // metric (null == all metrics)
   // filter

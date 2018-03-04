@@ -17,13 +17,15 @@ import java.util.concurrent.Executors;
 // TODO think of a better class name that is not DatabaseInterface, since it's not an interface
 public class Database {
   private ConcurrentHashMap<DatabaseConnection, Boolean> connections;
-  private ConcurrentHashMap<MetricQuery, MetricQueryResponse> previous;
+  private ConcurrentHashMap<MetricQuery, MetricQueryResponse> cachedResponses;
   private final ExecutorService pool = Executors.newFixedThreadPool(10);
   private CampaignConfig campaignConfig;
+  private DatabaseQueryFactory queryFactory;
 
   public Database(CampaignConfig campaignConfig) {
     this.campaignConfig = campaignConfig;
-    previous = new ConcurrentHashMap<>();
+    this.queryFactory = new DatabaseQueryFactory();
+    cachedResponses = new ConcurrentHashMap<>();
     connections = new ConcurrentHashMap<>();
   }
 
@@ -47,20 +49,20 @@ public class Database {
   }
 
   public MetricQueryResponse getResponse(MetricQuery request) {
-    if (previous.containsKey(request)) {
-      return previous.get(request);
+    if (cachedResponses.containsKey(request)) {
+      return cachedResponses.get(request);
     } else {
       MetricQueryResponse response =
           new MetricQueryResponse(request, pool.submit(() -> getGraphData(request)));
 
-      previous.put(request, response);
+      cachedResponses.put(request, response);
       return response;
     }
   }
 
   private List<Pair<String, Integer>> getGraphData(MetricQuery request) {
     DatabaseConnection connection = getConnection();
-    String sql = new DatabaseQueryFactory().generateSql(request);
+    String sql = queryFactory.generateSql(request);
     List<Pair<String, Integer>> result = new LinkedList<>();
 
     try {
