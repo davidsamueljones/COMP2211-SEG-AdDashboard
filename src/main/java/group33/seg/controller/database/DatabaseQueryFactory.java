@@ -16,9 +16,7 @@ public class DatabaseQueryFactory {
     //add interval templates
     intervalValues.put(Interval.HOUR, "hour");
     intervalValues.put(Interval.DAY, "day");
-    intervalValues.put(Interval.WEEK, "week");
     intervalValues.put(Interval.MONTH, "month");
-    intervalValues.put(Interval.QUARTER, "quarter");
     intervalValues.put(Interval.YEAR, "year");
 
     //add sql templates
