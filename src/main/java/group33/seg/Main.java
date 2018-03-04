@@ -1,8 +1,8 @@
 package group33.seg;
 
 import java.sql.SQLException;
-import group33.seg.controller.database.DatabaseConfig;
-import group33.seg.controller.database.DatabaseConnection;
+
+import group33.seg.controller.database.*;
 
 public class Main {
   public static void main(String[] args) throws SQLException {
@@ -10,8 +10,5 @@ public class Main {
     DatabaseConnection dbconn =
         new DatabaseConnection(config.getHost(), config.getUser(), config.getPassword());
     dbconn.connectDatabase();
-
   }
 }
-
-
