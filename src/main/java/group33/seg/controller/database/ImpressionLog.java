@@ -27,6 +27,9 @@ public class ImpressionLog implements DatabaseTable {
 
   @Override
   public void importFile(Connection c, String filepath) throws SQLException {
+    if (filepath == null) {
+      throw new IllegalArgumentException("Filepath cannot be null!");
+    }
     try {
       Stream<String> linesIn = Files.lines(Paths.get(filepath));
       Stream<String> linesOut =

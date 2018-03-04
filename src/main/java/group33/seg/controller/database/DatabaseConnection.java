@@ -16,11 +16,14 @@ public class DatabaseConnection {
   }
 
   public Connection connectDatabase() {
+    if (host == null || user == null) {
+      throw new IllegalArgumentException("Host and user cannot be null!");
+    }
+
     try {
       return DriverManager.getConnection(host, user, password);
     } catch (SQLException e) {
       e.printStackTrace();
-      System.exit(0);
       return null;
     }
   }
