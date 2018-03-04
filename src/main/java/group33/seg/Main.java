@@ -10,6 +10,7 @@ public class Main {
     DatabaseConnection dbconn =
         new DatabaseConnection(config.getHost(), config.getUser(), config.getPassword());
     dbconn.connectDatabase();
+
   }
 }
 
