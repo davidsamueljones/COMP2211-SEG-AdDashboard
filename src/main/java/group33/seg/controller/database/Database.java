@@ -10,7 +10,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -22,30 +21,22 @@ public class DatabaseInterface {
   private CampaignConfig campaignConfig;
 
   public DatabaseInterface(CampaignConfig campaignConfig) {
-    try {
-      Class.forName("org.postgresql.Driver");
-    } catch (ClassNotFoundException e) {
-      e.printStackTrace();
-    }
     this.campaignConfig = campaignConfig;
-
-    previous = new ConcurrentHashMap<MetricQuery, MetricQueryResponse>();
-    connections = new ConcurrentHashMap<DatabaseConnection, Boolean>();
+    previous = new ConcurrentHashMap<>();
+    connections = new ConcurrentHashMap<>();
   }
 
   private synchronized DatabaseConnection getConnection() {
     for (DatabaseConnection c : connections.keySet()) {
-      //true if available
+      // true if available
       if (connections.get(c)) {
         connections.put(c, false);
         return c;
       }
     }
-
     DatabaseConfig config = new DatabaseConfig("config.properties");
-    DatabaseConnection connection = new DatabaseConnection(config.getHost() + campaignConfig.getDatabase(),
-        config.getUser(), config.getPassword());
-
+    DatabaseConnection connection =
+        new DatabaseConnection(config.getHost(), config.getUser(), config.getPassword());
     connections.put(connection, false);
     return connection;
   }
@@ -54,17 +45,12 @@ public class DatabaseInterface {
     connections.put(c, true);
   }
 
-  public MetricQueryResponse call(MetricQuery request) {
-    if (previous.get(request) != null) {
+  public MetricQueryResponse getResponse(MetricQuery request) {
+    if (previous.containsKey(request)) {
       return previous.get(request);
     } else {
-      MetricQueryResponse response = new MetricQueryResponse(
-        request,
-        pool.submit(new Callable<List<Pair<String, Integer>>>() {
-          public List<Pair<String, Integer>> call() {
-            return getNewHistogram(request);
-          }
-      }));
+      MetricQueryResponse response =
+          new MetricQueryResponse(request, pool.submit(() -> getNewHistogram(request)));
 
       previous.put(request, response);
       return response;
@@ -73,16 +59,15 @@ public class DatabaseInterface {
 
   private List<Pair<String, Integer>> getNewHistogram(MetricQuery request) {
     DatabaseConnection connection = getConnection();
-
     String sql = new DatabaseQueryFactory().generateSql(request);
-    List<Pair<String, Integer>> result = new LinkedList<Pair<String, Integer>>();
+    List<Pair<String, Integer>> result = new LinkedList<>();
 
     try {
       Statement cs = connection.connectDatabase().createStatement();
       ResultSet rs = cs.executeQuery(sql);
 
       while (rs.next()) {
-        result.add(new Pair<String, Integer>(rs.getString("xaxis"), rs.getInt("yaxis")));
+        result.add(new Pair<>(rs.getString("xaxis"), rs.getInt("yaxis")));
       }
     } catch (SQLException e) {
       e.printStackTrace();
