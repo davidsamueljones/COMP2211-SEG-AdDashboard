@@ -1,9 +1,5 @@
 package group33.seg.model.configs;
 
-<<<<<<< Updated upstream
-public class MetricQuery {
-  // campaign
-=======
 import group33.seg.model.types.Metric;
 import group33.seg.model.types.Interval;
 
