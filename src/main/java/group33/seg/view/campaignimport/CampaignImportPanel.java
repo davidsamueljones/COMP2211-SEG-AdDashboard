@@ -6,9 +6,12 @@ import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Map;
 import java.awt.GridBagLayout;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import java.awt.GridBagConstraints;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -294,6 +297,20 @@ public class CampaignImportPanel extends JPanel {
     // * EVENT HANDLING
     // ************************************************************************************
 
+    // Single folder browser
+    FileActionListener actFolderBrowse = new FileActionListener(JFileChooser.DIRECTORIES_ONLY);
+    btnBrowseCSVFolder.addActionListener(actFolderBrowse);
+    actFolderBrowse.addMapping(btnBrowseCSVFolder, txtCSVFolder);
+
+    // Single file browsers
+    FileActionListener actFileBrowse = new FileActionListener(JFileChooser.FILES_ONLY);
+    btnBrowseClickLog.addActionListener(actFileBrowse);
+    actFileBrowse.addMapping(btnBrowseClickLog, txtClickLog);
+    btnBrowseImpressionLog.addActionListener(actFileBrowse);
+    actFileBrowse.addMapping(btnBrowseImpressionLog, txtImpressionLog);
+    btnBrowseServerLog.addActionListener(actFileBrowse);
+    actFileBrowse.addMapping(btnBrowseServerLog, txtServerLog);
+
     // Handle import trigger
     btnImportCampaign.addActionListener(new ActionListener() {
 
@@ -307,7 +324,6 @@ public class CampaignImportPanel extends JPanel {
           // show error
         }
       }
-
     });
 
     // Create a progress listener to handle any updates from the import handler
@@ -342,12 +358,19 @@ public class CampaignImportPanel extends JPanel {
     btnCancelImport.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
+        // TODO: Add are you sure?
         importHandler.cancelImport(false);
       }
     });
 
   }
 
+
+  /**
+   * Flip between layout cards and apply specific behaviour.
+   * 
+   * @param view View to switch to
+   */
   private void showView(View view) {
     cl_Panel.show(CampaignImportPanel.this, view.toString());
     switch (view) {
@@ -362,6 +385,13 @@ public class CampaignImportPanel extends JPanel {
     }
   }
 
+  /**
+   * Available views for CampaignImportPanel
+   */
+  private enum View {
+    CONTROLS, IMPORTING
+  }
+
   // TODO: Move to helper class
   public void focusRequest(Component component) {
     // Invoke the focus request later so components have a chance to initialise
@@ -373,8 +403,39 @@ public class CampaignImportPanel extends JPanel {
     });
   }
 
-  private enum View {
-    CONTROLS, IMPORTING
+
+  // TODO: Move to helper class
+  public class FileActionListener implements ActionListener {
+    private Map<Object, JTextField> mappings = new HashMap<>();
+    private JFileChooser fileChooser = new JFileChooser();
+
+    public FileActionListener(int selectionMode) {
+      fileChooser.setFileSelectionMode(selectionMode);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      JTextField txt = mappings.get(e.getSource());
+      if (txt == null) {
+        System.err.print("Object does not have a corresponding field to update");
+        return;
+      }
+
+      int res = fileChooser.showOpenDialog(CampaignImportPanel.this);
+      // fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+      if (res == JFileChooser.APPROVE_OPTION) {
+        txt.setText(fileChooser.getSelectedFile().getAbsolutePath());
+      }
+    }
+
+    public void addMapping(Object object, JTextField txt) {
+      mappings.put(object, txt);
+    }
+
+    public JFileChooser getFileChooser() {
+      return fileChooser;
+    }
+
   }
 
 }
