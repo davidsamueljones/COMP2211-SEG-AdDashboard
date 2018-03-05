@@ -20,10 +20,10 @@ public class CampaignImportPanel extends JPanel {
   private JButton btnBrowseCSVFolder;
 
   private JTextField txtClickLog;
-  private JTextField txtImpressionsLog;
+  private JTextField txtImpressionLog;
   private JTextField txtServerLog;
   private JButton btnBrowseClickLog;
-  private JButton btnBrowseImpressionsLog;
+  private JButton btnBrowseImpressionLog;
   private JButton btnBrowseServerLog;
 
   private JButton btnImportCampaign;
@@ -93,7 +93,7 @@ public class CampaignImportPanel extends JPanel {
 
     JLabel lblSimple = new JLabel();
     lblSimple.setText(
-        "<html>Select a folder that contains log files named exactly 'click_log.csv', 'impressions_log.csv' and 'server_log.csv':</html>");
+        "<html>Select a folder that contains log files named exactly 'click_log.csv', 'impression_log.csv' and 'server_log.csv':</html>");
     GridBagConstraints gbc_lblSimple = new GridBagConstraints();
     gbc_lblSimple.gridwidth = 2;
     gbc_lblSimple.insets = new Insets(0, 0, 5, 0);
@@ -158,28 +158,28 @@ public class CampaignImportPanel extends JPanel {
     gbc_btnBrowseClickLog.gridy = 2;
     pnlAdvanced.add(btnBrowseClickLog, gbc_btnBrowseClickLog);
 
-    JLabel lblImpressionsLog = new JLabel("Impressions Log:");
-    GridBagConstraints gbc_lblImpressionsLog = new GridBagConstraints();
-    gbc_lblImpressionsLog.insets = new Insets(0, 0, 5, 0);
-    gbc_lblImpressionsLog.fill = GridBagConstraints.HORIZONTAL;
-    gbc_lblImpressionsLog.gridx = 0;
-    gbc_lblImpressionsLog.gridy = 3;
-    pnlAdvanced.add(lblImpressionsLog, gbc_lblImpressionsLog);
+    JLabel lblImpressionLog = new JLabel("Impression Log:");
+    GridBagConstraints gbc_lblImpressionLog = new GridBagConstraints();
+    gbc_lblImpressionLog.insets = new Insets(0, 0, 5, 0);
+    gbc_lblImpressionLog.fill = GridBagConstraints.HORIZONTAL;
+    gbc_lblImpressionLog.gridx = 0;
+    gbc_lblImpressionLog.gridy = 3;
+    pnlAdvanced.add(lblImpressionLog, gbc_lblImpressionLog);
 
-    txtImpressionsLog = new JTextField();
-    GridBagConstraints gbc_txtImpressionsLog = new GridBagConstraints();
-    gbc_txtImpressionsLog.insets = new Insets(0, 0, 5, 5);
-    gbc_txtImpressionsLog.fill = GridBagConstraints.HORIZONTAL;
-    gbc_txtImpressionsLog.gridx = 0;
-    gbc_txtImpressionsLog.gridy = 4;
-    pnlAdvanced.add(txtImpressionsLog, gbc_txtImpressionsLog);
+    txtImpressionLog = new JTextField();
+    GridBagConstraints gbc_txtImpressionLog = new GridBagConstraints();
+    gbc_txtImpressionLog.insets = new Insets(0, 0, 5, 5);
+    gbc_txtImpressionLog.fill = GridBagConstraints.HORIZONTAL;
+    gbc_txtImpressionLog.gridx = 0;
+    gbc_txtImpressionLog.gridy = 4;
+    pnlAdvanced.add(txtImpressionLog, gbc_txtImpressionLog);
 
-    btnBrowseImpressionsLog = new JButton("Browse");
-    GridBagConstraints gbc_btnBrowseImpressionsLog = new GridBagConstraints();
-    gbc_btnBrowseImpressionsLog.insets = new Insets(0, 0, 5, 0);
-    gbc_btnBrowseImpressionsLog.gridx = 1;
-    gbc_btnBrowseImpressionsLog.gridy = 4;
-    pnlAdvanced.add(btnBrowseImpressionsLog, gbc_btnBrowseImpressionsLog);
+    btnBrowseImpressionLog = new JButton("Browse");
+    GridBagConstraints gbc_btnBrowseImpressionLog = new GridBagConstraints();
+    gbc_btnBrowseImpressionLog.insets = new Insets(0, 0, 5, 0);
+    gbc_btnBrowseImpressionLog.gridx = 1;
+    gbc_btnBrowseImpressionLog.gridy = 4;
+    pnlAdvanced.add(btnBrowseImpressionLog, gbc_btnBrowseImpressionLog);
 
     JLabel lblServerLog = new JLabel("Server Log:");
     GridBagConstraints gbc_lblServerLog = new GridBagConstraints();
