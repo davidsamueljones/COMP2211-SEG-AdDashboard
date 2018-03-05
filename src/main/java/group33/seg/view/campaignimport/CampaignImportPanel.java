@@ -3,6 +3,7 @@ package group33.seg.view.campaignimport;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import java.awt.Insets;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.GridBagLayout;
@@ -10,14 +11,22 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import java.awt.GridBagConstraints;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import group33.seg.controller.campaignimport.CampaignImportHandler;
+import group33.seg.controller.utilities.ProgressListener;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JTabbedPane;
 import java.awt.CardLayout;
+import java.awt.Component;
+import java.awt.EventQueue;
 
 public class CampaignImportPanel extends JPanel {
   private static final long serialVersionUID = 845431833540626100L;
 
+  private CardLayout cl_Panel;
+
+  public final CampaignImportHandler importHandler;
   private JTextField txtCampaignName;
 
   private JTextField txtCSVFolder;
@@ -31,26 +40,47 @@ public class CampaignImportPanel extends JPanel {
   private JButton btnBrowseServerLog;
 
   private JButton btnImportCampaign;
+  private JButton btnCancelImport;
+
 
   /**
    * Create the panel.
    */
   public CampaignImportPanel() {
-
-    initGUI();
+    this(null);
   }
 
+  public CampaignImportPanel(CampaignImportHandler importHandler) {
+    if (importHandler == null) {
+      importHandler = new CampaignImportHandler();
+    }
+    this.importHandler = importHandler;
+
+    initGUI();
+
+    // Set the current view
+    showView(View.CONTROLS);
+  }
+
+  /**
+   * Initialise GUI and any event listeners.
+   */
   private void initGUI() {
-    CardLayout cl_Panel = new CardLayout();
+
+    // ************************************************************************************
+    // * GUI HANDLING
+    // ************************************************************************************
+    cl_Panel = new CardLayout();
     setLayout(cl_Panel);
 
+    // Panel for import setup
     JPanel pnlControls = new JPanel();
     GridBagLayout gbl_pnlControls = new GridBagLayout();
     gbl_pnlControls.rowHeights = new int[] {0, 0, 0, 0, 0};
     gbl_pnlControls.columnWeights = new double[] {0.0, 1.0};
     gbl_pnlControls.rowWeights = new double[] {0.0, 0.0, 0.0, 0.0, 1.0};
     pnlControls.setLayout(gbl_pnlControls);
-    add(pnlControls, "CONTROLS");
+    add(pnlControls, View.CONTROLS.toString());
 
     {
       JLabel lblHelp = new JLabel();
@@ -227,16 +257,9 @@ public class CampaignImportPanel extends JPanel {
       gbc_btnImportCampaign.gridy = 3;
       pnlControls.add(btnImportCampaign, gbc_btnImportCampaign);
 
-      btnImportCampaign.addActionListener(new ActionListener() {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          cl_Panel.show(CampaignImportPanel.this, "IMPORTING");
-        }
-      });
-
     }
 
+    // Panel for importing screen
     JPanel pnlImporting = new JPanel();
     GridBagLayout gbl_pnlImporting = new GridBagLayout();
     gbl_pnlImporting.columnWidths = new int[] {0, 0, 0};
@@ -246,7 +269,7 @@ public class CampaignImportPanel extends JPanel {
     pnlImporting.setLayout(gbl_pnlImporting);
     add(pnlImporting, "IMPORTING");
 
-    JLabel lblImportProgress = new JLabel("Import progress...");
+    JLabel lblImportProgress = new JLabel();
     GridBagConstraints gbc_lblImportProgress = new GridBagConstraints();
     gbc_lblImportProgress.insets = new Insets(0, 0, 5, 0);
     gbc_lblImportProgress.gridx = 1;
@@ -261,19 +284,97 @@ public class CampaignImportPanel extends JPanel {
     gbc_pbarImportProgress.gridy = 2;
     pnlImporting.add(pbarImportProgress, gbc_pbarImportProgress);
 
-    JButton btnCancelImport = new JButton("Cancel Import");
+    btnCancelImport = new JButton("Cancel Import");
     GridBagConstraints gbc_btnCancelImport = new GridBagConstraints();
     gbc_btnCancelImport.gridx = 1;
     gbc_btnCancelImport.gridy = 3;
     pnlImporting.add(btnCancelImport, gbc_btnCancelImport);
-    btnCancelImport.addActionListener(new ActionListener() {
+
+    // ************************************************************************************
+    // * EVENT HANDLING
+    // ************************************************************************************
+
+    // Handle import trigger
+    btnImportCampaign.addActionListener(new ActionListener() {
 
       @Override
       public void actionPerformed(ActionEvent e) {
-        cl_Panel.show(CampaignImportPanel.this, "CONTROLS");
+        boolean started =
+            importHandler.doImport(importHandler.new CampaignImportConfig("Test", "", "", ""));
+        if (started) {
+          showView(View.IMPORTING);
+        } else {
+          // show error
+        }
+      }
+
+    });
+
+    // Create a progress listener to handle any updates from the import handler
+    importHandler.addProgressListener(new ProgressListener() {
+
+      @Override
+      public void progressUpdate(int progress) {
+        EventQueue.invokeLater(new Runnable() {
+          @Override
+          public void run() {
+            lblImportProgress.setText(String.format("Import progress %d%%...", progress));
+            pbarImportProgress.setValue(progress);
+          }
+        });
+      }
+
+      @Override
+      public void finish(boolean success) {
+        Window frmCurrent = SwingUtilities.getWindowAncestor(CampaignImportPanel.this);
+        frmCurrent.setVisible(false);
+        frmCurrent.dispose();
+      }
+
+      @Override
+      public void cancelled() {
+        showView(View.CONTROLS);
+      }
+
+    });
+
+    // Handle cancellation request
+    btnCancelImport.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        importHandler.cancelImport(false);
       }
     });
 
+  }
+
+  private void showView(View view) {
+    cl_Panel.show(CampaignImportPanel.this, view.toString());
+    switch (view) {
+      case CONTROLS:
+        focusRequest(txtCampaignName);
+        break;
+      case IMPORTING:
+        focusRequest(btnCancelImport);
+        break;
+      default:
+        break;
+    }
+  }
+
+  // TODO: Move to helper class
+  public void focusRequest(Component component) {
+    // Invoke the focus request later so components have a chance to initialise
+    EventQueue.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        component.requestFocusInWindow();
+      }
+    });
+  }
+
+  private enum View {
+    CONTROLS, IMPORTING
   }
 
 }

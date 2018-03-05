@@ -1,41 +1,32 @@
 package group33.seg.view.campaignimport;
 
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Point;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
-import javax.swing.WindowConstants;
 import javax.swing.border.BevelBorder;
+import group33.seg.controller.campaignimport.CampaignImportHandler;
+import group33.seg.model.configs.CampaignConfig;
 import group33.seg.view.utilities.Accessibility;
-import group33.seg.view.utilities.Accessibility.Appearance;
 
 public class CampaignImportDialog extends JDialog {
   private static final long serialVersionUID = -8083386947121993055L;
+
+  /** Import Handler used by Dialog */
+  private CampaignImportHandler importHandler;
+
   private JButton btnImportNew;
   private JButton btnCancel;
 
-  /**
-   * Launch the test application.
-   */
-  public static void main(String[] args) {
-    try {
-      Accessibility.scaleDefaultUIFontSize(1);
-      Accessibility.setAppearance(Appearance.PLATFORM);
-      CampaignImportDialog dialog = new CampaignImportDialog();
-      dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-      dialog.setVisible(true);
-      dialog.setTitle("Campaign Importer");
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
 
   /**
    * Create the dialog.
@@ -44,8 +35,13 @@ public class CampaignImportDialog extends JDialog {
     this(null);
   }
 
-  public CampaignImportDialog(Frame parent) {
-    super(parent, "Campaign Importer", true);
+  /**
+   * Create the dialog with a given parent window.
+   * 
+   * @param parent Window to treat as a parent
+   */
+  public CampaignImportDialog(Window parent) {
+    super(parent, "Campaign Importer");
 
     // Determine positioning
     Point loc;
@@ -57,12 +53,23 @@ public class CampaignImportDialog extends JDialog {
       loc = new Point(100, 100);
     }
 
+    // Initialise Handlers
+    importHandler = new CampaignImportHandler();
+
     // Initialise GUI
     initGUI();
     setBounds(loc.x, loc.y, 700, 400);
   }
 
+  /**
+   * Initialise GUI and any event listeners.
+   */
   private void initGUI() {
+
+    // ************************************************************************************
+    // * GUI HANDLING
+    // ************************************************************************************
+
     JPanel pnlDialog = new JPanel();
     pnlDialog.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     GridBagLayout gbl_pnlDialog = new GridBagLayout();
@@ -86,7 +93,7 @@ public class CampaignImportDialog extends JDialog {
     gbl_pnlModes.rowWeights = new double[] {0.0, 0.0, 1.0};
     pnlNavigation.setLayout(gbl_pnlModes);
 
-    // Create 'Large' JButton
+    // Create 'Large' JButton for selecting CampaignImportPanel
     btnImportNew = new JButton("Import New");
     Accessibility.scaleJComponentFontSize(btnImportNew, 1.5);
     btnImportNew.setHorizontalAlignment(SwingConstants.LEFT);
@@ -101,6 +108,7 @@ public class CampaignImportDialog extends JDialog {
     pnlNavigation.add(btnImportNew, gbc_btnImportNew);
     pnlNavigation.setMinimumSize(btnImportNew.getPreferredSize());
 
+    // Create 'Large' JButton for exiting dialog
     btnCancel = new JButton("Cancel");
     Accessibility.scaleJComponentFontSize(btnCancel, 1.5);
     btnCancel.setHorizontalAlignment(SwingConstants.LEFT);
@@ -114,20 +122,33 @@ public class CampaignImportDialog extends JDialog {
     pnlNavigation.add(btnCancel, gbc_btnCancel);
 
     // Controls Panel
-    CampaignImportPanel pnlCampaignImport = new CampaignImportPanel();
+    CampaignImportPanel pnlCampaignImport = new CampaignImportPanel(importHandler);
     pnlCampaignImport.setBorder(
         BorderFactory.createCompoundBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED),
             BorderFactory.createEmptyBorder(5, 5, 5, 5)));
-    // JScrollPane scr_pnlControls =
-    // new JScrollPane(pnlControls, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-    // ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-    // scr_pnlControls.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
     GridBagConstraints gbc_pnlCampaignImport = new GridBagConstraints();
     gbc_pnlCampaignImport.fill = GridBagConstraints.BOTH;
     gbc_pnlCampaignImport.insets = new Insets(5, 3, 5, 5);
     gbc_pnlCampaignImport.gridx = 1;
     gbc_pnlCampaignImport.gridy = 0;
     pnlDialog.add(pnlCampaignImport, gbc_pnlCampaignImport);
+
+    // ************************************************************************************
+    // * EVENT HANDLING
+    // ************************************************************************************
+
+    btnCancel.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        setVisible(false);
+        dispose();
+      }
+    });
+  }
+
+  public CampaignConfig getImportedCampaign() {
+    return importHandler.getImportedCampaign();
   }
 
 }
