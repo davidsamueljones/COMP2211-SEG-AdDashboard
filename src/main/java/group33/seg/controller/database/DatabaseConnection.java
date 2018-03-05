@@ -16,12 +16,15 @@ public class DatabaseConnection {
   }
 
   public Connection connectDatabase() {
+    if (host == null || user == null) {
+      throw new IllegalArgumentException("Host and user cannot be null!");
+    }
+
     try {
       Class.forName("org.postgresql.Driver");
       return DriverManager.getConnection(host, user, password);
     } catch (SQLException | ClassNotFoundException e) {
       e.printStackTrace();
-      System.exit(0);
       return null;
     }
   }

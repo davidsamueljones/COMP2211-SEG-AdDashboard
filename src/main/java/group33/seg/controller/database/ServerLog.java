@@ -19,6 +19,9 @@ public class ServerLog implements DatabaseTable {
 
   @Override
   public void importFile(Connection c, String filepath) throws SQLException {
+    if (filepath == null) {
+      throw new IllegalArgumentException("Filepath cannot be null!");
+    }
     Statement st = c.createStatement();
     st.execute("COPY server_log FROM '" + filepath + "' WITH DELIMITER ',' CSV HEADER NULL 'n/a'");
     st.close();

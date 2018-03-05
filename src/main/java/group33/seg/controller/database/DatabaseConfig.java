@@ -11,6 +11,9 @@ public class DatabaseConfig {
   private String password;
 
   public DatabaseConfig(String file) {
+    if (file == null) {
+      throw new IllegalArgumentException("Configuration file doesn't exist!");
+    }
     Properties prop = new Properties();
     try {
       prop.load(new FileInputStream(file));

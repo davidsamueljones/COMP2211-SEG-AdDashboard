@@ -1,11 +1,6 @@
 package group33.seg;
 
-import java.sql.SQLException;
-import java.util.List;
-
 import group33.seg.controller.database.Database;
-import group33.seg.controller.database.DatabaseConfig;
-import group33.seg.controller.database.DatabaseConnection;
 import group33.seg.controller.graphing.Graph;
 import group33.seg.model.configs.MetricQuery;
 import group33.seg.model.types.Interval;
@@ -13,14 +8,11 @@ import group33.seg.model.types.Metric;
 import group33.seg.model.types.Pair;
 
 import javax.swing.*;
+import java.sql.SQLException;
+import java.util.List;
 
 public class Main {
   public static void main(String[] args) throws SQLException {
-    DatabaseConfig config = new DatabaseConfig("config.properties");
-    DatabaseConnection dbconn =
-        new DatabaseConnection(config.getHost(), config.getUser(), config.getPassword());
-    dbconn.connectDatabase();
-
     /** Query for fetching total number of impressions data */
     Database db = new Database(null);
     MetricQuery totalImpressions = new MetricQuery(null, Metric.IMPRESSIONS, null, null);
