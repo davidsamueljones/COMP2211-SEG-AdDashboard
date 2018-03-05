@@ -46,7 +46,7 @@ public class CampaignImportPanel extends JPanel {
     JLabel lblHelp = new JLabel();
     lblHelp.setText(
         "<html>Import a campaign's data into the current workspace using its respective CSV files "
-            + "(a click log, an impressions log and a server log):</html>");
+            + "(a click log, an impression log and a server log):</html>");
     GridBagConstraints gbc_lblHelp = new GridBagConstraints();
     gbc_lblHelp.gridwidth = 2;
     gbc_lblHelp.insets = new Insets(0, 0, 5, 0);
