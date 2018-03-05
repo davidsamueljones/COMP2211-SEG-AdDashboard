@@ -9,8 +9,10 @@ public class ClickLog implements DatabaseTable {
   @Override
   public void createTable(Connection c) throws SQLException {
     Statement st = c.createStatement();
-    st.execute("CREATE TABLE IF NOT EXISTS click_log (date TIMESTAMP,"
-        + " user_id BIGINT NOT NULL, " + "click_cost REAL)");
+    st.execute(
+        "CREATE TABLE IF NOT EXISTS click_log (date TIMESTAMP,"
+            + " user_id BIGINT NOT NULL, "
+            + "click_cost REAL)");
     st.close();
   }
 
@@ -19,7 +21,5 @@ public class ClickLog implements DatabaseTable {
     Statement st = c.createStatement();
     st.execute("COPY click_log FROM '" + filepath + "' WITH DELIMITER ',' CSV HEADER");
     st.close();
-
-
   }
 }
