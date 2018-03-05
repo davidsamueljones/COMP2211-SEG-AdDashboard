@@ -1,8 +1,10 @@
 package group33.seg.view.campaignimport;
 
+import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Point;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -39,8 +41,25 @@ public class CampaignImportDialog extends JDialog {
    * Create the dialog.
    */
   public CampaignImportDialog() {
+    this(null);
+  }
+
+  public CampaignImportDialog(Frame parent) {
+    super(parent, "Campaign Importer", true);
+
+    // Determine positioning
+    Point loc;
+    if (parent != null) {
+      loc = parent.getLocation();
+      loc.x += 80;
+      loc.y += 80;
+    } else {
+      loc = new Point(100, 100);
+    }
+
+    // Initialise GUI
     initGUI();
-    setBounds(100, 100, 700, 400);
+    setBounds(loc.x, loc.y, 700, 400);
   }
 
   private void initGUI() {
