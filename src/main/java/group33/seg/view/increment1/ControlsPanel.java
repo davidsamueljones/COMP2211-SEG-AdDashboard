@@ -32,7 +32,16 @@ public class ControlsPanel extends JScrollPane {
     pnlControls.setLayout(gbl_pnlControls);
 
     {
-
+      // Campaign manager
+      CollapsiblePanel colpnlCampaignManager = new CollapsiblePanel("Campaign Manager");
+      CampaignManagerPanel pnlCampaignManager = new CampaignManagerPanel();
+      colpnlCampaignManager.setContentPane(pnlCampaignManager);
+      GridBagConstraints gbc_colpnlCampaignManager = new GridBagConstraints();
+      gbc_colpnlCampaignManager.fill = GridBagConstraints.BOTH;
+      gbc_colpnlCampaignManager.insets = new Insets(5, 5, 5, 5);
+      gbc_colpnlCampaignManager.gridx = 0;
+      gbc_colpnlCampaignManager.gridy = 0;
+      pnlControls.add(colpnlCampaignManager, gbc_colpnlCampaignManager);
     }
 
     // Configure scroll pane
