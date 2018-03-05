@@ -82,6 +82,8 @@ public class Accessibility {
     Font font = component.getFont();
     if (font != null) {
       font = scaleFont(component.getFont(), scale);
+      // Strip UIManager LaF data to avoid font scaling not being enforced 
+      font = new Font(font.getAttributes());
       component.setFont(font);
     }
   }
