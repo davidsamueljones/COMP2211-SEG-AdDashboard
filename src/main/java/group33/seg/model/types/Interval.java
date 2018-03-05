@@ -4,6 +4,7 @@ package group33.seg.model.types;
 public enum Interval {
   HOUR("hour"),
   DAY("day"),
+  WEEK("week"),
   MONTH("month"),
   YEAR("year");
 
