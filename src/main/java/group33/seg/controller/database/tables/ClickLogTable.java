@@ -1,4 +1,4 @@
-package group33.seg.controller.database;
+package group33.seg.controller.database.tables;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

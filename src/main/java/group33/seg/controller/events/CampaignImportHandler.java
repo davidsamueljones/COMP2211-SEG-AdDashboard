@@ -1,13 +1,13 @@
 package group33.seg.controller.events;
 
 import java.util.Set;
-import group33.seg.controller.database.ClickLogTable;
 import group33.seg.controller.database.DatabaseConfig;
 import group33.seg.controller.database.DatabaseConnection;
-import group33.seg.controller.database.DatabaseTable;
-import group33.seg.controller.database.DatabaseTableImporter;
-import group33.seg.controller.database.ImpressionLogTable;
-import group33.seg.controller.database.ServerLogTable;
+import group33.seg.controller.database.tables.ClickLogTable;
+import group33.seg.controller.database.tables.DatabaseTable;
+import group33.seg.controller.database.tables.DatabaseTableImporter;
+import group33.seg.controller.database.tables.ImpressionLogTable;
+import group33.seg.controller.database.tables.ServerLogTable;
 import group33.seg.controller.utilities.ErrorBuilder;
 import group33.seg.controller.utilities.ProgressListener;
 import group33.seg.model.configs.CampaignConfig;

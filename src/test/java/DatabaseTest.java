@@ -1,4 +1,7 @@
 import group33.seg.controller.database.*;
+import group33.seg.controller.database.tables.ClickLogTable;
+import group33.seg.controller.database.tables.ImpressionLogTable;
+import group33.seg.controller.database.tables.ServerLogTable;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
