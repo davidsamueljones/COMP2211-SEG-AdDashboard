@@ -33,7 +33,7 @@ public class ImpressionLog extends DatabaseTable {
   }
 
   @Override
-  protected String getInsertTemplate() {
+  public String getInsertTemplate() {
     return "INSERT INTO impression_log (date, user_id, female, age, income, context, impression_cost) "
         + "values (?, ?, ?, ?, ?, ?, ?)";
   }

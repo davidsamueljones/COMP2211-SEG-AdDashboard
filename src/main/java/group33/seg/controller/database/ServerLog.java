@@ -37,7 +37,7 @@ public class ServerLog extends DatabaseTable {
   }
 
   @Override
-  protected String getInsertTemplate() {
+  public String getInsertTemplate() {
     return "INSERT INTO server_log (entry_date, user_id, exit_date, pages_viewed, conversion) "
         + "values (?, ?, ?, ?, ?)";
   }

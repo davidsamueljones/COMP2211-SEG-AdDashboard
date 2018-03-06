@@ -28,7 +28,7 @@ public class ClickLog extends DatabaseTable {
   }
 
   @Override
-  protected String getInsertTemplate() {
+  public String getInsertTemplate() {
     return "INSERT INTO click_log (date, user_id, click_cost) values (?, ?, ?)";
   }
   
