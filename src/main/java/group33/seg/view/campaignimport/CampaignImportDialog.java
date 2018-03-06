@@ -17,7 +17,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
-import group33.seg.controller.campaignimport.CampaignImportHandler;
+import group33.seg.controller.events.CampaignImportHandler;
 import group33.seg.model.configs.CampaignConfig;
 import group33.seg.view.utilities.Accessibility;
 

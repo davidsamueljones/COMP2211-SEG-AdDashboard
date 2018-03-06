@@ -3,6 +3,7 @@ package group33.seg.view.increment1;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import javax.swing.JToolBar;
+import group33.seg.controller.graphing.Graph;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 

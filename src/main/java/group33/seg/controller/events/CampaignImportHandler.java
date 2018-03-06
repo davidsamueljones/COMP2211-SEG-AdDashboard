@@ -1,10 +1,11 @@
-package group33.seg.controller.campaignimport;
+package group33.seg.controller.events;
 
 import java.util.Set;
 import group33.seg.controller.database.ClickLog;
 import group33.seg.controller.database.DatabaseConfig;
 import group33.seg.controller.database.DatabaseConnection;
 import group33.seg.controller.database.DatabaseTable;
+import group33.seg.controller.database.DatabaseTableImporter;
 import group33.seg.controller.database.ImpressionLog;
 import group33.seg.controller.database.ServerLog;
 import group33.seg.controller.utilities.ErrorBuilder;
