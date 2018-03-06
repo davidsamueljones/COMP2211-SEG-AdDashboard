@@ -57,7 +57,7 @@ public class DatabaseTableImporter {
           }
         }     
         // Stop import if thread is interrupted
-        if (Thread.interrupted()) {
+        if (Thread.currentThread().isInterrupted()) {
           break;
         }
       }

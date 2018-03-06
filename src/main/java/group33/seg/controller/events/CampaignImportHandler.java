@@ -165,9 +165,14 @@ public class CampaignImportHandler {
     worker.start();
     // Wait for worker to finish
     while (worker.isAlive()) {
-      Thread.sleep(100);
+      boolean interrupt = false;
+      try {
+        Thread.sleep(100);
+      } catch (InterruptedException e) {
+        interrupt = true;
+      }
       // Check for interrupts
-      if (Thread.interrupted()) {
+      if (interrupt || Thread.currentThread().isInterrupted()) {
         worker.interrupt();
         worker.join(0);
         throw new InterruptedException();
@@ -194,7 +199,7 @@ public class CampaignImportHandler {
       threadImport.interrupt();
       if (wait) {
         try {
-          threadImport.wait();
+          threadImport.join();
           return true;
         } catch (InterruptedException e) {
           return false;

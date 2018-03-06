@@ -390,7 +390,7 @@ public class CampaignImportPanel extends JPanel {
         if (res != JOptionPane.YES_OPTION) {
           return;
         }
-        importHandler.cancelImport(false);
+        importHandler.cancelImport(true);
       }
     });
 
