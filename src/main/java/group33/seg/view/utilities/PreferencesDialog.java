@@ -19,6 +19,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 import group33.seg.controller.events.CampaignImportHandler;
 import group33.seg.model.configs.CampaignConfig;
+import group33.seg.view.campaignimport.CampaignImportPanel;
 import group33.seg.view.utilities.Accessibility;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
@@ -27,19 +28,6 @@ public class PreferencesDialog extends JDialog {
   private static final long serialVersionUID = -8083386947121993055L;
   private JButton btnApplyConfirm;
   private JButton btnCancel;
-
-  /**
-   * Launch the application.
-   */
-  public static void main(String[] args) {
-    try {
-      PreferencesDialog dialog = new PreferencesDialog();
-      dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-      dialog.setVisible(true);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
 
   /**
    * Create the dialog.
@@ -151,6 +139,32 @@ public class PreferencesDialog extends JDialog {
     gbc_btnApplyConfirm.gridy = 2;
     pnlDialog.add(btnApplyConfirm, gbc_btnApplyConfirm);
 
+    btnCancel.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        setVisible(false);
+        dispose();
+      }
+    });
+
+    btnApplyConfirm.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        if (pnlFontSize.hasChanged()) {
+          int res = JOptionPane.showConfirmDialog(PreferencesDialog.this,
+              "Updating the font size requires any open windows to refresh\r\n"
+                  + "This may clear any workspaces, are you sure you wish to continue?",
+              "Apply & Confirm", JOptionPane.YES_NO_OPTION);
+          if (res != JOptionPane.YES_OPTION) {
+            return;
+          }
+          pnlFontSize.updateSettingsScale();
+        }
+        setVisible(false);
+        dispose();
+      }
+    });
 
     // ************************************************************************************
     // * EVENT HANDLING

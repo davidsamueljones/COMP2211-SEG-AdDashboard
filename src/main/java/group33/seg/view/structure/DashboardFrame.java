@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import group33.seg.controller.events.GraphHandler;
 import group33.seg.controller.events.StatisticHandler;
+import group33.seg.controller.persistence.DashboardSettings;
 import group33.seg.view.utilities.Accessibility;
 import group33.seg.view.utilities.Accessibility.Appearance;
 import javax.swing.JSplitPane;
@@ -17,6 +18,8 @@ import javax.swing.JMenuBar;
 public class DashboardFrame extends JFrame {
   private static final long serialVersionUID = 5064629396099335312L;
 
+  private JSplitPane sppMain;
+  
   /**
    * Test Main: Launch the Dashboard frame.
    */
@@ -41,17 +44,20 @@ public class DashboardFrame extends JFrame {
    * Create the Dashboard frame.
    */
   public DashboardFrame() {
-
     this.setTitle("Ad-Dashboard");
     this.setBounds(100, 100, 1280, 720);
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+    double scaling = DashboardSettings.cur.prefs
+        .getDouble(DashboardSettings.FONT_SCALING, Accessibility.DEFAULT_SCALING);
+    Accessibility.scaleDefaultUIFontSize(scaling);
+    
     initGUI();
   }
 
   private void initGUI() {
     // Initialise menu bar and its respective items
-    JMenuBar menuBar = new DashboardMenuBar();
+    JMenuBar menuBar = new DashboardMenuBar(this);
     setJMenuBar(menuBar);
 
     // Use custom content pane
@@ -61,7 +67,7 @@ public class DashboardFrame extends JFrame {
     setContentPane(pnlDashboard);
 
     // Split panel into LHS and RHS
-    JSplitPane sppMain = new JSplitPane();
+    sppMain = new JSplitPane();
     pnlDashboard.add(sppMain);
 
     // Use LHS as single panel

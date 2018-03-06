@@ -11,22 +11,24 @@ import java.awt.GridBagConstraints;
 import javax.swing.JLabel;
 import java.awt.Insets;
 import org.jdesktop.swingx.JXTitledSeparator;
+import group33.seg.controller.persistence.DashboardSettings;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 
 public class FontSizePanel extends JPanel {
   private static final long serialVersionUID = -2100128317422188877L;
 
+  JSlider sldFontSize;
   JXTitledSeparator lblCurrentFontSize;
 
   private Font unscaledFont;
-  private double currentScaling = 1.0; // TODO: Load from file
+  private final double currentScaling = DashboardSettings.cur.prefs
+      .getDouble(DashboardSettings.FONT_SCALING, Accessibility.DEFAULT_SCALING);
 
   /**
    * Create the panel.
    */
   public FontSizePanel() {
-    Accessibility.scaleDefaultUIFontSize(currentScaling);
     initGUI();
   }
 
@@ -36,7 +38,7 @@ public class FontSizePanel extends JPanel {
     gridBagLayout.rowWeights = new double[] {0.0, 0.0, 0.0};
     setLayout(gridBagLayout);
 
-    JSlider sldFontSize = new JSlider();
+    sldFontSize = new JSlider();
     sldFontSize.setPaintTicks(true);
     sldFontSize.setSnapToTicks(true);
     sldFontSize.setMinimum(50);
@@ -84,7 +86,7 @@ public class FontSizePanel extends JPanel {
 
     lblCurrentFontSize = new JXTitledSeparator();
     lblCurrentFontSize.setHorizontalAlignment(SwingConstants.CENTER);
-    lblCurrentFontSize.setTitle("Current");
+    lblCurrentFontSize.setTitle("Current: #.#x");
     GridBagConstraints gbc_lblCurrentFontSize = new GridBagConstraints();
     gbc_lblCurrentFontSize.gridwidth = 3;
     gbc_lblCurrentFontSize.insets = new Insets(0, 0, 5, 0);
@@ -110,20 +112,28 @@ public class FontSizePanel extends JPanel {
 
     sldFontSize.addChangeListener(new ChangeListener() {
       public void stateChanged(ChangeEvent e) {
-        setFontScale(sldFontSize.getValue() / 100.0);
+        setFontScale(getSliderScale());
       }
     });
 
   }
 
-  private void loadUnscaledFont() {
-
-  }
-
   private void setFontScale(double scale) {
-    lblCurrentFontSize.setTitle(String.format("Current %.2fx", scale));
+    lblCurrentFontSize.setTitle(String.format("Current: %.2fx", scale));
     Font scaled = Accessibility.scaleFont(unscaledFont, scale);
     lblCurrentFontSize.setFont(scaled);
+  }
+
+  public boolean hasChanged() {
+    return (getSliderScale() != currentScaling);
+  }
+
+  public void updateSettingsScale() {
+    DashboardSettings.cur.prefs.putDouble(DashboardSettings.FONT_SCALING, getSliderScale());
+  }
+
+  private double getSliderScale() {
+    return sldFontSize.getValue() / (double) 100;
   }
 
 }

@@ -1,26 +1,35 @@
 package group33.seg.view.structure;
 
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
+import group33.seg.controller.persistence.DashboardSettings;
+import group33.seg.model.configs.CampaignConfig;
+import group33.seg.view.campaignimport.CampaignImportDialog;
+import group33.seg.view.utilities.Accessibility;
+import group33.seg.view.utilities.PreferencesDialog;
 
 public class DashboardMenuBar extends JMenuBar {
   private static final long serialVersionUID = 7553179515259733852L;
   public int CMD_MODIFIER = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
+  private final DashboardFrame dashboard;
+  
   /**
    * Initialise the menu bar.
    */
-  public DashboardMenuBar() {
-    super();
+  public DashboardMenuBar(DashboardFrame dashboard) {
+    this.dashboard = dashboard;
     initMenuBar();
   }
 
-  private void initMenuBar() {
+  private void initMenuBar() { 
     // Initialise menu bar items
     initMenuBarItemFile();
     initMenuBarItemView();
@@ -75,6 +84,34 @@ public class DashboardMenuBar extends JMenuBar {
     JMenuItem mntmPreferences = new JMenuItem("Preferences");
     mntmPreferences.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, CMD_MODIFIER));
     mnHelp.add(mntmPreferences);
+    
+    mntmPreferences.addActionListener(new ActionListener() {
+      
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        // Record scale
+        double originalScale = DashboardSettings.cur.prefs
+        .getDouble(DashboardSettings.FONT_SCALING, Accessibility.DEFAULT_SCALING);
+        // Show dialog
+        PreferencesDialog preferences = new PreferencesDialog(dashboard);
+        preferences.setModal(true);
+        preferences.setVisible(true);
+        
+        // Check if scale has changed
+        double newScale = DashboardSettings.cur.prefs
+            .getDouble(DashboardSettings.FONT_SCALING, Accessibility.DEFAULT_SCALING);
+        
+        // Restart dashboard
+        if (originalScale != newScale) {
+          Accessibility.scaleDefaultUIFontSize(1 / originalScale);
+          dashboard.setVisible(false);
+          DashboardFrame newDashboard = new DashboardFrame();
+          newDashboard.setVisible(true);
+          dashboard.dispose();
+        }
+        
+      }
+    });
   }
 
 }
