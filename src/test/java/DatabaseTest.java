@@ -40,16 +40,16 @@ public class DatabaseTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void clickImportTest() throws SQLException {
-    new ClickLog().importFile(conn.connectDatabase(), null);
+    new ClickLog().importCSV(conn.connectDatabase(), null);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void impressionImportTest() throws SQLException {
-    new ImpressionLog().importFile(conn.connectDatabase(), null);
+    new ImpressionLog().importCSV(conn.connectDatabase(), null);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void serverImportTest() throws SQLException {
-    new ServerLog().importFile(conn.connectDatabase(), null);
+    new ServerLog().importCSV(conn.connectDatabase(), null);
   }
 }

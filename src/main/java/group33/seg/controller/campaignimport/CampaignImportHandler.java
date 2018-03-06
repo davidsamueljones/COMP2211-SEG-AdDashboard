@@ -81,11 +81,10 @@ public class CampaignImportHandler {
           updateProgress(1);
           
           try {
-            Thread.sleep(5000);
             // Import click log
             ClickLog clickLog = new ClickLog();
             clickLog.createTable(conn);
-            clickLog.importFile(conn, importConfig.pathClickLog);
+            clickLog.importCSV(conn, importConfig.pathClickLog);
             updateProgress(33);
  
             if (Thread.interrupted()) {
@@ -95,7 +94,7 @@ public class CampaignImportHandler {
             // Import impression log
             ImpressionLog imprlog = new ImpressionLog();
             imprlog.createTable(conn);
-            imprlog.importFile(conn, importConfig.pathImpressionLog);
+            imprlog.importCSV(conn, importConfig.pathImpressionLog);
             updateProgress(66);
             
             if (Thread.interrupted()) {
@@ -105,7 +104,7 @@ public class CampaignImportHandler {
             // Import server log
             ServerLog serverLog = new ServerLog();
             serverLog.createTable(conn);
-            serverLog.importFile(conn, importConfig.pathServerLog);
+            serverLog.importCSV(conn, importConfig.pathServerLog);
             updateProgress(100);
             
             // Create campaign configuration (storing as last import)
