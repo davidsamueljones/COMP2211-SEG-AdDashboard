@@ -6,11 +6,15 @@ import javax.swing.JButton;
 import java.awt.GridBagConstraints;
 import javax.swing.JLabel;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.JTextField;
+import group33.seg.controller.events.StatisticHandler;
 
 public class StatisticViewer extends JPanel {
   private JButton btnGenerateImpressions;
   private JTextField txtTotalImpressions;
+  private StatisticHandler statisticHandler = new StatisticHandler();
 
   /**
    * Create the panel.
@@ -46,6 +50,7 @@ public class StatisticViewer extends JPanel {
     add(lblTotalImpressions, gbc_lblTotalImpressions);
 
     txtTotalImpressions = new JTextField();
+    txtTotalImpressions.setEnabled(false);
     GridBagConstraints gbc_txtTotalImpressions = new GridBagConstraints();
     gbc_txtTotalImpressions.anchor = GridBagConstraints.NORTH;
     gbc_txtTotalImpressions.fill = GridBagConstraints.HORIZONTAL;
@@ -53,6 +58,14 @@ public class StatisticViewer extends JPanel {
     gbc_txtTotalImpressions.gridy = 1;
     add(txtTotalImpressions, gbc_txtTotalImpressions);
     txtTotalImpressions.setColumns(10);
+
+    btnGenerateImpressions.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        txtTotalImpressions.setText(String.valueOf(statisticHandler.impressionRequest()));
+      }
+    });
+
   }
 
 }
