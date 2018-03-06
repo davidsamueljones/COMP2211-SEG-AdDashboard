@@ -3,39 +3,40 @@ package group33.seg.model.configs;
 import group33.seg.model.types.Metric;
 import group33.seg.model.types.Interval;
 
+/**
+ * Structure-like class for constructing a MetricQuery. All variables are public to allow for easy
+ * structure access.
+ */
 public class MetricQuery {
-  private CampaignConfig campaignConfig;
-  private Metric metric;
-  private Interval interval;
-  private FilterConfig filterConfig;
+  /** Campaign to target */
+  public CampaignConfig campaign;
 
-  public MetricQuery(
-      CampaignConfig campaignConfig, Metric metric, Interval time, FilterConfig filterConfig) {
-    this.campaignConfig = campaignConfig;
+  /** Metric to fetch */
+  public Metric metric;
+
+  /** Interval to group by (null == single return value) */
+  public Interval interval;
+
+  /** Filtering configuration to use (null == ignored) */
+  public FilterConfig filter;
+
+  // add bounce rate definition (ignored if not relevant to metric)
+
+  /**
+   * Instantiate an empty query.
+   */
+  public MetricQuery() {
+    this(null, null, null, null);
+  }
+
+  /**
+   * Instantiate a fully defined query.
+   */
+  public MetricQuery(CampaignConfig campaign, Metric metric, Interval time, FilterConfig filter) {
+    this.campaign = campaign;
     this.metric = metric;
     this.interval = time;
-    this.filterConfig = filterConfig;
+    this.filter = filter;
   }
 
-  public CampaignConfig getConfig() {
-    return campaignConfig;
-  }
-
-  public Metric getMetric() {
-    return metric;
-  }
-
-  public Interval getInterval() {
-    return interval;
-  }
-
-  public FilterConfig getFilterConfig() {
-    return filterConfig;
-  }
-
-  // metric (null == all metrics)
-  // filter
-  // bounce rate definition (ignored if not relevant to metric)
-
-  // interval (null == single value returned)
 }
