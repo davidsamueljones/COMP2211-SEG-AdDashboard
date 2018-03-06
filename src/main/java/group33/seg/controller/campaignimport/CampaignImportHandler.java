@@ -1,8 +1,18 @@
 package group33.seg.controller.campaignimport;
 
 import java.util.Set;
+import group33.seg.controller.database.ClickLog;
+import group33.seg.controller.database.DatabaseConfig;
+import group33.seg.controller.database.DatabaseConnection;
+import group33.seg.controller.database.ImpressionLog;
+import group33.seg.controller.database.ServerLog;
+import group33.seg.controller.utilities.ErrorBuilder;
 import group33.seg.controller.utilities.ProgressListener;
 import group33.seg.model.configs.CampaignConfig;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.HashSet;
 
 /**
@@ -25,18 +35,29 @@ public class CampaignImportHandler {
   /** Listeners to alert about import progress */
   private final Set<ProgressListener> progressListeners = new HashSet<>();
 
+  /** Error builder to store errors pertaining to the last import */ 
+  private ErrorBuilder eb = new ErrorBuilder();
+  
   /**
    * Import CSV files into tables using the current database connection. The imported data will
    * replace any data residing in the database. Progress listeners are kept updated on status of
-   * import. As the import is handled on another thread, {@link}cancelImport must be used to
-   * interrupt an ongoing import.
+   * import. As the import is handled on another thread, {@link cancelImport} must be used to
+   * interrupt an ongoing import. Any errors are built up using the instances internal ErrorBuilder.
    * 
    * @param importConfig Campaign information required for import.
    * @return Whether import started successfully
    */
-  public boolean doImport(CampaignImportConfig importConfig) {
+  public boolean doImport(CampaignImportConfig importConfig) {    
+    // Refresh error builder for this import, whilst validating config
+    eb = importConfig.validate();
+    
+    // Error in configuration
+    if (eb.isError()) {
+      return false; 
+    }  
     // Cannot start another import whilst another is ongoing
     if (isOngoing()) {
+      eb.addError("An import is already ongoing");
       return false;
     }
     
@@ -48,24 +69,54 @@ public class CampaignImportHandler {
           // Alert listeners that import is starting
           alertStart();
 
+          // TODO: TEMPORARY - Use interface database connection
+          DatabaseConfig config = new DatabaseConfig("config.properties");
+          DatabaseConnection dbConn = new DatabaseConnection(config.getHost(), config.getUser(), config.getPassword());
+          dbConn.connectDatabase();
+          Connection conn = dbConn.connectDatabase();
+          
+          // TODO: Improve update progress, most likely by changing import functions
           updateProgress(0);
-          // do click log import
-          Thread.sleep(1000);
-          updateProgress(33);
-          // do impression log import
-          Thread.sleep(1000);
-          updateProgress(66);
-          // do server log import
-          Thread.sleep(1000);
-          updateProgress(99);
-          Thread.sleep(1000);
-          // drop old table (do first?)
-          updateProgress(100);
+          // TODO: Drop old table
+          updateProgress(1);
+          
+          try {
+            Thread.sleep(5000);
+            // Import click log
+            ClickLog clickLog = new ClickLog();
+            clickLog.createTable(conn);
+            clickLog.importFile(conn, importConfig.pathClickLog);
+            updateProgress(33);
+ 
+            if (Thread.interrupted()) {
+              throw new InterruptedException();
+            }
+            
+            // Import impression log
+            ImpressionLog imprlog = new ImpressionLog();
+            imprlog.createTable(conn);
+            imprlog.importFile(conn, importConfig.pathImpressionLog);
+            updateProgress(66);
+            
+            if (Thread.interrupted()) {
+              throw new InterruptedException();
+            }
+            
+            // Import server log
+            ServerLog serverLog = new ServerLog();
+            serverLog.createTable(conn);
+            serverLog.importFile(conn, importConfig.pathServerLog);
+            updateProgress(100);
+            
+            // Create campaign configuration (storing as last import)
+            setImportedCampaign(new CampaignConfig(importConfig.campaignName));
+            // Alert listeners that import is finished
+            alertFinished(true);
+          } catch (SQLException e) {
+            alertFinished(false);
+            e.printStackTrace();
+          }
 
-          // Create campaign configuration (storing as last import)
-          setImportedCampaign(new CampaignConfig(importConfig.campaignName));
-          // Alert listeners that import is finished
-          alertFinished(true);
         } catch (InterruptedException e) {
           // drop any half imported data
           alertCancelled();
@@ -193,6 +244,13 @@ public class CampaignImportHandler {
       listener.progressUpdate(progress);
     }
   }
+  
+  /**
+   * @return Error builder pertaining to last import
+   */
+  public ErrorBuilder getErrors() {
+    return eb;
+  }
 
   /**
    * Configuration used to configure a campaign import.
@@ -217,6 +275,24 @@ public class CampaignImportHandler {
       this.pathClickLog = pathClickLog;
       this.pathImpressionLog = pathImpressionLog;
       this.pathServerLog = pathServerLog;
+    }
+    
+    
+    public ErrorBuilder validate() {
+      ErrorBuilder eb = new ErrorBuilder();
+      if (campaignName.isEmpty()) {
+        eb.addError("Campaign name is empty");
+      }
+      if (!Files.exists(Paths.get(pathClickLog))) {
+        eb.addError("Click log path does not exist");
+      }
+      if (!Files.exists(Paths.get(pathImpressionLog))) {
+        eb.addError("Impression log path does not exist");
+      }
+      if (!Files.exists(Paths.get(pathServerLog))) {
+        eb.addError("Server log path does not exist");
+      }
+      return eb; 
     }
   }
 
