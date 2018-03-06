@@ -46,6 +46,9 @@ public class GraphPanel extends JPanel {
     tlbControls.add(btnZoom);
 
     tlbControls.addSeparator();
+    
+    // FIXME: Hidden controls until functionality implemented
+    tlbControls.setVisible(false);
   }
   
   public void setGraphHandler(GraphHandler graphHandler) {
