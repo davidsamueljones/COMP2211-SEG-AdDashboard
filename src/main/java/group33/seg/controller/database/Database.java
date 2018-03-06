@@ -48,14 +48,13 @@ public class Database {
     // otherwise the same query will cache multiple times
     // TODO: Caching quickly eats RAM when graph data is considered, this needs to be improved or
     // removed
-    if (cachedResponses.containsKey(request)) {
-      return cachedResponses.get(request);
-    } else {
+//    if (cachedResponses.containsKey(request)) {
+//      return cachedResponses.get(request);
+//    } else {
       MetricQueryResponse response =
           new MetricQueryResponse(request, pool.submit(() -> getGraphData(request)));
-      cachedResponses.put(request, response);
+//      cachedResponses.put(request, response);
       return response;
-    }
   }
 
 
