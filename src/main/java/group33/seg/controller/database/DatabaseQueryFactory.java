@@ -20,7 +20,7 @@ public class DatabaseQueryFactory {
    */
   private static void createGraphQueries() {
     graphQueries.put(Metric.IMPRESSIONS,
-        "SELECT 'all' as xaxis, count(*) as yaxis from impression_log group by xaxis;");
+        "SELECT date_trunc('<interval>', date) as xaxis, count(*) as yaxis from impression_log group by xaxis;");
   }
 
   /**
@@ -28,7 +28,7 @@ public class DatabaseQueryFactory {
    */
   private static void createStatisticTemplates() {
     statisticQueries.put(Metric.IMPRESSIONS,
-        "SELECT date_trunc('<interval>', date) as xaxis, count(*) as yaxis from impression_log group by xaxis;");
+        "SELECT 'all' as xaxis, count(*) as yaxis from impression_log group by xaxis;");
   }
 
   /**
@@ -78,9 +78,9 @@ public class DatabaseQueryFactory {
         groupingString = "year";
         break;
       default:
-        return sql;     
+        return sql;
     }
     return sql.replace("<interval>", groupingString);
   }
-  
+
 }
