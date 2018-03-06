@@ -15,6 +15,7 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import group33.seg.controller.campaignimport.CampaignImportHandler;
 import group33.seg.controller.campaignimport.CampaignImportHandler.CampaignImportConfig;
+import group33.seg.controller.utilities.DashboardUtilities;
 import group33.seg.controller.utilities.ErrorBuilder;
 import group33.seg.controller.utilities.ProgressListener;
 import group33.seg.view.utilities.FileActionListener;
@@ -363,6 +364,8 @@ public class CampaignImportPanel extends JPanel {
           Window frmCurrent = SwingUtilities.getWindowAncestor(CampaignImportPanel.this);
           frmCurrent.setVisible(false);
           frmCurrent.dispose();
+          JOptionPane.showMessageDialog(null, "Import Successful", "Import Successful",
+              JOptionPane.INFORMATION_MESSAGE);
         } else {
           ErrorBuilder eb = importHandler.getErrors();
           JOptionPane.showMessageDialog(null, eb.listComments("Import Error"), "Import Error",
@@ -402,10 +405,10 @@ public class CampaignImportPanel extends JPanel {
     cl_Panel.show(CampaignImportPanel.this, view.toString());
     switch (view) {
       case CONTROLS:
-        focusRequest(txtCampaignName);
+        DashboardUtilities.focusRequest(txtCampaignName);
         break;
       case IMPORTING:
-        focusRequest(btnCancelImport);
+        DashboardUtilities.focusRequest(btnCancelImport);
         break;
       default:
         break;
@@ -417,17 +420,6 @@ public class CampaignImportPanel extends JPanel {
    */
   private enum View {
     CONTROLS, IMPORTING
-  }
-
-  // TODO: Move to helper class
-  public void focusRequest(Component component) {
-    // Invoke the focus request later so components have a chance to initialise
-    EventQueue.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        component.requestFocusInWindow();
-      }
-    });
   }
 
 }

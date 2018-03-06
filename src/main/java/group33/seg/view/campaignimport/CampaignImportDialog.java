@@ -162,8 +162,8 @@ public class CampaignImportDialog extends JDialog {
   private void closeDialog() {
     if (importHandler.isOngoing()) {
       JOptionPane.showMessageDialog(null,
-          "Cannot close whilst importing, either cancel or wait for it to finish.", "Close Error",
-          JOptionPane.ERROR_MESSAGE);
+          "Cannot close whilst importing, either cancel or wait for import to finish.",
+          "Close Error", JOptionPane.ERROR_MESSAGE);
     } else {
       setVisible(false);
       dispose();
