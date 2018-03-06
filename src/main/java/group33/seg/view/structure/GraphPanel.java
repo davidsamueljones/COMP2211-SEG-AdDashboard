@@ -1,9 +1,10 @@
-package group33.seg.view.increment1;
+package group33.seg.view.structure;
 
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import javax.swing.JToolBar;
 import group33.seg.controller.events.GraphHandler;
+import group33.seg.view.output.Graph;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 

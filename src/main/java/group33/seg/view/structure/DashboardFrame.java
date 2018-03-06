@@ -1,4 +1,4 @@
-package group33.seg.view.increment1;
+package group33.seg.view.structure;
 
 import java.awt.EventQueue;
 import java.awt.GridLayout;

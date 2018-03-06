@@ -1,4 +1,4 @@
-package group33.seg.view.increment1;
+package group33.seg.view.structure;
 
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;

@@ -1,4 +1,4 @@
-package group33.seg.view.increment1;
+package group33.seg.view.output;
 
 import group33.seg.model.types.Pair;
 import org.jfree.chart.ChartFactory;

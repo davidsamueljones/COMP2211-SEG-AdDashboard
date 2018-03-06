@@ -6,7 +6,7 @@ import group33.seg.model.configs.MetricQuery;
 import group33.seg.model.types.Interval;
 import group33.seg.model.types.Metric;
 import group33.seg.model.types.Pair;
-import group33.seg.view.increment1.Graph;
+import group33.seg.view.output.Graph;
 
 public class GraphHandler {
   Graph graph;

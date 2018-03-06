@@ -1,9 +1,12 @@
-package group33.seg.view.increment1;
+package group33.seg.view.structure;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.BevelBorder;
+import group33.seg.view.controls.CampaignManagerPanel;
+import group33.seg.view.controls.GraphGeneratorPanel;
+import group33.seg.view.controls.StatisticViewer;
 import group33.seg.view.utilities.CollapsiblePanel;
 import java.awt.GridBagLayout;
 import java.awt.Dimension;

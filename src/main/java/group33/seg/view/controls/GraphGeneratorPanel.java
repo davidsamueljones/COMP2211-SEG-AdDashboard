@@ -1,4 +1,4 @@
-package group33.seg.view.increment1;
+package group33.seg.view.controls;
 
 import javax.swing.JPanel;
 import group33.seg.controller.events.GraphHandler;
