@@ -42,6 +42,28 @@ public class ControlsPanel extends JScrollPane {
       gbc_colpnlCampaignManager.gridx = 0;
       gbc_colpnlCampaignManager.gridy = 0;
       pnlControls.add(colpnlCampaignManager, gbc_colpnlCampaignManager);
+      
+      // Statistic Viewer
+      CollapsiblePanel colpnlStatisticViewer = new CollapsiblePanel("Statistic Viewer");
+      StatisticViewer pnlStatisticViewier = new StatisticViewer();
+      colpnlStatisticViewer.setContentPane(pnlStatisticViewier);
+      GridBagConstraints gbc_colpnlStatisticViewer = new GridBagConstraints();
+      gbc_colpnlStatisticViewer.fill = GridBagConstraints.BOTH;
+      gbc_colpnlStatisticViewer.insets = new Insets(0, 5, 5, 5);
+      gbc_colpnlStatisticViewer.gridx = 0;
+      gbc_colpnlStatisticViewer.gridy = 1;
+      pnlControls.add(colpnlStatisticViewer, gbc_colpnlStatisticViewer);
+      
+      // Graph Generator
+      CollapsiblePanel colpnlGraphGenerator = new CollapsiblePanel("Graph Generator");
+      GraphGeneratorPanel pnlGraphGenerator = new GraphGeneratorPanel();
+      colpnlGraphGenerator.setContentPane(pnlGraphGenerator);
+      GridBagConstraints gbc_colpnlGraphGenerator = new GridBagConstraints();
+      gbc_colpnlGraphGenerator.fill = GridBagConstraints.BOTH;
+      gbc_colpnlGraphGenerator.insets = new Insets(0, 5, 5, 5);
+      gbc_colpnlGraphGenerator.gridx = 0;
+      gbc_colpnlGraphGenerator.gridy = 2;
+      pnlControls.add(colpnlGraphGenerator, gbc_colpnlGraphGenerator);
     }
 
     // Configure scroll pane
