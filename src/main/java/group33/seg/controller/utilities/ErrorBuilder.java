@@ -17,7 +17,7 @@ public class ErrorBuilder {
   /**
    * Indicate an error without adding a comment.
    */
-  public void addError() {
+  public synchronized void addError() {
     error = true;
   }
 
@@ -26,7 +26,7 @@ public class ErrorBuilder {
    *
    * @param newError Error to add
    */
-  public void addError(String newError) {
+  public synchronized void addError(String newError) {
     addComment(newError, true);
   }
 
@@ -36,7 +36,7 @@ public class ErrorBuilder {
    * @param newComment Comment to add
    * @param causeError Whether comment is an error
    */
-  public void addComment(String newComment, Boolean causeError) {
+  public synchronized void addComment(String newComment, Boolean causeError) {
     comments.add(newComment);
     if (causeError) {
       error = true;
@@ -46,7 +46,7 @@ public class ErrorBuilder {
   /**
    * @return List of comments held
    */
-  public List<String> getComments() {
+  public synchronized List<String> getComments() {
     return comments;
   }
 
@@ -56,7 +56,7 @@ public class ErrorBuilder {
    * @param title Title of list
    * @return Title string of held list
    */
-  public String listComments(String title) {
+  public synchronized String listComments(String title) {
     final StringBuilder sb = new StringBuilder();
     sb.append(title).append(":");
     for (final String comment : comments) {
@@ -68,7 +68,7 @@ public class ErrorBuilder {
   /**
    * @return Whether error builder contains an error
    */
-  public boolean isError() {
+  public synchronized boolean isError() {
     return error;
   }
 
@@ -78,7 +78,7 @@ public class ErrorBuilder {
    *
    * @param other Other error builder, ignored if null
    */
-  public void append(ErrorBuilder other) {
+  public synchronized void append(ErrorBuilder other) {
     if (other != null) {
       // Copy comments
       for (final String comment : other.getComments()) {
