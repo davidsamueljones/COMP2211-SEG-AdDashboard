@@ -1,6 +1,7 @@
 package group33.seg.controller.database;
 
 import group33.seg.model.configs.MetricQuery;
+import group33.seg.model.types.Interval;
 import group33.seg.model.types.Metric;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,7 +43,7 @@ public class DatabaseQueryFactory {
     if (request.interval != null) {
       // Create graph query
       sql = graphQueries.get(request.metric);
-      sql = sql.replace("<interval>", request.interval.getValue());
+      sql = applyGrouping(sql, request.interval);
     } else {
       // Create statistic query
       sql = statisticQueries.get(request.metric);
@@ -51,4 +52,35 @@ public class DatabaseQueryFactory {
     return sql;
   }
 
+  /**
+   * Helper function to modify template code to apply specific grouping.
+   * 
+   * @param sql SQL to apply grouping to
+   * @param interval Interval to apply
+   * @return Modified SQL statement
+   */
+  private static String applyGrouping(String sql, Interval interval) {
+    String groupingString;
+    switch (interval) {
+      case DAY:
+        groupingString = "day";
+        break;
+      case HOUR:
+        groupingString = "hour";
+        break;
+      case MONTH:
+        groupingString = "month";
+        break;
+      case WEEK:
+        groupingString = "week";
+        break;
+      case YEAR:
+        groupingString = "year";
+        break;
+      default:
+        return sql;     
+    }
+    return sql.replace("<interval>", groupingString);
+  }
+  
 }
