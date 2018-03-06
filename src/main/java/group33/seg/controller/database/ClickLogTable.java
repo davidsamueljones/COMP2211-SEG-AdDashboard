@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 
-public class ClickLog extends DatabaseTable {
+public class ClickLogTable extends DatabaseTable {
 
   @Override
   public void createTable(Connection c) throws SQLException {

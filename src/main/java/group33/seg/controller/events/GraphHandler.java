@@ -2,7 +2,7 @@ package group33.seg.controller.events;
 
 import group33.seg.model.utilities.Range;
 
-public class GraphChangeEvents {
+public class GraphHandler {
   // model being used
   // graph object being manipulated
 

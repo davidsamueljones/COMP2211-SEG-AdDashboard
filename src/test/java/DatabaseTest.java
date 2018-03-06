@@ -25,17 +25,17 @@ public class DatabaseTest {
 
   @Test(expected = NullPointerException.class)
   public void clickCreateTest() throws SQLException {
-    new ClickLog().createTable(null);
+    new ClickLogTable().createTable(null);
   }
 
   @Test(expected = NullPointerException.class)
   public void impressionCreateTest() throws SQLException {
-    new ImpressionLog().createTable(null);
+    new ImpressionLogTable().createTable(null);
   }
 
   @Test(expected = NullPointerException.class)
   public void serverCreateTest() throws SQLException {
-    new ServerLog().createTable(null);
+    new ServerLogTable().createTable(null);
   }
 
 //  @Test(expected = IllegalArgumentException.class)

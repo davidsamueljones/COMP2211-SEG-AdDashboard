@@ -1,13 +1,13 @@
 package group33.seg.controller.events;
 
 import java.util.Set;
-import group33.seg.controller.database.ClickLog;
+import group33.seg.controller.database.ClickLogTable;
 import group33.seg.controller.database.DatabaseConfig;
 import group33.seg.controller.database.DatabaseConnection;
 import group33.seg.controller.database.DatabaseTable;
 import group33.seg.controller.database.DatabaseTableImporter;
-import group33.seg.controller.database.ImpressionLog;
-import group33.seg.controller.database.ServerLog;
+import group33.seg.controller.database.ImpressionLogTable;
+import group33.seg.controller.database.ServerLogTable;
 import group33.seg.controller.utilities.ErrorBuilder;
 import group33.seg.controller.utilities.ProgressListener;
 import group33.seg.model.configs.CampaignConfig;
@@ -82,9 +82,9 @@ public class CampaignImportHandler {
         // TODO: Drop old table
         try {
           // Import all tables
-          importTable(new ClickLog(), conn, importConfig.pathClickLog, 0.33);
-          importTable(new ImpressionLog(), conn, importConfig.pathImpressionLog, 0.33);
-          importTable(new ServerLog(), conn, importConfig.pathServerLog, 0.33);
+          importTable(new ClickLogTable(), conn, importConfig.pathClickLog, 0.33);
+          importTable(new ImpressionLogTable(), conn, importConfig.pathImpressionLog, 0.33);
+          importTable(new ServerLogTable(), conn, importConfig.pathServerLog, 0.33);
 
           // Create campaign configuration (storing as last import)
           setImportedCampaign(new CampaignConfig(importConfig.campaignName));

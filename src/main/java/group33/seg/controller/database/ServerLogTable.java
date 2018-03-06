@@ -7,7 +7,7 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
 
-public class ServerLog extends DatabaseTable {
+public class ServerLogTable extends DatabaseTable {
   @Override
   public void createTable(Connection c) throws SQLException {
     Statement st = c.createStatement();
