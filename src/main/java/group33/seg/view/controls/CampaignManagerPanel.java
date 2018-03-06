@@ -1,8 +1,10 @@
 package group33.seg.view.controls;
 
 import javax.swing.JPanel;
+import group33.seg.controller.persistence.DashboardSettings;
 import group33.seg.model.configs.CampaignConfig;
 import group33.seg.view.campaignimport.CampaignImportDialog;
+import group33.seg.view.utilities.Accessibility;
 import java.awt.GridBagLayout;
 import javax.swing.JButton;
 import java.awt.GridBagConstraints;
@@ -26,7 +28,7 @@ public class CampaignManagerPanel extends JPanel {
   public CampaignManagerPanel() {
 
     initGUI();
-    setCurrentCampaign(null);
+    setCurrentCampaign(DashboardSettings.cur.prefs.get(DashboardSettings.CUR_CAMPAIGN, null));
   }
 
   private void initGUI() {
@@ -84,15 +86,19 @@ public class CampaignManagerPanel extends JPanel {
         cid.setVisible(true);
         // Handle dialog result TODO: Determine if cancelled before import or not
         CampaignConfig campaign = cid.getImportedCampaign();
-        setCurrentCampaign(campaign);
+        if (campaign != null) {
+          setCurrentCampaign(campaign.getName());
+        }
       }
     });
 
   }
 
-  private void setCurrentCampaign(CampaignConfig campaign) {
+  // TODO: Change to use campaign
+  private void setCurrentCampaign(String campaign) {
     if (campaign != null) {
-      txtCurrentCampaign.setText(campaign.getName());
+      DashboardSettings.cur.prefs.put(DashboardSettings.CUR_CAMPAIGN, campaign);
+      txtCurrentCampaign.setText(campaign);
     } else {
       txtCurrentCampaign.setText("No Campaign Set");
     }
