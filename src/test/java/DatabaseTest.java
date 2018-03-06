@@ -38,18 +38,18 @@ public class DatabaseTest {
     new ServerLog().createTable(null);
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void clickImportTest() throws SQLException {
-    new ClickLog().importCSV(conn.connectDatabase(), null);
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void impressionImportTest() throws SQLException {
-    new ImpressionLog().importCSV(conn.connectDatabase(), null);
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void serverImportTest() throws SQLException {
-    new ServerLog().importCSV(conn.connectDatabase(), null);
-  }
+//  @Test(expected = IllegalArgumentException.class)
+//  public void clickImportTest() throws SQLException {
+//    new ClickLog().importCSV(conn.connectDatabase(), null);
+//  }
+//
+//  @Test(expected = IllegalArgumentException.class)
+//  public void impressionImportTest() throws SQLException {
+//    new ImpressionLog().importCSV(conn.connectDatabase(), null);
+//  }
+//
+//  @Test(expected = IllegalArgumentException.class)
+//  public void serverImportTest() throws SQLException {
+//    new ServerLog().importCSV(conn.connectDatabase(), null);
+//  }
 }
