@@ -11,7 +11,10 @@ import javax.swing.UIManager.LookAndFeelInfo;
  * methods to apply localised accessibility.
  */
 public class Accessibility {
-
+  public static final double MAX_SCALING = 2;
+  public static final double MIN_SCALING = 0.5;
+  public static final double DEFAULT_SCALING = 1;
+  
   /**
    * Set system wide look and feel options using an appearance selection. OS specific rules/flags
    * should be applied here.
