@@ -40,20 +40,20 @@ public class Graph extends JPanel {
     chartPanel.setMouseWheelEnabled(true);
     chartPanel.setDomainZoomable(true);
     chartPanel.setRangeZoomable(false);
-    chartPanel.setPreferredSize(new Dimension(1680, 1100));
+    //chartPanel.setPreferredSize(new Dimension(1680, 1100));
     chartPanel.setZoomTriggerDistance(Integer.MAX_VALUE);
     chartPanel.setFillZoomRectangle(false);
     chartPanel.setZoomOutlinePaint(new Color(0f, 0f, 0f, 0f));
     chartPanel.setZoomAroundAnchor(true);
-    try {
-        Field mask = ChartPanel.class.getDeclaredField("panMask");
-        mask.setAccessible(true);
-        mask.set(chartPanel, 0);
-    } catch (NoSuchFieldException e) {
-        e.printStackTrace();
-    } catch (IllegalAccessException e) {
-        e.printStackTrace();
-    }
+//    try {
+//        Field mask = ChartPanel.class.getDeclaredField("panMask");
+//        mask.setAccessible(true);
+//        mask.set(chartPanel, 0);
+//    } catch (NoSuchFieldException e) {
+//        e.printStackTrace();
+//    } catch (IllegalAccessException e) {
+//        e.printStackTrace();
+//    }
     chartPanel.addMouseWheelListener(arg0 -> chartPanel.restoreAutoRangeBounds());
     
   }
