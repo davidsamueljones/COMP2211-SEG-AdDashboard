@@ -330,7 +330,7 @@ public class CampaignImportPanel extends JPanel {
               folder + "/server_log.csv");
         } else {
           config = importHandler.new CampaignImportConfig(txtCampaignName.getText(),
-              txtClickLog.getText(), txtImpressionLog.getText(), txtCSVFolder.getText());
+              txtClickLog.getText(), txtImpressionLog.getText(), txtServerLog.getText());
         }
 
         boolean started = importHandler.doImport(config);
