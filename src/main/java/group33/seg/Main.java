@@ -1,12 +1,11 @@
 package group33.seg;
 
 import group33.seg.controller.database.Database;
-import group33.seg.controller.graphing.Graph;
 import group33.seg.model.configs.MetricQuery;
 import group33.seg.model.types.Interval;
 import group33.seg.model.types.Metric;
 import group33.seg.model.types.Pair;
-
+import group33.seg.view.increment1.Graph;
 import javax.swing.*;
 import java.sql.SQLException;
 import java.util.List;
