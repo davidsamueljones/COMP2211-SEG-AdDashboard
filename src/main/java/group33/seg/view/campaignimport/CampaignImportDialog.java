@@ -7,10 +7,13 @@ import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
@@ -25,7 +28,7 @@ public class CampaignImportDialog extends JDialog {
   private CampaignImportHandler importHandler;
 
   private JButton btnImportNew;
-  private JButton btnCancel;
+  private JButton btnClose;
 
 
   /**
@@ -59,6 +62,7 @@ public class CampaignImportDialog extends JDialog {
     // Initialise GUI
     initGUI();
     setBounds(loc.x, loc.y, 700, 400);
+    setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
   }
 
   /**
@@ -109,17 +113,17 @@ public class CampaignImportDialog extends JDialog {
     pnlNavigation.setMinimumSize(btnImportNew.getPreferredSize());
 
     // Create 'Large' JButton for exiting dialog
-    btnCancel = new JButton("Cancel");
-    Accessibility.scaleJComponentFontSize(btnCancel, 1.5);
-    btnCancel.setHorizontalAlignment(SwingConstants.LEFT);
-    btnCancel.setIconTextGap(Math.min(btnCancel.getFont().getSize(), 20));
-    btnCancel.setIcon(new ImageIcon(getClass().getResource("/icons/times-circle.png")));
-    btnCancel.setMargin(new Insets(5, 5, 5, 20));
-    GridBagConstraints gbc_btnCancel = new GridBagConstraints();
-    gbc_btnCancel.fill = GridBagConstraints.HORIZONTAL;
-    gbc_btnCancel.gridx = 0;
-    gbc_btnCancel.gridy = 1;
-    pnlNavigation.add(btnCancel, gbc_btnCancel);
+    btnClose = new JButton("Close");
+    Accessibility.scaleJComponentFontSize(btnClose, 1.5);
+    btnClose.setHorizontalAlignment(SwingConstants.LEFT);
+    btnClose.setIconTextGap(Math.min(btnClose.getFont().getSize(), 20));
+    btnClose.setIcon(new ImageIcon(getClass().getResource("/icons/times-circle.png")));
+    btnClose.setMargin(new Insets(5, 5, 5, 20));
+    GridBagConstraints gbc_btnClose = new GridBagConstraints();
+    gbc_btnClose.fill = GridBagConstraints.HORIZONTAL;
+    gbc_btnClose.gridx = 0;
+    gbc_btnClose.gridy = 1;
+    pnlNavigation.add(btnClose, gbc_btnClose);
 
     // Controls Panel
     CampaignImportPanel pnlCampaignImport = new CampaignImportPanel(importHandler);
@@ -137,16 +141,38 @@ public class CampaignImportDialog extends JDialog {
     // * EVENT HANDLING
     // ************************************************************************************
 
-    btnCancel.addActionListener(new ActionListener() {
+    // Close the dialog if an import is not ongoing
+    btnClose.addActionListener(new ActionListener() {
 
       @Override
       public void actionPerformed(ActionEvent e) {
-        setVisible(false);
-        dispose();
+        closeDialog();
       }
     });
+
+    // Listen for any other window close event
+    addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent e) {
+        closeDialog();
+      }
+    });
+
   }
 
+  private void closeDialog() {
+    if (importHandler.isOngoing()) {
+      JOptionPane.showMessageDialog(null,
+          "Cannot close whilst importing, either cancel or wait for it to finish.", "Close Error",
+          JOptionPane.ERROR_MESSAGE);
+    } else {
+      setVisible(false);
+      dispose();
+    }
+  }
+
+  /**
+   * @return Get the configuration of the last imported campaign, null if none or failure
+   */
   public CampaignConfig getImportedCampaign() {
     return importHandler.getImportedCampaign();
   }

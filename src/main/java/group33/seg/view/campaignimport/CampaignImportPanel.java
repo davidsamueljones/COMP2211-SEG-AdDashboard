@@ -6,8 +6,6 @@ import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashMap;
-import java.util.Map;
 import java.awt.GridBagLayout;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -16,8 +14,12 @@ import java.awt.GridBagConstraints;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import group33.seg.controller.campaignimport.CampaignImportHandler;
+import group33.seg.controller.campaignimport.CampaignImportHandler.CampaignImportConfig;
+import group33.seg.controller.utilities.ErrorBuilder;
 import group33.seg.controller.utilities.ProgressListener;
+import group33.seg.view.utilities.FileActionListener;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JTabbedPane;
 import java.awt.CardLayout;
@@ -27,6 +29,7 @@ import java.awt.EventQueue;
 public class CampaignImportPanel extends JPanel {
   private static final long serialVersionUID = 845431833540626100L;
 
+  private JTabbedPane tabsPathModes;
   private CardLayout cl_Panel;
 
   public final CampaignImportHandler importHandler;
@@ -115,8 +118,7 @@ public class CampaignImportPanel extends JPanel {
       pnlControls.add(txtCampaignName, gbc_txtCampaignName);
       txtCampaignName.setColumns(10);
 
-
-      JTabbedPane tabsPathModes = new JTabbedPane(SwingConstants.TOP);
+      tabsPathModes = new JTabbedPane(SwingConstants.TOP);
       GridBagConstraints gbc_tabsPathModes = new GridBagConstraints();
       gbc_tabsPathModes.insets = new Insets(0, 0, 5, 0);
       gbc_tabsPathModes.gridwidth = 2;
@@ -298,12 +300,14 @@ public class CampaignImportPanel extends JPanel {
     // ************************************************************************************
 
     // Single folder browser
-    FileActionListener actFolderBrowse = new FileActionListener(JFileChooser.DIRECTORIES_ONLY);
+    FileActionListener actFolderBrowse =
+        new FileActionListener(CampaignImportPanel.this, JFileChooser.DIRECTORIES_ONLY);
     btnBrowseCSVFolder.addActionListener(actFolderBrowse);
     actFolderBrowse.addMapping(btnBrowseCSVFolder, txtCSVFolder);
 
     // Single file browsers
-    FileActionListener actFileBrowse = new FileActionListener(JFileChooser.FILES_ONLY);
+    FileActionListener actFileBrowse =
+        new FileActionListener(CampaignImportPanel.this, JFileChooser.FILES_ONLY);
     btnBrowseClickLog.addActionListener(actFileBrowse);
     actFileBrowse.addMapping(btnBrowseClickLog, txtClickLog);
     btnBrowseImpressionLog.addActionListener(actFileBrowse);
@@ -316,12 +320,25 @@ public class CampaignImportPanel extends JPanel {
 
       @Override
       public void actionPerformed(ActionEvent e) {
-        boolean started =
-            importHandler.doImport(importHandler.new CampaignImportConfig("Test", "", "", ""));
+        // Create configuration based off user input
+        CampaignImportConfig config;
+        if (tabsPathModes.getSelectedIndex() == 0) {
+          String folder = txtCSVFolder.getText();
+          config = importHandler.new CampaignImportConfig(txtCampaignName.getText(),
+              folder + "/click_log.csv", folder + "/impression_log.csv",
+              folder + "/server_log.csv");
+        } else {
+          config = importHandler.new CampaignImportConfig(txtCampaignName.getText(),
+              txtClickLog.getText(), txtImpressionLog.getText(), txtCSVFolder.getText());
+        }
+
+        boolean started = importHandler.doImport(config);
         if (started) {
           showView(View.IMPORTING);
         } else {
-          // show error
+          ErrorBuilder eb = importHandler.getErrors();
+          JOptionPane.showMessageDialog(null, eb.listComments("Configuration Error"),
+              "Configuration Error", JOptionPane.ERROR_MESSAGE);
         }
       }
     });
@@ -342,9 +359,16 @@ public class CampaignImportPanel extends JPanel {
 
       @Override
       public void finish(boolean success) {
-        Window frmCurrent = SwingUtilities.getWindowAncestor(CampaignImportPanel.this);
-        frmCurrent.setVisible(false);
-        frmCurrent.dispose();
+        if (success) {
+          Window frmCurrent = SwingUtilities.getWindowAncestor(CampaignImportPanel.this);
+          frmCurrent.setVisible(false);
+          frmCurrent.dispose();
+        } else {
+          ErrorBuilder eb = importHandler.getErrors();
+          JOptionPane.showMessageDialog(null, eb.listComments("Import Error"), "Import Error",
+              JOptionPane.ERROR_MESSAGE);
+          showView(View.CONTROLS);
+        }
       }
 
       @Override
@@ -358,13 +382,16 @@ public class CampaignImportPanel extends JPanel {
     btnCancelImport.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        // TODO: Add are you sure?
+        int res = JOptionPane.showConfirmDialog(CampaignImportPanel.this,
+            "Are you sure you want to cancel?", "Cancel", JOptionPane.YES_NO_OPTION);
+        if (res != JOptionPane.YES_OPTION) {
+          return;
+        }
         importHandler.cancelImport(false);
       }
     });
 
   }
-
 
   /**
    * Flip between layout cards and apply specific behaviour.
@@ -401,41 +428,6 @@ public class CampaignImportPanel extends JPanel {
         component.requestFocusInWindow();
       }
     });
-  }
-
-
-  // TODO: Move to helper class
-  public class FileActionListener implements ActionListener {
-    private Map<Object, JTextField> mappings = new HashMap<>();
-    private JFileChooser fileChooser = new JFileChooser();
-
-    public FileActionListener(int selectionMode) {
-      fileChooser.setFileSelectionMode(selectionMode);
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      JTextField txt = mappings.get(e.getSource());
-      if (txt == null) {
-        System.err.print("Object does not have a corresponding field to update");
-        return;
-      }
-
-      int res = fileChooser.showOpenDialog(CampaignImportPanel.this);
-      // fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-      if (res == JFileChooser.APPROVE_OPTION) {
-        txt.setText(fileChooser.getSelectedFile().getAbsolutePath());
-      }
-    }
-
-    public void addMapping(Object object, JTextField txt) {
-      mappings.put(object, txt);
-    }
-
-    public JFileChooser getFileChooser() {
-      return fileChooser;
-    }
-
   }
 
 }
