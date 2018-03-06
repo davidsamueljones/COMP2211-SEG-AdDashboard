@@ -15,6 +15,7 @@ import javax.swing.JButton;
 public class GraphGeneratorPanel extends JPanel {
   private GraphHandler graphHandler;
   private JButton btnGenerateImpressionGraph;
+  private JButton btnClearGraph;
 
   /**
    * Create the panel.
@@ -26,9 +27,9 @@ public class GraphGeneratorPanel extends JPanel {
   private void initGUI() {
     GridBagLayout gridBagLayout = new GridBagLayout();
     gridBagLayout.columnWidths = new int[] {0, 0, 0};
-    gridBagLayout.rowHeights = new int[] {0, 0, 0};
+    gridBagLayout.rowHeights = new int[] {0, 0, 0, 0};
     gridBagLayout.columnWeights = new double[] {0.0, 1.0, Double.MIN_VALUE};
-    gridBagLayout.rowWeights = new double[] {0.0, 0.0, Double.MIN_VALUE};
+    gridBagLayout.rowWeights = new double[] {0.0, 0.0, 0.0, Double.MIN_VALUE};
     setLayout(gridBagLayout);
 
     JLabel lblInterval = new JLabel("Interval:");
@@ -53,6 +54,7 @@ public class GraphGeneratorPanel extends JPanel {
 
     btnGenerateImpressionGraph = new JButton("Generate Impression Graph");
     GridBagConstraints gbc_btnGenerateImpressionGraph = new GridBagConstraints();
+    gbc_btnGenerateImpressionGraph.insets = new Insets(0, 0, 5, 0);
     gbc_btnGenerateImpressionGraph.fill = GridBagConstraints.HORIZONTAL;
     gbc_btnGenerateImpressionGraph.gridwidth = 2;
     gbc_btnGenerateImpressionGraph.gridx = 0;
@@ -66,6 +68,20 @@ public class GraphGeneratorPanel extends JPanel {
       }
     });
 
+
+    btnClearGraph = new JButton("Clear Graph");
+    btnClearGraph.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        graphHandler.clearGraph();
+      }
+    });
+    GridBagConstraints gbc_btnClearGraph = new GridBagConstraints();
+    gbc_btnClearGraph.fill = GridBagConstraints.HORIZONTAL;
+    gbc_btnClearGraph.gridwidth = 2;
+    gbc_btnClearGraph.gridx = 0;
+    gbc_btnClearGraph.gridy = 2;
+    add(btnClearGraph, gbc_btnClearGraph);
   }
 
   public void setGraphHandler(GraphHandler graphHandler) {

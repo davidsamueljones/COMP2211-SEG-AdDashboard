@@ -22,5 +22,9 @@ public class GraphHandler {
     
     graph.addLine(data);
   }
+
+  public void clearGraph() {
+    graph.clearLines();
+  }
   
 }
