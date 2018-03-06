@@ -6,6 +6,7 @@ import java.io.LineNumberReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import com.opencsv.CSVReader;
 import group33.seg.controller.utilities.DashboardUtilities;
 
@@ -31,6 +32,24 @@ public abstract class DatabaseTable {
    * @return Template used for INSERT statements
    */
   public abstract String getInsertTemplate();
+  
+  /**
+   * @return Name of table
+   */
+  public abstract String getTableName();
+  
+  /**
+   * Clear all rows from table.
+   */
+  public void clearTable(Connection c) {
+    Statement cs; 
+    try {
+       cs = c.createStatement();
+       cs.execute(String.format("TRUNCATE TABLE %s", getTableName()));
+    } catch (SQLException e) {
+      // FIXME: Do not ignore this error, throw and handle 
+    }   
+  }
 
 }
 

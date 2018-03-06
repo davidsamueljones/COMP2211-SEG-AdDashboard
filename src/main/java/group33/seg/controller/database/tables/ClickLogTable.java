@@ -22,14 +22,19 @@ public class ClickLogTable extends DatabaseTable {
       throw new IllegalArgumentException("Incorrect number of parameters for prepared statement");
     }
     // Create prepared statement
-    ps.setTimestamp(1, Timestamp.valueOf(params[0]));
-    ps.setLong(2, Long.valueOf(params[1])); // Long == BIGINT
-    ps.setDouble(3, Double.valueOf(params[2]));
+    ps.setTimestamp(1, Timestamp.valueOf(params[0])); // date
+    ps.setLong(2, Long.valueOf(params[1])); // user_id
+    ps.setDouble(3, Double.valueOf(params[2])); // click_cost
   }
 
   @Override
   public String getInsertTemplate() {
     return "INSERT INTO click_log (date, user_id, click_cost) values (?, ?, ?)";
+  }
+
+  @Override
+  public String getTableName() {
+    return "click_log";
   }
   
 }

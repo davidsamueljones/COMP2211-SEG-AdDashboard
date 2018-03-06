@@ -42,4 +42,10 @@ public class ServerLogTable extends DatabaseTable {
         + "values (?, ?, ?, ?, ?)";
   }
 
+
+  @Override
+  public String getTableName() {
+    return "server_log";
+  }
+
 }

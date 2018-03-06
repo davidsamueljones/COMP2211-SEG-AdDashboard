@@ -67,6 +67,8 @@ public class CampaignImportHandler {
     threadImport = new Thread(new Runnable() {
       @Override
       public void run() {
+        boolean finished = false; 
+        
         // Alert listeners that import is starting
         alertStart();
         // Reset import progress
@@ -79,24 +81,42 @@ public class CampaignImportHandler {
         dbConn.connectDatabase();
         Connection conn = dbConn.connectDatabase();
 
-        // TODO: Drop old table
+        // Create table objects
+        ClickLogTable clickLogTable = new ClickLogTable();
+        ImpressionLogTable impressionLogTable = new ImpressionLogTable();
+        ServerLogTable serverLogTable = new ServerLogTable();
+        
+        // Remove existing tables data (TODO: Not to be kept)
+        clickLogTable.clearTable(conn);
+        impressionLogTable.clearTable(conn);
+        serverLogTable.clearTable(conn);
+        
         try {
-          // Import all tables
-          importTable(new ClickLogTable(), conn, importConfig.pathClickLog, 0.33);
-          importTable(new ImpressionLogTable(), conn, importConfig.pathImpressionLog, 0.33);
-          importTable(new ServerLogTable(), conn, importConfig.pathServerLog, 0.33);
+          // Import click log
+          importTable(clickLogTable, conn, importConfig.pathClickLog, 0.33);
+          // Import impression log and ensure enums are set
+          ImpressionLogTable.initEnums(conn);
+          importTable(impressionLogTable, conn, importConfig.pathImpressionLog, 0.33);
+          // Import server log
+          importTable(serverLogTable, conn, importConfig.pathServerLog, 0.33);
 
           // Create campaign configuration (storing as last import)
           setImportedCampaign(new CampaignConfig(importConfig.campaignName));
           // Alert listeners that import is finished
           alertFinished(true);
+          finished = true;
         } catch (InterruptedException e) {
-          // TODO: Drop half imported data
           alertCancelled();
         } catch (ImportException e) {
           alertFinished(false);
-        }
+        } 
         
+        // Remove 'corrupted' data if import did not finish successfully
+        if (!finished) {
+          clickLogTable.clearTable(conn);
+          impressionLogTable.clearTable(conn);
+          serverLogTable.clearTable(conn);
+        }
         threadImport = null;
       }
     });
@@ -135,6 +155,7 @@ public class CampaignImportHandler {
         try {
           importer.importCSV(table, conn, path);
         } catch (Exception e) {
+          e.printStackTrace();
           // do nothing, let main import thread handle
         }
       }
