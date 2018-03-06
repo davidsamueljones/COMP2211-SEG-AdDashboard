@@ -21,9 +21,11 @@ public class Main {
 
     /** Get the query response and pass it as a final param to the Graph view data as a chart */
     List<Pair<String, Integer>> weeklyData = db.getQueryResponse(weeklyImpressions).getResult();
-    List<Pair<String, Integer>> monthlyData = db.getQueryResponse(weeklyImpressions).getResult();
+    List<Pair<String, Integer>> monthlyData = db.getQueryResponse(monthlyImpressions).getResult();
 
-    Graph chart = new Graph("Number of Impressions", "Time", "Number of impressions", weeklyData);
+    Graph chart = new Graph("Number of Impressions", "Time", "Number of impressions");
+    chart.addLine(weeklyData);
+    chart.addLine(monthlyData);
 
     JFrame frame = new JFrame();
     frame.add(chart);

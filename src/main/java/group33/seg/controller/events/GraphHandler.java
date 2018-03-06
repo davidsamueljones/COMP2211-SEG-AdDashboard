@@ -1,49 +1,26 @@
 package group33.seg.controller.events;
 
-import group33.seg.model.utilities.Range;
+import java.util.List;
+import group33.seg.controller.database.Database;
+import group33.seg.model.configs.MetricQuery;
+import group33.seg.model.types.Interval;
+import group33.seg.model.types.Metric;
+import group33.seg.model.types.Pair;
+import group33.seg.view.increment1.Graph;
 
 public class GraphHandler {
-  // model being used
-  // graph object being manipulated
-
-  public void xAxisChange(Range<Double> range) {
-    // TODO:
-    // 1. Update x axis on graph
+  Graph graph;
+  
+  public void setGraph(Graph graph) {
+    this.graph = graph;
   }
-
-  public void yAxisChange(Range<Double> range) {
-    // TODO:
-    // 1. Update y axis on graph
+  
+  public void generateImpressionGraph(Interval interval) {
+    Database db = new Database();
+    MetricQuery query = new MetricQuery(null, Metric.IMPRESSIONS, interval, null);
+    List<Pair<String, Integer>> data = db.getQueryResponse(query).getResult();
+    
+    graph.addLine(data);
   }
-
-  public void intervalChange(/* Interval*/ ) {
-    // TODO:
-    // 1. Requery all line queries with new grouping (update in model)
-    // 2. Update data on all lines (update data objects for lines)
-    // 3. Update interval in graph (update graph object)
-    // 4. Redraw full graph
-  }
-
-  public void linePropertyChange(/* Line object? */ ) {
-    // TODO:
-    // 1. Update line properties (in model)
-    // 2. Redraw line on graph
-  }
-
-  public void lineQueryChange(/* Line object? */ ) {
-    // TODO:
-    // 1. Requery line data (update in model)
-    // 2. Update line data in graph
-    // 3. Redraw line on graph
-  }
-
-  public void multiLinePropertyChange(/* Lines list */ ) {
-    // TODO:
-    // For all lines do: linePropertyChange(line);
-  }
-
-  public void multiLineQueryChange() {
-    // TODO:
-    // For all lines do: lineQueryChange(line);
-  }
+  
 }

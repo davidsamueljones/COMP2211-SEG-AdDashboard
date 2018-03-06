@@ -1,22 +1,25 @@
 package group33.seg.view.increment1;
 
 import javax.swing.JPanel;
+import group33.seg.controller.events.GraphHandler;
 import group33.seg.model.types.Interval;
 import java.awt.GridBagLayout;
 import javax.swing.JLabel;
 import java.awt.GridBagConstraints;
 import javax.swing.JComboBox;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.JButton;
 
 public class GraphGeneratorPanel extends JPanel {
+  private GraphHandler graphHandler;
   private JButton btnGenerateImpressionGraph;
 
   /**
    * Create the panel.
    */
   public GraphGeneratorPanel() {
-
     initGUI();
   }
 
@@ -55,6 +58,18 @@ public class GraphGeneratorPanel extends JPanel {
     gbc_btnGenerateImpressionGraph.gridx = 0;
     gbc_btnGenerateImpressionGraph.gridy = 1;
     add(btnGenerateImpressionGraph, gbc_btnGenerateImpressionGraph);
+
+    btnGenerateImpressionGraph.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        graphHandler.generateImpressionGraph((Interval) cboInterval.getSelectedItem());
+      }
+    });
+
+  }
+
+  public void setGraphHandler(GraphHandler graphHandler) {
+    this.graphHandler = graphHandler;
   }
 
 }

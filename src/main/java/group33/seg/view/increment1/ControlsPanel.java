@@ -14,6 +14,10 @@ import java.awt.Insets;
 public class ControlsPanel extends JScrollPane {
   private static final long serialVersionUID = 335036489710020302L;
 
+  private CampaignManagerPanel pnlCampaignManager;
+  private StatisticViewer pnlStatisticViewer;
+  private GraphGeneratorPanel pnlGraphGenerator;
+  
   /**
    * Create the panel.
    */
@@ -34,7 +38,7 @@ public class ControlsPanel extends JScrollPane {
     {
       // Campaign manager
       CollapsiblePanel colpnlCampaignManager = new CollapsiblePanel("Campaign Manager");
-      CampaignManagerPanel pnlCampaignManager = new CampaignManagerPanel();
+      pnlCampaignManager = new CampaignManagerPanel();
       colpnlCampaignManager.setContentPane(pnlCampaignManager);
       GridBagConstraints gbc_colpnlCampaignManager = new GridBagConstraints();
       gbc_colpnlCampaignManager.fill = GridBagConstraints.BOTH;
@@ -45,8 +49,8 @@ public class ControlsPanel extends JScrollPane {
       
       // Statistic Viewer
       CollapsiblePanel colpnlStatisticViewer = new CollapsiblePanel("Statistic Viewer");
-      StatisticViewer pnlStatisticViewier = new StatisticViewer();
-      colpnlStatisticViewer.setContentPane(pnlStatisticViewier);
+      pnlStatisticViewer = new StatisticViewer();
+      colpnlStatisticViewer.setContentPane(pnlStatisticViewer);
       GridBagConstraints gbc_colpnlStatisticViewer = new GridBagConstraints();
       gbc_colpnlStatisticViewer.fill = GridBagConstraints.BOTH;
       gbc_colpnlStatisticViewer.insets = new Insets(0, 5, 5, 5);
@@ -56,7 +60,7 @@ public class ControlsPanel extends JScrollPane {
       
       // Graph Generator
       CollapsiblePanel colpnlGraphGenerator = new CollapsiblePanel("Graph Generator");
-      GraphGeneratorPanel pnlGraphGenerator = new GraphGeneratorPanel();
+      pnlGraphGenerator = new GraphGeneratorPanel();
       colpnlGraphGenerator.setContentPane(pnlGraphGenerator);
       GridBagConstraints gbc_colpnlGraphGenerator = new GridBagConstraints();
       gbc_colpnlGraphGenerator.fill = GridBagConstraints.BOTH;
@@ -71,6 +75,18 @@ public class ControlsPanel extends JScrollPane {
     this.setViewportView(pnlControls);
     this.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
     this.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+  }
+  
+  public CampaignManagerPanel getPnlCampaignManager() {
+    return pnlCampaignManager;
+  }
+
+  public StatisticViewer getPnlStatisticViewer() {
+    return pnlStatisticViewer;
+  }
+
+  public GraphGeneratorPanel getPnlGraphGenerator() {
+    return pnlGraphGenerator;
   }
 
 }

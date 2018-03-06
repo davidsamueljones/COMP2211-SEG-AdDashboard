@@ -7,6 +7,10 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.time.*;
 import javax.swing.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,18 +21,16 @@ public class Graph extends JPanel {
 
   private ArrayList<TimeSeries> series = new ArrayList<TimeSeries>();
 
-  public Graph(
-      String chartTitle, String xAxisLabel, String yAxisLabel, List<Pair<String, Integer>> data) {
-    JFreeChart xylineChart =
-        ChartFactory.createTimeSeriesChart(
-            chartTitle, xAxisLabel, yAxisLabel, dataset, false, true, false);
+  public Graph(String chartTitle, String xAxisLabel, String yAxisLabel) {
+
+    JFreeChart xylineChart = ChartFactory.createTimeSeriesChart(chartTitle, xAxisLabel, yAxisLabel,
+        dataset, false, true, false);
 
     // Creates a panel for the chart
     ChartPanel chartPanel = new ChartPanel(xylineChart);
-
     this.plot = xylineChart.getXYPlot();
 
-    this.addLine(data);
+    this.setLayout(new GridLayout(1, 1));
     this.add(chartPanel);
   }
 
@@ -43,7 +45,7 @@ public class Graph extends JPanel {
     updateCharts();
   }
 
-  // The dataset is is refreshed
+  // The dataset is refreshed
   public void updateCharts() {
     ((TimeSeriesCollection) plot.getDataset()).removeAllSeries();
     displayCharts();
@@ -55,4 +57,5 @@ public class Graph extends JPanel {
       dataset.addSeries(series);
     }
   }
+
 }

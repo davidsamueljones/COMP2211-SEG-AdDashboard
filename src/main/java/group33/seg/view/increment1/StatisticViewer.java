@@ -9,12 +9,14 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JTextField;
+import group33.seg.controller.events.GraphHandler;
 import group33.seg.controller.events.StatisticHandler;
 
 public class StatisticViewer extends JPanel {
+  private StatisticHandler statisticHandler;
+
   private JButton btnGenerateImpressions;
   private JTextField txtTotalImpressions;
-  private StatisticHandler statisticHandler = new StatisticHandler();
 
   /**
    * Create the panel.
@@ -65,7 +67,10 @@ public class StatisticViewer extends JPanel {
         txtTotalImpressions.setText(String.valueOf(statisticHandler.impressionRequest()));
       }
     });
+  }
 
+  public void setStatisticHandler(StatisticHandler statisticHandler) {
+    this.statisticHandler = statisticHandler;
   }
 
 }

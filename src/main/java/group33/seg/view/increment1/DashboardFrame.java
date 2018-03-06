@@ -6,6 +6,8 @@ import java.awt.Toolkit;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import group33.seg.controller.events.GraphHandler;
+import group33.seg.controller.events.StatisticHandler;
 import group33.seg.view.utilities.Accessibility;
 import group33.seg.view.utilities.Accessibility.Appearance;
 import javax.swing.JSplitPane;
@@ -14,7 +16,6 @@ import javax.swing.JMenuBar;
 
 public class DashboardFrame extends JFrame {
   private static final long serialVersionUID = 5064629396099335312L;
-  public int CMD_MODIFIER = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
   /**
    * Test Main: Launch the Dashboard frame.
@@ -71,6 +72,14 @@ public class DashboardFrame extends JFrame {
     // Use RHS as single panel
     GraphPanel pnlGraph = new GraphPanel();
     sppMain.setRightComponent(pnlGraph);
+    
+    // Configure global event handlers
+    StatisticHandler statisticHandler = new StatisticHandler();
+    pnlControls.getPnlStatisticViewer().setStatisticHandler(statisticHandler);
+    
+    GraphHandler graphHandler = new GraphHandler();   
+    pnlControls.getPnlGraphGenerator().setGraphHandler(graphHandler);
+    pnlGraph.setGraphHandler(graphHandler);
 
   }
 
