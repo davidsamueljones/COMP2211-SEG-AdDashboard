@@ -30,11 +30,17 @@ public class Database {
         return c;
       }
     }
-    DatabaseConfig config = new DatabaseConfig("config.properties");
-    DatabaseConnection connection =
-        new DatabaseConnection(config.getHost(), config.getUser(), config.getPassword());
-    connections.put(connection, false);
-    return connection;
+    
+    try {
+      DatabaseConfig config = new DatabaseConfig("config.properties");
+      DatabaseConnection connection =
+          new DatabaseConnection(config.getHost(), config.getUser(), config.getPassword());
+      connections.put(connection, false);
+      return connection;
+    } catch (Exception e) {
+      return null;
+    }
+
   }
 
   private void returnConnection(DatabaseConnection c) {

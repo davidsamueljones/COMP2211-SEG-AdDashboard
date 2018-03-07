@@ -1,7 +1,11 @@
 package group33.seg.controller.database;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 public class DatabaseConfig {
@@ -10,10 +14,11 @@ public class DatabaseConfig {
   private String user;
   private String password;
 
-  public DatabaseConfig(String file) {
-    if (file == null) {
-      throw new IllegalArgumentException("Configuration file doesn't exist!");
+  public DatabaseConfig(String file) throws FileNotFoundException {
+    if (file == null || !Files.exists(Paths.get(file))) {
+      throw new FileNotFoundException("Configuration file doesn't exist!");
     }
+    
     Properties prop = new Properties();
     try {
       prop.load(new FileInputStream(file));
