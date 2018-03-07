@@ -28,7 +28,7 @@ Make sure you have ``postgres`` installed. If not follow these steps:
     ``` SQL
     ALTER ROLE <username> CREATEDB;
     ```
-* Quit postgres and run:
+    * Quit postgres and run:
     ``` bash
     psql  -U <DB_USER>
     ```
@@ -49,7 +49,7 @@ CREATE DATABASE <DB_NAME>;
         DB_PASSWORD = DB_PASSWORD
         ```
         
-       * By default the postgres server is listening on port 5432, so DB_HOST should be “jdbc:postgresql://localhost:5432/DBNAME”, where DBNAME is the name you’ve selected for the database.
+       * By default the postgres server is listening on port 5432, so DB_HOST should be `` jdbc:postgresql://localhost:5432/DBNAME ``, where DBNAME is the name you’ve selected for the database.
 
    * Make sure that the ``config.properties`` file is in the same folder as the .jar file.
    * Execute the *.jar* file by running: ``java -jar SEG.jar``
