@@ -51,4 +51,5 @@ CREATE DATABASE <DB_NAME>;
 ## Built With
 * [TravisCI](http://www.dropwizard.io/1.0.2/docs/) - Distributed Continuous Integration Service
 * [Maven](https://maven.apache.org/) - Dependency Management
+* [Mockito](http://site.mockito.org/) - Testing Framework
 
