@@ -1,12 +1,12 @@
-#Ad Auction Dashboard - Group 33
+# Ad Auction Dashboard - Group 33
 
 The Ad Auction Dashboard is an application that will be used for easier evaluation of custom made campaigns.
 The project is currently under development and it only includes functionality that we included in our **Sprint One** Backlog.
 
-##Getting Started
+## Getting Started
 The instructions below will guide you through the steps for running the code.
 
-###Prerequisites
+### Prerequisites
 Make sure you have ``postgres`` installed. If not follow these steps:
 * Go to [PostgreSQL website](https://www.postgresql.org/download/) and install the latest version available for your system.
     * If you have ``apt`` on your system you can run 
@@ -48,7 +48,7 @@ CREATE DATABASE <DB_NAME>;
     * Build from source by running: ``mvn install``
     * Execute the *.jar* file by running: ``java -jar SEG.jar``
 
-##Built With
+## Built With
 * [TravisCI](http://www.dropwizard.io/1.0.2/docs/) - Distributed Continuous Integration Service
 * [Maven](https://maven.apache.org/) - Dependency Management
 
