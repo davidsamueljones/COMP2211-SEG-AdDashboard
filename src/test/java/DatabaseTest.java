@@ -67,14 +67,12 @@ public class DatabaseTest {
 
   @Test
   public void groupingTest() {
-
     // ensures that any future Intervals will be included in this method
     for (Interval interval : Interval.values()) {
       MetricQuery mq =
           new MetricQuery(mock(CampaignConfig.class), Metric.IMPRESSIONS, interval, null);
       String res = DatabaseQueryFactory.generateSQL(mq);
-
-      assertTrue(res.contains("<interval>"));
+      assertTrue(!res.contains("<interval>"));
     }
   }
 }
