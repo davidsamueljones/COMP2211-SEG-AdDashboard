@@ -9,9 +9,8 @@ import group33.seg.model.types.Metric;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
-
+import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -33,8 +32,8 @@ public class DatabaseTest {
     new DatabaseConnection(config.getHost(), null, config.getPassword()).connectDatabase();
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void configTest() {
+  @Test(expected = FileNotFoundException.class)
+  public void configTest() throws FileNotFoundException {
     new DatabaseConfig(null);
   }
 
