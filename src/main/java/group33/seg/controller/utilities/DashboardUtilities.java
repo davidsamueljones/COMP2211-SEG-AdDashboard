@@ -10,14 +10,14 @@ public class DashboardUtilities {
 
   /**
    * Count the number of lines in a file.
-   * 
+   *
    * @param path File to do line count for
    * @return Number of lines
    */
   public static Integer countFileLines(String path) {
     Integer lineCount = 0;
     LineNumberReader reader = null;
-    
+
     try {
       reader = new LineNumberReader(new FileReader(path));
       while (reader.readLine() != null) {
@@ -36,18 +36,19 @@ public class DashboardUtilities {
     }
     return lineCount;
   }
-  
+
   /**
    * Invoke a focus request later so that request is queued until all previous events have occurred.
+   *
    * @param component Component to request focus
    */
   public static void focusRequest(Component component) {
-    EventQueue.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        component.requestFocusInWindow();
-      }
-    });
+    EventQueue.invokeLater(
+        new Runnable() {
+          @Override
+          public void run() {
+            component.requestFocusInWindow();
+          }
+        });
   }
-  
 }

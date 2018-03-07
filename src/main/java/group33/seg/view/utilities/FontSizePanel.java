@@ -22,12 +22,11 @@ public class FontSizePanel extends JPanel {
   JXTitledSeparator lblCurrentFontSize;
 
   private Font unscaledFont;
-  private final double currentScaling = DashboardSettings.cur.prefs
-      .getDouble(DashboardSettings.FONT_SCALING, Accessibility.DEFAULT_SCALING);
+  private final double currentScaling =
+      DashboardSettings.cur.prefs.getDouble(
+          DashboardSettings.FONT_SCALING, Accessibility.DEFAULT_SCALING);
 
-  /**
-   * Create the panel.
-   */
+  /** Create the panel. */
   public FontSizePanel() {
     initGUI();
   }
@@ -109,13 +108,12 @@ public class FontSizePanel extends JPanel {
     setFontScale(currentScaling);
     lblCurrentFontSize.setPreferredSize(preferred);
 
-
-    sldFontSize.addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-        setFontScale(getSliderScale());
-      }
-    });
-
+    sldFontSize.addChangeListener(
+        new ChangeListener() {
+          public void stateChanged(ChangeEvent e) {
+            setFontScale(getSliderScale());
+          }
+        });
   }
 
   private void setFontScale(double scale) {
@@ -135,5 +133,4 @@ public class FontSizePanel extends JPanel {
   private double getSliderScale() {
     return sldFontSize.getValue() / (double) 100;
   }
-
 }

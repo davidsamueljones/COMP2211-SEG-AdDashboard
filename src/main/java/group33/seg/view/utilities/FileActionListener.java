@@ -12,7 +12,7 @@ public class FileActionListener implements ActionListener {
   private Map<Object, JTextField> mappings = new HashMap<>();
   private JFileChooser fileChooser = new JFileChooser();
   private Component parent;
-  
+
   public FileActionListener(Component parent, int selectionMode) {
     this.parent = parent;
     fileChooser.setFileSelectionMode(selectionMode);
@@ -39,5 +39,4 @@ public class FileActionListener implements ActionListener {
   public JFileChooser getFileChooser() {
     return fileChooser;
   }
-
 }

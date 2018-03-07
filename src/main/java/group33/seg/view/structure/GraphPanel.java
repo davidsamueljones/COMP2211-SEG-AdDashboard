@@ -13,14 +13,12 @@ public class GraphPanel extends JPanel {
 
   private GraphHandler graphHandler;
   private Graph graph;
-  
+
   private JButton btnPointer;
   private JButton btnPan;
   private JButton btnZoom;
 
-  /**
-   * Create the panel.
-   */
+  /** Create the panel. */
   public GraphPanel() {
 
     initGUI();
@@ -46,15 +44,13 @@ public class GraphPanel extends JPanel {
     tlbControls.add(btnZoom);
 
     tlbControls.addSeparator();
-    
+
     // FIXME: Hidden controls until functionality implemented
     tlbControls.setVisible(false);
   }
-  
+
   public void setGraphHandler(GraphHandler graphHandler) {
     this.graphHandler = graphHandler;
     graphHandler.setGraph(graph);
   }
-
-
 }

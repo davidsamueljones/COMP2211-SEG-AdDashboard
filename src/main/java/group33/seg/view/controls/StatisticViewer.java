@@ -18,9 +18,7 @@ public class StatisticViewer extends JPanel {
   private JButton btnGenerateImpressions;
   private JTextField txtTotalImpressions;
 
-  /**
-   * Create the panel.
-   */
+  /** Create the panel. */
   public StatisticViewer() {
 
     initGUI();
@@ -61,16 +59,16 @@ public class StatisticViewer extends JPanel {
     add(txtTotalImpressions, gbc_txtTotalImpressions);
     txtTotalImpressions.setColumns(10);
 
-    btnGenerateImpressions.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        txtTotalImpressions.setText(String.valueOf(statisticHandler.impressionRequest()));
-      }
-    });
+    btnGenerateImpressions.addActionListener(
+        new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            txtTotalImpressions.setText(String.valueOf(statisticHandler.impressionRequest()));
+          }
+        });
   }
 
   public void setStatisticHandler(StatisticHandler statisticHandler) {
     this.statisticHandler = statisticHandler;
   }
-
 }

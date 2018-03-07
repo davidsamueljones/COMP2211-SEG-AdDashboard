@@ -14,44 +14,41 @@ import group33.seg.view.utilities.Accessibility.Appearance;
 import javax.swing.JSplitPane;
 import javax.swing.JMenuBar;
 
-
 public class DashboardFrame extends JFrame {
   private static final long serialVersionUID = 5064629396099335312L;
 
   private JSplitPane sppMain;
-  
-  /**
-   * Test Main: Launch the Dashboard frame.
-   */
+
+  /** Test Main: Launch the Dashboard frame. */
   public static void main(String[] args) {
-    EventQueue.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          Accessibility.setAppearance(Appearance.PLATFORM);
-          Accessibility.scaleDefaultUIFontSize(1);
-          // Show frame
-          DashboardFrame frame = new DashboardFrame();
-          frame.setVisible(true);
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
-      }
-    });
+    EventQueue.invokeLater(
+        new Runnable() {
+          @Override
+          public void run() {
+            try {
+              Accessibility.setAppearance(Appearance.PLATFORM);
+              Accessibility.scaleDefaultUIFontSize(1);
+              // Show frame
+              DashboardFrame frame = new DashboardFrame();
+              frame.setVisible(true);
+            } catch (Exception e) {
+              e.printStackTrace();
+            }
+          }
+        });
   }
 
-  /**
-   * Create the Dashboard frame.
-   */
+  /** Create the Dashboard frame. */
   public DashboardFrame() {
     this.setTitle("Ad-Dashboard");
     this.setBounds(100, 100, 1280, 720);
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-    double scaling = DashboardSettings.cur.prefs
-        .getDouble(DashboardSettings.FONT_SCALING, Accessibility.DEFAULT_SCALING);
+    double scaling =
+        DashboardSettings.cur.prefs.getDouble(
+            DashboardSettings.FONT_SCALING, Accessibility.DEFAULT_SCALING);
     Accessibility.scaleDefaultUIFontSize(scaling);
-    
+
     initGUI();
   }
 
@@ -78,15 +75,13 @@ public class DashboardFrame extends JFrame {
     // Use RHS as single panel
     GraphPanel pnlGraph = new GraphPanel();
     sppMain.setRightComponent(pnlGraph);
-    
+
     // Configure global event handlers
     StatisticHandler statisticHandler = new StatisticHandler();
     pnlControls.getPnlStatisticViewer().setStatisticHandler(statisticHandler);
-    
-    GraphHandler graphHandler = new GraphHandler();   
+
+    GraphHandler graphHandler = new GraphHandler();
     pnlControls.getPnlGraphGenerator().setGraphHandler(graphHandler);
     pnlGraph.setGraphHandler(graphHandler);
-
   }
-
 }

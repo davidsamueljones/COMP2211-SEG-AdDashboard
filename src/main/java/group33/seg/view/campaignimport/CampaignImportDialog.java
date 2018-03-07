@@ -30,17 +30,14 @@ public class CampaignImportDialog extends JDialog {
   private JButton btnImportNew;
   private JButton btnClose;
 
-
-  /**
-   * Create the dialog.
-   */
+  /** Create the dialog. */
   public CampaignImportDialog() {
     this(null);
   }
 
   /**
    * Create the dialog with a given parent window.
-   * 
+   *
    * @param parent Window to treat as a parent
    */
   public CampaignImportDialog(Window parent) {
@@ -65,9 +62,7 @@ public class CampaignImportDialog extends JDialog {
     setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
   }
 
-  /**
-   * Initialise GUI and any event listeners.
-   */
+  /** Initialise GUI and any event listeners. */
   private void initGUI() {
 
     // ************************************************************************************
@@ -128,7 +123,8 @@ public class CampaignImportDialog extends JDialog {
     // Controls Panel
     CampaignImportPanel pnlCampaignImport = new CampaignImportPanel(importHandler);
     pnlCampaignImport.setBorder(
-        BorderFactory.createCompoundBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED),
+        BorderFactory.createCompoundBorder(
+            BorderFactory.createBevelBorder(BevelBorder.LOWERED),
             BorderFactory.createEmptyBorder(5, 5, 5, 5)));
     GridBagConstraints gbc_pnlCampaignImport = new GridBagConstraints();
     gbc_pnlCampaignImport.fill = GridBagConstraints.BOTH;
@@ -142,39 +138,39 @@ public class CampaignImportDialog extends JDialog {
     // ************************************************************************************
 
     // Close the dialog if an import is not ongoing
-    btnClose.addActionListener(new ActionListener() {
+    btnClose.addActionListener(
+        new ActionListener() {
 
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        closeDialog();
-      }
-    });
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            closeDialog();
+          }
+        });
 
     // Listen for any other window close event
-    addWindowListener(new WindowAdapter() {
-      public void windowClosing(WindowEvent e) {
-        closeDialog();
-      }
-    });
-
+    addWindowListener(
+        new WindowAdapter() {
+          public void windowClosing(WindowEvent e) {
+            closeDialog();
+          }
+        });
   }
 
   private void closeDialog() {
     if (importHandler.isOngoing()) {
-      JOptionPane.showMessageDialog(null,
+      JOptionPane.showMessageDialog(
+          null,
           "Cannot close whilst importing, either cancel or wait for import to finish.",
-          "Close Error", JOptionPane.ERROR_MESSAGE);
+          "Close Error",
+          JOptionPane.ERROR_MESSAGE);
     } else {
       setVisible(false);
       dispose();
     }
   }
 
-  /**
-   * @return Get the configuration of the last imported campaign, null if none or failure
-   */
+  /** @return Get the configuration of the last imported campaign, null if none or failure */
   public CampaignConfig getImportedCampaign() {
     return importHandler.getImportedCampaign();
   }
-
 }

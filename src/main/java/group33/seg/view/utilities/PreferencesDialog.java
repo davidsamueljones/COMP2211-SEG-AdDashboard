@@ -29,16 +29,14 @@ public class PreferencesDialog extends JDialog {
   private JButton btnApplyConfirm;
   private JButton btnCancel;
 
-  /**
-   * Create the dialog.
-   */
+  /** Create the dialog. */
   public PreferencesDialog() {
     this(null);
   }
 
   /**
    * Create the dialog with a given parent window.
-   * 
+   *
    * @param parent Window to treat as a parent
    */
   public PreferencesDialog(Window parent) {
@@ -62,9 +60,7 @@ public class PreferencesDialog extends JDialog {
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
   }
 
-  /**
-   * Initialise GUI and any event listeners.
-   */
+  /** Initialise GUI and any event listeners. */
   private void initGUI() {
 
     // ************************************************************************************
@@ -97,9 +93,10 @@ public class PreferencesDialog extends JDialog {
     pnlAccessibility.setLayout(gbl_pnlAccessibility);
 
     FontSizePanel pnlFontSize = new FontSizePanel();
-    pnlFontSize.setBorder(BorderFactory.createCompoundBorder(
-        BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Font Size"),
-        BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+    pnlFontSize.setBorder(
+        BorderFactory.createCompoundBorder(
+            BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Font Size"),
+            BorderFactory.createEmptyBorder(5, 5, 5, 5)));
     GridBagConstraints gbc_pnlFontSize = new GridBagConstraints();
     gbc_pnlFontSize.insets = new Insets(5, 5, 5, 5);
     gbc_pnlFontSize.fill = GridBagConstraints.BOTH;
@@ -108,8 +105,8 @@ public class PreferencesDialog extends JDialog {
     pnlAccessibility.add(pnlFontSize, gbc_pnlFontSize);
 
     JPanel pnlOther = new JPanel();
-    pnlOther
-        .setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Other"));
+    pnlOther.setBorder(
+        BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Other"));
     GridBagConstraints gbc_pnlOther = new GridBagConstraints();
     gbc_pnlOther.anchor = GridBagConstraints.NORTHWEST;
     gbc_pnlOther.gridwidth = 2;
@@ -139,38 +136,41 @@ public class PreferencesDialog extends JDialog {
     gbc_btnApplyConfirm.gridy = 2;
     pnlDialog.add(btnApplyConfirm, gbc_btnApplyConfirm);
 
-    btnCancel.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        setVisible(false);
-        dispose();
-      }
-    });
-
-    btnApplyConfirm.addActionListener(new ActionListener() {
-
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        if (pnlFontSize.hasChanged()) {
-          int res = JOptionPane.showConfirmDialog(PreferencesDialog.this,
-              "Updating the font size requires any open windows to refresh\r\n"
-                  + "This may clear any workspaces, are you sure you wish to continue?",
-              "Apply & Confirm", JOptionPane.YES_NO_OPTION);
-          if (res != JOptionPane.YES_OPTION) {
-            return;
+    btnCancel.addActionListener(
+        new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            setVisible(false);
+            dispose();
           }
-          pnlFontSize.updateSettingsScale();
-        }
-        setVisible(false);
-        dispose();
-      }
-    });
+        });
+
+    btnApplyConfirm.addActionListener(
+        new ActionListener() {
+
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            if (pnlFontSize.hasChanged()) {
+              int res =
+                  JOptionPane.showConfirmDialog(
+                      PreferencesDialog.this,
+                      "Updating the font size requires any open windows to refresh\r\n"
+                          + "This may clear any workspaces, are you sure you wish to continue?",
+                      "Apply & Confirm",
+                      JOptionPane.YES_NO_OPTION);
+              if (res != JOptionPane.YES_OPTION) {
+                return;
+              }
+              pnlFontSize.updateSettingsScale();
+            }
+            setVisible(false);
+            dispose();
+          }
+        });
 
     // ************************************************************************************
     // * EVENT HANDLING
     // ************************************************************************************
 
   }
-
-
 }

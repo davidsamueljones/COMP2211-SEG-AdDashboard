@@ -23,8 +23,9 @@ public class Graph extends JPanel {
 
   public Graph(String chartTitle, String xAxisLabel, String yAxisLabel) {
 
-    JFreeChart xylineChart = ChartFactory.createTimeSeriesChart(chartTitle, xAxisLabel, yAxisLabel,
-        dataset, false, true, false);
+    JFreeChart xylineChart =
+        ChartFactory.createTimeSeriesChart(
+            chartTitle, xAxisLabel, yAxisLabel, dataset, false, true, false);
 
     // Creates a panel for the chart
     ChartPanel chartPanel = new ChartPanel(xylineChart);
@@ -32,30 +33,28 @@ public class Graph extends JPanel {
 
     this.setLayout(new GridLayout(1, 1));
     this.add(chartPanel);
-    
-    
+
     // FIXME: TEMPORARY CODE TO MAKE GRAPH MORE USABLE [REPLACE ASAP]
     // https://stackoverflow.com/questions/31193099/pan-chart-using-mouse-jfreechart
     chartPanel.setMouseZoomable(false);
     chartPanel.setMouseWheelEnabled(true);
     chartPanel.setDomainZoomable(true);
     chartPanel.setRangeZoomable(false);
-    //chartPanel.setPreferredSize(new Dimension(1680, 1100));
+    // chartPanel.setPreferredSize(new Dimension(1680, 1100));
     chartPanel.setZoomTriggerDistance(Integer.MAX_VALUE);
     chartPanel.setFillZoomRectangle(false);
     chartPanel.setZoomOutlinePaint(new Color(0f, 0f, 0f, 0f));
     chartPanel.setZoomAroundAnchor(true);
-//    try {
-//        Field mask = ChartPanel.class.getDeclaredField("panMask");
-//        mask.setAccessible(true);
-//        mask.set(chartPanel, 0);
-//    } catch (NoSuchFieldException e) {
-//        e.printStackTrace();
-//    } catch (IllegalAccessException e) {
-//        e.printStackTrace();
-//    }
+    //    try {
+    //        Field mask = ChartPanel.class.getDeclaredField("panMask");
+    //        mask.setAccessible(true);
+    //        mask.set(chartPanel, 0);
+    //    } catch (NoSuchFieldException e) {
+    //        e.printStackTrace();
+    //    } catch (IllegalAccessException e) {
+    //        e.printStackTrace();
+    //    }
     chartPanel.addMouseWheelListener(arg0 -> chartPanel.restoreAutoRangeBounds());
-    
   }
 
   public void addLine(List<Pair<String, Integer>> data) {
@@ -68,8 +67,8 @@ public class Graph extends JPanel {
 
     updateCharts();
   }
-  
-  public void clearLines()  {
+
+  public void clearLines() {
     series.clear();
     updateCharts();
   }
@@ -86,5 +85,4 @@ public class Graph extends JPanel {
       dataset.addSeries(series);
     }
   }
-
 }

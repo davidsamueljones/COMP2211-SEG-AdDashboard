@@ -22,21 +22,16 @@ public class MetricQuery {
 
   // add bounce rate definition (ignored if not relevant to metric)
 
-  /**
-   * Instantiate an empty query.
-   */
+  /** Instantiate an empty query. */
   public MetricQuery() {
     this(null, null, null, null);
   }
 
-  /**
-   * Instantiate a fully defined query.
-   */
+  /** Instantiate a fully defined query. */
   public MetricQuery(CampaignConfig campaign, Metric metric, Interval time, FilterConfig filter) {
     this.campaign = campaign;
     this.metric = metric;
     this.interval = time;
     this.filter = filter;
   }
-
 }

@@ -72,7 +72,6 @@ public class CollapsiblePanel extends JPanel {
 
     btnToggle.setAction(toggleAction);
     btnToggle.setText(toggleText);
-
   }
 
   public JButton getToggleButton() {
@@ -90,5 +89,4 @@ public class CollapsiblePanel extends JPanel {
   public void setContentPane(Container pane) {
     cp.setContentPane(pane);
   }
-
 }

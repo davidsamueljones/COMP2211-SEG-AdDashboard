@@ -14,9 +14,7 @@ public class ErrorBuilder {
   /** Whether an error has occurred */
   private boolean error = false;
 
-  /**
-   * Indicate an error without adding a comment.
-   */
+  /** Indicate an error without adding a comment. */
   public synchronized void addError() {
     error = true;
   }
@@ -43,9 +41,7 @@ public class ErrorBuilder {
     }
   }
 
-  /**
-   * @return List of comments held
-   */
+  /** @return List of comments held */
   public synchronized List<String> getComments() {
     return comments;
   }
@@ -65,9 +61,7 @@ public class ErrorBuilder {
     return sb.toString();
   }
 
-  /**
-   * @return Whether error builder contains an error
-   */
+  /** @return Whether error builder contains an error */
   public synchronized boolean isError() {
     return error;
   }
@@ -90,5 +84,4 @@ public class ErrorBuilder {
       }
     }
   }
-
 }

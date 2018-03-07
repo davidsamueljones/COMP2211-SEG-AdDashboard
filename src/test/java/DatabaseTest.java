@@ -2,19 +2,31 @@ import group33.seg.controller.database.*;
 import group33.seg.controller.database.tables.ClickLogTable;
 import group33.seg.controller.database.tables.ImpressionLogTable;
 import group33.seg.controller.database.tables.ServerLogTable;
+import group33.seg.model.configs.CampaignConfig;
+import group33.seg.model.configs.MetricQuery;
+import group33.seg.model.types.Interval;
+import group33.seg.model.types.Metric;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
+
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DatabaseTest {
 
-  @Mock private DatabaseConnection conn;
+  @Mock private DatabaseConnection dbConn;
 
   @Mock private DatabaseConfig config;
+
+  @Mock private Connection conn;
 
   @Test(expected = IllegalArgumentException.class)
   public void connectionArgsTest() {
@@ -41,18 +53,28 @@ public class DatabaseTest {
     new ServerLogTable().createTable(null);
   }
 
-//  @Test(expected = IllegalArgumentException.class)
-//  public void clickImportTest() throws SQLException {
-//    new ClickLog().importCSV(conn.connectDatabase(), null);
-//  }
-//
-//  @Test(expected = IllegalArgumentException.class)
-//  public void impressionImportTest() throws SQLException {
-//    new ImpressionLog().importCSV(conn.connectDatabase(), null);
-//  }
-//
-//  @Test(expected = IllegalArgumentException.class)
-//  public void serverImportTest() throws SQLException {
-//    new ServerLog().importCSV(conn.connectDatabase(), null);
-//  }
+  @Test
+  public void clearTableTest() throws SQLException {
+    ServerLogTable slt = new ServerLogTable();
+    Statement stmt = mock(Statement.class);
+
+    when(conn.createStatement()).thenReturn(stmt);
+
+    slt.clearTable(conn);
+    verify(conn, times(1)).createStatement();
+    verify(stmt, times(1)).execute(contains("TRUNCATE TABLE "));
+  }
+
+  @Test
+  public void groupingTest() {
+
+    // ensures that any future Intervals will be included in this method
+    for (Interval interval : Interval.values()) {
+      MetricQuery mq =
+          new MetricQuery(mock(CampaignConfig.class), Metric.IMPRESSIONS, interval, null);
+      String res = DatabaseQueryFactory.generateSQL(mq);
+
+      assertTrue(res.contains("<interval>"));
+    }
+  }
 }

@@ -10,21 +10,20 @@ import group33.seg.view.output.Graph;
 
 public class GraphHandler {
   Graph graph;
-  
+
   public void setGraph(Graph graph) {
     this.graph = graph;
   }
-  
+
   public void generateImpressionGraph(Interval interval) {
     Database db = new Database();
     MetricQuery query = new MetricQuery(null, Metric.IMPRESSIONS, interval, null);
     List<Pair<String, Integer>> data = db.getQueryResponse(query).getResult();
-    
+
     graph.addLine(data);
   }
 
   public void clearGraph() {
     graph.clearLines();
   }
-  
 }

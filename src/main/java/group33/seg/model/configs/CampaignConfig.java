@@ -10,5 +10,4 @@ public class CampaignConfig {
   public String getName() {
     return name;
   }
-  
 }

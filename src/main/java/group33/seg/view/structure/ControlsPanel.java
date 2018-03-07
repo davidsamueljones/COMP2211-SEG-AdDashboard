@@ -20,10 +20,8 @@ public class ControlsPanel extends JScrollPane {
   private CampaignManagerPanel pnlCampaignManager;
   private StatisticViewer pnlStatisticViewer;
   private GraphGeneratorPanel pnlGraphGenerator;
-  
-  /**
-   * Create the panel.
-   */
+
+  /** Create the panel. */
   public ControlsPanel() {
     initGUI();
   }
@@ -49,7 +47,7 @@ public class ControlsPanel extends JScrollPane {
       gbc_colpnlCampaignManager.gridx = 0;
       gbc_colpnlCampaignManager.gridy = 0;
       pnlControls.add(colpnlCampaignManager, gbc_colpnlCampaignManager);
-      
+
       // Statistic Viewer
       CollapsiblePanel colpnlStatisticViewer = new CollapsiblePanel("Statistic Viewer");
       pnlStatisticViewer = new StatisticViewer();
@@ -60,7 +58,7 @@ public class ControlsPanel extends JScrollPane {
       gbc_colpnlStatisticViewer.gridx = 0;
       gbc_colpnlStatisticViewer.gridy = 1;
       pnlControls.add(colpnlStatisticViewer, gbc_colpnlStatisticViewer);
-      
+
       // Graph Generator
       CollapsiblePanel colpnlGraphGenerator = new CollapsiblePanel("Graph Generator");
       pnlGraphGenerator = new GraphGeneratorPanel();
@@ -79,7 +77,7 @@ public class ControlsPanel extends JScrollPane {
     this.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
     this.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
   }
-  
+
   public CampaignManagerPanel getPnlCampaignManager() {
     return pnlCampaignManager;
   }
@@ -91,5 +89,4 @@ public class ControlsPanel extends JScrollPane {
   public GraphGeneratorPanel getPnlGraphGenerator() {
     return pnlGraphGenerator;
   }
-
 }

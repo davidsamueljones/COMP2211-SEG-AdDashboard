@@ -14,11 +14,11 @@ public class Accessibility {
   public static final double MAX_SCALING = 2;
   public static final double MIN_SCALING = 0.5;
   public static final double DEFAULT_SCALING = 1;
-  
+
   /**
    * Set system wide look and feel options using an appearance selection. OS specific rules/flags
    * should be applied here.
-   * 
+   *
    * @param appearance Appearance selection to use
    */
   public static void setAppearance(Appearance appearance) {
@@ -47,14 +47,13 @@ public class Accessibility {
         System.err.println(info);
       }
     }
-
   }
 
   /**
    * Scale the font sizes of all objects contained in the UIManager (that utilise a font). This will
    * only affect objects instantiated in the future and hence should be executed before any
    * component generation.
-   * 
+   *
    * @param scale Scaling factor to apply
    */
   public static void scaleDefaultUIFontSize(double scale) {
@@ -77,7 +76,7 @@ public class Accessibility {
 
   /**
    * Scale a JComponent's text by scaling its current font.
-   * 
+   *
    * @param component JComponent to scale font of
    * @param scale Scaling factor to apply
    */
@@ -85,7 +84,7 @@ public class Accessibility {
     Font font = component.getFont();
     if (font != null) {
       font = scaleFont(component.getFont(), scale);
-      // Strip UIManager LaF data to avoid font scaling not being enforced 
+      // Strip UIManager LaF data to avoid font scaling not being enforced
       font = new Font(font.getAttributes());
       component.setFont(font);
     }
@@ -93,7 +92,7 @@ public class Accessibility {
 
   /**
    * Scale a font by a given scaling factor.
-   * 
+   *
    * @param font Font to create a scaled version of
    * @param scale Scaling factor to apply
    * @return Scaled font using original font properties
@@ -102,11 +101,9 @@ public class Accessibility {
     return font.deriveFont((float) (font.getSize() * scale));
   }
 
-  /**
-   * Enumeration of valid appearance options.
-   */
+  /** Enumeration of valid appearance options. */
   public enum Appearance {
-    PLATFORM, NIMBUS
+    PLATFORM,
+    NIMBUS
   }
-
 }

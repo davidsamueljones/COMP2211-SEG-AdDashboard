@@ -25,7 +25,7 @@ public class ImpressionLogTable extends DatabaseTable {
     // Create prepared statement
     ps.setTimestamp(1, Timestamp.valueOf(params[0])); // date
     ps.setLong(2, Long.valueOf(params[1])); // user_id
-    ps.setBoolean(3, params[2].equals("female") ? true : false); // female
+    ps.setBoolean(3, params[2].equals("female")); // female
     ps.setString(4, params[3]); // age
     ps.setString(5, params[4]); // income
     ps.setString(6, params[5]); // context

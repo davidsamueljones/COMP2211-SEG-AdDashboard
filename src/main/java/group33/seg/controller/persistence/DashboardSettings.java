@@ -7,10 +7,10 @@ import group33.seg.view.utilities.Accessibility;
 public class DashboardSettings {
   public static final String CUR_CAMPAIGN = "cur_campaign";
   public static final String FONT_SCALING = "font_scaling";
-  
+
   /** Static access to preferences */
   public static final DashboardSettings cur = new DashboardSettings();
- 
+
   public final Preferences prefs;
 
   public DashboardSettings() {
@@ -31,7 +31,6 @@ public class DashboardSettings {
     if (newPrefs) {
       setDefaults();
     }
-    
   }
 
   public void clearPreferences() {
@@ -47,5 +46,4 @@ public class DashboardSettings {
     prefs.remove(CUR_CAMPAIGN);
     prefs.putDouble(FONT_SCALING, Accessibility.DEFAULT_SCALING);
   }
-
 }

@@ -1,56 +1,42 @@
 package group33.seg.controller.database.tables;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.LineNumberReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
-import com.opencsv.CSVReader;
-import group33.seg.controller.utilities.DashboardUtilities;
 
 public abstract class DatabaseTable {
-  private volatile int importProgress;
-  
+
   /**
    * Create a table of the required type at the given connection.
-   * 
+   *
    * @param c Database connection
    */
   public abstract void createTable(Connection c) throws SQLException;
 
   /**
    * Convert a set of string parameters to their correct format and create a prepared statement.
-   * 
+   *
    * @param ps Prepared statement to apply params to
    * @param params Params to apply to the prepared statement
    */
   public abstract void prepareInsert(PreparedStatement ps, String[] params) throws SQLException;
 
-  /**
-   * @return Template used for INSERT statements
-   */
+  /** @return Template used for INSERT statements */
   public abstract String getInsertTemplate();
-  
-  /**
-   * @return Name of table
-   */
+
+  /** @return Name of table */
   public abstract String getTableName();
-  
-  /**
-   * Clear all rows from table.
-   */
-  public void clearTable(Connection c) {
-    Statement cs; 
+
+  /** Clear all rows from table. */
+  public final void clearTable(Connection c) {
+    Statement cs;
     try {
-       cs = c.createStatement();
-       cs.execute(String.format("TRUNCATE TABLE %s", getTableName()));
+      cs = c.createStatement();
+      cs.execute(String.format("TRUNCATE TABLE %s", getTableName()));
     } catch (SQLException e) {
-      // FIXME: Do not ignore this error, throw and handle 
-    }   
+      e.printStackTrace();
+      // FIXME: Do not ignore this error, throw and handle
+    }
   }
-
 }
-
-

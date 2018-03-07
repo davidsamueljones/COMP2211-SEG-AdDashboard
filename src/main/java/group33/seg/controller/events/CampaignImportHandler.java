@@ -45,7 +45,7 @@ public class CampaignImportHandler {
    * replace any data residing in the database. Progress listeners are kept updated on status of
    * import. As the import is handled on another thread, {@link cancelImport} must be used to
    * interrupt an ongoing import. Any errors are built up using the instances internal ErrorBuilder.
-   * 
+   *
    * @param importConfig Campaign information required for import.
    * @return Whether import started successfully
    */
@@ -64,62 +64,65 @@ public class CampaignImportHandler {
     }
 
     // Handle import on a separate thread
-    threadImport = new Thread(new Runnable() {
-      @Override
-      public void run() {
-        boolean finished = false; 
-        
-        // Alert listeners that import is starting
-        alertStart();
-        // Reset import progress
-        updateProgress(0);
+    threadImport =
+        new Thread(
+            new Runnable() {
+              @Override
+              public void run() {
+                boolean finished = false;
 
-        // TODO: TEMPORARY - Use interface database connection
-        DatabaseConfig config = new DatabaseConfig("config.properties");
-        DatabaseConnection dbConn =
-            new DatabaseConnection(config.getHost(), config.getUser(), config.getPassword());
-        dbConn.connectDatabase();
-        Connection conn = dbConn.connectDatabase();
+                // Alert listeners that import is starting
+                alertStart();
+                // Reset import progress
+                updateProgress(0);
 
-        // Create table objects
-        ClickLogTable clickLogTable = new ClickLogTable();
-        ImpressionLogTable impressionLogTable = new ImpressionLogTable();
-        ServerLogTable serverLogTable = new ServerLogTable();
-        
-        // Remove existing tables data (TODO: Not to be kept)
-        clickLogTable.clearTable(conn);
-        impressionLogTable.clearTable(conn);
-        serverLogTable.clearTable(conn);
-        
-        try {
-          // Import click log
-          importTable(clickLogTable, conn, importConfig.pathClickLog, 0.33);
-          // Import impression log and ensure enums are set
-          ImpressionLogTable.initEnums(conn);
-          importTable(impressionLogTable, conn, importConfig.pathImpressionLog, 0.33);
-          // Import server log
-          importTable(serverLogTable, conn, importConfig.pathServerLog, 0.33);
+                // TODO: TEMPORARY - Use interface database connection
+                DatabaseConfig config = new DatabaseConfig("config.properties");
+                DatabaseConnection dbConn =
+                    new DatabaseConnection(
+                        config.getHost(), config.getUser(), config.getPassword());
+                dbConn.connectDatabase();
+                Connection conn = dbConn.connectDatabase();
 
-          // Create campaign configuration (storing as last import)
-          setImportedCampaign(new CampaignConfig(importConfig.campaignName));
-          // Alert listeners that import is finished
-          alertFinished(true);
-          finished = true;
-        } catch (InterruptedException e) {
-          alertCancelled();
-        } catch (ImportException e) {
-          alertFinished(false);
-        } 
-        
-        // Remove 'corrupted' data if import did not finish successfully
-        if (!finished) {
-          clickLogTable.clearTable(conn);
-          impressionLogTable.clearTable(conn);
-          serverLogTable.clearTable(conn);
-        }
-        threadImport = null;
-      }
-    });
+                // Create table objects
+                ClickLogTable clickLogTable = new ClickLogTable();
+                ImpressionLogTable impressionLogTable = new ImpressionLogTable();
+                ServerLogTable serverLogTable = new ServerLogTable();
+
+                // Remove existing tables data (TODO: Not to be kept)
+                clickLogTable.clearTable(conn);
+                impressionLogTable.clearTable(conn);
+                serverLogTable.clearTable(conn);
+
+                try {
+                  // Import click log
+                  importTable(clickLogTable, conn, importConfig.pathClickLog, 0.33);
+                  // Import impression log and ensure enums are set
+                  ImpressionLogTable.initEnums(conn);
+                  importTable(impressionLogTable, conn, importConfig.pathImpressionLog, 0.33);
+                  // Import server log
+                  importTable(serverLogTable, conn, importConfig.pathServerLog, 0.33);
+
+                  // Create campaign configuration (storing as last import)
+                  setImportedCampaign(new CampaignConfig(importConfig.campaignName));
+                  // Alert listeners that import is finished
+                  alertFinished(true);
+                  finished = true;
+                } catch (InterruptedException e) {
+                  alertCancelled();
+                } catch (ImportException e) {
+                  alertFinished(false);
+                }
+
+                // Remove 'corrupted' data if import did not finish successfully
+                if (!finished) {
+                  clickLogTable.clearTable(conn);
+                  impressionLogTable.clearTable(conn);
+                  serverLogTable.clearTable(conn);
+                }
+                threadImport = null;
+              }
+            });
 
     // Import can start successfully
     this.importedCampaign = null;
@@ -129,7 +132,7 @@ public class CampaignImportHandler {
 
   /**
    * Use a worker thread to import a given database type with the given file.
-   * 
+   *
    * @param table Table type to import to
    * @param conn Database connection
    * @param path Path to file to import
@@ -139,27 +142,29 @@ public class CampaignImportHandler {
       throws InterruptedException {
     DatabaseTableImporter importer = new DatabaseTableImporter();
     final int curProgress = progress;
-  
-    // Ensure table is created 
+
+    // Ensure table is created
     try {
       table.createTable(conn);
     } catch (SQLException e) {
       eb.addError("Database error, consult your administrator");
       throw new ImportException();
     }
-    
+
     // Create worker thread handling import
-    Thread worker = new Thread(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          importer.importCSV(table, conn, path);
-        } catch (Exception e) {
-          e.printStackTrace();
-          // do nothing, let main import thread handle
-        }
-      }
-    });
+    Thread worker =
+        new Thread(
+            new Runnable() {
+              @Override
+              public void run() {
+                try {
+                  importer.importCSV(table, conn, path);
+                } catch (Exception e) {
+                  e.printStackTrace();
+                  // do nothing, let main import thread handle
+                }
+              }
+            });
 
     // Start worker
     worker.start();
@@ -182,15 +187,16 @@ public class CampaignImportHandler {
     }
     // Check if import was successful
     if (!importer.isSuccessful()) {
-      eb.addError(String.format(
-          "Error importing file '%s', check that the file is of the correct format", path));
+      eb.addError(
+          String.format(
+              "Error importing file '%s', check that the file is of the correct format", path));
       throw new ImportException();
     }
   }
 
   /**
    * Cancel an ongoing import (if one is ongoing). Let importer control how cancellation occurs.
-   * 
+   *
    * @param wait Whether to halt the current thread until cancellation is finished
    * @return Whether import was cancelled
    */
@@ -209,24 +215,19 @@ public class CampaignImportHandler {
     return false;
   }
 
-
-  /**
-   * @return Whether an import is ongoing
-   */
+  /** @return Whether an import is ongoing */
   public boolean isOngoing() {
     return (threadImport != null && threadImport.isAlive());
   }
 
-  /**
-   * @return Current progress level
-   */
+  /** @return Current progress level */
   public int getProgress() {
     return progress;
   }
 
   /**
    * Thread safe access to internal campaign.
-   * 
+   *
    * @return Last imported campaign, null if none or unsuccessful
    */
   public CampaignConfig getImportedCampaign() {
@@ -237,7 +238,7 @@ public class CampaignImportHandler {
 
   /**
    * Thread safe setting of internal imported campaign set.
-   * 
+   *
    * @param importedCampaign Campaign to store
    */
   private void setImportedCampaign(CampaignConfig importedCampaign) {
@@ -246,32 +247,24 @@ public class CampaignImportHandler {
     }
   }
 
-  /**
-   * @param progressListener Progress listener to start sending alerts to
-   */
+  /** @param progressListener Progress listener to start sending alerts to */
   public void addProgressListener(ProgressListener progressListener) {
     progressListeners.add(progressListener);
   }
 
-  /**
-   * @param progressListener Progress listener to no longer alert
-   */
+  /** @param progressListener Progress listener to no longer alert */
   public void removeProgressListener(ProgressListener progressListener) {
     progressListeners.remove(progressListener);
   }
 
-  /**
-   * Helper function to alert all listeners that an import has started.
-   */
+  /** Helper function to alert all listeners that an import has started. */
   private void alertStart() {
     for (ProgressListener listener : progressListeners) {
       listener.start();
     }
   }
 
-  /**
-   * Helper function to alert all listeners that an import has been cancelled.
-   */
+  /** Helper function to alert all listeners that an import has been cancelled. */
   private void alertCancelled() {
     for (ProgressListener listener : progressListeners) {
       listener.cancelled();
@@ -280,7 +273,7 @@ public class CampaignImportHandler {
 
   /**
    * Helper function to alert all listeners that an import finished.
-   * 
+   *
    * @param success Whether the import finished successfully
    */
   private void alertFinished(boolean success) {
@@ -291,7 +284,7 @@ public class CampaignImportHandler {
 
   /**
    * Update progress value, notifying all listeners.
-   * 
+   *
    * @param progress Current progress of import
    */
   private void updateProgress(int progress) {
@@ -301,16 +294,12 @@ public class CampaignImportHandler {
     }
   }
 
-  /**
-   * @return Error builder pertaining to last import
-   */
+  /** @return Error builder pertaining to last import */
   public ErrorBuilder getErrors() {
     return eb;
   }
 
-  /**
-   * Configuration used to configure a campaign import.
-   */
+  /** Configuration used to configure a campaign import. */
   public class CampaignImportConfig {
     public final String campaignName;
     public final String pathClickLog;
@@ -319,20 +308,19 @@ public class CampaignImportHandler {
 
     /**
      * Initialise a campaign import configuration.
-     * 
+     *
      * @param campaignName Name for campaign
      * @param pathClickLog Path to click log csv
      * @param pathImpressionLog Path to impression log csv
      * @param pathServerLog Path to server log csv
      */
-    public CampaignImportConfig(String campaignName, String pathClickLog, String pathImpressionLog,
-        String pathServerLog) {
+    public CampaignImportConfig(
+        String campaignName, String pathClickLog, String pathImpressionLog, String pathServerLog) {
       this.campaignName = campaignName;
       this.pathClickLog = pathClickLog;
       this.pathImpressionLog = pathImpressionLog;
       this.pathServerLog = pathServerLog;
     }
-
 
     public ErrorBuilder validate() {
       ErrorBuilder eb = new ErrorBuilder();
@@ -351,12 +339,9 @@ public class CampaignImportHandler {
       return eb;
     }
   }
-  
-  /**
-   * Unchecked exception for importing failures
-   */
+
+  /** Unchecked exception for importing failures */
   public class ImportException extends RuntimeException {
     private static final long serialVersionUID = -3767480036135704125L;
   }
-
 }

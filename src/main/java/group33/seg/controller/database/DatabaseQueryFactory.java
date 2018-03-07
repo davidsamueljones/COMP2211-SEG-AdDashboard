@@ -15,25 +15,23 @@ public class DatabaseQueryFactory {
     createStatisticTemplates();
   }
 
-  /**
-   * Define and store templates for every graph metric type.
-   */
+  /** Define and store templates for every graph metric type. */
   private static void createGraphQueries() {
-    graphQueries.put(Metric.IMPRESSIONS,
+    graphQueries.put(
+        Metric.IMPRESSIONS,
         "SELECT date_trunc('<interval>', date) as xaxis, count(*) as yaxis from impression_log group by xaxis;");
   }
 
-  /**
-   * Define and store templates for every statistic metric type.
-   */
+  /** Define and store templates for every statistic metric type. */
   private static void createStatisticTemplates() {
-    statisticQueries.put(Metric.IMPRESSIONS,
+    statisticQueries.put(
+        Metric.IMPRESSIONS,
         "SELECT 'all' as xaxis, count(*) as yaxis from impression_log group by xaxis;");
   }
 
   /**
    * Using a metric query request object, generate its corresponding SQL.
-   * 
+   *
    * @param request Query to generate SQL for
    * @return SQL generated from given MetricQuery
    */
@@ -54,7 +52,7 @@ public class DatabaseQueryFactory {
 
   /**
    * Helper function to modify template code to apply specific grouping.
-   * 
+   *
    * @param sql SQL to apply grouping to
    * @param interval Interval to apply
    * @return Modified SQL statement
@@ -82,5 +80,4 @@ public class DatabaseQueryFactory {
     }
     return sql.replace("<interval>", groupingString);
   }
-
 }

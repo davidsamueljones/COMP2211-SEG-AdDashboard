@@ -20,16 +20,14 @@ public class DashboardMenuBar extends JMenuBar {
   public int CMD_MODIFIER = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
   private final DashboardFrame dashboard;
-  
-  /**
-   * Initialise the menu bar.
-   */
+
+  /** Initialise the menu bar. */
   public DashboardMenuBar(DashboardFrame dashboard) {
     this.dashboard = dashboard;
     initMenuBar();
   }
 
-  private void initMenuBar() { 
+  private void initMenuBar() {
     // Initialise menu bar items
     initMenuBarItemFile();
     initMenuBarItemView();
@@ -66,7 +64,6 @@ public class DashboardMenuBar extends JMenuBar {
     JCheckBoxMenuItem mntmGraph = new JCheckBoxMenuItem("Graph");
     mntmGraph.setSelected(true);
     mnView.add(mntmGraph);
-
   }
 
   private void initMenuBarItemHelp() {
@@ -78,40 +75,40 @@ public class DashboardMenuBar extends JMenuBar {
     JMenuItem mntmAbout = new JMenuItem("About");
     mnHelp.add(mntmAbout);
 
-
     mnHelp.addSeparator();
 
     JMenuItem mntmPreferences = new JMenuItem("Preferences");
     mntmPreferences.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, CMD_MODIFIER));
     mnHelp.add(mntmPreferences);
-    
-    mntmPreferences.addActionListener(new ActionListener() {
-      
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        // Record scale
-        double originalScale = DashboardSettings.cur.prefs
-        .getDouble(DashboardSettings.FONT_SCALING, Accessibility.DEFAULT_SCALING);
-        // Show dialog
-        PreferencesDialog preferences = new PreferencesDialog(dashboard);
-        preferences.setModal(true);
-        preferences.setVisible(true);
-        
-        // Check if scale has changed
-        double newScale = DashboardSettings.cur.prefs
-            .getDouble(DashboardSettings.FONT_SCALING, Accessibility.DEFAULT_SCALING);
-        
-        // Restart dashboard
-        if (originalScale != newScale) {
-          Accessibility.scaleDefaultUIFontSize(1 / originalScale);
-          dashboard.setVisible(false);
-          DashboardFrame newDashboard = new DashboardFrame();
-          newDashboard.setVisible(true);
-          dashboard.dispose();
-        }
-        
-      }
-    });
-  }
 
+    mntmPreferences.addActionListener(
+        new ActionListener() {
+
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            // Record scale
+            double originalScale =
+                DashboardSettings.cur.prefs.getDouble(
+                    DashboardSettings.FONT_SCALING, Accessibility.DEFAULT_SCALING);
+            // Show dialog
+            PreferencesDialog preferences = new PreferencesDialog(dashboard);
+            preferences.setModal(true);
+            preferences.setVisible(true);
+
+            // Check if scale has changed
+            double newScale =
+                DashboardSettings.cur.prefs.getDouble(
+                    DashboardSettings.FONT_SCALING, Accessibility.DEFAULT_SCALING);
+
+            // Restart dashboard
+            if (originalScale != newScale) {
+              Accessibility.scaleDefaultUIFontSize(1 / originalScale);
+              dashboard.setVisible(false);
+              DashboardFrame newDashboard = new DashboardFrame();
+              newDashboard.setVisible(true);
+              dashboard.dispose();
+            }
+          }
+        });
+  }
 }

@@ -22,9 +22,7 @@ public class CampaignManagerPanel extends JPanel {
   JTextField txtCurrentCampaign;
   private JButton btnChangeCampaign;
 
-  /**
-   * Create the panel.
-   */
+  /** Create the panel. */
   public CampaignManagerPanel() {
 
     initGUI();
@@ -74,24 +72,24 @@ public class CampaignManagerPanel extends JPanel {
     // ************************************************************************************
 
     // Load import campaign dialog and update view
-    btnChangeCampaign.addActionListener(new ActionListener() {
+    btnChangeCampaign.addActionListener(
+        new ActionListener() {
 
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        // Use current panels form as parent
-        Window frmCurrent = SwingUtilities.getWindowAncestor(CampaignManagerPanel.this);
-        // Show dialog
-        CampaignImportDialog cid = new CampaignImportDialog(frmCurrent);
-        cid.setModal(true);
-        cid.setVisible(true);
-        // Handle dialog result TODO: Determine if cancelled before import or not
-        CampaignConfig campaign = cid.getImportedCampaign();
-        if (campaign != null) {
-          setCurrentCampaign(campaign.getName());
-        }
-      }
-    });
-
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            // Use current panels form as parent
+            Window frmCurrent = SwingUtilities.getWindowAncestor(CampaignManagerPanel.this);
+            // Show dialog
+            CampaignImportDialog cid = new CampaignImportDialog(frmCurrent);
+            cid.setModal(true);
+            cid.setVisible(true);
+            // Handle dialog result TODO: Determine if cancelled before import or not
+            CampaignConfig campaign = cid.getImportedCampaign();
+            if (campaign != null) {
+              setCurrentCampaign(campaign.getName());
+            }
+          }
+        });
   }
 
   // TODO: Change to use campaign
@@ -103,5 +101,4 @@ public class CampaignManagerPanel extends JPanel {
       txtCurrentCampaign.setText("No Campaign Set");
     }
   }
-
 }

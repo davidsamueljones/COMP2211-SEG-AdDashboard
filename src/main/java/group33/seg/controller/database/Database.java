@@ -14,7 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-// TODO think of a better class name that is not DatabaseInterface, since it's not an interface
 public class Database {
   private Map<DatabaseConnection, Boolean> connections = new ConcurrentHashMap<>();
 
@@ -48,15 +47,14 @@ public class Database {
     // otherwise the same query will cache multiple times
     // TODO: Caching quickly eats RAM when graph data is considered, this needs to be improved or
     // removed
-//    if (cachedResponses.containsKey(request)) {
-//      return cachedResponses.get(request);
-//    } else {
-      MetricQueryResponse response =
-          new MetricQueryResponse(request, pool.submit(() -> getGraphData(request)));
-//      cachedResponses.put(request, response);
-      return response;
+    //    if (cachedResponses.containsKey(request)) {
+    //      return cachedResponses.get(request);
+    //    } else {
+    MetricQueryResponse response =
+        new MetricQueryResponse(request, pool.submit(() -> getGraphData(request)));
+    //      cachedResponses.put(request, response);
+    return response;
   }
-
 
   private List<Pair<String, Integer>> getGraphData(MetricQuery request) {
     DatabaseConnection connection = getConnection();
@@ -78,5 +76,4 @@ public class Database {
 
     return result;
   }
-
 }
