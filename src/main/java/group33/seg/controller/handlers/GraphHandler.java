@@ -14,7 +14,7 @@ public class GraphHandler {
   
   /** Graph being controlled */
   private Graph graph;
-  
+ 
   /**
    * Instantiate a graph handler.
    * 
@@ -26,6 +26,7 @@ public class GraphHandler {
   
   public void setGraph(Graph graph) {
     this.graph = graph;
+    graph.setFontScale(scale); //FIXME: Instead fetch theme here
   }
 
   public void generateImpressionGraph(Interval interval) {
@@ -39,4 +40,15 @@ public class GraphHandler {
   public void clearGraph() {
     graph.clearLines();
   }
+  
+  // FIXME: Can remove when setting by theme
+  private double scale = 1;
+  public void setFontScale(double scale) {
+    this.scale = scale;
+  }
+  
+  
+  
+  
+  
 }

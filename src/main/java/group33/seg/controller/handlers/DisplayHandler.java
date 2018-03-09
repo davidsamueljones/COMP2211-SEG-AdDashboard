@@ -100,6 +100,7 @@ public class DisplayHandler {
   
   public void applyUIFontScaling(double scaling) {
     Accessibility.scaleDefaultUIFontSize(scaling);
+    mvc.controller.graphs.setFontScale(scaling);
     fontScalingOutdated = true;
   }
   

@@ -1,6 +1,7 @@
 package group33.seg.view.output;
 
 import group33.seg.model.types.Pair;
+import group33.seg.view.utilities.Accessibility;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -9,28 +10,27 @@ import org.jfree.data.time.*;
 import javax.swing.*;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Graph extends JPanel {
-
+  private double scale;
   private TimeSeriesCollection dataset = new TimeSeriesCollection();
   private XYPlot plot;
-
+  private JFreeChart xylineChart;
   private ArrayList<TimeSeries> series = new ArrayList<TimeSeries>();
 
   public Graph(String chartTitle, String xAxisLabel, String yAxisLabel) {
-
-    JFreeChart xylineChart =
+    xylineChart =
         ChartFactory.createTimeSeriesChart(
             chartTitle, xAxisLabel, yAxisLabel, dataset, false, true, false);
 
     // Creates a panel for the chart
     ChartPanel chartPanel = new ChartPanel(xylineChart);
     this.plot = xylineChart.getXYPlot();
-
     this.setLayout(new GridLayout(1, 1));
     this.add(chartPanel);
 
@@ -85,4 +85,25 @@ public class Graph extends JPanel {
       dataset.addSeries(series);
     }
   }
+  
+  
+  public void applyFontScale() {
+    // TODO: Replace with themeing code
+    Font title = xylineChart.getTitle().getFont();
+    xylineChart.getTitle().setFont(Accessibility.scaleFont(title, scale));
+    Font xTitle = plot.getDomainAxis().getLabelFont();
+    plot.getDomainAxis().setLabelFont(Accessibility.scaleFont(xTitle, scale));
+    Font xTicker = plot.getDomainAxis().getTickLabelFont();
+    plot.getDomainAxis().setTickLabelFont(Accessibility.scaleFont(xTicker, scale));
+    Font yTitle = plot.getRangeAxis().getLabelFont();
+    plot.getRangeAxis().setLabelFont(Accessibility.scaleFont(yTitle, scale));
+    Font yTicker = plot.getDomainAxis().getTickLabelFont();
+    plot.getRangeAxis().setTickLabelFont(Accessibility.scaleFont(yTicker, scale));
+  }
+  
+  public void setFontScale(double scale) {
+    this.scale = scale;
+    applyFontScale();
+  }
+  
 }
