@@ -3,7 +3,8 @@ package group33.seg.view.structure;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import javax.swing.JToolBar;
-import group33.seg.controller.events.GraphHandler;
+import group33.seg.controller.DashboardController;
+import group33.seg.controller.handlers.GraphHandler;
 import group33.seg.view.output.Graph;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -11,17 +12,26 @@ import javax.swing.JLabel;
 public class GraphPanel extends JPanel {
   private static final long serialVersionUID = 6541885932864334941L;
 
-  private GraphHandler graphHandler;
+  private DashboardController controller;
+  
   private Graph graph;
 
   private JButton btnPointer;
   private JButton btnPan;
   private JButton btnZoom;
 
-  /** Create the panel. */
-  public GraphPanel() {
-
+  /**
+   * Create the panel.
+   * 
+   * @param controller Controller for this view object
+   */
+  public GraphPanel(DashboardController controller) {
+    this.controller = controller;
+    
     initGUI();
+    
+    // Update controllers knowledge of graph to update in view
+    controller.graphs.setGraph(graph);
   }
 
   private void initGUI() {
@@ -49,8 +59,4 @@ public class GraphPanel extends JPanel {
     tlbControls.setVisible(false);
   }
 
-  public void setGraphHandler(GraphHandler graphHandler) {
-    this.graphHandler = graphHandler;
-    graphHandler.setGraph(graph);
-  }
 }

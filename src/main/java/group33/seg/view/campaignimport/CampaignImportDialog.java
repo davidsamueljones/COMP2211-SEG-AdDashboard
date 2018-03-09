@@ -17,31 +17,29 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
-import group33.seg.controller.events.CampaignImportHandler;
+import group33.seg.controller.DashboardController;
+import group33.seg.controller.handlers.CampaignImportHandler;
 import group33.seg.model.configs.CampaignConfig;
 import group33.seg.view.utilities.Accessibility;
 
 public class CampaignImportDialog extends JDialog {
   private static final long serialVersionUID = -8083386947121993055L;
 
-  /** Import Handler used by Dialog */
-  private CampaignImportHandler importHandler;
+  private DashboardController controller;
 
   private JButton btnImportNew;
   private JButton btnClose;
 
-  /** Create the dialog. */
-  public CampaignImportDialog() {
-    this(null);
-  }
-
   /**
-   * Create the dialog with a given parent window.
+   * Create the dialog.
    *
    * @param parent Window to treat as a parent
+   * @param controller Controller for this view object
    */
-  public CampaignImportDialog(Window parent) {
+  public CampaignImportDialog(Window parent, DashboardController controller) {
     super(parent, "Campaign Importer");
+
+    this.controller = controller;
 
     // Determine positioning
     Point loc;
@@ -52,9 +50,6 @@ public class CampaignImportDialog extends JDialog {
     } else {
       loc = new Point(100, 100);
     }
-
-    // Initialise Handlers
-    importHandler = new CampaignImportHandler();
 
     // Initialise GUI
     initGUI();
@@ -121,10 +116,9 @@ public class CampaignImportDialog extends JDialog {
     pnlNavigation.add(btnClose, gbc_btnClose);
 
     // Controls Panel
-    CampaignImportPanel pnlCampaignImport = new CampaignImportPanel(importHandler);
+    CampaignImportPanel pnlCampaignImport = new CampaignImportPanel(controller);
     pnlCampaignImport.setBorder(
-        BorderFactory.createCompoundBorder(
-            BorderFactory.createBevelBorder(BevelBorder.LOWERED),
+        BorderFactory.createCompoundBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED),
             BorderFactory.createEmptyBorder(5, 5, 5, 5)));
     GridBagConstraints gbc_pnlCampaignImport = new GridBagConstraints();
     gbc_pnlCampaignImport.fill = GridBagConstraints.BOTH;
@@ -138,39 +132,31 @@ public class CampaignImportDialog extends JDialog {
     // ************************************************************************************
 
     // Close the dialog if an import is not ongoing
-    btnClose.addActionListener(
-        new ActionListener() {
+    btnClose.addActionListener(new ActionListener() {
 
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            closeDialog();
-          }
-        });
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        closeDialog();
+      }
+    });
 
     // Listen for any other window close event
-    addWindowListener(
-        new WindowAdapter() {
-          public void windowClosing(WindowEvent e) {
-            closeDialog();
-          }
-        });
+    addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent e) {
+        closeDialog();
+      }
+    });
   }
 
   private void closeDialog() {
-    if (importHandler.isOngoing()) {
-      JOptionPane.showMessageDialog(
-          null,
+    if (controller.imports.isOngoing()) {
+      JOptionPane.showMessageDialog(null,
           "Cannot close whilst importing, either cancel or wait for import to finish.",
-          "Close Error",
-          JOptionPane.ERROR_MESSAGE);
+          "Close Error", JOptionPane.ERROR_MESSAGE);
     } else {
       setVisible(false);
       dispose();
     }
   }
 
-  /** @return Get the configuration of the last imported campaign, null if none or failure */
-  public CampaignConfig getImportedCampaign() {
-    return importHandler.getImportedCampaign();
-  }
 }

@@ -1,27 +1,27 @@
-package group33.seg.controller.persistence;
+package group33.seg.controller.handlers;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.prefs.BackingStoreException;
+import java.util.prefs.NodeChangeListener;
+import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 import group33.seg.view.utilities.Accessibility;
 
-public class DashboardSettings {
+public class SettingsHandler {
   public static final String CUR_CAMPAIGN = "cur_campaign";
   public static final String FONT_SCALING = "font_scaling";
 
-  /** Static access to preferences */
-  public static final DashboardSettings cur = new DashboardSettings();
-
   public final Preferences prefs;
 
-  public DashboardSettings() {
+  public SettingsHandler() {
     boolean newPrefs = false;
 
     try {
       // Check whether to initialise defaults
       newPrefs = !Preferences.userRoot().nodeExists(this.getClass().getName());
     } catch (BackingStoreException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      // Do nothing, leaving settings unchanged
     }
 
     // Get preference node
@@ -33,7 +33,7 @@ public class DashboardSettings {
     }
   }
 
-  public void clearPreferences() {
+  public void clear() {
     try {
       prefs.removeNode();
     } catch (BackingStoreException e) {
@@ -46,4 +46,5 @@ public class DashboardSettings {
     prefs.remove(CUR_CAMPAIGN);
     prefs.putDouble(FONT_SCALING, Accessibility.DEFAULT_SCALING);
   }
+
 }

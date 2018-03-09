@@ -1,6 +1,8 @@
-package group33.seg.controller.events;
+package group33.seg.controller.handlers;
 
 import java.util.Set;
+import group33.seg.controller.DashboardController;
+import group33.seg.controller.DashboardController.DashboardMVC;
 import group33.seg.controller.database.DatabaseConfig;
 import group33.seg.controller.database.DatabaseConnection;
 import group33.seg.controller.database.tables.ClickLogTable;
@@ -11,6 +13,7 @@ import group33.seg.controller.database.tables.ServerLogTable;
 import group33.seg.controller.utilities.ErrorBuilder;
 import group33.seg.controller.utilities.ProgressListener;
 import group33.seg.model.configs.CampaignConfig;
+import group33.seg.model.configs.CampaignImportConfig;
 import java.io.FileNotFoundException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -23,6 +26,9 @@ import java.util.HashSet;
  * database connection. Use listening infrastructure to communicate any external updates.
  */
 public class CampaignImportHandler {
+  /** MVC model that sub-controller has knowledge of */
+  private final DashboardMVC mvc;
+
   /** Thread safety lock for importedCampaign */
   private final Object lockImportedCampaign = new Object();
 
@@ -40,6 +46,15 @@ public class CampaignImportHandler {
 
   /** Error builder to store errors pertaining to the last import */
   private ErrorBuilder eb = new ErrorBuilder();
+
+  /**
+   * Instantiate an import handler.
+   * 
+   * @param mvc Knowledge of full system as model view controller
+   */
+  public CampaignImportHandler(DashboardMVC mvc) {
+    this.mvc = mvc;
+  }
 
   /**
    * Import CSV files into tables using the current database connection. The imported data will
@@ -223,12 +238,16 @@ public class CampaignImportHandler {
     return false;
   }
 
-  /** @return Whether an import is ongoing */
+  /** 
+   * @return Whether an import is ongoing 
+   */
   public boolean isOngoing() {
     return (threadImport != null && threadImport.isAlive());
   }
 
-  /** @return Current progress level */
+  /** 
+   * @return Current progress level 
+   */
   public int getProgress() {
     return progress;
   }
@@ -255,24 +274,32 @@ public class CampaignImportHandler {
     }
   }
 
-  /** @param progressListener Progress listener to start sending alerts to */
+  /** 
+   * @param progressListener Progress listener to start sending alerts to 
+   */
   public void addProgressListener(ProgressListener progressListener) {
     progressListeners.add(progressListener);
   }
 
-  /** @param progressListener Progress listener to no longer alert */
+  /** 
+   * @param progressListener Progress listener to no longer alert 
+   */
   public void removeProgressListener(ProgressListener progressListener) {
     progressListeners.remove(progressListener);
   }
 
-  /** Helper function to alert all listeners that an import has started. */
+  /** 
+   * Helper function to alert all listeners that an import has started. 
+   */
   private void alertStart() {
     for (ProgressListener listener : progressListeners) {
       listener.start();
     }
   }
 
-  /** Helper function to alert all listeners that an import has been cancelled. */
+  /** 
+   * Helper function to alert all listeners that an import has been cancelled. 
+   */
   private void alertCancelled() {
     for (ProgressListener listener : progressListeners) {
       listener.cancelled();
@@ -302,54 +329,18 @@ public class CampaignImportHandler {
     }
   }
 
-  /** @return Error builder pertaining to last import */
+  /**
+   * @return Error builder pertaining to last import
+   */
   public ErrorBuilder getErrors() {
     return eb;
   }
 
-  /** Configuration used to configure a campaign import. */
-  public class CampaignImportConfig {
-    public final String campaignName;
-    public final String pathClickLog;
-    public final String pathImpressionLog;
-    public final String pathServerLog;
-
-    /**
-     * Initialise a campaign import configuration.
-     *
-     * @param campaignName Name for campaign
-     * @param pathClickLog Path to click log csv
-     * @param pathImpressionLog Path to impression log csv
-     * @param pathServerLog Path to server log csv
-     */
-    public CampaignImportConfig(String campaignName, String pathClickLog, String pathImpressionLog,
-        String pathServerLog) {
-      this.campaignName = campaignName;
-      this.pathClickLog = pathClickLog;
-      this.pathImpressionLog = pathImpressionLog;
-      this.pathServerLog = pathServerLog;
-    }
-
-    public ErrorBuilder validate() {
-      ErrorBuilder eb = new ErrorBuilder();
-      if (campaignName.isEmpty()) {
-        eb.addError("Campaign name is empty");
-      }
-      if (!Files.exists(Paths.get(pathClickLog))) {
-        eb.addError("Click log path does not exist");
-      }
-      if (!Files.exists(Paths.get(pathImpressionLog))) {
-        eb.addError("Impression log path does not exist");
-      }
-      if (!Files.exists(Paths.get(pathServerLog))) {
-        eb.addError("Server log path does not exist");
-      }
-      return eb;
-    }
-  }
-
-  /** Unchecked exception for importing failures */
+  /**
+   * Unchecked exception for importing failures
+   */
   public class ImportException extends RuntimeException {
     private static final long serialVersionUID = -3767480036135704125L;
   }
+  
 }

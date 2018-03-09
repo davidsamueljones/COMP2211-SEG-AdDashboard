@@ -9,18 +9,21 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JTextField;
-import group33.seg.controller.events.GraphHandler;
-import group33.seg.controller.events.StatisticHandler;
+import group33.seg.controller.DashboardController;
+import group33.seg.controller.handlers.GraphHandler;
+import group33.seg.controller.handlers.StatisticHandler;
 
 public class StatisticViewer extends JPanel {
-  private StatisticHandler statisticHandler;
+  private DashboardController controller;
 
   private JButton btnGenerateImpressions;
   private JTextField txtTotalImpressions;
 
-  /** Create the panel. */
-  public StatisticViewer() {
-
+  /**
+   * Create the panel.
+   */
+  public StatisticViewer(DashboardController controller) {
+    this.controller = controller;
     initGUI();
   }
 
@@ -59,16 +62,12 @@ public class StatisticViewer extends JPanel {
     add(txtTotalImpressions, gbc_txtTotalImpressions);
     txtTotalImpressions.setColumns(10);
 
-    btnGenerateImpressions.addActionListener(
-        new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            txtTotalImpressions.setText(String.valueOf(statisticHandler.impressionRequest()));
-          }
-        });
+    btnGenerateImpressions.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        txtTotalImpressions.setText(String.valueOf(controller.statistics.impressionRequest()));
+      }
+    });
   }
 
-  public void setStatisticHandler(StatisticHandler statisticHandler) {
-    this.statisticHandler = statisticHandler;
-  }
 }

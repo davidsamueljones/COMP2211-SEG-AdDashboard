@@ -1,5 +1,9 @@
-package group33.seg.controller.database;
+package group33.seg.controller.handlers;
 
+import group33.seg.controller.DashboardController.DashboardMVC;
+import group33.seg.controller.database.DatabaseConfig;
+import group33.seg.controller.database.DatabaseConnection;
+import group33.seg.controller.database.DatabaseQueryFactory;
 import group33.seg.controller.types.MetricQueryResponse;
 import group33.seg.model.configs.CampaignConfig;
 import group33.seg.model.configs.MetricQuery;
@@ -14,10 +18,23 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class Database {
+public class DatabaseHandler {
+  
+  /** MVC model that sub-controller has knowledge of */
+  private final DashboardMVC mvc;
+  
   private Map<DatabaseConnection, Boolean> connections = new ConcurrentHashMap<>();
 
   private Map<MetricQuery, MetricQueryResponse> cachedResponses = new ConcurrentHashMap<>();
+  
+  /**
+   * Instantiate a database handler.
+   * 
+   * @param mvc Knowledge of full system as model view controller
+   */
+  public DatabaseHandler(DashboardMVC mvc) {
+    this.mvc = mvc;
+  }
 
   /** Number of query threads */
   private final ExecutorService pool = Executors.newFixedThreadPool(10);

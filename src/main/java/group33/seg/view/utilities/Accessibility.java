@@ -100,10 +100,22 @@ public class Accessibility {
   public static Font scaleFont(Font font, double scale) {
     return font.deriveFont((float) (font.getSize() * scale));
   }
+  
+  /**
+   * Get a a font reduced by a given scaling factor.
+   *
+   * @param font Font to create a scaled version of
+   * @param scale Scaling factor to reverse
+   * @return Scaled font using original font properties
+   */
+  public static Font unscaleFont(Font font, double currentScaling) {
+    return Accessibility.scaleFont(font, 1 / currentScaling);
+  }
 
   /** Enumeration of valid appearance options. */
   public enum Appearance {
     PLATFORM,
     NIMBUS
   }
+  
 }

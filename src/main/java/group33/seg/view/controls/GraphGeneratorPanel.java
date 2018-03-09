@@ -1,7 +1,9 @@
 package group33.seg.view.controls;
 
 import javax.swing.JPanel;
-import group33.seg.controller.events.GraphHandler;
+import javax.swing.JTextField;
+import group33.seg.controller.DashboardController;
+import group33.seg.controller.handlers.GraphHandler;
 import group33.seg.model.types.Interval;
 import java.awt.GridBagLayout;
 import javax.swing.JLabel;
@@ -13,14 +15,18 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 
 public class GraphGeneratorPanel extends JPanel {
-  private GraphHandler graphHandler;
+  private DashboardController controller;;
   private JButton btnGenerateImpressionGraph;
   private JButton btnClearGraph;
 
-  /** Create the panel. */
-  public GraphGeneratorPanel() {
+  /**
+   * Create the panel.
+   */
+  public GraphGeneratorPanel(DashboardController controller) {
+    this.controller = controller;
     initGUI();
   }
+
 
   private void initGUI() {
     GridBagLayout gridBagLayout = new GridBagLayout();
@@ -59,22 +65,20 @@ public class GraphGeneratorPanel extends JPanel {
     gbc_btnGenerateImpressionGraph.gridy = 1;
     add(btnGenerateImpressionGraph, gbc_btnGenerateImpressionGraph);
 
-    btnGenerateImpressionGraph.addActionListener(
-        new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            graphHandler.generateImpressionGraph((Interval) cboInterval.getSelectedItem());
-          }
-        });
+    btnGenerateImpressionGraph.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        controller.graphs.generateImpressionGraph((Interval) cboInterval.getSelectedItem());
+      }
+    });
 
     btnClearGraph = new JButton("Clear Graph");
-    btnClearGraph.addActionListener(
-        new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            graphHandler.clearGraph();
-          }
-        });
+    btnClearGraph.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        controller.graphs.clearGraph();
+      }
+    });
     GridBagConstraints gbc_btnClearGraph = new GridBagConstraints();
     gbc_btnClearGraph.fill = GridBagConstraints.HORIZONTAL;
     gbc_btnClearGraph.gridwidth = 2;
@@ -83,7 +87,4 @@ public class GraphGeneratorPanel extends JPanel {
     add(btnClearGraph, gbc_btnClearGraph);
   }
 
-  public void setGraphHandler(GraphHandler graphHandler) {
-    this.graphHandler = graphHandler;
-  }
 }

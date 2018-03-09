@@ -8,26 +8,36 @@ import javax.swing.SwingConstants;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
+import javax.sound.midi.ControllerEventListener;
 import javax.swing.JLabel;
 import java.awt.Insets;
+import java.util.prefs.Preferences;
 import org.jdesktop.swingx.JXTitledSeparator;
-import group33.seg.controller.persistence.DashboardSettings;
+import group33.seg.controller.DashboardController;
+import group33.seg.controller.handlers.SettingsHandler;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 
 public class FontSizePanel extends JPanel {
   private static final long serialVersionUID = -2100128317422188877L;
 
-  JSlider sldFontSize;
-  JXTitledSeparator lblCurrentFontSize;
+  private DashboardController controller;
+
+  private JSlider sldFontSize;
+  private JXTitledSeparator lblCurrentFontSize;
 
   private Font unscaledFont;
-  private final double currentScaling =
-      DashboardSettings.cur.prefs.getDouble(
-          DashboardSettings.FONT_SCALING, Accessibility.DEFAULT_SCALING);
+  private final double currentScaling;
 
-  /** Create the panel. */
-  public FontSizePanel() {
+  /**
+   * Create the panel.
+   * 
+   * @param controller Controller for this view object
+   */
+  public FontSizePanel(DashboardController controller) {
+    this.controller = controller;
+    this.currentScaling = controller.settings.prefs.getDouble(SettingsHandler.FONT_SCALING,
+        Accessibility.DEFAULT_SCALING);
     initGUI();
   }
 
@@ -47,7 +57,6 @@ public class FontSizePanel extends JPanel {
     sldFontSize.setValue((int) (currentScaling * 100));
     sldFontSize.setOrientation(JScrollBar.HORIZONTAL);
     sldFontSize.setPreferredSize(new Dimension(300, sldFontSize.getPreferredSize().height));
-    // sldFontSize.setMinimumSize(new Dimension(300, sldFontSize.getPreferredSize().height));
     GridBagConstraints gbc_sldFontSize = new GridBagConstraints();
     gbc_sldFontSize.fill = GridBagConstraints.HORIZONTAL;
     gbc_sldFontSize.gridwidth = 3;
@@ -96,7 +105,7 @@ public class FontSizePanel extends JPanel {
 
     // Get unscaled font
     Font initial = lblCurrentFontSize.getFont();
-    unscaledFont = Accessibility.scaleFont(initial, 1 / currentScaling);
+    unscaledFont = Accessibility.unscaleFont(initial, currentScaling);
     lblCurrentFontSize.setFont(unscaledFont);
 
     // Determine preferred size of displayed font size
@@ -108,12 +117,12 @@ public class FontSizePanel extends JPanel {
     setFontScale(currentScaling);
     lblCurrentFontSize.setPreferredSize(preferred);
 
-    sldFontSize.addChangeListener(
-        new ChangeListener() {
-          public void stateChanged(ChangeEvent e) {
-            setFontScale(getSliderScale());
-          }
-        });
+    sldFontSize.addChangeListener(new ChangeListener() {
+      @Override
+      public void stateChanged(ChangeEvent e) {
+        setFontScale(getSliderScale());
+      }
+    });
   }
 
   private void setFontScale(double scale) {
@@ -127,10 +136,11 @@ public class FontSizePanel extends JPanel {
   }
 
   public void updateSettingsScale() {
-    DashboardSettings.cur.prefs.putDouble(DashboardSettings.FONT_SCALING, getSliderScale());
+    controller.display.setUIFontScaling(getSliderScale());
   }
 
   private double getSliderScale() {
     return sldFontSize.getValue() / (double) 100;
   }
+
 }

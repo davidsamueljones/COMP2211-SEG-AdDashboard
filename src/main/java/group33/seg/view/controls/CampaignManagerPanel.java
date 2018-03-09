@@ -1,7 +1,8 @@
 package group33.seg.view.controls;
 
 import javax.swing.JPanel;
-import group33.seg.controller.persistence.DashboardSettings;
+import group33.seg.controller.DashboardController;
+import group33.seg.controller.handlers.SettingsHandler;
 import group33.seg.model.configs.CampaignConfig;
 import group33.seg.view.campaignimport.CampaignImportDialog;
 import group33.seg.view.utilities.Accessibility;
@@ -19,14 +20,21 @@ import javax.swing.SwingUtilities;
 public class CampaignManagerPanel extends JPanel {
   private static final long serialVersionUID = 8138446932363054396L;
 
-  JTextField txtCurrentCampaign;
+  private DashboardController controller;
+
+  private JTextField txtCurrentCampaign;
   private JButton btnChangeCampaign;
 
-  /** Create the panel. */
-  public CampaignManagerPanel() {
+  /**
+   * Create the panel.
+   * 
+   * @param controller Controller for this view object
+   */
+  public CampaignManagerPanel(DashboardController controller) {
+    this.controller = controller;
 
     initGUI();
-    setCurrentCampaign(DashboardSettings.cur.prefs.get(DashboardSettings.CUR_CAMPAIGN, null));
+    setCurrentCampaign(controller.settings.prefs.get(SettingsHandler.CUR_CAMPAIGN, null));
   }
 
   private void initGUI() {
@@ -72,30 +80,29 @@ public class CampaignManagerPanel extends JPanel {
     // ************************************************************************************
 
     // Load import campaign dialog and update view
-    btnChangeCampaign.addActionListener(
-        new ActionListener() {
+    btnChangeCampaign.addActionListener(new ActionListener() {
 
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            // Use current panels form as parent
-            Window frmCurrent = SwingUtilities.getWindowAncestor(CampaignManagerPanel.this);
-            // Show dialog
-            CampaignImportDialog cid = new CampaignImportDialog(frmCurrent);
-            cid.setModal(true);
-            cid.setVisible(true);
-            // Handle dialog result TODO: Determine if cancelled before import or not
-            CampaignConfig campaign = cid.getImportedCampaign();
-            if (campaign != null) {
-              setCurrentCampaign(campaign.getName());
-            }
-          }
-        });
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        // Use current panels form as parent
+        Window frmCurrent = SwingUtilities.getWindowAncestor(CampaignManagerPanel.this);
+        // Show dialog
+        CampaignImportDialog cid = new CampaignImportDialog(frmCurrent, controller);
+        cid.setModal(true);
+        cid.setVisible(true);
+        // Handle dialog result TODO: Determine if cancelled before import or not
+        CampaignConfig campaign = controller.imports.getImportedCampaign();
+        if (campaign != null) {
+          setCurrentCampaign(campaign.getName());
+        }
+      }
+    });
   }
 
   // TODO: Change to use campaign
   private void setCurrentCampaign(String campaign) {
     if (campaign != null) {
-      DashboardSettings.cur.prefs.put(DashboardSettings.CUR_CAMPAIGN, campaign);
+      controller.settings.prefs.put(SettingsHandler.CUR_CAMPAIGN, campaign);
       txtCurrentCampaign.setText(campaign);
     } else {
       txtCurrentCampaign.setText("No Campaign Set");
