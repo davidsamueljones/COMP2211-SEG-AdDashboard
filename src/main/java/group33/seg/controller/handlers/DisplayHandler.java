@@ -103,15 +103,13 @@ public class DisplayHandler {
     fontScalingOutdated = true;
   }
   
-  
   public void setUIFontScaling(double newScaling) {
     double currentScaling = mvc.controller.settings.prefs.getDouble(
             SettingsHandler.FONT_SCALING, Accessibility.DEFAULT_SCALING);
 
-    if (currentScaling != newScaling) {     
+    if (currentScaling != newScaling) {
       mvc.controller.settings.prefs.putDouble(SettingsHandler.FONT_SCALING, newScaling);
-      // Make scaling adjustment from current (not direct set)
-      applyUIFontScaling(newScaling / currentScaling);
+      fontScalingOutdated = true;
     }
     
   }

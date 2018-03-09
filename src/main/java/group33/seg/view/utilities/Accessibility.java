@@ -15,6 +15,8 @@ public class Accessibility {
   public static final double MIN_SCALING = 0.5;
   public static final double DEFAULT_SCALING = 1;
 
+  public static double currentScaling = DEFAULT_SCALING;
+  
   /**
    * Set system wide look and feel options using an appearance selection. OS specific rules/flags
    * should be applied here.
@@ -52,11 +54,16 @@ public class Accessibility {
   /**
    * Scale the font sizes of all objects contained in the UIManager (that utilise a font). This will
    * only affect objects instantiated in the future and hence should be executed before any
-   * component generation.
+   * component generation. Scalings apply to defaults and do not stack.
    *
-   * @param scale Scaling factor to apply
+   * @param scale Scaling factor to apply to default
    */
   public static void scaleDefaultUIFontSize(double scale) {
+    // Normalise scale, tracking new
+    double temp = currentScaling;
+    currentScaling = scale;
+    scale /= temp;
+    
     // Iterate over all UI object types
     Set<Object> objects = UIManager.getLookAndFeelDefaults().keySet();
     for (Object object : objects) {
