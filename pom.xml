@@ -21,7 +21,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>group33.seg.view.structure.DashboardFrame</mainClass>
+                            <mainClass>group33.seg.main.Main</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
