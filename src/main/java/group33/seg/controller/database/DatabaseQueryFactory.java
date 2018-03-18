@@ -19,14 +19,22 @@ public class DatabaseQueryFactory {
   private static void createGraphQueries() {
     graphQueries.put(
         Metric.IMPRESSIONS,
-        "SELECT date_trunc('<interval>', date) as xaxis, count(*) as yaxis from impression_log group by xaxis;");
+        "SELECT date_trunc('<interval>', date) AS xaxis, count(*) AS yaxis FROM impression_log GROUP BY xaxis;");
+
+    graphQueries.put(
+        Metric.CONVERSIONS,
+        "SELECT date_trunc('<interval>', date) AS xaxis, count(*) AS yaxis FROM server_log WHERE conversion = true;");
   }
 
   /** Define and store templates for every statistic metric type. */
   private static void createStatisticTemplates() {
     statisticQueries.put(
         Metric.IMPRESSIONS,
-        "SELECT 'all' as xaxis, count(*) as yaxis from impression_log group by xaxis;");
+        "SELECT 'all' AS xaxis, count(*) AS yaxis FROM impression_log GROUP BY xaxis;");
+
+    statisticQueries.put(
+        Metric.CONVERSIONS,
+        "SELECT 'all' AS xaxis, count(*) AS yaxis FROM server_log WHERE conversion = true;");
   }
 
   /**
