@@ -23,11 +23,20 @@ public class DatabaseQueryFactory {
 
     graphQueries.put(
         Metric.CONVERSIONS,
-        "SELECT date_trunc('<interval>', date) AS xaxis, sum(conversion::int) AS yaxis FROM server_log GROUP BY xaxis;");
+        "SELECT date_trunc('<interval>', entry_date) AS xaxis, sum(conversion::int) AS yaxis FROM server_log GROUP BY xaxis;");
 
-    statisticQueries.put(
+    graphQueries.put(
         Metric.TOTAL_COST,
         "SELECT date_trunc('<interval>', date) AS xaxis, sum(impression_cost) AS yaxis FROM impression_log GROUP BY xaxis;");
+
+    graphQueries.put(
+        Metric.CPA,
+        "SELECT conversions.xaxis AS xaxis, cost.yaxis / NULLIF(conversions.yaxis,0) AS yaxis
+        FROM
+        (SELECT date_trunc('<interval>', entry_date) AS xaxis, sum(conversion::int) AS yaxis FROM server_log GROUP BY xaxis) AS conversions
+        INNER JOIN
+        (SELECT date_trunc('<interval>', date) AS xaxis, sum(impression_cost) AS yaxis FROM impression_log GROUP BY xaxis) AS cost
+        ON conversions.xaxis = cost.xaxis;");
   }
 
   /** Define and store templates for every statistic metric type. */
@@ -43,6 +52,13 @@ public class DatabaseQueryFactory {
     statisticQueries.put(
         Metric.TOTAL_COST,
         "SELECT 'all' AS xaxis, sum(impression_cost) AS yaxis FROM impression_log;");
+
+    statisticQueries.put(
+        Metric.CPA,
+        "SELECT 'all' AS xaxis, sum(impression_cost) / sum(conversion::int) AS yaxis
+        FROM impression_log AS il
+        LEFT JOIN server_log AS sl
+        ON il.ctid = sl.ctid;");
   }
 
   /**
