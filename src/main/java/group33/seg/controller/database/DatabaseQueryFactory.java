@@ -23,7 +23,7 @@ public class DatabaseQueryFactory {
 
     graphQueries.put(
         Metric.CONVERSIONS,
-        "SELECT date_trunc('<interval>', date) AS xaxis, count(*) AS yaxis FROM server_log WHERE conversion;");
+        "SELECT date_trunc('<interval>', date) AS xaxis, count(*) AS yaxis FROM server_log WHERE conversion GROUP BY xaxis;");
 
     statisticQueries.put(
         Metric.TOTAL_COST,
@@ -34,7 +34,7 @@ public class DatabaseQueryFactory {
   private static void createStatisticTemplates() {
     statisticQueries.put(
         Metric.IMPRESSIONS,
-        "SELECT 'all' AS xaxis, count(*) AS yaxis FROM impression_log GROUP BY xaxis;");
+        "SELECT 'all' AS xaxis, count(*) AS yaxis FROM impression_log;");
 
     statisticQueries.put(
         Metric.CONVERSIONS,
@@ -42,7 +42,7 @@ public class DatabaseQueryFactory {
 
     statisticQueries.put(
         Metric.TOTAL_COST,
-        "SELECT 'all' AS xaxis, sum(impression_cost) AS yaxis FROM impression_log GROUP BY xaxis;");
+        "SELECT 'all' AS xaxis, sum(impression_cost) AS yaxis FROM impression_log;");
   }
 
   /**
