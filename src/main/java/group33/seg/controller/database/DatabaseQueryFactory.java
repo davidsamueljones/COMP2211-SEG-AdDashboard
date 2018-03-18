@@ -24,6 +24,10 @@ public class DatabaseQueryFactory {
     graphQueries.put(
         Metric.CONVERSIONS,
         "SELECT date_trunc('<interval>', date) AS xaxis, count(*) AS yaxis FROM server_log WHERE conversion = true;");
+
+    statisticQueries.put(
+        Metric.TOTAL_COST,
+        "SELECT date_trunc('<interval>', date) AS xaxis, sum(impression_cost) AS yaxis FROM impression_log GROUP BY xaxis;");
   }
 
   /** Define and store templates for every statistic metric type. */
@@ -35,6 +39,10 @@ public class DatabaseQueryFactory {
     statisticQueries.put(
         Metric.CONVERSIONS,
         "SELECT 'all' AS xaxis, count(*) AS yaxis FROM server_log WHERE conversion = true;");
+
+    statisticQueries.put(
+        Metric.TOTAL_COST,
+        "SELECT 'all' AS xaxis, sum(impression_cost) AS yaxis FROM impression_log GROUP BY xaxis;");
   }
 
   /**
