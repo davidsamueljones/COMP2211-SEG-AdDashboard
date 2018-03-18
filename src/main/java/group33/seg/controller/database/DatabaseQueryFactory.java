@@ -23,7 +23,7 @@ public class DatabaseQueryFactory {
 
     graphQueries.put(
         Metric.CONVERSIONS,
-        "SELECT date_trunc('<interval>', date) AS xaxis, count(*) AS yaxis FROM server_log WHERE conversion GROUP BY xaxis;");
+        "SELECT date_trunc('<interval>', date) AS xaxis, sum(conversion::int) AS yaxis FROM server_log GROUP BY xaxis;");
 
     statisticQueries.put(
         Metric.TOTAL_COST,
@@ -38,7 +38,7 @@ public class DatabaseQueryFactory {
 
     statisticQueries.put(
         Metric.CONVERSIONS,
-        "SELECT 'all' AS xaxis, count(*) AS yaxis FROM server_log WHERE conversion;");
+        "SELECT 'all' AS xaxis, sum(conversion::int) AS yaxis FROM server_log;");
 
     statisticQueries.put(
         Metric.TOTAL_COST,
