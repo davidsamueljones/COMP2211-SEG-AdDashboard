@@ -23,7 +23,7 @@ public class DatabaseQueryFactory {
 
     graphQueries.put(
         Metric.CONVERSIONS,
-        "SELECT date_trunc('<interval>', date) AS xaxis, count(*) AS yaxis FROM server_log WHERE conversion = true;");
+        "SELECT date_trunc('<interval>', date) AS xaxis, count(*) AS yaxis FROM server_log WHERE conversion;");
 
     statisticQueries.put(
         Metric.TOTAL_COST,
@@ -38,7 +38,7 @@ public class DatabaseQueryFactory {
 
     statisticQueries.put(
         Metric.CONVERSIONS,
-        "SELECT 'all' AS xaxis, count(*) AS yaxis FROM server_log WHERE conversion = true;");
+        "SELECT 'all' AS xaxis, count(*) AS yaxis FROM server_log WHERE conversion;");
 
     statisticQueries.put(
         Metric.TOTAL_COST,
