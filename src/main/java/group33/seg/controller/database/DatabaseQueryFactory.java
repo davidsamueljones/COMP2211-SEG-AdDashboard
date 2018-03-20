@@ -44,6 +44,15 @@ public class DatabaseQueryFactory {
     graphQueries.put(
         Metric.CPC,
         "SELECT date_trunc('<interval>', date) AS xaxis, avg(click_cost) AS yaxis FROM click_log GROUP BY xaxis ORDER BY xaxis;");
+
+    graphQueries.put(
+        Metric.CPM,
+        new StringBuilder().append("SELECT impression_cost.xaxis AS xaxis, (click_cost.click_cost + impression_cost.impression_cost) / impressions * 1000 AS yaxis")
+        .append("FROM")
+        .append("(SELECT date_trunc('<interval>', date) AS xaxis, sum(impression_cost) AS impression_cost, count(*) AS impressions FROM impression_log GROUP BY xaxis) AS impression_cost")
+        .append("FULL OUTER JOIN")
+        .append("(SELECT date_trunc('<interval>', date) AS xaxis2, sum(click_cost) AS click_cost FROM click_log GROUP BY xaxis2) AS click_cost")
+        .append("ON impression_cost.xaxis = click_cost.xaxis2;").toString());
   }
 
   /** Define and store templates for every statistic metric type. */
