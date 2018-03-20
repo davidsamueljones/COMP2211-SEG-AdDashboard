@@ -23,7 +23,7 @@ public class DatabaseQueryFactory {
 
     graphQueries.put(
         Metric.CONVERSIONS,
-        "SELECT date_trunc('<interval>', entry_date) AS xaxis, sum(conversion::int) AS yaxis FROM server_log GROUP BY xaxis;");
+        "SELECT date_trunc('<interval>', entry_date) AS xaxis, sum(conversion::int) AS yaxis FROM server_log GROUP BY xaxis ORDER BY xaxis;");
 
     graphQueries.put(
         Metric.TOTAL_COST,
@@ -31,12 +31,19 @@ public class DatabaseQueryFactory {
 
     graphQueries.put(
         Metric.CPA,
-        new StringBuilder().append("SELECT conversions.xaxis AS xaxis, cost.yaxis / NULLIF(conversions.yaxis,0) AS yaxis")
+        new StringBuilder().append("SELECT conversions.xaxis AS xaxis, (cost.impression_cost + cost.click_cost) / NULLIF(conversions.yaxis,0) AS yaxis")
         .append("FROM")
-        .append("(SELECT date_trunc('<interval>', entry_date) AS xaxis, sum(conversion::int) AS yaxis FROM server_log GROUP BY xaxis) AS conversions")
+        .append("(SELECT date_trunc('hour', entry_date) AS xaxis, sum(conversion::int) AS yaxis FROM server_log GROUP BY xaxis) AS conversions")
         .append("INNER JOIN")
-        .append("(SELECT date_trunc('<interval>', date) AS xaxis, sum(impression_cost) AS yaxis FROM impression_log GROUP BY xaxis) AS cost")
-        .append("ON conversions.xaxis = cost.xaxis;").toString());
+        .append("((SELECT date_trunc('hour', date) AS xaxis, sum(impression_cost) AS impression_cost FROM impression_log GROUP BY xaxis) AS impression_cost")
+        .append("INNER JOIN")
+        .append("(SELECT date_trunc('hour', date) AS xaxis2, sum(click_cost) AS click_cost FROM click_log GROUP BY xaxis2) AS click_cost")
+        .append("ON impression_cost.xaxis = click_cost.xaxis2) AS cost")
+        .append("ON conversions.xaxis = cost.xaxis").toString());
+
+    graphQueries.put(
+        Metric.CPC,
+        "SELECT date_trunc('<interval>', date) AS xaxis, avg(click_cost) AS yaxis FROM click_log GROUP BY xaxis ORDER BY xaxis;");
   }
 
   /** Define and store templates for every statistic metric type. */
@@ -55,10 +62,18 @@ public class DatabaseQueryFactory {
 
     statisticQueries.put(
         Metric.CPA,
-        new StringBuilder().append("SELECT 'all' AS xaxis, sum(impression_cost) / sum(conversion::int) AS yaxis")
+        new StringBuilder().append("SELECT 'all' AS xaxis, (sum(impression_cost) + sum(click_cost)) / sum(conversion::int) AS yaxis")
         .append("FROM impression_log AS il")
-        .append("LEFT JOIN server_log AS sl")
+        .append("FULL OUTER JOIN")
+        .append("click_log AS cl")
+        .append("ON il.ctid = cl.ctid")
+        .append("FULL OUTER JOIN")
+        .append("server_log AS sl")
         .append("ON il.ctid = sl.ctid;").toString());
+
+    statisticQueries.put(
+        Metric.CPC,
+        "SELECT 'all' AS xaxis, avg(click_cost) AS yaxis FROM click_log;");
   }
 
   /**
