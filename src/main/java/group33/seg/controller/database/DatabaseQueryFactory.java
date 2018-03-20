@@ -34,9 +34,9 @@ public class DatabaseQueryFactory {
         new StringBuilder().append("SELECT conversions.xaxis AS xaxis, (cost.impression_cost + cost.click_cost) / NULLIF(conversions.yaxis,0) AS yaxis")
         .append("FROM")
         .append("(SELECT date_trunc('hour', entry_date) AS xaxis, sum(conversion::int) AS yaxis FROM server_log GROUP BY xaxis) AS conversions")
-        .append("INNER JOIN")
+        .append("FULL OUTER JOIN")
         .append("((SELECT date_trunc('hour', date) AS xaxis, sum(impression_cost) AS impression_cost FROM impression_log GROUP BY xaxis) AS impression_cost")
-        .append("INNER JOIN")
+        .append("FULL OUTER JOIN")
         .append("(SELECT date_trunc('hour', date) AS xaxis2, sum(click_cost) AS click_cost FROM click_log GROUP BY xaxis2) AS click_cost")
         .append("ON impression_cost.xaxis = click_cost.xaxis2) AS cost")
         .append("ON conversions.xaxis = cost.xaxis").toString());
