@@ -23,7 +23,7 @@ public class StatisticHandler {
   
   public Integer impressionRequest() {
     DatabaseHandler db = new DatabaseHandler(null); // TODO: REMOVE ASAP
-    MetricQuery queryImpressions = new MetricQuery(null, Metric.IMPRESSIONS, null, null);
+    MetricQuery queryImpressions = new MetricQuery(Metric.IMPRESSIONS, null, null);
     MetricQueryResponse resImpressions = db.getQueryResponse(queryImpressions);
     if (!resImpressions.getResult().isEmpty()) {
       return resImpressions.getResult().get(0).value;

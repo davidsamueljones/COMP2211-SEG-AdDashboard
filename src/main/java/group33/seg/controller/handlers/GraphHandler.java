@@ -31,7 +31,7 @@ public class GraphHandler {
 
   public void generateImpressionGraph(Interval interval) {
     DatabaseHandler db = new DatabaseHandler(null); // TODO: REMOVE ASAP
-    MetricQuery query = new MetricQuery(null, Metric.IMPRESSIONS, interval, null);
+    MetricQuery query = new MetricQuery(Metric.IMPRESSIONS, interval, null);
     List<Pair<String, Integer>> data = db.getQueryResponse(query).getResult();
 
     graph.addLine(data);
