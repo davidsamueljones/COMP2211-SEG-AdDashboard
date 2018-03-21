@@ -175,6 +175,7 @@ public class CampaignImportHandler {
     // Ensure table is created
     try {
       table.createTable(conn);
+      table.createIndexes(conn);
     } catch (SQLException e) {
       eb.addError("Database error, consult your administrator");
       throw new ImportException();
