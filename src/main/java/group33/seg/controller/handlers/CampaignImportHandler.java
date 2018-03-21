@@ -130,7 +130,10 @@ public class CampaignImportHandler {
           importTable(serverLogTable, conn, importConfig.pathServerLog, 0.33);
 
           // Create campaign configuration (storing as last import)
-          setImportedCampaign(new CampaignConfig(importConfig.campaignName));
+          // TODO: Get ID from database
+          CampaignConfig config = new CampaignConfig();
+          config.name = importConfig.campaignName;
+          setImportedCampaign(config);
           // Alert listeners that import is finished
           alertFinished(true);
           finished = true;

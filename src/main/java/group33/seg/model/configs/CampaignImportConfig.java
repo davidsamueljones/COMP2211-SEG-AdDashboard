@@ -29,6 +29,12 @@ public class CampaignImportConfig {
     this.pathServerLog = pathServerLog;
   }
 
+  /**
+   * Do local validation of configuration. For import configurations this
+   * includes validation of import paths.
+   * 
+   * @return Any issues with validation
+   */
   public ErrorBuilder validate() {
     ErrorBuilder eb = new ErrorBuilder();
     if (campaignName.isEmpty()) {
@@ -45,4 +51,5 @@ public class CampaignImportConfig {
     }
     return eb;
   }
+  
 }
