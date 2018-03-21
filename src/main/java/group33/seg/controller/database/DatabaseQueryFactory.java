@@ -56,7 +56,11 @@ public class DatabaseQueryFactory {
 
     graphQueries.put(
         Metric.CLICKS,
-        "SELECT date_trunc('hour', date) AS xaxis, count(*) AS yaxis FROM click_log GROUP BY xaxis;");
+        "SELECT date_trunc('<interval>', date) AS xaxis, count(*) AS yaxis FROM click_log GROUP BY xaxis;");
+
+    graphQueries.put(
+        Metric.UNIQUES,
+        "SELECT date_trunc('<interval>', date) AS xaxis, count(DISTINCT user_id) AS yaxis FROM click_log GROUP BY xaxis;");
   }
 
   /** Define and store templates for every statistic metric type. */
