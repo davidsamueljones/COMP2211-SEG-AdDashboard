@@ -61,6 +61,15 @@ public class DatabaseQueryFactory {
     graphQueries.put(
         Metric.UNIQUES,
         "SELECT date_trunc('<interval>', date) AS xaxis, count(DISTINCT user_id) AS yaxis FROM click_log GROUP BY xaxis;");
+
+    graphQueries.put(
+        Metric.CTR,
+        new StringBuilder().append("SELECT il.xaxis AS xaxis, (cl.count::float) / (il.count::float) AS yaxis")
+        .append(" FROM")
+        .append(" (SELECT date_trunc('<interval>', date) AS xaxis, count(*) AS count FROM impression_log GROUP BY xaxis) AS il")
+        .append(" LEFT JOIN")
+        .append(" (SELECT date_trunc('<interval>', date) AS xaxis, count(*) AS count FROM click_log GROUP BY xaxis) AS cl")
+        .append(" ON il.xaxis = cl.xaxis;").toString());
   }
 
   /** Define and store templates for every statistic metric type. */
