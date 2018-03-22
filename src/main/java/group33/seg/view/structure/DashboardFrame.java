@@ -49,10 +49,16 @@ public class DashboardFrame extends JFrame {
     ControlsPanel pnlControls = new ControlsPanel(controller);
     pnlControls.setMinimumSize(pnlControls.getPreferredSize());
     sppMain.setLeftComponent(pnlControls);
+    
+    // Split RHS into graph and table panels
+    JSplitPane sppView = new JSplitPane();
+    sppView.setResizeWeight(0.65);
+    sppView.setOrientation(JSplitPane.VERTICAL_SPLIT);
+    sppView.setOneTouchExpandable(true);
+    sppMain.setRightComponent(sppView);
 
-    // Use RHS as single panel
     GraphPanel pnlGraph = new GraphPanel(controller);
-    sppMain.setRightComponent(pnlGraph);
+    sppView.setLeftComponent(pnlGraph);
 
   }
   
