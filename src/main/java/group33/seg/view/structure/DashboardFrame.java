@@ -5,10 +5,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import group33.seg.controller.DashboardController;
-import group33.seg.controller.handlers.DisplayHandler;
-import group33.seg.controller.handlers.GraphHandler;
-import group33.seg.controller.handlers.StatisticHandler;
-import group33.seg.view.DashboardView;
 import javax.swing.JSplitPane;
 import javax.swing.JMenuBar;
 
@@ -59,6 +55,9 @@ public class DashboardFrame extends JFrame {
 
     GraphPanel pnlGraph = new GraphPanel(controller);
     sppView.setLeftComponent(pnlGraph);
+    
+    StatisticsPanel pnlStatistics = new StatisticsPanel(controller);
+    sppView.setRightComponent(pnlStatistics);
 
   }
   
