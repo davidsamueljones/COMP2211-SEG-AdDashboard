@@ -1,4 +1,4 @@
-package group33.seg.view.utilities;
+package group33.seg.view.preferences;
 
 import javax.swing.JPanel;
 import java.awt.GridBagLayout;
@@ -15,6 +15,7 @@ import java.util.prefs.Preferences;
 import org.jdesktop.swingx.JXTitledSeparator;
 import group33.seg.controller.DashboardController;
 import group33.seg.controller.handlers.SettingsHandler;
+import group33.seg.view.utilities.Accessibility;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 

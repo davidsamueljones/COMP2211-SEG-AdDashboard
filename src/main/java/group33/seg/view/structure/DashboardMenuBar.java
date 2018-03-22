@@ -16,8 +16,8 @@ import group33.seg.controller.handlers.SettingsHandler;
 import group33.seg.model.configs.CampaignConfig;
 import group33.seg.view.campaignimport.CampaignImportDialog;
 import group33.seg.view.controls.CampaignManagerPanel;
+import group33.seg.view.preferences.PreferencesDialog;
 import group33.seg.view.utilities.Accessibility;
-import group33.seg.view.utilities.PreferencesDialog;
 
 public class DashboardMenuBar extends JMenuBar {
   private static final long serialVersionUID = 7553179515259733852L;
