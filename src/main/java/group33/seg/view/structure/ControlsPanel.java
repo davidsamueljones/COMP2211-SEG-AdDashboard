@@ -107,6 +107,7 @@ public class ControlsPanel extends JScrollPane {
     this.setViewportView(pnlControls);
     this.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
     this.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+    this.getVerticalScrollBar().setUnitIncrement(10);
   }
   
   private void applyCollapsiblePanelStyle(CollapsiblePanel colpnl) {
