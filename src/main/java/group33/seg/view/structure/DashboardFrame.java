@@ -56,7 +56,7 @@ public class DashboardFrame extends JFrame {
     GraphPanel pnlGraph = new GraphPanel(controller);
     sppView.setLeftComponent(pnlGraph);
     
-    StatisticsPanel pnlStatistics = new StatisticsPanel(controller);
+    WorkspaceStatisticsPanel pnlStatistics = new WorkspaceStatisticsPanel(controller);
     sppView.setRightComponent(pnlStatistics);
 
   }
