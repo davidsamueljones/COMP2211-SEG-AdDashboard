@@ -18,6 +18,13 @@ public class ImpressionLogTable extends DatabaseTable {
   }
 
   @Override
+  public void createIndexes(Connection c) throws SQLException {
+    Statement st = c.createStatement();
+    st.execute("CREATE INDEX CONCURRENTLY IF NOT EXISTS il_date ON impression_log(date);");
+    st.close();
+  }
+
+  @Override
   public void prepareInsert(PreparedStatement ps, String[] params) throws SQLException {
     if (params.length != 7) {
       throw new IllegalArgumentException("Incorrect number of parameters for prepared statement");

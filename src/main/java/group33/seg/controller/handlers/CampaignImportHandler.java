@@ -60,7 +60,7 @@ public class CampaignImportHandler {
   /**
    * Import CSV files into tables using the current database connection. The imported data will
    * replace any data residing in the database. Progress listeners are kept updated on status of
-   * import. As the import is handled on another thread, {@link cancelImport} must be used to
+   * import. As the import is handled on another thread, {@link CampaignImportHandler#cancelImport} must be used to
    * interrupt an ongoing import. Any errors are built up using the instances internal ErrorBuilder.
    *
    * @param importConfig Campaign information required for import.
@@ -137,7 +137,9 @@ public class CampaignImportHandler {
         importTable(serverLogTable, conn, importConfig.pathServerLog, sizeServerLog/totalSize);
 
         // Create campaign configuration (storing as last import)
-        setImportedCampaign(new CampaignConfig(importConfig.campaignName));
+        CampaignConfig c = new CampaignConfig();
+        c.name = importConfig.campaignName;
+        setImportedCampaign(c);
         // Alert listeners that import is finished
         alertFinished(true);
         finished = true;
@@ -178,6 +180,7 @@ public class CampaignImportHandler {
     // Ensure table is created
     try {
       table.createTable(conn);
+      table.createIndexes(conn);
     } catch (SQLException e) {
       eb.addError("Database error, consult your administrator");
       throw new ImportException();
