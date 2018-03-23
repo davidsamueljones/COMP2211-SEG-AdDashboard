@@ -40,31 +40,24 @@ public class GraphManagerPanel extends JPanel {
   private void initGUI() {
     GridBagLayout gridBagLayout = new GridBagLayout();
     gridBagLayout.columnWeights = new double[] {1.0};
-    gridBagLayout.rowWeights = new double[] {0.0, 1.0};
+    gridBagLayout.rowWeights = new double[] {1.0, 0.0};
     setLayout(gridBagLayout);
 
-    btnNew = new JButton("New");
-    GridBagConstraints gbc_btnNew = new GridBagConstraints();
-    gbc_btnNew.insets = new Insets(0, 0, 5, 0);
-    gbc_btnNew.fill = GridBagConstraints.HORIZONTAL;
-    gbc_btnNew.gridx = 0;
-    gbc_btnNew.gridy = 0;
-    add(btnNew, gbc_btnNew);
-    
+    mdl_lstGraphs = new DefaultListModel<>();
+
     JPanel pnlExisting = new JPanel();
-    pnlExisting.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Existing Graphs", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+    pnlExisting.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null),
+        "Existing Graphs", TitledBorder.LEADING, TitledBorder.TOP, null, null));
     GridBagConstraints gbc_pnlExisting = new GridBagConstraints();
-    gbc_pnlExisting.insets = new Insets(0, 5, 5, 5);
+    gbc_pnlExisting.insets = new Insets(0, 0, 5, 0);
     gbc_pnlExisting.fill = GridBagConstraints.BOTH;
     gbc_pnlExisting.gridx = 0;
-    gbc_pnlExisting.gridy = 1;
+    gbc_pnlExisting.gridy = 0;
     add(pnlExisting, gbc_pnlExisting);
     GridBagLayout gbl_pnlExisting = new GridBagLayout();
-    gbl_pnlExisting.columnWeights = new double[]{1.0, 1.0};
+    gbl_pnlExisting.columnWeights = new double[] {1.0, 1.0};
     gbl_pnlExisting.rowWeights = new double[] {1.0, 0.0, 0.0};
     pnlExisting.setLayout(gbl_pnlExisting);
-    
-    mdl_lstGraphs = new DefaultListModel<>();
     JList<GraphConfig> lstGraphs = new JList<>(mdl_lstGraphs);
     JScrollPane scrGraphs = new JScrollPane(lstGraphs);
     scrGraphs.setPreferredSize(new Dimension(0, scrGraphs.getPreferredSize().height));
@@ -101,6 +94,13 @@ public class GraphManagerPanel extends JPanel {
     gbc_btnLoad.gridx = 0;
     gbc_btnLoad.gridy = 2;
     pnlExisting.add(btnLoad, gbc_btnLoad);
+
+    btnNew = new JButton("New Graph");
+    GridBagConstraints gbc_btnNew = new GridBagConstraints();
+    gbc_btnNew.fill = GridBagConstraints.HORIZONTAL;
+    gbc_btnNew.gridx = 0;
+    gbc_btnNew.gridy = 1;
+    add(btnNew, gbc_btnNew);
   }
 
 }
