@@ -29,25 +29,22 @@ public class DisplayHandler {
    * If the view does not have a dashboard instance, create a new one and show it.
    */
   public void openDashboard() {
-    EventQueue.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        if (mvc.view.getDashboard() != null) {
-          System.err.println("Dashboard already open");
-          return;
-        }
+    EventQueue.invokeLater(() -> {
+      if (mvc.view.getDashboard() != null) {
+        System.err.println("Dashboard already open");
+        return;
+      }
 
-        try {
-          // Ensure view settings are enforced
-          applyViewSettings();
-          // Create and show a new dashboard
-          DashboardFrame newDashboard = new DashboardFrame(mvc.controller);
-          mvc.view.setDashboard(newDashboard);
-          newDashboard.setVisible(true);
-          fontScalingOutdated = false;
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
+      try {
+        // Ensure view settings are enforced
+        applyViewSettings();
+        // Create and show a new dashboard
+        DashboardFrame newDashboard = new DashboardFrame(mvc.controller);
+        mvc.view.setDashboard(newDashboard);
+        newDashboard.setVisible(true);
+        fontScalingOutdated = false;
+      } catch (Exception e) {
+        e.printStackTrace();
       }
     });
   }
@@ -58,18 +55,15 @@ public class DisplayHandler {
   public void closeDashboard() {
     DashboardFrame dashboard = mvc.view.getDashboard();
 
-    EventQueue.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        if (dashboard == null) {
-          System.err.println("Dashboard not open");
-          return;
-        }
-
-        dashboard.setVisible(false);
-        dashboard.dispose();
-        mvc.view.setDashboard(null);
+    EventQueue.invokeLater(() -> {
+      if (dashboard == null) {
+        System.err.println("Dashboard not open");
+        return;
       }
+
+      dashboard.setVisible(false);
+      dashboard.dispose();
+      mvc.view.setDashboard(null);
     });
 
   }

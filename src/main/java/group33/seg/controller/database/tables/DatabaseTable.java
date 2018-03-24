@@ -15,6 +15,12 @@ public abstract class DatabaseTable {
   public abstract void createTable(Connection c) throws SQLException;
 
   /**
+   * Creates required indexes for that table
+   *
+   * @param c Database connection
+   */
+  public abstract void createIndexes(Connection c) throws SQLException;
+  /**
    * Convert a set of string parameters to their correct format and create a prepared statement.
    *
    * @param ps Prepared statement to apply params to

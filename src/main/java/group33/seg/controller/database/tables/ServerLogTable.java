@@ -17,6 +17,13 @@ public class ServerLogTable extends DatabaseTable {
     st.close();
   }
 
+  @Override
+  public void createIndexes(Connection c) throws SQLException {
+    Statement st = c.createStatement();
+    st.execute("CREATE INDEX CONCURRENTLY IF NOT EXISTS sl_date ON server_log(entry_date);");
+    st.close();
+  }
+
 
   @Override
   public void prepareInsert(PreparedStatement ps, String[] params) throws SQLException {
@@ -33,7 +40,7 @@ public class ServerLogTable extends DatabaseTable {
       ps.setTimestamp(3,   Timestamp.valueOf(params[2])); 
     }   
     ps.setInt(4, Integer.valueOf(params[3])); // pages_viewed
-    ps.setBoolean(5, Boolean.valueOf(params[4])); // Conversion
+    ps.setBoolean(5, params[4].equals("Yes")); // Conversion
   }
 
   @Override

@@ -2,11 +2,11 @@ package group33.seg.controller.utilities;
 
 public interface ProgressListener {
 
-  public default void start() {};
+  default void start() {}
 
-  public default void progressUpdate(int progress) {};
+  default void progressUpdate(int progress) {}
 
-  public default void finish(boolean success) {};
+  default void finish(boolean success) {}
 
-  public default void cancelled() {};
+  default void cancelled() {}
 }

@@ -15,6 +15,13 @@ public class ClickLogTable extends DatabaseTable {
         + "user_id BIGINT NOT NULL, click_cost REAL)");
     st.close();
   }
+
+  @Override
+  public void createIndexes(Connection c) throws SQLException {
+    Statement st = c.createStatement();
+    st.execute("CREATE INDEX CONCURRENTLY IF NOT EXISTS cl_date ON click_log(date);");
+    st.close();
+  }
   
   @Override
   public void prepareInsert(PreparedStatement ps, String[] params) throws SQLException {
