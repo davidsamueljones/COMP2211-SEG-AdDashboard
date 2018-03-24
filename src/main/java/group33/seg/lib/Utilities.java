@@ -5,7 +5,7 @@ public class Utilities {
   
   /**
    * Split string into words using any underscores and capitalise the first letter of each word to
-   * make title case. TODO: Move generic utility somewhere more appropriate
+   * make title case.
    * 
    * @param string String to convert to sentence case
    * @return Formatted string
