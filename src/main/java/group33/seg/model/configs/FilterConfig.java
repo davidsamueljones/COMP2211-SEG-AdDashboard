@@ -3,6 +3,7 @@ package group33.seg.model.configs;
 import java.util.Date;
 import java.util.Set;
 import org.apache.commons.text.WordUtils;
+import group33.seg.lib.Utilities;
 import group33.seg.model.utilities.Range;
 
 /**
@@ -60,7 +61,7 @@ public class FilterConfig {
 
     @Override
     public String toString() {
-      return getTitleCase(super.toString());
+      return Utilities.getTitleCase(super.toString());
     }
   }
 
@@ -72,7 +73,7 @@ public class FilterConfig {
 
     @Override
     public String toString() {
-      return getTitleCase(super.toString());
+      return Utilities.getTitleCase(super.toString());
     }
   }
 
@@ -84,21 +85,10 @@ public class FilterConfig {
 
     @Override
     public String toString() {
-      return getTitleCase(super.toString());
+      return Utilities.getTitleCase(super.toString());
     }
   }
 
-  /**
-   * Split string into words using any underscores and capitalise the first letter of each word to
-   * make title case. TODO: Move generic utility somewhere more appropriate
-   * 
-   * @param string String to convert to sentence case
-   * @return Formatted string
-   */
-  private static String getTitleCase(String string) {
-    string = string.replace("_", " ");
-    string = string.toLowerCase();
-    return WordUtils.capitalize(string);
-  }
+
 
 }
