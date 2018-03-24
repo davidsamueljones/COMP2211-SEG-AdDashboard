@@ -2,6 +2,7 @@ package group33.seg.model.configs;
 
 import java.util.Date;
 import java.util.Set;
+import org.apache.commons.text.WordUtils;
 import group33.seg.model.utilities.Range;
 
 /**
@@ -32,20 +33,72 @@ public class FilterConfig {
   public Range<Date> dates;
 
 
-  enum Age {
-    LESS_25, BETWEEN_25_34, BETWEEN_35_44, BETWEEN_45_54, MORE_54;
+  /**
+   * Enumeration of possible ages for filtering.
+   */
+  public enum Age {
+    LESS_25("< 25"), BETWEEN_25_34("25-34"), BETWEEN_35_44("35-44"), BETWEEN_45_54(
+        "45-54"), MORE_54("> 54");
+
+    private String string;
+
+    Age(String string) {
+      this.string = string;
+    }
+
+    @Override
+    public String toString() {
+      return string;
+    }
   }
 
-  enum Income {
-    LOW, MEDIUM, HIGH,
-  }
-
-  enum Context {
-    SHOPPING, BLOG, SOCIAL_MEDIA, NEWS,
-  }
-
-  enum Gender {
+  /**
+   * Enumeration of possible genders for filtering.
+   */
+  public enum Gender {
     MALE, FEMALE;
+
+    @Override
+    public String toString() {
+      return getTitleCase(super.toString());
+    }
+  }
+
+  /**
+   * Enumeration of possible incomes for filtering.
+   */
+  public enum Income {
+    LOW, MEDIUM, HIGH;
+
+    @Override
+    public String toString() {
+      return getTitleCase(super.toString());
+    }
+  }
+
+  /**
+   * Enumeration of possible contexts for filtering.
+   */
+  public enum Context {
+    SHOPPING, BLOG, SOCIAL_MEDIA, NEWS;
+
+    @Override
+    public String toString() {
+      return getTitleCase(super.toString());
+    }
+  }
+
+  /**
+   * Split string into words using any underscores and capitalise the first letter of each word to
+   * make title case. TODO: Move generic utility somewhere more appropriate
+   * 
+   * @param string String to convert to sentence case
+   * @return Formatted string
+   */
+  private static String getTitleCase(String string) {
+    string = string.replace("_", " ");
+    string = string.toLowerCase();
+    return WordUtils.capitalize(string);
   }
 
 }
