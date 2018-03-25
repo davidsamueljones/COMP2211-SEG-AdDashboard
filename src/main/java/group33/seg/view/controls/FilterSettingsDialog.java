@@ -16,7 +16,7 @@ import java.awt.event.ActionEvent;
 public class FilterSettingsDialog extends JDialog {
   private static final long serialVersionUID = -6395675568821301037L;
 
-  private FilterConfig filter = null;
+  private FilterConfig filter;
 
   /**
    * Create the dialog.
@@ -24,8 +24,19 @@ public class FilterSettingsDialog extends JDialog {
    * @param parent Window to treat as a parent
    */
   public FilterSettingsDialog(Window parent) {
+    this(parent, null);
+  }
+  
+  /**
+   * Create the dialog.
+   *
+   * @param parent Window to treat as a parent
+   * @param filter Filter to load into dialog
+   */
+  public FilterSettingsDialog(Window parent, FilterConfig filter) {
     super(parent, "Filter Modifier");
-
+    this.filter = filter;
+    
     // Initialise GUI
     initGUI();
 
@@ -47,7 +58,7 @@ public class FilterSettingsDialog extends JDialog {
     pnlMain.setLayout(gbl_pnlMain);
     setContentPane(pnlMain);
 
-    FilterSettingsPanel pnlFilterSettings = new FilterSettingsPanel();
+    FilterSettingsPanel pnlFilterSettings = new FilterSettingsPanel(filter);
     GridBagConstraints gbc_pnlFilterSettings = new GridBagConstraints();
     gbc_pnlFilterSettings.gridwidth = 2;
     gbc_pnlFilterSettings.insets = new Insets(5, 5, 5, 5);

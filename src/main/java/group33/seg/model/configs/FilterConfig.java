@@ -1,8 +1,9 @@
 package group33.seg.model.configs;
 
+import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Set;
-import org.apache.commons.text.WordUtils;
 import group33.seg.lib.Utilities;
 import group33.seg.model.utilities.Range;
 
@@ -13,26 +14,76 @@ import group33.seg.model.utilities.Range;
 public class FilterConfig {
 
   /** Campaign to target (should not be null but target all if is) */
-  public CampaignConfig campaign;
+  public CampaignConfig campaign = null;
 
   /** Age Filter (filtered to those in set, ignored if null, acknowledge if empty) */
-  public Set<Age> ages;
-
-  /** Income Filter (filtered to those in set, ignored if null, acknowledge if empty) */
-  public Set<Income> incomes;
-
-  /** Context Filter (filtered to those in set, ignored if null, acknowledge if empty) */
-  public Set<Context> contexts;
+  public Collection<Age> ages = null;
 
   /** Gender Filter (filtered to those in set, ignored if null, acknowledge if empty) */
-  public Set<Gender> genders;
+  public Collection<Gender> genders = null;
+
+  /** Income Filter (filtered to those in set, ignored if null, acknowledge if empty) */
+  public Collection<Income> incomes = null;
+
+  /** Context Filter (filtered to those in set, ignored if null, acknowledge if empty) */
+  public Collection<Context> contexts = null;
 
   /**
    * Date Filter (ignore full range if set to null or if not null but individual limit is null
    * ignore the respective individual limit)
    */
-  public Range<Date> dates;
+  public Range<Date> dates = null;
 
+  /**
+   * Create a human readable string representing the filter configuration.
+   * 
+   * @return Filter as generated text
+   */
+  public String inText() {
+    StringBuilder filter = new StringBuilder();
+    // Fields
+    filter.append(generateFieldText("Ages", ages));
+    filter.append(generateFieldText("Genders", genders));
+    filter.append(generateFieldText("Incomes", incomes));
+    filter.append(generateFieldText("Contexts", contexts));
+    // Dates
+    if (dates != null) {
+      filter.append(dates.toString());
+    }
+    // Check if any filter rules have been found
+    if (filter.length() == 0) {
+      filter.append("* No Filter *");
+    }
+    return filter.toString();
+  }
+
+  /**
+   * Generate a human readable string representing a single fields filter configuration.
+   * 
+   * @param field Field values correspond to
+   * @param values Values to filter by, no filter if null
+   * @return Filter as generated text
+   */
+  private String generateFieldText(String field, Collection<?> values) {
+    StringBuilder filter = new StringBuilder();
+    // No filter to apply if null
+    if (values != null) {
+      // Add list title
+      filter.append(field);
+      // Make string list of input values
+      filter.append(" [");
+      Iterator<?> itrValues = values.iterator();
+      while (itrValues.hasNext()) {
+        Object value = itrValues.next();
+        filter.append(value.toString());
+        if (itrValues.hasNext()) {
+          filter.append(", ");
+        }
+      }
+      filter.append("]\n");
+    }
+    return filter.toString();
+  }
 
   /**
    * Enumeration of possible ages for filtering.
@@ -88,7 +139,5 @@ public class FilterConfig {
       return Utilities.getTitleCase(super.toString());
     }
   }
-
-
 
 }

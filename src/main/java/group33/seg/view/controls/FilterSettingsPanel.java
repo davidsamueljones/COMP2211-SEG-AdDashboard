@@ -8,6 +8,7 @@ import javax.swing.border.BevelBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 import org.jdesktop.swingx.JXDatePicker;
 import org.scijava.swing.checkboxtree.CheckBoxNodeData;
 import org.scijava.swing.checkboxtree.CheckBoxNodeEditor;
@@ -18,11 +19,13 @@ import java.awt.Component;
 import java.awt.GridBagConstraints;
 import javax.swing.JLabel;
 import java.awt.Insets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -36,7 +39,7 @@ public class FilterSettingsPanel extends JPanel {
 
   private JTree tree;
   private JXDatePicker dtpStartDate;
-  JXDatePicker dtpEndDate;
+  private JXDatePicker dtpEndDate;
 
   // Associations of filtering types to corresponding tree nodes
   private Map<FilterConfig.Age, DefaultMutableTreeNode> ages;
@@ -53,6 +56,10 @@ public class FilterSettingsPanel extends JPanel {
   public FilterSettingsPanel(FilterConfig filter) {
     initGUI();
     initialiseTree(tree, filter);
+    if (filter != null && filter.dates != null) {
+      dtpStartDate.setDate(filter.dates.min);
+      dtpEndDate.setDate(filter.dates.max);
+    }
   }
 
   private void initGUI() {
@@ -146,7 +153,7 @@ public class FilterSettingsPanel extends JPanel {
     ages = addTreeCheckboxes(tnAge, FilterConfig.Age.class,
         Arrays.asList(FilterConfig.Age.values()), filter.ages);
     root.add(tnAge);
-
+    
     DefaultMutableTreeNode tnGender = new DefaultMutableTreeNode("Gender");
     genders = addTreeCheckboxes(tnGender, FilterConfig.Gender.class,
         Arrays.asList(FilterConfig.Gender.values()), filter.genders);
@@ -165,7 +172,13 @@ public class FilterSettingsPanel extends JPanel {
     // Create tree model
     DefaultTreeModel treeModel = new DefaultTreeModel(root);
     tree.setModel(treeModel);
+    // Fully expand tree
     tree.expandRow(0);
+    tree.expandPath(new TreePath(tnAge.getPath()));
+    tree.expandPath(new TreePath(tnGender.getPath()));
+    tree.expandPath(new TreePath(tnIncome.getPath()));
+    tree.expandPath(new TreePath(tnContext.getPath()));
+    // Set tree properties
     tree.setRootVisible(false);
     tree.setShowsRootHandles(true);
     tree.setCellEditor(new CheckBoxNodeEditor(tree));
@@ -250,7 +263,10 @@ public class FilterSettingsPanel extends JPanel {
     // Process dates
     Date start = dtpStartDate.getDate();
     Date end = dtpEndDate.getDate();
-    filter.dates = new Range<>(start, end);
+    if (start != null || end != null) {
+      filter.dates = new Range<>(start, end);
+    }
+    
     return filter;
   }
 
@@ -261,9 +277,9 @@ public class FilterSettingsPanel extends JPanel {
    * @param mappings Values and their corresponding nodes
    * @return Values which have a node that is checked, null if all nodes are checked
    */
-  private <T> Set<T> processFilterCategory(Class<T> type, Map<T, DefaultMutableTreeNode> mappings) {
+  private <T> Collection<T> processFilterCategory(Class<T> type, Map<T, DefaultMutableTreeNode> mappings) {
     // Create a set of checked values in the filter
-    Set<T> inFilter = new HashSet<>();
+    Collection<T> inFilter = new ArrayList<>();
     for (Entry<T, DefaultMutableTreeNode> entry : mappings.entrySet()) {
       if (isNodeChecked(entry.getValue())) {
         inFilter.add(entry.getKey());

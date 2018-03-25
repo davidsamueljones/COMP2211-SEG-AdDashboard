@@ -18,4 +18,11 @@ public class Range<T> {
     this.max = max;
   }
   
+  @Override
+  public String toString() {
+    String strMin = (min == null ? "[]" : min.toString());
+    String strMax = (max == null ? "[]" : max.toString());
+    return String.format("%s - %s", strMin, strMax);
+  }
+  
 }
