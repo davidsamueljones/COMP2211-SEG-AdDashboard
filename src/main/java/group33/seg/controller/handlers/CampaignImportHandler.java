@@ -1,25 +1,17 @@
 package group33.seg.controller.handlers;
 
 import java.io.File;
+import java.sql.*;
 import java.util.Set;
-import group33.seg.controller.DashboardController;
 import group33.seg.controller.DashboardController.DashboardMVC;
 import group33.seg.controller.database.DatabaseConfig;
 import group33.seg.controller.database.DatabaseConnection;
-import group33.seg.controller.database.tables.ClickLogTable;
-import group33.seg.controller.database.tables.DatabaseTable;
-import group33.seg.controller.database.tables.DatabaseTableImporter;
-import group33.seg.controller.database.tables.ImpressionLogTable;
-import group33.seg.controller.database.tables.ServerLogTable;
+import group33.seg.controller.database.tables.*;
 import group33.seg.controller.utilities.ErrorBuilder;
 import group33.seg.controller.utilities.ProgressListener;
 import group33.seg.model.configs.CampaignConfig;
 import group33.seg.model.configs.CampaignImportConfig;
 import java.io.FileNotFoundException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.HashSet;
 
 /**
@@ -93,9 +85,12 @@ public class CampaignImportHandler {
       ClickLogTable clickLogTable = new ClickLogTable();
       ImpressionLogTable impressionLogTable = new ImpressionLogTable();
       ServerLogTable serverLogTable = new ServerLogTable();
+      CampaignTable campaignTable = new CampaignTable();
 
       // Use a single connection for the entire transaction
       Connection conn = null;
+
+      int campaignID = -1;
 
       try {
         // TODO: TEMPORARY - Use interface database connection, error handling needs better
@@ -111,6 +106,14 @@ public class CampaignImportHandler {
           impressionLogTable.clearTable(conn);
           serverLogTable.clearTable(conn);
 
+            campaignTable.createTable(conn);
+            PreparedStatement ps = conn.prepareStatement(campaignTable.getInsertTemplate(), Statement.RETURN_GENERATED_KEYS);
+            campaignTable.prepareInsert(ps, new String[] {importConfig.campaignName}, -1);
+            ps.executeUpdate();
+            ResultSet rs = ps.getGeneratedKeys();
+            if(rs.next()) {
+                campaignID = rs.getInt(1);
+            }
         } catch (FileNotFoundException e) {
           eb.addError("Database configuration 'config.properties' not found");
           throw new ImportException();
@@ -120,6 +123,7 @@ public class CampaignImportHandler {
           throw new ImportException();
         }
 
+
         // Use the file size to determine the proportions when importing
         double sizeImpressionLog = new File(importConfig.pathImpressionLog).length();
         double sizeClickLog = new File(importConfig.pathClickLog).length();
@@ -127,14 +131,14 @@ public class CampaignImportHandler {
         double totalSize = sizeImpressionLog + sizeClickLog + sizeServerLog;
 
         // Import click log
-        importTable(clickLogTable, conn, importConfig.pathClickLog, sizeClickLog/totalSize);
+        importTable(clickLogTable, conn, importConfig.pathClickLog, sizeClickLog/totalSize, campaignID);
 
         // Import impression log and ensure enums are set
         ImpressionLogTable.initEnums(conn);
-        importTable(impressionLogTable, conn, importConfig.pathImpressionLog, sizeImpressionLog/totalSize);
+        importTable(impressionLogTable, conn, importConfig.pathImpressionLog, sizeImpressionLog/totalSize, campaignID);
 
         // Import server log
-        importTable(serverLogTable, conn, importConfig.pathServerLog, sizeServerLog/totalSize);
+        importTable(serverLogTable, conn, importConfig.pathServerLog, sizeServerLog/totalSize, campaignID);
 
         // Create campaign configuration (storing as last import)
         CampaignConfig c = new CampaignConfig();
@@ -144,6 +148,7 @@ public class CampaignImportHandler {
         alertFinished(true);
         finished = true;
       } catch (InterruptedException e) {
+        e.printStackTrace();
         alertCancelled();
       } catch (ImportException e) {
         alertFinished(false);
@@ -172,7 +177,7 @@ public class CampaignImportHandler {
    * @param path Path to file to import
    * @param weight Weighting for progress updates
    */
-  private void importTable(DatabaseTable table, Connection conn, String path, double weight)
+  private void importTable(DatabaseTable table, Connection conn, String path, double weight, int campaignID)
       throws InterruptedException {
     DatabaseTableImporter importer = new DatabaseTableImporter();
     final int curProgress = progress;
@@ -182,6 +187,7 @@ public class CampaignImportHandler {
       table.createTable(conn);
       table.createIndexes(conn);
     } catch (SQLException e) {
+      e.printStackTrace();
       eb.addError("Database error, consult your administrator");
       throw new ImportException();
     }
@@ -189,7 +195,7 @@ public class CampaignImportHandler {
     // Create worker thread handling import
     Thread worker = new Thread(() -> {
       try {
-        importer.importCSV(table, conn, path);
+        importer.importCSV(table, conn, path, campaignID);
       } catch (Exception e) {
         e.printStackTrace();
         // do nothing, let main import thread handle

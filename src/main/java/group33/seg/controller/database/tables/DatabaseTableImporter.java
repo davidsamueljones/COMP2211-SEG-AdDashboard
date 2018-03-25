@@ -25,7 +25,7 @@ public class DatabaseTableImporter {
    * @param path Path to CSV file
    * @throws InterruptedException 
    */
-  public void importCSV(DatabaseTable table, Connection c, String path) throws SQLException {
+  public void importCSV(DatabaseTable table, Connection c, String path, int campaignID) throws SQLException {
     // Find total number of lines for progress feedback (remove header)
     int availableRecords = DashboardUtilities.countFileLines(path) - 1;
     successful = false;
@@ -44,7 +44,7 @@ public class DatabaseTableImporter {
       for (int i = 1; i <= availableRecords; i++) {
         // Create insert statement
         record = reader.readNext();
-        table.prepareInsert(ps, record);
+        table.prepareInsert(ps, record, campaignID);
         // Handle batching
         ps.addBatch();
         count += 1;

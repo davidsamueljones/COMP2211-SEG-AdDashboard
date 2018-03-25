@@ -19,7 +19,7 @@ public class MetricQuery {
   public FilterConfig filter;
 
   /** Bounce rate definition (ignored if not relevant to metric) */
-  public BounceRateConfig bouncerateDef;
+  public BounceConfig bounceDef;
   
   /** Instantiate an empty query. */
   public MetricQuery() {
@@ -43,13 +43,13 @@ public class MetricQuery {
    * @param metric Metric type being requested
    * @param time Interval to group by
    * @param filter Filter to apply on query
-   * @param bouncerateDef Definition to use for bouncerate if applicable
+   * @param bounceDef Definition to use for bounce if applicable
    * */
-  public MetricQuery(Metric metric, Interval time, FilterConfig filter, BounceRateConfig bouncerateDef) {
+  public MetricQuery(Metric metric, Interval time, FilterConfig filter, BounceConfig bounceDef) {
     this.metric = metric;
     this.interval = time;
     this.filter = filter;
-    this.bouncerateDef = bouncerateDef;
+    this.bounceDef = bounceDef;
   }
   
 }

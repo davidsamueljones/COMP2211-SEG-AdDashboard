@@ -13,7 +13,9 @@ public class ServerLogTable extends DatabaseTable {
     Statement st = c.createStatement();
     st.execute(
         "CREATE TABLE IF NOT EXISTS server_log (entry_date TIMESTAMP, user_id BIGINT NOT NULL,"
-            + "exit_date TIMESTAMP, pages_viewed INTEGER, conversion BOOLEAN)");
+            + "exit_date TIMESTAMP, pages_viewed INTEGER, conversion BOOLEAN,  campaign_id integer,"
+            + "CONSTRAINT server_log_campaign_id_fkey FOREIGN KEY (campaign_id)"
+            + "REFERENCES campaign (id) MATCH SIMPLE)");
     st.close();
   }
 
@@ -24,9 +26,8 @@ public class ServerLogTable extends DatabaseTable {
     st.close();
   }
 
-
   @Override
-  public void prepareInsert(PreparedStatement ps, String[] params) throws SQLException {
+  public void prepareInsert(PreparedStatement ps, String[] params, int campaignID) throws SQLException {
     if (params.length != 5) {
       throw new IllegalArgumentException("Incorrect number of parameters for prepared statement");
     }
@@ -37,22 +38,21 @@ public class ServerLogTable extends DatabaseTable {
     if (params[2].equals("n/a")) {
       ps.setNull(3, Types.TIMESTAMP);
     } else {
-      ps.setTimestamp(3,   Timestamp.valueOf(params[2])); 
-    }   
+      ps.setTimestamp(3, Timestamp.valueOf(params[2]));
+    }
     ps.setInt(4, Integer.valueOf(params[3])); // pages_viewed
-    ps.setBoolean(5, params[4].equals("Yes")); // Conversion
+    ps.setBoolean(5, params[4].equals("Yes")); // conversion
+    ps.setInt(6, campaignID); //campaign_id
   }
 
   @Override
   public String getInsertTemplate() {
-    return "INSERT INTO server_log (entry_date, user_id, exit_date, pages_viewed, conversion) "
-        + "values (?, ?, ?, ?, ?)";
+    return "INSERT INTO server_log (entry_date, user_id, exit_date, pages_viewed, conversion, campaign_id) "
+        + "values (?, ?, ?, ?, ?, ?)";
   }
-
 
   @Override
   public String getTableName() {
     return "server_log";
   }
-
 }
