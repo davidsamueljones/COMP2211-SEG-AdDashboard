@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 import group33.seg.controller.DashboardController.DashboardMVC;
 import group33.seg.model.configs.GraphConfig;
+import group33.seg.model.workspace.Workspace;
 
 public class WorkspaceHandler {
   
@@ -44,7 +45,12 @@ public class WorkspaceHandler {
   }
   
   public List<GraphConfig> getGraphs() {
-    return mvc.model.getWorkspace().graphs;
+    Workspace workspace = mvc.model.getWorkspace();
+    if (workspace != null) {
+      return workspace.graphs;
+    } else {
+      return null;
+    }
   }
   
 }
