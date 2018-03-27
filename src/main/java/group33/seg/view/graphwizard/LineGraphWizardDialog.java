@@ -36,30 +36,30 @@ public class LineGraphWizardDialog extends JDialog {
   private GraphLinesPanel pnlLines;
   private LineGraphConfig base;
 
-  public static void main(String[] args) {
-    LineGraphConfig config = new LineGraphConfig();
-    config.identifier = "IDENTIFIER";
-    config.title = "Title";
-    config.xAxisTitle = "X-Axis";
-    config.yAxisTitle = "Y-Axis";
-    config.mode = Mode.OVERLAY;
-    config.showLegend = true;
-    config.lines = new ArrayList<>();
-    LineConfig line = new LineConfig();
-    line.color = Color.RED;
-    line.thickness = 75;
-    line.hide = true;
-    line.identifier = "abcdefghijklmnop";
-    line.query = new MetricQuery();
-    line.query.filter = new FilterConfig();
-    line.query.bounceDef = new BounceConfig();
-    line.query.metric = Metric.CLICKS;
-    line.query.interval = Interval.MONTH;
-
-    config.lines.add(line);
-    LineGraphWizardDialog dialog = new LineGraphWizardDialog(null, null, config);
-    dialog.setVisible(true);
-  }
+//  public static void main(String[] args) {
+//    LineGraphConfig config = new LineGraphConfig();
+//    config.identifier = "IDENTIFIER";
+//    config.title = "Title";
+//    config.xAxisTitle = "X-Axis";
+//    config.yAxisTitle = "Y-Axis";
+//    config.mode = Mode.OVERLAY;
+//    config.showLegend = true;
+//    config.lines = new ArrayList<>();
+//    LineConfig line = new LineConfig();
+//    line.color = Color.RED;
+//    line.thickness = 75;
+//    line.hide = true;
+//    line.identifier = "abcdefghijklmnop";
+//    line.query = new MetricQuery();
+//    line.query.filter = new FilterConfig();
+//    line.query.bounceDef = new BounceConfig();
+//    line.query.metric = Metric.CLICKS;
+//    line.query.interval = Interval.MONTH;
+//
+//    config.lines.add(line);
+//    LineGraphWizardDialog dialog = new LineGraphWizardDialog(null, null, config);
+//    dialog.setVisible(true);
+//  }
 
   public LineGraphWizardDialog(Window parent, DashboardController controller) {
     this(parent, controller, null);
@@ -156,20 +156,7 @@ public class LineGraphWizardDialog extends JDialog {
 
   private void apply() {
     LineGraphConfig config = makeGraphConfig();
-    for (LineConfig line : config.lines) {
-      for (LineConfig bLine : base.lines) {
-        if (bLine.equals(line)) {
-          System.out.println(GraphHandler.getLineUpdate(bLine, line));
-        }
-        
-      }
-      
-    }
-    System.out.println("Base:");
-    for (LineConfig line : base.lines) {
-      System.out.println(line.uuid);
-    }
-    System.out.println(config);
+    controller.workspace.putGraph(config);
     loadGraph(config);
   }
   

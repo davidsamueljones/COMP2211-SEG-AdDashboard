@@ -9,6 +9,8 @@ import java.awt.Insets;
 import java.awt.Window;
 import javax.swing.border.BevelBorder;
 import group33.seg.controller.DashboardController;
+import group33.seg.controller.handlers.WorkspaceHandler.WorkspaceListener;
+import group33.seg.controller.handlers.WorkspaceHandler.WorkspaceListener.Type;
 import group33.seg.model.configs.GraphConfig;
 import group33.seg.model.configs.LineGraphConfig;
 import group33.seg.view.graphwizard.LineGraphWizardDialog;
@@ -135,6 +137,20 @@ public class GraphManagerPanel extends JPanel {
         LineGraphWizardDialog wizard = new LineGraphWizardDialog(frmCurrent, controller, null);
         wizard.setModal(true);
         wizard.setVisible(true);
+      }
+    });
+    
+    controller.workspace.addListener(new WorkspaceListener() {   
+      @Override
+      public void update(Type type) {
+        if (type == Type.GRAPHS) {
+          SwingUtilities.invokeLater(new Runnable() {          
+            @Override
+            public void run() {
+              refreshGraphs();
+            }
+          });
+        }
       }
     });
   }
