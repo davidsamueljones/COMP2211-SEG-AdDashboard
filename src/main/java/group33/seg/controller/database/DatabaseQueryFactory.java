@@ -48,7 +48,15 @@ public class DatabaseQueryFactory {
             Metric.BOUNCES,
             "SELECT date_trunc('<interval>', date) AS xaxis, count(*) AS yaxis FROM server_log WHERE (<bounce>);");
 
-    //TODO add bounce rate query
+    // Bounces per click over time
+    graphQueries.put(
+            Metric.BOUNCE_RATE,
+            new StringBuilder().append("SELECT bounces.xaxis AS xaxis, (bounces.bounce::float) / (clicks.click::float) AS yaxis")
+            .append(" FROM")
+            .append(" (SELECT date_trunc('<interval>', date) AS xaxis, count(*) AS bounce FROM server_log WHERE (<bounce>)) AS bounces")
+            .append(" FULL OUTER JOIN")
+            .append(" (SELECT date_trunc('<interval>', date) AS xaxis2, count(*) AS click FROM click_log GROUP BY xaxis2) AS clicks")
+            .append(" ON bounces.xaxis = clicks.xaxis2;").toString());
     
     // Average amount of money spent per conversion over time
     graphQueries.put(
