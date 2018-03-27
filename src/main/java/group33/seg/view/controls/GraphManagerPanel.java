@@ -12,6 +12,7 @@ import group33.seg.controller.DashboardController;
 import group33.seg.model.configs.GraphConfig;
 import group33.seg.model.configs.LineGraphConfig;
 import group33.seg.view.graphwizard.LineGraphWizardDialog;
+import group33.seg.view.output.Graph;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -24,6 +25,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.border.EtchedBorder;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.awt.event.ActionEvent;
 
@@ -145,11 +147,17 @@ public class GraphManagerPanel extends JPanel {
     mdl_lstGraphs.clear();
     graphs = new HashMap<String, GraphConfig>();
     
-    for (GraphConfig graph : controller.workspace.getGraphs()) {
-      mdl_lstGraphs.addElement(graph.identifier);
-      graphs.put(graph.identifier, graph);
+    List<GraphConfig> workspaceGraphs = controller.workspace.getGraphs();
+    if (workspaceGraphs != null) {
+      for (GraphConfig graph : workspaceGraphs) {
+        mdl_lstGraphs.addElement(graph.identifier);
+        graphs.put(graph.identifier, graph);
+      }
+      lstGraphs.setSelectedValue(selected, true);
+    } else {
+      lstGraphs.setSelectedValue(null, true);
     }
-    lstGraphs.setSelectedValue(selected, true);
+
   }
   
 }
