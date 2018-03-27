@@ -38,18 +38,17 @@ public class WorkspaceHandler {
     return;
   }
   
-  public boolean removeGraph(String identifier) {
+  public boolean removeGraph(GraphConfig graphConfig) {
     boolean removed = false;
     Iterator<GraphConfig> itrGraphs = getGraphs().iterator(); 
     while (itrGraphs.hasNext()) {
       GraphConfig graph = itrGraphs.next();
-      if (graph.identifier.equals(identifier)) {
+      if (graph.equals(graphConfig)) {
         itrGraphs.remove();
         removed = true;
         notifyListeners(Type.GRAPHS);
       }
-    }
-    
+    }  
     return removed;
   }
   
