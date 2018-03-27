@@ -31,7 +31,7 @@ public class GraphPanel extends JPanel {
     initGUI();
     
     // Update controllers knowledge of graph to update in view
-    controller.graphs.setGraph(graph);
+    controller.graphs.setGraphView(graph);
   }
 
   private void initGUI() {
