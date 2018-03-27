@@ -5,12 +5,17 @@ import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
 import java.awt.GridBagLayout;
 import javax.swing.JRadioButton;
+import group33.seg.model.configs.LineGraphConfig;
+import group33.seg.model.configs.LineGraphConfig.Mode;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 
 public class PlottingModePanel extends JPanel {
   private static final long serialVersionUID = 4139382753869737135L;
 
+  private JRadioButton radOverlaid;
+  private JRadioButton radNormal;
+  
   public PlottingModePanel() {
     initGUI();
   }
@@ -27,7 +32,7 @@ public class PlottingModePanel extends JPanel {
     setLayout(gridBagLayout);
       
     ButtonGroup group = new ButtonGroup();
-    JRadioButton radNormal = new JRadioButton("Normal");
+    radNormal = new JRadioButton("Normal");
     group.add(radNormal);
     GridBagConstraints gbc_radNormal = new GridBagConstraints();
     gbc_radNormal.insets = new Insets(0, 0, 0, 5);
@@ -35,12 +40,41 @@ public class PlottingModePanel extends JPanel {
     gbc_radNormal.gridy = 0;
     add(radNormal, gbc_radNormal);
     
-    JRadioButton radOverlaid = new JRadioButton("Overlaid Time Period");
+    radOverlaid = new JRadioButton("Overlaid Time Period");
     group.add(radOverlaid);
     GridBagConstraints gbc_radOverlaid = new GridBagConstraints();
     gbc_radOverlaid.gridx = 1;
     gbc_radOverlaid.gridy = 0;
     add(radOverlaid, gbc_radOverlaid);
+  }
+ 
+  public void loadGraph(LineGraphConfig config) {
+    if (config == null) {
+      clear();
+      return;
+    }
+    
+    switch (config.mode) {
+      case NORMAL:
+        radNormal.setSelected(true);
+        break;
+      case OVERLAY:
+        radOverlaid.setSelected(true);
+        break;
+    }
+
+  }
+  
+  public void clear() {
+    radNormal.setSelected(true);
+  }
+
+  public void updateConfig(LineGraphConfig config) {
+    if (radNormal.isSelected()) {
+      config.mode = Mode.NORMAL;
+    } else {
+      config.mode = Mode.OVERLAY;
+    }
   }
   
 }

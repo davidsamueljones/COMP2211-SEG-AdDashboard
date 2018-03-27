@@ -6,6 +6,7 @@ import group33.seg.controller.handlers.DisplayHandler;
 import group33.seg.controller.handlers.GraphHandler;
 import group33.seg.controller.handlers.SettingsHandler;
 import group33.seg.controller.handlers.StatisticHandler;
+import group33.seg.controller.handlers.WorkspaceHandler;
 import group33.seg.model.DashboardModel;
 import group33.seg.view.DashboardView;
 
@@ -32,6 +33,9 @@ public class DashboardController {
   /** Handler for settings */
   public final SettingsHandler settings;
   
+  /** Handler for workspace */
+  public final WorkspaceHandler workspace;
+  
   /**
    * Instantiate a dashboard controller to control interactions between a given view and model. Uses
    * suite of sub-controllers to break down functionality. Controller creates an MVC instance that
@@ -51,6 +55,7 @@ public class DashboardController {
     graphs = new GraphHandler(mvc);
     statistics = new StatisticHandler(mvc);
     settings = new SettingsHandler();
+    workspace = new WorkspaceHandler(mvc);
   }
 
   /**

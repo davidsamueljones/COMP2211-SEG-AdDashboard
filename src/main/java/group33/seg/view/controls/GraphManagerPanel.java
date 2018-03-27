@@ -6,21 +6,34 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Window;
 import javax.swing.border.BevelBorder;
 import group33.seg.controller.DashboardController;
 import group33.seg.model.configs.GraphConfig;
+import group33.seg.model.configs.LineGraphConfig;
+import group33.seg.view.graphwizard.LineGraphWizardDialog;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JSeparator;
+import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.border.EtchedBorder;
+import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Map;
+import java.awt.event.ActionEvent;
 
 public class GraphManagerPanel extends JPanel {
   private static final long serialVersionUID = 6541885932864334941L;
 
-  private DefaultListModel<GraphConfig> mdl_lstGraphs;
+  private DashboardController controller;
+  
+  private JList<String> lstGraphs;
+  private DefaultListModel<String> mdl_lstGraphs;
 
   private JButton btnRemove;
   private JButton btnViewModify;
@@ -28,13 +41,13 @@ public class GraphManagerPanel extends JPanel {
   private JButton btnLoad;
   private JButton btnNew;
 
-  /**
-   * Create the panel.
-   * 
-   * @param controller
-   */
+  private Map<String, GraphConfig> graphs;
+
   public GraphManagerPanel(DashboardController controller) {
+    this.controller = controller;
+
     initGUI();
+    refreshGraphs();
   }
 
   private void initGUI() {
@@ -58,7 +71,8 @@ public class GraphManagerPanel extends JPanel {
     gbl_pnlExisting.columnWeights = new double[] {1.0, 1.0};
     gbl_pnlExisting.rowWeights = new double[] {1.0, 0.0, 0.0};
     pnlExisting.setLayout(gbl_pnlExisting);
-    JList<GraphConfig> lstGraphs = new JList<>(mdl_lstGraphs);
+
+    lstGraphs = new JList<>(mdl_lstGraphs);
     JScrollPane scrGraphs = new JScrollPane(lstGraphs);
     scrGraphs.setPreferredSize(new Dimension(0, scrGraphs.getPreferredSize().height));
     scrGraphs.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
@@ -88,7 +102,7 @@ public class GraphManagerPanel extends JPanel {
 
     btnLoad = new JButton("Load");
     GridBagConstraints gbc_btnLoad = new GridBagConstraints();
-    gbc_btnLoad.insets = new Insets(0, 0, 0, 0);
+    gbc_btnLoad.insets = new Insets(0, 0, 5, 0);
     gbc_btnLoad.fill = GridBagConstraints.HORIZONTAL;
     gbc_btnLoad.gridwidth = 2;
     gbc_btnLoad.gridx = 0;
@@ -101,6 +115,41 @@ public class GraphManagerPanel extends JPanel {
     gbc_btnNew.gridx = 0;
     gbc_btnNew.gridy = 1;
     add(btnNew, gbc_btnNew);
-  }
 
+    lstGraphs.addListSelectionListener(new ListSelectionListener() {   
+      @Override
+      public void valueChanged(ListSelectionEvent e) {
+        boolean isSelection = lstGraphs.getSelectedIndex() != -1;
+        btnLoad.setEnabled(isSelection);
+        btnRemove.setEnabled(isSelection);
+        btnViewModify.setEnabled(isSelection);
+      }
+    });
+    lstGraphs.setSelectedIndex(-1);
+    
+    btnNew.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        Window frmCurrent = SwingUtilities.getWindowAncestor(GraphManagerPanel.this);
+        LineGraphWizardDialog wizard = new LineGraphWizardDialog(frmCurrent, controller, null);
+        wizard.setModal(true);
+        wizard.setVisible(true);
+      }
+    });
+  }
+  
+  public void refreshGraphs() {
+    refreshGraphs(lstGraphs.getSelectedValue());
+  }
+  
+  public void refreshGraphs(String selected) {
+    mdl_lstGraphs.clear();
+    graphs = new HashMap<String, GraphConfig>();
+    
+    for (GraphConfig graph : controller.workspace.getGraphs()) {
+      mdl_lstGraphs.addElement(graph.identifier);
+      graphs.put(graph.identifier, graph);
+    }
+    lstGraphs.setSelectedValue(selected, true);
+  }
+  
 }

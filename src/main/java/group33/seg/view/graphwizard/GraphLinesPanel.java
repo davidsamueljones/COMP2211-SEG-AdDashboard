@@ -7,14 +7,30 @@ import javax.swing.JScrollPane;
 import javax.swing.JButton;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
+import group33.seg.model.configs.LineGraphConfig;
+import group33.seg.model.configs.LineConfig;
 
 public class GraphLinesPanel extends JPanel {
   private static final long serialVersionUID = -1169530766129778297L;
-
+  
+  private JTabbedPane tabsLines;
+  private Collection<LinePanel> linePanels;
+  
   public GraphLinesPanel() {
+    this(null);
+  }
+  
+  public GraphLinesPanel(Collection<LineConfig> lines) {
     initGUI();
+    loadLines(lines);
   }
 
   private void initGUI() {
@@ -32,7 +48,7 @@ public class GraphLinesPanel extends JPanel {
     gbc_btnNew.gridy = 0;
     add(btnNew, gbc_btnNew);
     
-    JTabbedPane tabsLines = new JTabbedPane(JTabbedPane.TOP);
+    tabsLines = new JTabbedPane(JTabbedPane.TOP);
     GridBagConstraints gbc_tabsLines = new GridBagConstraints();
     gbc_tabsLines.gridheight = 5;
     gbc_tabsLines.insets = new Insets(0, 0, 5, 0);
@@ -40,8 +56,7 @@ public class GraphLinesPanel extends JPanel {
     gbc_tabsLines.gridx = 1;
     gbc_tabsLines.gridy = 0;
     add(tabsLines, gbc_tabsLines);
-    tabsLines.add("L1", new LinePanel());
-    
+      
     JButton btnImport = new JButton("Import");
     GridBagConstraints gbc_btnImport = new GridBagConstraints();
     gbc_btnImport.fill = GridBagConstraints.HORIZONTAL;
@@ -65,6 +80,51 @@ public class GraphLinesPanel extends JPanel {
     gbc_btnRemove.gridx = 0;
     gbc_btnRemove.gridy = 3;
     add(btnRemove, gbc_btnRemove);
+    
+    btnNew.addActionListener(new ActionListener() {     
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        // TODO: Check if new line already exists
+        LinePanel pnlLine = new LinePanel();
+        addLinePanel("New Line", pnlLine);
+        tabsLines.setSelectedComponent(pnlLine);
+      }
+    });
+  }
+
+  public void loadLines(Collection<LineConfig> lines) {
+    // Clear existing lines from tabs
+    clearLines();
+    if (lines != null) {
+      // Load new lines as tabs
+      for (LineConfig line : lines) {
+        LinePanel pnlLine = new LinePanel(line);
+        addLinePanel(line.identifier, pnlLine);
+      }
+    }
+  }
+  
+  private final static int MAX_TAB_TITLE_LEN = 15;
+  public void addLinePanel(String identifier, LinePanel panel) {
+    String title = identifier;
+    if (title.length() >= MAX_TAB_TITLE_LEN) {
+      title = identifier.substring(0, MAX_TAB_TITLE_LEN - 3) + "...";
+    }
+    linePanels.add(panel);
+    tabsLines.addTab(title, null, panel, identifier); 
+  }
+  
+  public void clearLines() {
+    linePanels = new ArrayList<>();
+    tabsLines.removeAll();
+  }
+  
+  public List<LineConfig> getLines() {
+    List<LineConfig> lines = new ArrayList<>();
+    for (LinePanel pnlLine : linePanels) {
+      lines.add(pnlLine.getLine());
+    }
+    return lines;
   }
   
 }

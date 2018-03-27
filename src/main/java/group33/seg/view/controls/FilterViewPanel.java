@@ -116,4 +116,8 @@ public class FilterViewPanel extends JPanel {
     }
   }
 
+  public FilterConfig getFilter() {
+    return filter;
+  }
+
 }

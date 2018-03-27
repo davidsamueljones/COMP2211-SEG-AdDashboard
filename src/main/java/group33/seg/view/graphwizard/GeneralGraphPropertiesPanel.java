@@ -6,10 +6,19 @@ import javax.swing.JLabel;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import javax.swing.JTextField;
+import group33.seg.model.configs.LineGraphConfig;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 
 public class GeneralGraphPropertiesPanel extends JPanel {
+  private static final long serialVersionUID = -1585475807433849072L;
+
+  private JTextField txtIdentifier;
+  private JTextField txtTitle;
+  private JTextField txtXAxisTitle;
+  private JTextField txtYAxisTitle;
+  private JCheckBox chckbxShowLegend;
+
   public GeneralGraphPropertiesPanel() {
     initGUI();
   }
@@ -57,41 +66,41 @@ public class GeneralGraphPropertiesPanel extends JPanel {
     add(txtTitle, gbc_txtTitle);
     txtTitle.setColumns(10);
 
-    JLabel lblXaxisTitle = new JLabel("X-Axis Title:");
-    GridBagConstraints gbc_lblXaxisTitle = new GridBagConstraints();
-    gbc_lblXaxisTitle.anchor = GridBagConstraints.EAST;
-    gbc_lblXaxisTitle.insets = new Insets(0, 0, 5, 5);
-    gbc_lblXaxisTitle.gridx = 0;
-    gbc_lblXaxisTitle.gridy = 2;
-    add(lblXaxisTitle, gbc_lblXaxisTitle);
+    JLabel lblXAxisTitle = new JLabel("X-Axis Title:");
+    GridBagConstraints gbc_lblXAxisTitle = new GridBagConstraints();
+    gbc_lblXAxisTitle.anchor = GridBagConstraints.EAST;
+    gbc_lblXAxisTitle.insets = new Insets(0, 0, 5, 5);
+    gbc_lblXAxisTitle.gridx = 0;
+    gbc_lblXAxisTitle.gridy = 2;
+    add(lblXAxisTitle, gbc_lblXAxisTitle);
 
-    txtXaxistitle = new JTextField();
-    GridBagConstraints gbc_txtXaxistitle = new GridBagConstraints();
-    gbc_txtXaxistitle.insets = new Insets(0, 0, 5, 0);
-    gbc_txtXaxistitle.fill = GridBagConstraints.HORIZONTAL;
-    gbc_txtXaxistitle.gridx = 1;
-    gbc_txtXaxistitle.gridy = 2;
-    add(txtXaxistitle, gbc_txtXaxistitle);
-    txtXaxistitle.setColumns(10);
+    txtXAxisTitle = new JTextField();
+    GridBagConstraints gbc_txtXAxisTitle = new GridBagConstraints();
+    gbc_txtXAxisTitle.insets = new Insets(0, 0, 5, 0);
+    gbc_txtXAxisTitle.fill = GridBagConstraints.HORIZONTAL;
+    gbc_txtXAxisTitle.gridx = 1;
+    gbc_txtXAxisTitle.gridy = 2;
+    add(txtXAxisTitle, gbc_txtXAxisTitle);
+    txtXAxisTitle.setColumns(10);
 
-    JLabel lblYaxisTitle = new JLabel("Y-Axis Title:");
-    GridBagConstraints gbc_lblYaxisTitle = new GridBagConstraints();
-    gbc_lblYaxisTitle.anchor = GridBagConstraints.EAST;
-    gbc_lblYaxisTitle.insets = new Insets(0, 0, 5, 5);
-    gbc_lblYaxisTitle.gridx = 0;
-    gbc_lblYaxisTitle.gridy = 3;
-    add(lblYaxisTitle, gbc_lblYaxisTitle);
+    JLabel lblYAxisTitle = new JLabel("Y-Axis Title:");
+    GridBagConstraints gbc_lblYAxisTitle = new GridBagConstraints();
+    gbc_lblYAxisTitle.anchor = GridBagConstraints.EAST;
+    gbc_lblYAxisTitle.insets = new Insets(0, 0, 5, 5);
+    gbc_lblYAxisTitle.gridx = 0;
+    gbc_lblYAxisTitle.gridy = 3;
+    add(lblYAxisTitle, gbc_lblYAxisTitle);
 
-    txtYaxistitle = new JTextField();
-    GridBagConstraints gbc_txtYaxistitle = new GridBagConstraints();
-    gbc_txtYaxistitle.insets = new Insets(0, 0, 5, 0);
-    gbc_txtYaxistitle.fill = GridBagConstraints.HORIZONTAL;
-    gbc_txtYaxistitle.gridx = 1;
-    gbc_txtYaxistitle.gridy = 3;
-    add(txtYaxistitle, gbc_txtYaxistitle);
-    txtYaxistitle.setColumns(10);
+    txtYAxisTitle = new JTextField();
+    GridBagConstraints gbc_txtYAxisTitle = new GridBagConstraints();
+    gbc_txtYAxisTitle.insets = new Insets(0, 0, 5, 0);
+    gbc_txtYAxisTitle.fill = GridBagConstraints.HORIZONTAL;
+    gbc_txtYAxisTitle.gridx = 1;
+    gbc_txtYAxisTitle.gridy = 3;
+    add(txtYAxisTitle, gbc_txtYAxisTitle);
+    txtYAxisTitle.setColumns(10);
 
-    JCheckBox chckbxShowLegend = new JCheckBox("Show Legend");
+    chckbxShowLegend = new JCheckBox("Show Legend");
     GridBagConstraints gbc_chckbxShowLegend = new GridBagConstraints();
     gbc_chckbxShowLegend.anchor = GridBagConstraints.WEST;
     gbc_chckbxShowLegend.gridx = 1;
@@ -99,10 +108,32 @@ public class GeneralGraphPropertiesPanel extends JPanel {
     add(chckbxShowLegend, gbc_chckbxShowLegend);
   }
 
-  private static final long serialVersionUID = -1585475807433849072L;
-  private JTextField txtIdentifier;
-  private JTextField txtTitle;
-  private JTextField txtXaxistitle;
-  private JTextField txtYaxistitle;
+  public void loadGraph(LineGraphConfig config) {
+    if (config == null) {
+      reset();
+    } else {
+      txtIdentifier.setText(config.identifier);
+      txtTitle.setText(config.title);
+      txtXAxisTitle.setText(config.xAxisTitle);
+      txtYAxisTitle.setText(config.yAxisTitle);
+      chckbxShowLegend.setSelected(config.showLegend);
+    }
+  }
+
+  public void reset() {
+    txtIdentifier.setText("");
+    txtTitle.setText("");
+    txtXAxisTitle.setText("");
+    txtYAxisTitle.setText("");
+    chckbxShowLegend.setSelected(true);
+  }
+
+  public void updateConfig(LineGraphConfig config) {
+    config.identifier = txtIdentifier.getText();
+    config.title = txtTitle.getText();
+    config.xAxisTitle = txtXAxisTitle.getText();
+    config.yAxisTitle = txtYAxisTitle.getText();
+    config.showLegend = chckbxShowLegend.isSelected();
+  }
 
 }

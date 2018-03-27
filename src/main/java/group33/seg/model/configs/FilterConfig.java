@@ -12,6 +12,7 @@ import group33.seg.model.utilities.Range;
  * for easy structure access.
  */
 public class FilterConfig {
+  public static String NO_FILTER_TEXT = "* No Filter *";
 
   /** Campaign to target (should not be null but target all if is) */
   public CampaignConfig campaign = null;
@@ -52,7 +53,7 @@ public class FilterConfig {
     }
     // Check if any filter rules have been found
     if (filter.length() == 0) {
-      filter.append("* No Filter *");
+      filter.append(NO_FILTER_TEXT);
     }
     return filter.toString();
   }
@@ -83,6 +84,24 @@ public class FilterConfig {
       filter.append("]\n");
     }
     return filter.toString();
+  }
+
+  /**
+   * Equality check between this instance and another instance. This equality check compares all
+   * fields including non-final.
+   * 
+   * @param other Other instance to compare against
+   * @return Whether instances are the same
+   */
+  public boolean isEquals(FilterConfig other) {
+    boolean equal = true;
+    equal &= (campaign == null ? (other.campaign == null) : campaign.equals(other.campaign));
+    equal &= (ages == null ? (other.ages == null) : ages.equals(other.ages));
+    equal &= (genders == null ? (other.genders == null) : genders.equals(other.genders));
+    equal &= (incomes == null ? (other.incomes == null) : incomes.equals(other.incomes));
+    equal &= (contexts == null ? (other.contexts == null) : contexts.equals(other.contexts));
+    equal &= (dates == null ? (other.dates == null) : dates.equals(dates));
+    return equal;
   }
 
   /**
