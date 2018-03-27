@@ -13,7 +13,6 @@ import java.awt.event.MouseEvent;
 import javax.swing.JSpinner;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import org.hamcrest.Description.NullDescription;
 import group33.seg.model.configs.BounceConfig;
 import group33.seg.model.configs.BounceConfig.Type;
 
