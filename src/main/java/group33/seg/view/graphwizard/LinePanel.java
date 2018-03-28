@@ -32,12 +32,10 @@ public class LinePanel extends JScrollPane {
     JPanel pnlMain = new JPanel();
     pnlMain.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     GridBagLayout gbl_pnlMain = new GridBagLayout();
-    gbl_pnlMain.rowHeights = new int[] {0, 0, 0, 0};
+    gbl_pnlMain.rowHeights = new int[] {0, 0, 0};
     gbl_pnlMain.columnWeights = new double[] {1.0};
-    gbl_pnlMain.rowWeights = new double[] {0.0, 0.0, 0.0, 1.0};
+    gbl_pnlMain.rowWeights = new double[] {0.0, 0.0, 1.0};
     pnlMain.setLayout(gbl_pnlMain);
-    
-    this.setViewportView(pnlMain);
     
     pnlLineProperties = new LinePropertiesPanel();
     GridBagConstraints gbc_pnlLineProperties = new GridBagConstraints();
@@ -55,7 +53,7 @@ public class LinePanel extends JScrollPane {
     gbc_pnlLineData.gridy = 1;
     pnlMain.add(pnlLineData, gbc_pnlLineData);
     
-    
+    this.setViewportView(pnlMain);
     this.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     this.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
     this.getVerticalScrollBar().setUnitIncrement(10);
@@ -75,6 +73,8 @@ public class LinePanel extends JScrollPane {
     } else {
       config = new LineConfig();
     }
+    base = config;
+    
     // Do updates
     pnlLineProperties.updateConfig(config);
     pnlLineData.updateConfig(config);

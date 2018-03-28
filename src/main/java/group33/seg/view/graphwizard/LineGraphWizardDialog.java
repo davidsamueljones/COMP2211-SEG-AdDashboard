@@ -109,13 +109,13 @@ public class LineGraphWizardDialog extends JDialog {
     pnlLines = new GraphLinesPanel();
     tabsProperties.add("Lines", pnlLines);
 
-    JButton btnCancel = new JButton("Cancel");
-    GridBagConstraints gbc_btnCancel = new GridBagConstraints();
-    gbc_btnCancel.anchor = GridBagConstraints.EAST;
-    gbc_btnCancel.insets = new Insets(0, 0, 0, 5);
-    gbc_btnCancel.gridx = 0;
-    gbc_btnCancel.gridy = 1;
-    pnlContent.add(btnCancel, gbc_btnCancel);
+    JButton btnClose = new JButton("Close");
+    GridBagConstraints gbc_btnClose = new GridBagConstraints();
+    gbc_btnClose.anchor = GridBagConstraints.EAST;
+    gbc_btnClose.insets = new Insets(0, 0, 0, 5);
+    gbc_btnClose.gridx = 0;
+    gbc_btnClose.gridy = 1;
+    pnlContent.add(btnClose, gbc_btnClose);
 
     JButton btnApply = new JButton("Apply");
     GridBagConstraints gbc_btnApply = new GridBagConstraints();
@@ -130,7 +130,7 @@ public class LineGraphWizardDialog extends JDialog {
     gbc_btnApplyClose.gridy = 1;
     pnlContent.add(btnApplyClose, gbc_btnApplyClose);
 
-    btnCancel.addActionListener(new ActionListener() {  
+    btnClose.addActionListener(new ActionListener() {  
       @Override
       public void actionPerformed(ActionEvent e) {
         setVisible(false);
