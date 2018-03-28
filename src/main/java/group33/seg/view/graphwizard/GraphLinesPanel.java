@@ -3,21 +3,17 @@ package group33.seg.view.graphwizard;
 import java.awt.GridBagLayout;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JButton;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
-import group33.seg.model.configs.LineGraphConfig;
-import group33.seg.model.types.Pair;
+import javax.swing.SwingConstants;
 import group33.seg.model.configs.LineConfig;
 
 public class GraphLinesPanel extends JPanel {
@@ -32,9 +28,9 @@ public class GraphLinesPanel extends JPanel {
     this(null);
   }
 
-  public GraphLinesPanel(Collection<LineConfig> lines) {
+  public GraphLinesPanel(List<LineConfig> lines) {
     initGUI();
-    loadLines(lines);
+    updateLines(lines);
   }
 
   private void initGUI() {
@@ -52,7 +48,7 @@ public class GraphLinesPanel extends JPanel {
     gbc_btnNew.gridy = 0;
     add(btnNew, gbc_btnNew);
 
-    tabsLines = new JTabbedPane(JTabbedPane.TOP);
+    tabsLines = new JTabbedPane(SwingConstants.TOP);
     GridBagConstraints gbc_tabsLines = new GridBagConstraints();
     gbc_tabsLines.gridheight = 5;
     gbc_tabsLines.insets = new Insets(0, 0, 5, 0);
@@ -61,13 +57,13 @@ public class GraphLinesPanel extends JPanel {
     gbc_tabsLines.gridy = 0;
     add(tabsLines, gbc_tabsLines);
 
-//    JButton btnImport = new JButton("Import");
-//    GridBagConstraints gbc_btnImport = new GridBagConstraints();
-//    gbc_btnImport.fill = GridBagConstraints.HORIZONTAL;
-//    gbc_btnImport.insets = new Insets(0, 0, 5, 5);
-//    gbc_btnImport.gridx = 0;
-//    gbc_btnImport.gridy = 1;
-//    add(btnImport, gbc_btnImport);
+    // JButton btnImport = new JButton("Import");
+    // GridBagConstraints gbc_btnImport = new GridBagConstraints();
+    // gbc_btnImport.fill = GridBagConstraints.HORIZONTAL;
+    // gbc_btnImport.insets = new Insets(0, 0, 5, 5);
+    // gbc_btnImport.gridx = 0;
+    // gbc_btnImport.gridy = 1;
+    // add(btnImport, gbc_btnImport);
 
     JSeparator separator = new JSeparator();
     GridBagConstraints gbc_separator = new GridBagConstraints();
@@ -109,29 +105,63 @@ public class GraphLinesPanel extends JPanel {
 
 
   /**
-   * Clear lines, loading a fresh set. If the currently selected line exists in both sets it is
-   * reselected. TODO: Do as update behaviour to avoid computation and graphical glitches?
+   * Handle line update, first ensuring any outdated lines are removed before applying updates and
+   * adding new lines. This ensures the contents of the view will have line panels in corresponding
+   * indexes to the input lines and only these line panels.
    * 
-   * @param lines Lines to load into panel
+   * @param lines Lines to load into view
    */
-  public void loadLines(Collection<LineConfig> lines) {
-    // Track current selected line in case of update
-    LineConfig curLine = getSelectedLine();
-    int scrPos = getSelectedScrollPosition();
+  public void updateLines(List<LineConfig> lines) {
+    removeOutdatedLines(lines);
+    loadLines(lines);
+  }
 
-    // Clear existing lines from tabs
-    clearLines();
-    // Load new lines as tabs
-    if (lines != null) {
-
-      for (LineConfig line : lines) {
-        LinePanel pnlLine = new LinePanel(line);
-        addLinePanel(line.identifier, pnlLine);
+  /**
+   * Do add/update behaviour for a set of line configurations. If a line configuration has an
+   * existing line panel the contents of the panel is updated. Otherwise a new panel is created and
+   * inserted in the index position.
+   * 
+   * @param lines Line configuration to use
+   */
+  private void loadLines(List<LineConfig> lines) {
+    if (lines == null) {
+      return;
+    }
+    for (int i = 0; i < lines.size(); i++) {
+      LineConfig line = lines.get(i);
+      LinePanel pnlLine = getLinePanel(line);
+      if (pnlLine == null) {
+        // New line behaviour
+        pnlLine = new LinePanel(line);
+        addLinePanel(line.identifier, pnlLine, i);
+      } else {
+        // Update behaviour
+        pnlLine.loadLine(line);
       }
     }
+  }
 
-    // Reselect current line if it still exists
-    showLineTab(curLine, scrPos);
+  /**
+   * Remove any lines from the current view that do not exist in the latest configuration.
+   * 
+   * @param lines Lines in the new configuration
+   */
+  private void removeOutdatedLines(List<LineConfig> lines) {
+    if (linePanels == null) {
+      return;
+    }
+    // Iterate over all existing lines
+    Iterator<LinePanel> itrLinePanels = linePanels.iterator();
+    int idxTab = 0;
+    while (itrLinePanels.hasNext()) {
+      LinePanel pnlLine = itrLinePanels.next();
+      // If line exists in old set but not in new set, remove it
+      if (lines == null || !lines.contains(pnlLine.getLine())) {
+        itrLinePanels.remove();
+        tabsLines.remove(idxTab);
+      }
+      idxTab++;
+    }
   }
 
   /**
@@ -148,15 +178,36 @@ public class GraphLinesPanel extends JPanel {
   }
 
   /**
-   * Add a new line panel, tracking accordingly for lookup.
+   * Add a line panel after all other current line panels, tracking accordingly for lookup.
    * 
    * @param identifier String identifier to use for panel
    * @param panel Panel to add
    */
   private void addLinePanel(String identifier, LinePanel panel) {
-    linePanels.add(panel);
-    tabsLines.addTab("", panel);
-    setTabProperties(tabsLines.getTabCount() - 1, identifier);
+    addLinePanel(identifier, panel, tabsLines.getTabCount());
+  }
+
+  /**
+   * Add a new line panel, tracking accordingly for lookup.
+   * 
+   * @param identifier String identifier to use for panel
+   * @param panel Panel to add
+   * @param idx Index for new line panel
+   */
+  private void addLinePanel(String identifier, LinePanel panel, int idx) {
+    if (linePanels == null) {
+      linePanels = new ArrayList<>();
+    }
+    if (idx > linePanels.size()) {
+      // Insert behaviour
+      linePanels.add(idx, panel);
+      tabsLines.insertTab(null, null, panel, null, idx);
+    } else {
+      // Append behaviour
+      linePanels.add(panel);
+      tabsLines.add(panel);
+    }
+    setTabProperties(Math.min(linePanels.size(), idx), identifier);
   }
 
   /**
@@ -176,53 +227,21 @@ public class GraphLinesPanel extends JPanel {
   }
 
   /**
-   * Display the tab holding the corresponding configuration. If the line configuration does not
-   * exist in any tabs then no selection is made. Scroll position setting is also triggered on the
-   * desired tab.
+   * For a given line configuration return it's corresponding line panel if it exists.
    * 
-   * @param line Configuration to load corresponding tab for
-   * @param scrPos Scroll position for tab if found
+   * @param line Line configuration to search for
+   * @return Corresponding panel, null if not found
    */
-  private void showLineTab(LineConfig line, int scrPos) {
-    for (int i = 0; i < linePanels.size(); i++) {
-      LinePanel pnlLine = linePanels.get(i);
-      if (pnlLine.getLine().equals(line)) {
-        tabsLines.setSelectedIndex(i);
-        // Ensure panel sizing has time to complete for scrolling
-        SwingUtilities.invokeLater(new Runnable() {
-          @Override
-          public void run() {
-            pnlLine.getVerticalScrollBar().setValue(scrPos);
-          }
-        });
+  private LinePanel getLinePanel(LineConfig line) {
+    if (linePanels != null) {
+      for (LinePanel pnlLine : linePanels) {
+        if (line.equals(pnlLine.getLine())) {
+          return pnlLine;
+        }
       }
     }
+    return null;
   }
-
-  /**
-   * @return The line generates from the currently displayed LinePanel instance
-   */
-  private LineConfig getSelectedLine() {
-    LinePanel selected = getSelectedLinePanel();
-    return (selected == null ? null : selected.getLine());
-  }
-
-  /**
-   * @return The scroll position of the currently displayed LinePanel instance
-   */
-  private int getSelectedScrollPosition() {
-    LinePanel selected = getSelectedLinePanel();
-    return (selected == null ? 0 : selected.getVerticalScrollBar().getValue());
-  }
-
-  /**
-   * @return The currently displayed tabs corresponding LinePanel instance
-   */
-  private LinePanel getSelectedLinePanel() {
-    int idx = tabsLines.getSelectedIndex();
-    return (idx >= 0 ? linePanels.get(idx) : null);
-  }
-
 
   /**
    * Remove handling for all current lines.

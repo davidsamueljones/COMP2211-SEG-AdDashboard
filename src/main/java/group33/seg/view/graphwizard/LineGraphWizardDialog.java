@@ -159,7 +159,7 @@ public class LineGraphWizardDialog extends JDialog {
   public void loadGraph(LineGraphConfig graph) {
     this.base = graph;
     pnlGraphProperties.loadGraph(graph);
-    pnlLines.loadLines((graph == null ? null : graph.lines));
+    pnlLines.updateLines((graph == null ? null : graph.lines));
   } 
 
   private void apply() {
