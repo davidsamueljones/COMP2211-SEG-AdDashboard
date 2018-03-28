@@ -58,7 +58,7 @@ public class DatabaseQueryFactory {
                     " FULL OUTER JOIN" +
                     " (SELECT date_trunc('<interval>', date) AS xaxis2, count(*) AS click FROM click_log GROUP BY xaxis2) AS clicks" +
                     " ON bounces.xaxis = clicks.xaxis2;");
-    
+
     // Average amount of money spent per conversion over time
     graphQueries.put(
         Metric.CPA,
@@ -133,14 +133,10 @@ public class DatabaseQueryFactory {
     // Average amount of money spent on a campaign for each conversion
     statisticQueries.put(
         Metric.CPA,
-            "SELECT 'all' AS xaxis, (sum(impression_cost) + sum(click_cost)) / sum(conversion::int) AS yaxis" +
-                    "FROM impression_log AS il" +
-                    "FULL OUTER JOIN" +
-                    "click_log AS cl" +
-                    "ON il.ctid = cl.ctid" +
-                    "FULL OUTER JOIN" +
-                    "server_log AS sl" +
-                    "ON il.ctid = sl.ctid;");
+            "SELECT 'all' AS xaxis, (il.cost + cl.cost) / conversions AS yaxis FROM " +
+                    "(SELECT sum(impression_cost) as cost FROM impression_log) as il," +
+                    "(SELECT sum(click_cost) as cost FROM click_log) as cl," +
+                    "(SELECT count(*) as conversions FROM server_log WHERE conversion=true) as sl;");
 
     // The average amount of money spent for each click
     statisticQueries.put(
