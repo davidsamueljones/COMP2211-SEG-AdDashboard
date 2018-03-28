@@ -50,7 +50,7 @@ public class DashboardController {
 
     // Create sub-controllers with access to MVC
     display = new DisplayHandler(mvc);
-    database = new DatabaseHandler(mvc);
+    database = new DatabaseHandler(mvc, "config.properties");
     imports = new CampaignImportHandler(mvc);
     graphs = new GraphHandler(mvc);
     statistics = new StatisticHandler(mvc);

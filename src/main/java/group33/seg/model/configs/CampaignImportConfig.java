@@ -13,6 +13,8 @@ public class CampaignImportConfig {
   public final String pathImpressionLog;
   public final String pathServerLog;
 
+  public final String databaseConfigFile;
+
   /**
    * Initialise a campaign import configuration.
    *
@@ -22,11 +24,12 @@ public class CampaignImportConfig {
    * @param pathServerLog Path to server log csv
    */
   public CampaignImportConfig(String campaignName, String pathClickLog, String pathImpressionLog,
-      String pathServerLog) {
+      String pathServerLog, String databaseConfigFile) {
     this.campaignName = campaignName;
     this.pathClickLog = pathClickLog;
     this.pathImpressionLog = pathImpressionLog;
     this.pathServerLog = pathServerLog;
+    this.databaseConfigFile = databaseConfigFile;
   }
 
   /**

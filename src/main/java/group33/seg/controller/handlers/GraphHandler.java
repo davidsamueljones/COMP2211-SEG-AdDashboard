@@ -48,7 +48,7 @@ public class GraphHandler {
 
 
   public void generateImpressionGraph(Interval interval) {
-    DatabaseHandler db = new DatabaseHandler(null); // TODO: REMOVE ASAP
+    DatabaseHandler db = new DatabaseHandler(null, "config.properties"); // TODO: REMOVE ASAP
     MetricQuery query = new MetricQuery(Metric.IMPRESSIONS, interval, null);
     List<Pair<String, Integer>> data = db.getQueryResponse(query).getResult();
 

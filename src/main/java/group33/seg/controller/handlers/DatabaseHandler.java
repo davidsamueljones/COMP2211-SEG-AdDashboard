@@ -22,6 +22,8 @@ public class DatabaseHandler {
   
   /** MVC model that sub-controller has knowledge of */
   private final DashboardMVC mvc;
+
+  private final String databaseConfig;
   
   private Map<DatabaseConnection, Boolean> connections = new ConcurrentHashMap<>();
 
@@ -32,8 +34,9 @@ public class DatabaseHandler {
    * 
    * @param mvc Knowledge of full system as model view controller
    */
-  public DatabaseHandler(DashboardMVC mvc) {
+  public DatabaseHandler(DashboardMVC mvc, String databaseConfig) {
     this.mvc = mvc;
+    this.databaseConfig = databaseConfig;
   }
 
   /** Number of query threads */
@@ -49,7 +52,7 @@ public class DatabaseHandler {
     }
     
     try {
-      DatabaseConfig config = new DatabaseConfig("config.properties");
+      DatabaseConfig config = new DatabaseConfig(databaseConfig);
       DatabaseConnection connection =
           new DatabaseConnection(config.getHost(), config.getUser(), config.getPassword());
       connections.put(connection, false);

@@ -97,7 +97,7 @@ public class CampaignImportHandler {
         // TODO: TEMPORARY - Use interface database connection, error handling needs better
         // handling lower down in the stack, current behaviour is inconsistent
         try {
-          DatabaseConfig config = new DatabaseConfig("config.properties");
+          DatabaseConfig config = new DatabaseConfig(importConfig.databaseConfigFile);
           DatabaseConnection dbConn =
               new DatabaseConnection(config.getHost(), config.getUser(), config.getPassword());
           conn = dbConn.connectDatabase();
