@@ -53,18 +53,13 @@ public class QueryCorrectnessTest {
       DatabaseConfig config = new DatabaseConfig(databaseCredentials);
       Connection conn = new DatabaseConnection(config.getHost(), config.getUser(), config.getPassword()).connectDatabase();
 
-      if(conn == null) {
-        System.out.println("connection is null");
-      } else {
-        System.out.println("credentials worked");
-      }
       //init tables
       CampaignImportConfig importConfig = new CampaignImportConfig(campaignName, pathClickLog, pathImpressionLog, pathServerLog, databaseCredentials);
       CampaignImportHandler importHandler = new CampaignImportHandler(null);
       boolean importComplete = importHandler.doImport(importConfig);
 
       while(importHandler.isOngoing()){
-        Thread.sleep(100);
+        Thread.sleep(10);
       }
 
       //setup database handler

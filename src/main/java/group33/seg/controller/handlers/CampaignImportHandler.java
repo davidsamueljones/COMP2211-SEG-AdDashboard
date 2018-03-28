@@ -102,6 +102,12 @@ public class CampaignImportHandler {
               new DatabaseConnection(config.getHost(), config.getUser(), config.getPassword());
           conn = dbConn.connectDatabase();
 
+          //add tables so that that the clearing doesn't complain that they don't exist
+          //TODO: Remove table creation when table clearing is removed
+          clickLogTable.createTable(conn);
+          impressionLogTable.createTable(conn);
+          serverLogTable.createTable(conn);
+
           // Remove existing tables data (TODO: Not to be kept)
           clickLogTable.clearTable(conn);
           impressionLogTable.clearTable(conn);
@@ -117,7 +123,7 @@ public class CampaignImportHandler {
             campaignID = rs.getInt(1);
           }
         } catch (FileNotFoundException e) {
-          eb.addError("Database configuration 'config.properties' not found");
+          eb.addError("Database configuration '" + importConfig.databaseConfigFile + "' not found");
           throw new ImportException();
         } catch (Exception e) {
           eb.addError("Unknown Error");
