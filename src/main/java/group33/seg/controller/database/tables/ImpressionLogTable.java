@@ -1,10 +1,6 @@
 package group33.seg.controller.database.tables;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
+import java.sql.*;
 
 public class ImpressionLogTable extends DatabaseTable {
 

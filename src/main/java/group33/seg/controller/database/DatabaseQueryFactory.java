@@ -4,6 +4,7 @@ import group33.seg.model.configs.BounceConfig;
 import group33.seg.model.configs.MetricQuery;
 import group33.seg.model.types.Interval;
 import group33.seg.model.types.Metric;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,22 +49,28 @@ public class DatabaseQueryFactory {
             Metric.BOUNCES,
             "SELECT date_trunc('<interval>', date) AS xaxis, count(*) AS yaxis FROM server_log WHERE (<bounce>);");
 
-    //TODO add bounce rate query
+    // Bounces per click over time
+    graphQueries.put(
+            Metric.BOUNCE_RATE,
+            "SELECT bounces.xaxis AS xaxis, (bounces.bounce::float) / (clicks.click::float) AS yaxis" +
+                    " FROM" +
+                    " (SELECT date_trunc('<interval>', date) AS xaxis, count(*) AS bounce FROM server_log WHERE (<bounce>)) AS bounces" +
+                    " FULL OUTER JOIN" +
+                    " (SELECT date_trunc('<interval>', date) AS xaxis2, count(*) AS click FROM click_log GROUP BY xaxis2) AS clicks" +
+                    " ON bounces.xaxis = clicks.xaxis2;");
     
     // Average amount of money spent per conversion over time
     graphQueries.put(
         Metric.CPA,
-        new StringBuilder()
-            .append("SELECT conversions.xaxis AS xaxis, (cost.impression_cost + cost.click_cost) / NULLIF(conversions.yaxis,0) AS yaxis")
-            .append(" FROM")
-            .append(" (SELECT date_trunc('<interval>', entry_date) AS xaxis, sum(conversion::int) AS yaxis FROM server_log GROUP BY xaxis) AS conversions")
-            .append(" FULL OUTER JOIN")
-            .append(" ((SELECT date_trunc('<interval>', date) AS xaxis, sum(impression_cost) AS impression_cost FROM impression_log GROUP BY xaxis) AS impression_cost")
-            .append(" FULL OUTER JOIN")
-            .append(" (SELECT date_trunc('<interval>', date) AS xaxis2, sum(click_cost) AS click_cost FROM click_log GROUP BY xaxis2) AS click_cost")
-            .append(" ON impression_cost.xaxis = click_cost.xaxis2) AS cost")
-            .append(" ON conversions.xaxis = cost.xaxis")
-            .toString());
+            "SELECT conversions.xaxis AS xaxis, (cost.impression_cost + cost.click_cost) / NULLIF(conversions.yaxis,0) AS yaxis" +
+                    " FROM" +
+                    " (SELECT date_trunc('<interval>', entry_date) AS xaxis, sum(conversion::int) AS yaxis FROM server_log GROUP BY xaxis) AS conversions" +
+                    " FULL OUTER JOIN" +
+                    " ((SELECT date_trunc('<interval>', date) AS xaxis, sum(impression_cost) AS impression_cost FROM impression_log GROUP BY xaxis) AS impression_cost" +
+                    " FULL OUTER JOIN" +
+                    " (SELECT date_trunc('<interval>', date) AS xaxis2, sum(click_cost) AS click_cost FROM click_log GROUP BY xaxis2) AS click_cost" +
+                    " ON impression_cost.xaxis = click_cost.xaxis2) AS cost" +
+                    " ON conversions.xaxis = cost.xaxis");
 
     // Average amount of money spent per click over time
     graphQueries.put(
@@ -73,26 +80,22 @@ public class DatabaseQueryFactory {
     // Average amount of money spent per 1000 impressions over time
     graphQueries.put(
         Metric.CPM,
-        new StringBuilder()
-            .append("SELECT impression_cost.xaxis AS xaxis, (click_cost.click_cost + impression_cost.impression_cost) / impressions * 1000 AS yaxis")
-            .append(" FROM")
-            .append(" (SELECT date_trunc('<interval>', date) AS xaxis, sum(impression_cost) AS impression_cost, count(*) AS impressions FROM impression_log GROUP BY xaxis) AS impression_cost")
-            .append(" FULL OUTER JOIN")
-            .append(" (SELECT date_trunc('<interval>', date) AS xaxis2, sum(click_cost) AS click_cost FROM click_log GROUP BY xaxis2) AS click_cost")
-            .append(" ON impression_cost.xaxis = click_cost.xaxis2;")
-            .toString());
+            "SELECT impression_cost.xaxis AS xaxis, (click_cost.click_cost + impression_cost.impression_cost) / impressions * 1000 AS yaxis" +
+                    " FROM" +
+                    " (SELECT date_trunc('<interval>', date) AS xaxis, sum(impression_cost) AS impression_cost, count(*) AS impressions FROM impression_log GROUP BY xaxis) AS impression_cost" +
+                    " FULL OUTER JOIN" +
+                    " (SELECT date_trunc('<interval>', date) AS xaxis2, sum(click_cost) AS click_cost FROM click_log GROUP BY xaxis2) AS click_cost" +
+                    " ON impression_cost.xaxis = click_cost.xaxis2;");
 
     // Average number of clicks per impression over time
     graphQueries.put(
         Metric.CTR,
-        new StringBuilder()
-            .append("SELECT il.xaxis AS xaxis, (cl.count::float) / (il.count::float) AS yaxis")
-            .append(" FROM")
-            .append(" (SELECT date_trunc('<interval>', date) AS xaxis, count(*) AS count FROM impression_log GROUP BY xaxis) AS il")
-            .append(" LEFT JOIN")
-            .append(" (SELECT date_trunc('<interval>', date) AS xaxis, count(*) AS count FROM click_log GROUP BY xaxis) AS cl")
-            .append(" ON il.xaxis = cl.xaxis;")
-            .toString());
+            "SELECT il.xaxis AS xaxis, (cl.count::float) / (il.count::float) AS yaxis" +
+                    " FROM" +
+                    " (SELECT date_trunc('<interval>', date) AS xaxis, count(*) AS count FROM impression_log GROUP BY xaxis) AS il" +
+                    " LEFT JOIN" +
+                    " (SELECT date_trunc('<interval>', date) AS xaxis, count(*) AS count FROM click_log GROUP BY xaxis) AS cl" +
+                    " ON il.xaxis = cl.xaxis;");
   }
 
   /** Define and store templates for every statistic metric type. */
@@ -130,16 +133,14 @@ public class DatabaseQueryFactory {
     // Average amount of money spent on a campaign for each conversion
     statisticQueries.put(
         Metric.CPA,
-        new StringBuilder()
-            .append("SELECT 'all' AS xaxis, (sum(impression_cost) + sum(click_cost)) / sum(conversion::int) AS yaxis")
-            .append("FROM impression_log AS il")
-            .append("FULL OUTER JOIN")
-            .append("click_log AS cl")
-            .append("ON il.ctid = cl.ctid")
-            .append("FULL OUTER JOIN")
-            .append("server_log AS sl")
-            .append("ON il.ctid = sl.ctid;")
-            .toString());
+            "SELECT 'all' AS xaxis, (sum(impression_cost) + sum(click_cost)) / sum(conversion::int) AS yaxis" +
+                    "FROM impression_log AS il" +
+                    "FULL OUTER JOIN" +
+                    "click_log AS cl" +
+                    "ON il.ctid = cl.ctid" +
+                    "FULL OUTER JOIN" +
+                    "server_log AS sl" +
+                    "ON il.ctid = sl.ctid;");
 
     // The average amount of money spent for each click
     statisticQueries.put(
