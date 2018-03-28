@@ -16,14 +16,14 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Graph extends JPanel {
+public class LineGraphView extends JPanel {
   private double scale;
   private TimeSeriesCollection dataset = new TimeSeriesCollection();
   private XYPlot plot;
   private JFreeChart xylineChart;
   private ArrayList<TimeSeries> series = new ArrayList<TimeSeries>();
 
-  public Graph(String chartTitle, String xAxisLabel, String yAxisLabel) {
+  public LineGraphView(String chartTitle, String xAxisLabel, String yAxisLabel) {
     xylineChart =
         ChartFactory.createTimeSeriesChart(
             chartTitle, xAxisLabel, yAxisLabel, dataset, false, true, false);

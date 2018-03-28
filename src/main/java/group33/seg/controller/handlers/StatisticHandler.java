@@ -5,7 +5,6 @@ import group33.seg.controller.DashboardController.DashboardMVC;
 import group33.seg.controller.types.MetricQueryResponse;
 import group33.seg.model.configs.MetricQuery;
 import group33.seg.model.types.Metric;
-import group33.seg.view.output.Graph;
 
 public class StatisticHandler {
 

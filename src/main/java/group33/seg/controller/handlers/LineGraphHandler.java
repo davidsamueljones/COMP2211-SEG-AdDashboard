@@ -1,0 +1,211 @@
+package group33.seg.controller.handlers;
+
+import java.util.List;
+import group33.seg.controller.DashboardController.DashboardMVC;
+import group33.seg.controller.handlers.GraphsHandler.Update;
+import group33.seg.model.configs.GraphConfig;
+import group33.seg.model.configs.LineConfig;
+import group33.seg.model.configs.LineGraphConfig;
+import group33.seg.view.output.LineGraphView;
+
+public class LineGraphHandler implements GraphHandlerInterface<LineGraphConfig> {
+  /** MVC model that sub-controller has knowledge of */
+  private final DashboardMVC mvc;
+
+  /** Graph being controlled */
+  private final LineGraphView view;
+
+  /** Currently loaded graph */
+  private LineGraphConfig graph = null;
+
+  /**
+   * Instantiate a line graph handler.
+   * 
+   * @param mvc Knowledge of full system as model view controller
+   * @param view View being handled
+   */
+  public LineGraphHandler(DashboardMVC mvc, LineGraphView view) {
+    this.mvc = mvc;
+    this.view = view;
+  }
+
+  /**
+   * Update the line graph displayed in the view. As an update, behaviour means that if the
+   * currently displayed graph is the same as the input graph, only changes will be reflected. In
+   * the case that the current graph does not exist or is different, behaviour is the same as that
+   * of loadLineGraph.
+   * 
+   * @param graph Graph to update the view with
+   */
+  @Override
+  public void displayGraph(LineGraphConfig graph) {
+    // Clear graph if not an update
+    if (this.graph == null || !this.graph.uuid.equals(graph.uuid)) {
+      clearGraph();
+    }
+    // Configure graph view
+    setGraphProperties(graph);
+    updateGraphLines(graph.lines);
+    this.graph = graph;
+  }
+
+  /**
+   * Remove any lines from graph.
+   */
+  @Override
+  public void clearGraph() {
+    // TODO: Is this clear behaviour fully defined?
+    this.graph = null;
+    view.clearLines();
+    System.out.println("CLEARING GRAPH");
+  }
+
+  /**
+   * Update the graph's view's properties, this includes information such as title and axis labels.
+   * No data fetches should occur here.
+   * 
+   * @param graph Graph properties to load
+   */
+  private void setGraphProperties(GraphConfig graph) {
+    // TODO: CALL VIEW UPDATES FOR TITLE/AXIS LABELS ON VIEW
+  }
+
+  /**
+   * Handle line update, first ensuring any outdated lines are removed before applying updates and
+   * adding new lines.
+   * 
+   * @param lines Lines to use for update
+   */
+  private void updateGraphLines(List<LineConfig> lines) {
+    removeOutdatedLines(lines);
+    loadLines(lines);
+  }
+
+  /**
+   * Using the list of existing lines, update or add a set of lines to the graph view.
+   * 
+   * @param lines Lines to load
+   */
+  private void loadLines(List<LineConfig> lines) {
+    // Get list of existing lines
+    List<LineConfig> exLines = (this.graph == null ? null : graph.lines);
+    for (LineConfig line : lines) {
+      if (!line.hide) {
+        // Update line if it exists, otherwise add it
+        int idx = (exLines == null ? -1 : exLines.indexOf(line));
+        if (idx >= 0) {
+          updateLine(line, getLineUpdate(exLines.get(idx), line));
+        } else {
+          addLine(line);
+        }
+      }
+    }
+  }
+
+  /**
+   * Using the list of existing lines, remove those from the view that should no longer be displayed
+   * based on provided updated lined information.
+   * 
+   * @param lines Updated line information
+   */
+  private void removeOutdatedLines(List<LineConfig> lines) {
+    // Get list of existing lines
+    List<LineConfig> exLines = (this.graph == null ? null : graph.lines);
+    if (exLines == null) {
+      return;
+    }
+    // Remove existing lines that no longer exist or are hidden after update
+    for (LineConfig exLine : exLines) {
+      boolean remove = false;
+      int idx = lines.indexOf(exLine);
+      if (idx >= 0) {
+        LineConfig line = lines.get(idx);
+        if ((exLine.hide != line.hide) && line.hide) {
+          remove = true;
+        }
+      } else {
+        remove = true;
+      }
+      if (remove) {
+        removeLine(exLine);
+      }
+    }
+  }
+
+  /**
+   * Query data for the given configuration and add the line to the current view.
+   * 
+   * @param line Line configuration to use
+   */
+  private void addLine(LineConfig line) {
+    updateLine(line, Update.FULL);
+  }
+
+  /**
+   * Update a line in the view using the given update options. On a DATA update the line's query
+   * must be executed to fetch up-to-date data first. On a PROPERTIES update only the view must be
+   * updated.
+   * 
+   * @param line Line configuration to use
+   * @param update Update options
+   */
+  private void updateLine(LineConfig line, Update update) {
+    // TODO: This actual structure is not final (just gives the premise), change as required
+    if (update == Update.FULL || update == Update.DATA) {
+      // TODO: Query data and do line data update
+      System.out.println("UPDATING DATA: " + line.identifier);
+    }
+    if (update == Update.FULL || update == Update.PROPERTIES) {
+      // TODO: Set line properties
+      System.out.println("UPDATING PROPERTIES: " + line.identifier);
+    }
+  }
+
+  /**
+   * Remove a line from the current view.
+   * 
+   * @param line Line to remove
+   */
+  private void removeLine(LineConfig line) {
+    // TODO: Use the unique identifier to remove line from graph view
+    System.out.println("REMOVING: " + line.identifier);
+  }
+
+  /**
+   * Given an original and an updated line configuration, determine what type of update is required
+   * to update the graph in the least cost-manner. As in, if only line properties have changed it is
+   * best to not requery data due to computational cost.
+   * 
+   * @param original Line configuration to use as base
+   * @param updated Line configuration to compare with base
+   * @return Update type as represented by Update enumeration
+   */
+  public static Update getLineUpdate(LineConfig original, LineConfig updated) {
+    // Check for any changes in querying that may change data
+    boolean data = true;
+    data &= (original.query == null ? (original.query == null)
+        : original.query.isEquals(updated.query));
+
+    // Check for any changes of properties
+    boolean properties = true;
+    properties &= (original.identifier == null ? (original.identifier == null)
+        : original.identifier.equals(updated.identifier));
+    properties &=
+        (original.color == null ? (original.color == null) : original.color.equals(updated.color));
+    properties &= original.thickness == updated.thickness;
+    properties &= original.hide == updated.hide;
+
+    // Determine update required
+    if (!(data || properties)) {
+      return Update.FULL;
+    }
+    if (!data) {
+      return Update.DATA;
+    }
+    if (!properties) {
+      return Update.PROPERTIES;
+    }
+    return Update.NOTHING;
+  }
+
+}

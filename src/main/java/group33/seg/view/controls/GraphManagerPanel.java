@@ -11,18 +11,14 @@ import java.awt.Window;
 import javax.swing.border.BevelBorder;
 import group33.seg.controller.DashboardController;
 import group33.seg.controller.handlers.WorkspaceHandler.WorkspaceListener;
-import group33.seg.controller.handlers.WorkspaceHandler.WorkspaceListener.Type;
 import group33.seg.model.configs.GraphConfig;
 import group33.seg.model.configs.LineGraphConfig;
 import group33.seg.view.graphwizard.LineGraphWizardDialog;
-import group33.seg.view.output.Graph;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JList;
-import javax.swing.JSeparator;
-import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
@@ -47,8 +43,6 @@ public class GraphManagerPanel extends JPanel {
 
   private JButton btnLoad;
   private JButton btnNew;
-
-  private Map<String, GraphConfig> graphs;
 
   public GraphManagerPanel(DashboardController controller) {
     this.controller = controller;
@@ -86,7 +80,8 @@ public class GraphManagerPanel extends JPanel {
       @Override
       public Component getListCellRendererComponent(JList<?> list, Object value, int index,
           boolean isSelected, boolean cellHasFocus) {
-        Component comp = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+        Component comp =
+            super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
         if (value instanceof GraphConfig) {
           GraphConfig config = (GraphConfig) value;
           setText(config.identifier);
@@ -166,15 +161,6 @@ public class GraphManagerPanel extends JPanel {
     });
     lstGraphs.setSelectedIndex(-1);
 
-    btnNew.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        Window frmCurrent = SwingUtilities.getWindowAncestor(GraphManagerPanel.this);
-        LineGraphWizardDialog wizard = new LineGraphWizardDialog(frmCurrent, controller, null);
-        wizard.setModal(true);
-        wizard.setVisible(true);
-      }
-    });
-
     btnRemove.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -182,8 +168,37 @@ public class GraphManagerPanel extends JPanel {
       }
     });
 
+    btnViewModify.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        displayWizard(lstGraphs.getSelectedValue());
+      }
+    });
 
+    btnLoad.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        controller.graphs.displayGraph(lstGraphs.getSelectedValue());
+      }
+    });
+    
+    btnNew.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        displayWizard(null);
+      }
+    });
 
+  }
+
+  public void displayWizard(GraphConfig config) {
+    Window frmCurrent = SwingUtilities.getWindowAncestor(GraphManagerPanel.this);
+    if (config == null || config instanceof LineGraphConfig) {
+      LineGraphWizardDialog wizard =
+          new LineGraphWizardDialog(frmCurrent, controller, (LineGraphConfig) config);
+      wizard.setModal(true);
+      wizard.setVisible(true);
+    }
   }
 
   public void refreshGraphs() {
@@ -192,13 +207,10 @@ public class GraphManagerPanel extends JPanel {
 
   public void refreshGraphs(GraphConfig selected) {
     mdl_lstGraphs.clear();
-    graphs = new HashMap<String, GraphConfig>();
-
     List<GraphConfig> workspaceGraphs = controller.workspace.getGraphs();
     if (workspaceGraphs != null) {
       for (GraphConfig graph : workspaceGraphs) {
         mdl_lstGraphs.addElement(graph);
-        graphs.put(graph.identifier, graph);
       }
       lstGraphs.setSelectedValue(selected, true);
     } else {

@@ -17,10 +17,10 @@ public class LineConfig {
   public final String uuid;
 
   /** Identifier (not necessarily unique) shown for line */
-  public String identifier;
+  public String identifier = null;
 
   /** Colour of line plotted */
-  public Color color;
+  public Color color = null;
 
   /** Thickness of line plotted */
   public int thickness;
@@ -29,7 +29,7 @@ public class LineConfig {
   public boolean hide;
 
   /** Query to fetch data with, uses graph grouping */
-  public MetricQuery query;
+  public MetricQuery query = null;
 
 
   public LineConfig() {

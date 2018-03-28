@@ -9,7 +9,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import group33.seg.controller.DashboardController;
-import group33.seg.controller.handlers.GraphHandler;
+import group33.seg.controller.handlers.GraphsHandler;
 import group33.seg.model.configs.BounceConfig;
 import group33.seg.model.configs.FilterConfig;
 import group33.seg.model.configs.LineGraphConfig;
@@ -130,6 +130,14 @@ public class LineGraphWizardDialog extends JDialog {
     gbc_btnApplyClose.gridy = 1;
     pnlContent.add(btnApplyClose, gbc_btnApplyClose);
 
+    btnCancel.addActionListener(new ActionListener() {  
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        setVisible(false);
+        dispose();
+      }
+    });
+    
     btnApply.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -157,6 +165,7 @@ public class LineGraphWizardDialog extends JDialog {
   private void apply() {
     LineGraphConfig config = makeGraphConfig();
     controller.workspace.putGraph(config);
+    controller.graphs.displayGraph(config);
     loadGraph(config);
   }
   

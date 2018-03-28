@@ -1,6 +1,7 @@
 package group33.seg.model.configs;
 
 import java.util.List;
+import group33.seg.controller.types.GraphVisitor;
 
 /**
  * Structure-like class for constructing a line graph configuration. All variables are public to
@@ -24,6 +25,11 @@ public class LineGraphConfig extends GraphConfig {
 
   /** Whether the graph legend should be shown on the graph */
   public boolean showLegend;
+
+  @Override
+  public void accept(GraphVisitor visitor) {
+    visitor.visit(this);
+  }
 
   /** Enumeration of line drawing modes. */
   public enum Mode {

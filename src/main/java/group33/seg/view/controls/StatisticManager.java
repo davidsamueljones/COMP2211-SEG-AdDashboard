@@ -15,7 +15,6 @@ import java.awt.event.ActionListener;
 import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
 import group33.seg.controller.DashboardController;
-import group33.seg.controller.handlers.GraphHandler;
 import group33.seg.controller.handlers.StatisticHandler;
 import group33.seg.model.configs.StatisticConfig;
 import javax.swing.border.TitledBorder;

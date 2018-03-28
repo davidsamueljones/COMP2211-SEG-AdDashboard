@@ -20,36 +20,55 @@ public class MetricQuery {
 
   /** Bounce rate definition (ignored if not relevant to metric) */
   public BounceConfig bounceDef;
-  
+
   /** Instantiate an empty query. */
   public MetricQuery() {
     this(null, null, null);
   }
 
-  /** 
+  /**
    * Instantiate a query with no special definitions.
    * 
    * @param metric Metric type being requested
    * @param time Interval to group by
    * @param filter Filter to apply on query
-   * */
+   */
   public MetricQuery(Metric metric, Interval time, FilterConfig filter) {
     this(metric, time, filter, null);
   }
-  
-  /** 
-   * Instantiate a fully defined query. 
+
+  /**
+   * Instantiate a fully defined query.
    * 
    * @param metric Metric type being requested
    * @param time Interval to group by
    * @param filter Filter to apply on query
    * @param bounceDef Definition to use for bounce if applicable
-   * */
+   */
   public MetricQuery(Metric metric, Interval time, FilterConfig filter, BounceConfig bounceDef) {
     this.metric = metric;
     this.interval = time;
     this.filter = filter;
     this.bounceDef = bounceDef;
   }
-  
+
+  /**
+   * Equality check between this instance and another instance. This equality check compares all
+   * fields including non-final.
+   * 
+   * @param other Other instance to compare against
+   * @return Whether instances are the same
+   */
+  public boolean isEquals(MetricQuery other) {
+    boolean equal = true;
+    equal &= (metric == null ? (other.metric == null) : metric.equals(other.metric));
+    equal &= (interval == null ? (other.interval == null) : interval.equals(other.interval));
+    equal &= (filter == null ? (other.filter == null) : filter.isEquals(other.filter));
+    if (Metric.BOUNCE_RATE.equals(metric)) {
+      equal &=
+          (bounceDef == null ? (other.bounceDef == null) : bounceDef.isEquals(other.bounceDef));
+    }
+    return equal;
+  }
+
 }
