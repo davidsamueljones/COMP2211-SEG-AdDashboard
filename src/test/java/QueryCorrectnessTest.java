@@ -93,6 +93,6 @@ public class QueryCorrectnessTest {
     MetricQuery statQuery = new MetricQuery(Metric.IMPRESSIONS, null, null);
     List<Pair<String, Integer>> response = databaseHandler.getQueryResponse(statQuery).getResult();
     
-    assertTrue("Statistic wrong for impressions", response.equals(expectedResponse));
+    assertTrue("Statistic wrong for impressions, should have been 50 but was " + response.get(0).value, response.equals(expectedResponse));
   }
 }
