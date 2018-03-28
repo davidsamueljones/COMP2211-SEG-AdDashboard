@@ -9,7 +9,7 @@ public class ClickLogTable extends DatabaseTable {
     Statement st = c.createStatement();
     st.execute(
         "CREATE TABLE IF NOT EXISTS click_log (date TIMESTAMP, "
-            + "user_id BIGINT NOT NULL, click_cost REAL, campaign_id integer,"
+            + "user_id BIGINT NOT NULL, click_cost DOUBLE PRECISION , campaign_id integer,"
             + "CONSTRAINT click_log_campaign_id_fkey FOREIGN KEY (campaign_id)"
             + "REFERENCES campaign (id) MATCH SIMPLE);");
     st.close();

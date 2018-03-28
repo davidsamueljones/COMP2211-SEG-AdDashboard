@@ -10,7 +10,7 @@ public class ImpressionLogTable extends DatabaseTable {
     st.execute(
         "CREATE TABLE IF NOT EXISTS impression_log (date TIMESTAMP,"
             + "user_id BIGINT NOT NULL, female BOOLEAN, age age, "
-            + "income income, context context, impression_cost REAL, campaign_id integer,"
+            + "income income, context context, impression_cost DOUBLE PRECISION, campaign_id integer,"
             + "CONSTRAINT impression_log_campaign_id_fkey FOREIGN KEY (campaign_id)"
             + "REFERENCES campaign (id) MATCH SIMPLE)");
     st.close();
