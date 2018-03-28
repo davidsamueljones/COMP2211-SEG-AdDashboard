@@ -129,17 +129,20 @@ public class GraphLinesPanel extends JPanel {
     }
     for (int i = 0; i < lines.size(); i++) {
       LineConfig line = lines.get(i);
-      LinePanel pnlLine = getLinePanel(line);
-      if (pnlLine == null) {
+      Integer idx = getLineTabIndex(line);
+      if (idx == -1) {
         // New line behaviour
-        pnlLine = new LinePanel(line);
+        LinePanel pnlLine = new LinePanel(line);
         addLinePanel(line.identifier, pnlLine, i);
       } else {
         // Update behaviour
+        LinePanel pnlLine = linePanels.get(idx);
         pnlLine.loadLine(line);
+        setTabProperties(idx, line.identifier);
       }
     }
   }
+
 
   /**
    * Remove any lines from the current view that do not exist in the latest configuration.
@@ -171,8 +174,10 @@ public class GraphLinesPanel extends JPanel {
    */
   public List<LineConfig> getLines() {
     List<LineConfig> lines = new ArrayList<>();
-    for (LinePanel pnlLine : linePanels) {
-      lines.add(pnlLine.getLine());
+    if (linePanels != null) {
+      for (LinePanel pnlLine : linePanels) {
+        lines.add(pnlLine.getLine());
+      }
     }
     return lines;
   }
@@ -227,27 +232,29 @@ public class GraphLinesPanel extends JPanel {
   }
 
   /**
-   * For a given line configuration return it's corresponding line panel if it exists.
+   * For a given line configuration find it's corresponding line panel if it exists using this as a
+   * tab index.
    * 
    * @param line Line configuration to search for
    * @return Corresponding panel, null if not found
    */
-  private LinePanel getLinePanel(LineConfig line) {
+  private int getLineTabIndex(LineConfig line) {
     if (linePanels != null) {
-      for (LinePanel pnlLine : linePanels) {
+      for (int i = 0; i < linePanels.size(); i++) {
+        LinePanel pnlLine = linePanels.get(i);
         if (line.equals(pnlLine.getLine())) {
-          return pnlLine;
+          return i;
         }
       }
     }
-    return null;
+    return -1;
   }
 
   /**
    * Remove handling for all current lines.
    */
-  private void clearLines() {
-    linePanels = new ArrayList<>();
+  public void clearLines() {
+    linePanels = null;
     tabsLines.removeAll();
   }
 
