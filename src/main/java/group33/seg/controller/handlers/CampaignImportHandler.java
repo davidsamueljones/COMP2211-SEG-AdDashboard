@@ -104,6 +104,7 @@ public class CampaignImportHandler {
 
           //add tables so that that the clearing doesn't complain that they don't exist
           //TODO: Remove table creation when table clearing is removed
+          campaignTable.createTable(conn);
           clickLogTable.createTable(conn);
           impressionLogTable.createTable(conn);
           serverLogTable.createTable(conn);
@@ -113,7 +114,6 @@ public class CampaignImportHandler {
           impressionLogTable.clearTable(conn);
           serverLogTable.clearTable(conn);
 
-          campaignTable.createTable(conn);
           PreparedStatement ps = conn.prepareStatement(campaignTable.getInsertTemplate(),
               Statement.RETURN_GENERATED_KEYS);
           campaignTable.prepareInsert(ps, new String[] {importConfig.campaignName}, -1);
