@@ -130,7 +130,7 @@ public class DatabaseQueryFactory {
 
     //TODO add bounce rate query
 
-    // Average amount of money spent on a campaign for each conversion
+    // Average amount of money spent on a campaign for each conversion (CPA)
     statisticQueries.put(
         Metric.CPA,
             "SELECT 'all' AS xaxis, (il.cost + cl.cost) / conversions AS yaxis FROM " +
@@ -138,13 +138,24 @@ public class DatabaseQueryFactory {
                     "(SELECT sum(click_cost) as cost FROM click_log) as cl," +
                     "(SELECT count(*) as conversions FROM server_log WHERE conversion=true) as sl;");
 
-    // The average amount of money spent for each click
+    // The average amount of money spent for each click (CPC)
     statisticQueries.put(
-        Metric.CPC, "SELECT 'all' AS xaxis, avg(click_cost) AS yaxis FROM click_log;");
+        Metric.CPC, "SELECT 'all' AS xaxis, (il.cost + cl.cost) / clicks AS yaxis FROM " +
+                    "(SELECT sum(impression_cost) AS cost FROM impression_log) AS il," +
+                    "(SELECT  sum(click_cost) AS cost FROM click_log) AS cl," +
+                    "(SELECT count(*) AS clicks FROM click_log) AS ccl;");
 
+    // The average amount of money spent per 1000 impressions (CPM)
+    statisticQueries.put(
+            Metric.CPM, "SELECT 'all' AS xaxis, (il.cost) / impressions * 1000 AS yaxis FROM" +
+                    "(SELECT sum(impression_cost) AS cost FROM impression_log) as il," +
+                    "(SELECT count(*) AS impressions FROM impression_log) AS iil;");
 
-    // TODO Add CPM query
-    // TODO add CTR query
+    // The average amount of clicks per impression (CTR)
+    statisticQueries.put(
+            Metric.CTR, "SELECT 'all' AS xaxis, (clicks::DECIMAL) / impressions AS yaxis FROM" +
+                    "(SELECT count(*) AS clicks FROM click_log) AS cl," +
+                    "(SELECT count(*) AS impressions FROM impression_log) AS il;");
   }
 
   /**
