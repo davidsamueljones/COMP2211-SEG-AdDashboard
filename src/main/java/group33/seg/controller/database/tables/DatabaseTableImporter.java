@@ -1,12 +1,13 @@
 package group33.seg.controller.database.tables;
 
+import com.opencsv.CSVReader;
+import group33.seg.controller.utilities.DashboardUtilities;
+
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import com.opencsv.CSVReader;
-import group33.seg.controller.utilities.DashboardUtilities;
 
 public class DatabaseTableImporter {
   private final int batchSize = 500;
