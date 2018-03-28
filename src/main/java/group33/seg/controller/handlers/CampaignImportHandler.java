@@ -104,6 +104,7 @@ public class CampaignImportHandler {
 
           //add tables so that that the clearing doesn't complain that they don't exist
           //TODO: Remove table creation when table clearing is removed
+          ImpressionLogTable.initEnums(conn);
           campaignTable.createTable(conn);
           clickLogTable.createTable(conn);
           impressionLogTable.createTable(conn);
