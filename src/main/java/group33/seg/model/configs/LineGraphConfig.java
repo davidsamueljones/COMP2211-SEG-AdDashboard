@@ -1,45 +1,34 @@
 package group33.seg.model.configs;
 
-import java.awt.Color;
 import java.util.List;
-import group33.seg.model.types.Interval;
+import group33.seg.controller.types.GraphVisitor;
 
 /**
- * Structure-like class for constructing a line graph configuration. All variables are public to allow
- * for easy structure access.
+ * Structure-like class for constructing a line graph configuration. All variables are public to
+ * allow for easy structure access.
  */
 public class LineGraphConfig extends GraphConfig {
+
+  public LineGraphConfig() {
+    this(null);
+  }
+  
+  public LineGraphConfig(String uuid) {
+    super(uuid);
+  }
 
   /** Mode for how lines behave in respect to each other */
   public Mode mode;
 
-  /** Grouping interval applied to all lines */
-  public Interval interval;
-
   /** Set of lines that graph should display */
-  public List<Line> lines;
+  public List<LineConfig> lines;
 
-  /**
-   * Structure-like class for constructing a single line. All variables are public to allow for easy
-   * structure access.
-   */
-  public class Line {
+  /** Whether the graph legend should be shown on the graph */
+  public boolean showLegend;
 
-    /** Identifier shown for line (possibly in legend) */
-    public String identifier;
-
-    /** Colour of line plotted */
-    public Color color;
-
-    /** Thickness of line plotted */
-    public int thickness;
-
-    /** Whether to hide plot from the graph */
-    public boolean hide;
-
-    /** Query to fetch data with, uses graph grouping */
-    public MetricQuery query;
-
+  @Override
+  public void accept(GraphVisitor visitor) {
+    visitor.visit(this);
   }
 
   /** Enumeration of line drawing modes. */

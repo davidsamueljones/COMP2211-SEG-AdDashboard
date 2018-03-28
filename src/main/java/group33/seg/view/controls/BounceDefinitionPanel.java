@@ -8,10 +8,21 @@ import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import javax.swing.JSpinner;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import group33.seg.model.configs.BounceConfig;
+import group33.seg.model.configs.BounceConfig.Type;
 
 public class BounceDefinitionPanel extends JPanel {
   private static final long serialVersionUID = -4113181723451098077L;
+
+  private JRadioButton radTime;
+  private JSpinner nudTime;
+  private JRadioButton radPageCount;
+  private JSpinner nudPageCount;
 
   /**
    * Create the panel.
@@ -32,7 +43,7 @@ public class BounceDefinitionPanel extends JPanel {
     setLayout(gridBagLayout);
 
     ButtonGroup bgBounceRateType = new ButtonGroup();
-    JRadioButton radTime = new JRadioButton("", true);
+    radTime = new JRadioButton("", true);
     bgBounceRateType.add(radTime);
     GridBagConstraints gbc_radTime = new GridBagConstraints();
     gbc_radTime.anchor = GridBagConstraints.WEST;
@@ -48,7 +59,7 @@ public class BounceDefinitionPanel extends JPanel {
     gbc_lblTime.gridy = 0;
     add(lblTime, gbc_lblTime);
 
-    JSpinner nudTime = new JSpinner();
+    nudTime = new JSpinner();
     GridBagConstraints gbc_nudTime = new GridBagConstraints();
     gbc_nudTime.fill = GridBagConstraints.HORIZONTAL;
     gbc_nudTime.insets = new Insets(5, 0, 5, 5);
@@ -56,7 +67,7 @@ public class BounceDefinitionPanel extends JPanel {
     gbc_nudTime.gridy = 0;
     add(nudTime, gbc_nudTime);
 
-    JRadioButton radPageCount = new JRadioButton("");
+    radPageCount = new JRadioButton("");
     bgBounceRateType.add(radPageCount);
     GridBagConstraints gbc_radPageCount = new GridBagConstraints();
     gbc_radPageCount.anchor = GridBagConstraints.WEST;
@@ -72,13 +83,75 @@ public class BounceDefinitionPanel extends JPanel {
     gbc_lblPageCount.gridy = 1;
     add(lblPageCount, gbc_lblPageCount);
 
-    JSpinner nudPageCount = new JSpinner();
+    nudPageCount = new JSpinner();
     GridBagConstraints gbc_nudPageCount = new GridBagConstraints();
     gbc_nudPageCount.fill = GridBagConstraints.HORIZONTAL;
     gbc_nudPageCount.insets = new Insets(0, 0, 5, 5);
     gbc_nudPageCount.gridx = 2;
     gbc_nudPageCount.gridy = 1;
     add(nudPageCount, gbc_nudPageCount);
+
+
+    lblPageCount.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        radPageCount.setSelected(true);
+      }
+    });
+    nudPageCount.addChangeListener(new ChangeListener() {
+      @Override
+      public void stateChanged(ChangeEvent e) {
+        radPageCount.setSelected(true);
+      }
+    });
+
+    lblTime.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        radTime.setSelected(true);
+      }
+    });
+    nudTime.addChangeListener(new ChangeListener() {
+      @Override
+      public void stateChanged(ChangeEvent e) {
+        radTime.setSelected(true);
+      }
+    });
+
+  }
+
+  public void loadDef(BounceConfig bounceDef) {
+    if (bounceDef == null || bounceDef.type == null) {
+      clear();
+      return;
+    }
+    switch (bounceDef.type) {
+      case PAGES:
+        nudPageCount.setValue(bounceDef.value);
+        break;
+      case TIME:
+        nudTime.setValue(bounceDef.value);
+        break;
+      default:
+        break;
+    }   
+  }
+  
+  public void clear() {
+    nudTime.setValue(0);
+    nudPageCount.setValue(0);
+  }
+
+  public BounceConfig getBounceDef() {
+    BounceConfig config = new BounceConfig();   
+    if (radPageCount.isSelected()) {
+      config.type = Type.PAGES;
+      config.value = (Integer) nudPageCount.getValue();
+    } else if (radTime.isSelected()) {
+      config.type = Type.TIME;
+      config.value = (Integer) nudTime.getValue();
+    }
+    return config;
   }
 
 }
