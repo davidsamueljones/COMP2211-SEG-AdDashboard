@@ -64,7 +64,7 @@ public class QueryCorrectnessTest {
       boolean importComplete = importHandler.doImport(importConfig);
 
       while(importHandler.isOngoing()){
-
+        Thread.sleep(100);
       }
 
       //setup database handler
@@ -73,7 +73,7 @@ public class QueryCorrectnessTest {
       } else {
         databaseHandler = null;
       }
-    } catch (FileNotFoundException e) {
+    } catch (InterruptedException | FileNotFoundException e) {
       e.printStackTrace();
     }
   }
