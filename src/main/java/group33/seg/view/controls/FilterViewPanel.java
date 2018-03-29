@@ -76,7 +76,7 @@ public class FilterViewPanel extends JPanel {
     // gbc_cboCampaign.gridy = 0;
     // add(cboCampaign, gbc_cboCampaign);
 
-    txtFilter = new JTextArea();
+    txtFilter = new JTextArea(FilterConfig.NO_FILTER_TEXT);
     txtFilter.setEditable(false);
     JScrollPane scrFilter = new JScrollPane(txtFilter);
     scrFilter.setPreferredSize(new Dimension(0, scrFilter.getPreferredSize().height));
