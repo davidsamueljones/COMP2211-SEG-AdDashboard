@@ -1,6 +1,7 @@
 package group33.seg.controller.database;
 
 import group33.seg.model.configs.BounceConfig;
+import group33.seg.model.configs.FilterConfig;
 import group33.seg.model.configs.MetricQuery;
 import group33.seg.model.types.Interval;
 import group33.seg.model.types.Metric;
@@ -201,16 +202,22 @@ public class DatabaseQueryFactory {
         sql = sql.replace("<bounce>", "pages_viewed <= " + request.bounceDef.value);
       }
     }
+
+    // Data for which campaign should be queried
     if (request.campaignConfig != null) {
       sql = sql.replace("<campaign>", "campaign_id = " + request.campaignConfig.uid);
     }
-
 
     // If no campaign_id is specified, fetch all data
     else {
       sql.replace("<campaign>", "1 == 1");
     }
+
+    // TODO filter configuration info
+    // Are there any filters?
+    if (request.filterConfig != null) {}
     return sql;
+
   }
 
   /**

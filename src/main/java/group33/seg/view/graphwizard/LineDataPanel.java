@@ -127,7 +127,7 @@ public class LineDataPanel extends JPanel {
     }
     cboMetric.setSelectedItem(line.query.metric);
     cboInterval.setSelectedItem(line.query.interval);
-    pnlFilter.loadFilter(line.query.filter);
+    pnlFilter.loadFilter(line.query.filterConfig);
     pnlBounceRate.loadDef(line.query.bounceDef);
     pnlBounceRate.setVisible(Metric.BOUNCE_RATE.equals(line.query.metric));
   }
@@ -145,7 +145,7 @@ public class LineDataPanel extends JPanel {
     MetricQuery query = new MetricQuery();
     query.metric = (Metric) cboMetric.getSelectedItem();
     query.interval = (Interval) cboInterval.getSelectedItem();
-    query.filter = pnlFilter.getFilter();
+    query.filterConfig = pnlFilter.getFilter();
     query.bounceDef = pnlBounceRate.getBounceDef();
     query.campaignConfig = config.campaignConfig;
     config.query = query;

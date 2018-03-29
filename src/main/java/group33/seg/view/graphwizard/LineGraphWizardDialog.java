@@ -16,10 +16,8 @@ import group33.seg.model.types.Interval;
 import group33.seg.model.types.Metric;
 
 import javax.swing.JTabbedPane;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
@@ -48,7 +46,7 @@ public class LineGraphWizardDialog extends JDialog {
     line.hide = true;
     line.identifier = "abcdefghijklmnop";
     line.query = new MetricQuery();
-    line.query.filter = new FilterConfig();
+    line.query.filterConfig = new FilterConfig();
     line.query.bounceDef = new BounceConfig();
     line.query.metric = Metric.CLICKS;
     line.query.interval = Interval.MONTH;

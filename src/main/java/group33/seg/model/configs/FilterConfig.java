@@ -8,7 +8,7 @@ import group33.seg.lib.Utilities;
 import group33.seg.model.utilities.Range;
 
 /**
- * Structure-like class for constructing a filter configuration. All variables are public to allow
+ * Structure-like class for constructing a filterConfig configuration. All variables are public to allow
  * for easy structure access.
  */
 public class FilterConfig {
@@ -36,7 +36,7 @@ public class FilterConfig {
   public Range<Date> dates = null;
 
   /**
-   * Create a human readable string representing the filter configuration.
+   * Create a human readable string representing the filterConfig configuration.
    * 
    * @return Filter as generated text
    */
@@ -51,7 +51,7 @@ public class FilterConfig {
     if (dates != null) {
       filter.append(dates.toString());
     }
-    // Check if any filter rules have been found
+    // Check if any filterConfig rules have been found
     if (filter.length() == 0) {
       filter.append(NO_FILTER_TEXT);
     }
@@ -59,15 +59,15 @@ public class FilterConfig {
   }
 
   /**
-   * Generate a human readable string representing a single fields filter configuration.
+   * Generate a human readable string representing a single fields filterConfig configuration.
    * 
    * @param field Field values correspond to
-   * @param values Values to filter by, no filter if null
+   * @param values Values to filterConfig by, no filterConfig if null
    * @return Filter as generated text
    */
   private String generateFieldText(String field, Collection<?> values) {
     StringBuilder filter = new StringBuilder();
-    // No filter to apply if null
+    // No filterConfig to apply if null
     if (values != null) {
       // Add list title
       filter.append(field);

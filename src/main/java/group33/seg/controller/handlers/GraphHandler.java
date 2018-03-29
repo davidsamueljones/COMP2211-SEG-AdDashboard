@@ -1,10 +1,8 @@
 package group33.seg.controller.handlers;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
+
 import group33.seg.controller.DashboardController.DashboardMVC;
-import group33.seg.model.configs.GraphConfig;
 import group33.seg.model.configs.LineConfig;
 import group33.seg.model.configs.LineGraphConfig;
 import group33.seg.model.configs.MetricQuery;
@@ -71,7 +69,7 @@ public class GraphHandler {
     boolean data = true;
     data &= original.query.metric.equals(updated.query.metric);
     data &= original.query.interval.equals(updated.query.interval);
-    data &= original.query.filter.isEquals(updated.query.filter);
+    data &= original.query.filterConfig.isEquals(updated.query.filterConfig);
     if (updated.query.metric.equals(Metric.BOUNCE_RATE)) {
       data &= original.query.bounceDef.isEquals(updated.query.bounceDef);
     }

@@ -16,7 +16,7 @@ public class MetricQuery {
   public Interval interval;
 
   /** Filtering configuration to use (null == ignored) */
-  public FilterConfig filter;
+  public FilterConfig filterConfig;
 
   /** Bounce rate definition (ignored if not relevant to metric) */
   public BounceConfig bounceDef;
@@ -52,7 +52,7 @@ public class MetricQuery {
   public MetricQuery(Metric metric, Interval time, FilterConfig filter, BounceConfig bounceDef, CampaignConfig campaignConfig) {
     this.metric = metric;
     this.interval = time;
-    this.filter = filter;
+    this.filterConfig = filter;
     this.bounceDef = bounceDef;
     this.campaignConfig = campaignConfig;
   }
