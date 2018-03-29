@@ -35,10 +35,16 @@ public class DatabaseQueryFactory {
             + "(SELECT date_trunc('<interval>', date) AS dates, count(*) AS yaxis FROM impression_log WHERE <campaign> GROUP BY dates) AS s"
             + "ON xaxis = s.dates;");
 
-    // Total number of conversions over time
+    // Total number of conversions over time - conversions are calculated per entry_date
     graphQueries.put(
         Metric.CONVERSIONS,
-        "SELECT date_trunc('<interval>', entry_date) AS xaxis, sum(conversion::int) AS yaxis FROM server_log WHERE <campaign> GROUP BY xaxis ORDER BY xaxis;");
+        "SELECT xaxis, s.yaxis FROM"
+            + "(SELECT date_trunc('<interval>', min(entry_date)) AS start FROM server_log WHERE <campaign>) AS min,"
+            + "(SELECT date_trunc('<interval>', max(entry_date)) AS final FROM server_log WHERE <campaign>) AS max,"
+            + "generate_series(<start>, <final>,'1 <interval>') AS xaxis"
+            + "LEFT JOIN"
+            + "(SELECT date_trunc('<interval>', entry_date) AS dates, count(*) AS yaxis FROM server_log WHERE <campaign> AND conversion = TRUE GROUP BY dates) AS s"
+            + "ON xaxis = s.dates;");
 
     // Total number of clicks over time
     graphQueries.put(
