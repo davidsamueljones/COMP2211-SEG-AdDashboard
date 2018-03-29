@@ -5,6 +5,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -12,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -21,7 +23,10 @@ import group33.seg.model.configs.LineConfig;
 public class GraphLinesPanel extends JPanel {
   private static final long serialVersionUID = -1169530766129778297L;
   private final static int MAX_TAB_TITLE_LEN = 15;
-
+  
+  /** Randomiser for line colours */
+  private Random random = new Random();
+  
   protected JTabbedPane tabsLines;
   protected List<LinePanel> linePanels;
 
@@ -87,9 +92,11 @@ public class GraphLinesPanel extends JPanel {
     btnNew.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        // TODO: Check if new line already exists
         LinePanel pnlLine = new LinePanel();
-        addLinePanel("New Line", pnlLine);
+        pnlLine.pnlLineProperties.txtIdentifier
+            .setText(String.format("Line %d", tabsLines.getTabCount() + 1));
+        pnlLine.pnlLineProperties.setColor(randomLineColor());
+        addLinePanel("Line ", pnlLine);
         tabsLines.setSelectedComponent(pnlLine);
       }
     });
@@ -246,8 +253,6 @@ public class GraphLinesPanel extends JPanel {
     String title = identifier;
     if (title.length() >= MAX_TAB_TITLE_LEN) {
       title = identifier.substring(0, MAX_TAB_TITLE_LEN - 3) + "...";
-    } else if (title.isEmpty()) {
-      title = "[ LINE ]";
     }
     tabsLines.setTitleAt(idx, title);
     tabsLines.setToolTipTextAt(idx, identifier);
@@ -280,4 +285,14 @@ public class GraphLinesPanel extends JPanel {
     tabsLines.removeAll();
   }
 
+  /**
+   * @return A random, bright non-saturated colour that can be used as the default for a line.
+   */
+  private Color randomLineColor() {
+    float hue = random.nextFloat();
+    float saturation = 0.9f;
+    float luminance = 0.9f;
+    return Color.getHSBColor(hue, saturation, luminance);
+  }
+  
 }

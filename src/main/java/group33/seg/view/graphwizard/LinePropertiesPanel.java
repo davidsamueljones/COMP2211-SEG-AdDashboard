@@ -15,6 +15,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import group33.seg.model.configs.LineConfig;
@@ -25,15 +26,14 @@ import javax.swing.JButton;
 
 public class LinePropertiesPanel extends JPanel {
   private static final long serialVersionUID = -5431944440857799069L;
-  private static int DEFAULT_THICKNESS = 25;
+  private static int DEFAULT_THICKNESS = 50;
 
   protected JTextField txtIdentifier;
   protected JSlider sldThickness;
   protected JCheckBox chckbxHideFromPlot;
   protected JPanel pnlPreview;
 
-  private BasicStroke lineStroke = new BasicStroke(1);
-  protected Color color = Color.BLACK;
+  private Color color = Color.BLACK;
 
   /**
    * Initialise the panel.
@@ -46,11 +46,11 @@ public class LinePropertiesPanel extends JPanel {
    * Initialise GUI and any event listeners.
    */
   private void initGUI() {
-    
+
     // ************************************************************************************
     // * GUI HANDLING
     // ************************************************************************************
-    
+
     setBorder(BorderFactory.createCompoundBorder(
         BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Properties"),
         BorderFactory.createEmptyBorder(5, 5, 5, 5)));
@@ -89,6 +89,7 @@ public class LinePropertiesPanel extends JPanel {
     sldThickness.setMajorTickSpacing(100);
     sldThickness.setMinorTickSpacing(10);
     sldThickness.setPaintTicks(true);
+    sldThickness.setValue(DEFAULT_THICKNESS);
     GridBagConstraints gbc_sldThickness = new GridBagConstraints();
     gbc_sldThickness.fill = GridBagConstraints.HORIZONTAL;
     gbc_sldThickness.insets = new Insets(0, 0, 5, 5);
@@ -120,7 +121,7 @@ public class LinePropertiesPanel extends JPanel {
       public void paintComponent(Graphics gr) {
         super.paintComponent(gr);
         Graphics2D g = (Graphics2D) gr;
-        g.setStroke(lineStroke);
+        g.setStroke(LineGraphView.getLineStroke(sldThickness.getValue()));
         g.setColor(color);
         g.setRenderingHints(
             new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON));
@@ -136,7 +137,7 @@ public class LinePropertiesPanel extends JPanel {
     gbc_pnlPreview.gridx = 1;
     gbc_pnlPreview.gridy = 2;
     add(pnlPreview, gbc_pnlPreview);
-
+    
     chckbxHideFromPlot = new JCheckBox("Hide from plot");
     GridBagConstraints gbc_chckbxHideFromPlot = new GridBagConstraints();
     gbc_chckbxHideFromPlot.insets = new Insets(0, 0, 0, 5);
@@ -148,12 +149,11 @@ public class LinePropertiesPanel extends JPanel {
     // ************************************************************************************
     // * EVENT HANDLING
     // ************************************************************************************
-    
+
     // Update line preview in line with slider value
     sldThickness.addChangeListener(new ChangeListener() {
       @Override
       public void stateChanged(ChangeEvent e) {
-        lineStroke = LineGraphView.getLineStroke(sldThickness.getValue());
         updatePreview();
       }
     });
@@ -171,7 +171,7 @@ public class LinePropertiesPanel extends JPanel {
         }
       }
     });
-    
+
   }
 
   /**
@@ -211,12 +211,29 @@ public class LinePropertiesPanel extends JPanel {
     config.thickness = sldThickness.getValue();
     config.hide = chckbxHideFromPlot.isSelected();
   }
-  
+
   /**
    * Update the preview to be in line with view object's fields.
    */
   public void updatePreview() {
     pnlPreview.repaint();
+  }
+
+  /**
+   * @return The current line colour
+   */
+  protected Color getColor() {
+    return color;
+  }
+
+  /**
+   * Update the line's colour property. Updating the preview respectively.
+   * 
+   * @param color New colour to use
+   */
+  protected void setColor(Color color) {
+    this.color = color;
+    updatePreview();
   }
 
 }
