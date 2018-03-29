@@ -19,8 +19,8 @@ import java.util.List;
 
 public class LineGraphView extends JPanel {
   private static final long serialVersionUID = -7920465975957290150L;
-  private static float MIN_THICKNESS = 0.1f;
-  private static float MAX_THICKNESS = 5.0f;
+  private static float MIN_THICKNESS = 2.0f;
+  private static float MAX_THICKNESS = 10.0f;
   
   private double scale;
   private TimeSeriesCollection dataset = new TimeSeriesCollection();
