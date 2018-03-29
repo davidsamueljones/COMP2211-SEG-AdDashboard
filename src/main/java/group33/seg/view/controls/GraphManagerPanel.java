@@ -56,20 +56,27 @@ public class GraphManagerPanel extends JPanel {
     // ************************************************************************************
     // * GUI HANDLING
     // ************************************************************************************
-    
+
     GridBagLayout gridBagLayout = new GridBagLayout();
     gridBagLayout.columnWeights = new double[] {1.0};
-    gridBagLayout.rowWeights = new double[] {1.0, 0.0};
+    gridBagLayout.rowWeights = new double[] {0.0, 1.0};
     setLayout(gridBagLayout);
+
+    JButton btnNew = new JButton("New Graph");
+    GridBagConstraints gbc_btnNew = new GridBagConstraints();
+    gbc_btnNew.insets = new Insets(0, 0, 5, 0);
+    gbc_btnNew.fill = GridBagConstraints.HORIZONTAL;
+    gbc_btnNew.gridx = 0;
+    gbc_btnNew.gridy = 0;
+    add(btnNew, gbc_btnNew);
 
     JPanel pnlExisting = new JPanel();
     pnlExisting.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null),
         "Existing Graphs", TitledBorder.LEADING, TitledBorder.TOP, null, null));
     GridBagConstraints gbc_pnlExisting = new GridBagConstraints();
-    gbc_pnlExisting.insets = new Insets(0, 0, 5, 0);
     gbc_pnlExisting.fill = GridBagConstraints.BOTH;
     gbc_pnlExisting.gridx = 0;
-    gbc_pnlExisting.gridy = 0;
+    gbc_pnlExisting.gridy = 1;
     add(pnlExisting, gbc_pnlExisting);
     GridBagLayout gbl_pnlExisting = new GridBagLayout();
     gbl_pnlExisting.columnWeights = new double[] {1.0, 1.0};
@@ -132,16 +139,17 @@ public class GraphManagerPanel extends JPanel {
     gbc_btnLoad.gridy = 2;
     pnlExisting.add(btnLoad, gbc_btnLoad);
 
-    JButton btnNew = new JButton("New Graph");
-    GridBagConstraints gbc_btnNew = new GridBagConstraints();
-    gbc_btnNew.fill = GridBagConstraints.HORIZONTAL;
-    gbc_btnNew.gridx = 0;
-    gbc_btnNew.gridy = 1;
-    add(btnNew, gbc_btnNew);
-
     // ************************************************************************************
     // * EVENT HANDLING
     // ************************************************************************************
+
+    // Allow a new graph to be created using a fresh wizard
+    btnNew.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        displayWizard(null);
+      }
+    });
     
     // Listen for changes in workspace graphs, updating list if required
     controller.workspace.addListener(new WorkspaceListener() {
@@ -191,20 +199,12 @@ public class GraphManagerPanel extends JPanel {
         displayWizard(lstGraphs.getSelectedValue());
       }
     });
-    
+
     // Load the selected graph into the view
     btnLoad.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
         controller.graphs.displayGraph(lstGraphs.getSelectedValue());
-      }
-    });
-
-    // Allow a new graph to be created using a fresh wizard 
-    btnNew.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        displayWizard(null);
       }
     });
 
@@ -251,7 +251,7 @@ public class GraphManagerPanel extends JPanel {
     // Select new graph on wizard close
     GraphConfig newConfig = wizard.getGraph();
     if (newConfig != null) {
-      SwingUtilities.invokeLater(new Runnable() {  
+      SwingUtilities.invokeLater(new Runnable() {
         @Override
         public void run() {
           lstGraphs.setSelectedValue(newConfig, true);
