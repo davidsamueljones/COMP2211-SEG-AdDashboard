@@ -251,7 +251,12 @@ public class GraphManagerPanel extends JPanel {
     // Select new graph on wizard close
     GraphConfig newConfig = wizard.getGraph();
     if (newConfig != null) {
-      lstGraphs.setSelectedValue(newConfig, true);
+      SwingUtilities.invokeLater(new Runnable() {  
+        @Override
+        public void run() {
+          lstGraphs.setSelectedValue(newConfig, true);
+        }
+      });
     }
   }
 
