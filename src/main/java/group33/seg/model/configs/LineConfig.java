@@ -31,6 +31,9 @@ public class LineConfig {
   /** Query to fetch data with, uses graph grouping */
   public MetricQuery query;
 
+  /** Campaign */
+  public CampaignConfig campaignConfig;
+
 
   public LineConfig() {
     this(UUID.randomUUID().toString());

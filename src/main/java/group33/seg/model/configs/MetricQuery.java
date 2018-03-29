@@ -20,10 +20,13 @@ public class MetricQuery {
 
   /** Bounce rate definition (ignored if not relevant to metric) */
   public BounceConfig bounceDef;
+
+  /** Campaign configuration for selecting a campaign through ID */
+  public CampaignConfig campaignConfig;
   
   /** Instantiate an empty query. */
   public MetricQuery() {
-    this(null, null, null);
+    this(null, null, null, null, null);
   }
 
   /** 
@@ -34,7 +37,7 @@ public class MetricQuery {
    * @param filter Filter to apply on query
    * */
   public MetricQuery(Metric metric, Interval time, FilterConfig filter) {
-    this(metric, time, filter, null);
+    this(metric, time, filter, null, null);
   }
   
   /** 
@@ -44,12 +47,14 @@ public class MetricQuery {
    * @param time Interval to group by
    * @param filter Filter to apply on query
    * @param bounceDef Definition to use for bounce if applicable
+   * @param campaignConfig Campaign to use
    * */
-  public MetricQuery(Metric metric, Interval time, FilterConfig filter, BounceConfig bounceDef) {
+  public MetricQuery(Metric metric, Interval time, FilterConfig filter, BounceConfig bounceDef, CampaignConfig campaignConfig) {
     this.metric = metric;
     this.interval = time;
     this.filter = filter;
     this.bounceDef = bounceDef;
+    this.campaignConfig = campaignConfig;
   }
   
 }

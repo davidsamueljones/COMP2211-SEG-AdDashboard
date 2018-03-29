@@ -147,6 +147,7 @@ public class LineDataPanel extends JPanel {
     query.interval = (Interval) cboInterval.getSelectedItem();
     query.filter = pnlFilter.getFilter();
     query.bounceDef = pnlBounceRate.getBounceDef();
+    query.campaignConfig = config.campaignConfig;
     config.query = query;
   }
   

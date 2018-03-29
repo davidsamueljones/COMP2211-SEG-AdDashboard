@@ -10,14 +10,11 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import group33.seg.controller.DashboardController;
 import group33.seg.controller.handlers.GraphHandler;
-import group33.seg.model.configs.BounceConfig;
-import group33.seg.model.configs.FilterConfig;
-import group33.seg.model.configs.LineGraphConfig;
-import group33.seg.model.configs.LineConfig;
+import group33.seg.model.configs.*;
 import group33.seg.model.configs.LineGraphConfig.Mode;
 import group33.seg.model.types.Interval;
 import group33.seg.model.types.Metric;
-import group33.seg.model.configs.MetricQuery;
+
 import javax.swing.JTabbedPane;
 import java.awt.BorderLayout;
 import java.awt.Color;
