@@ -18,13 +18,21 @@ public class DatabaseQueryFactory {
     createStatisticTemplates();
   }
 
-  /** Define and store templates for every graph metric type. */
+  /** Define and store templates for every graph metric type.
+   *  generate_series is used to avoid straight lines on
+   *  graphs, when at a certain time the statistic value is 0.*/
   private static void createGraphQueries() {
 
     // Total number of impressions over time
     graphQueries.put(
         Metric.IMPRESSIONS,
-        "SELECT date_trunc('<interval>', date) AS xaxis, count(*) AS yaxis FROM impression_log WHERE <campaign> GROUP BY xaxis;");
+            "SELECT xaxis, s.yaxis FROM" +
+                    "(SELECT date_trunc('<interval>', min(date)) AS start FROM impression_log WHERE <campaign>) AS min," +
+                    "(SELECT date_trunc('<interval>', max(date)) AS final FROM impression_log WHERE <campaign>) AS max," +
+                    "generate_series(<start>, <final>, '1 <interval>') AS xaxis" +
+                    "LEFT JOIN" +
+                    "(SELECT date_trunc('<interval>', date) AS dates, count(*) AS yaxis FROM impression_log WHERE <campaign> GROUP BY dates) AS s" +
+                    "ON xaxis = s.dates;");
 
     // Total number of conversions over time
     graphQueries.put(
@@ -116,7 +124,7 @@ public class DatabaseQueryFactory {
         Metric.CONVERSIONS,
         "SELECT 'all' AS xaxis, sum(conversion::int) AS yaxis FROM server_log WHERE <campaign>;");
 
-    // Total cost
+    // Total cost - includes both click and impression cost
     statisticQueries.put(
         Metric.TOTAL_COST,
         "SELECT 'all' AS xaxis, il.cost + cl.cost AS yaxis FROM"
