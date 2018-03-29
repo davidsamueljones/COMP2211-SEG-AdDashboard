@@ -36,12 +36,27 @@ public class LineGraphWizardDialog extends JDialog {
 
   private GraphPropertiesPanel pnlGraphProperties;
   private GraphLinesPanel pnlLines;
+
+  /** Last loaded (or updated) graph */
   private LineGraphConfig base;
 
-
+  /**
+   * Create the dialog.
+   *
+   * @param parent Window to treat as a parent
+   * @param controller Controller for this view object
+   */
   public LineGraphWizardDialog(Window parent, DashboardController controller) {
     this(parent, controller, null);
   }
+
+  /**
+   * Create the dialog, loading an initial configuration.
+   *
+   * @param parent Window to treat as a parent
+   * @param controller Controller for this view object
+   * @param graph Configuration to load into view
+   */
 
   public LineGraphWizardDialog(Window parent, DashboardController controller,
       LineGraphConfig graph) {
@@ -62,7 +77,13 @@ public class LineGraphWizardDialog extends JDialog {
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
   }
 
+  /** 
+   * Initialise GUI and any event listeners. 
+   */
   private void initGUI() {
+    // ************************************************************************************
+    // * GUI HANDLING
+    // ************************************************************************************
 
     JPanel pnlContent = new JPanel();
     pnlContent.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -108,6 +129,11 @@ public class LineGraphWizardDialog extends JDialog {
     gbc_btnApplyClose.gridy = 1;
     pnlContent.add(btnApplyClose, gbc_btnApplyClose);
 
+    // ************************************************************************************
+    // * EVENT HANDLING
+    // ************************************************************************************
+
+    // Close the wizard, do not do any updates
     btnClose.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -122,6 +148,7 @@ public class LineGraphWizardDialog extends JDialog {
       }
     });
 
+    // Handle apply behaviour, no other effects
     btnApply.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -129,6 +156,7 @@ public class LineGraphWizardDialog extends JDialog {
       }
     });
 
+    // Handle apply behaviour and then close the wizard
     btnApplyClose.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -140,19 +168,36 @@ public class LineGraphWizardDialog extends JDialog {
 
   }
 
+  /**
+   * Load the given graph configuration into the dialog. After a load it shall be treated as the
+   * base graph so any future changes will be treated as updates/increments of a previous load.
+   * 
+   * @param graph Configuration to load
+   */
   public void loadGraph(LineGraphConfig graph) {
-    this.base = graph;
     pnlGraphProperties.loadGraph(graph);
     pnlLines.updateLines((graph == null ? null : graph.lines));
+    this.base = graph;
   }
 
+  /**
+   * Handle behaviour for cementing changes made in the graph wizard. This involves updating the
+   * current workspace and displaying the graph.
+   */
   private void apply() {
     LineGraphConfig config = makeGraphConfig();
+    // TODO: Check validity of config
     controller.workspace.putGraph(config);
     controller.graphs.displayGraph(config);
     loadGraph(config);
   }
 
+  /**
+   * Generate a graph configuration using the current wizard configuration. The current base will be
+   * used as a reference point if it exists.
+   * 
+   * @return Generated graph
+   */
   private LineGraphConfig makeGraphConfig() {
     LineGraphConfig config;
     if (base != null) {
@@ -167,6 +212,9 @@ public class LineGraphWizardDialog extends JDialog {
     return config;
   }
 
+  /**
+   * @return The currently loaded graph without any non-applied changes
+   */
   public LineGraphConfig getGraph() {
     return base;
   }
