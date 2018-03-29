@@ -9,6 +9,7 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import group33.seg.controller.DashboardController;
+import group33.seg.controller.utilities.ErrorBuilder;
 import group33.seg.model.configs.LineGraphConfig;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
@@ -174,10 +175,15 @@ public class LineGraphWizardDialog extends JDialog {
    */
   private void apply() {
     LineGraphConfig config = makeGraphConfig();
-    // TODO: Check validity of config
-    controller.workspace.putGraph(config);
-    controller.graphs.displayGraph(config);
-    loadGraph(config);
+    ErrorBuilder eb = config.validate();
+    if (eb.isError()) {
+      JOptionPane.showMessageDialog(null, eb.listComments("Configuration Error"),
+          "Configuration Error", JOptionPane.ERROR_MESSAGE);
+    } else {
+      controller.workspace.putGraph(config);
+      controller.graphs.displayGraph(config);
+      loadGraph(config);
+    }
   }
 
   /**
