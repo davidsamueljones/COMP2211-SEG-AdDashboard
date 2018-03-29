@@ -2,6 +2,7 @@ package group33.seg.model.configs;
 
 import java.awt.Color;
 import java.util.UUID;
+import group33.seg.controller.utilities.ErrorBuilder;
 
 /**
  * Structure-like class for constructing a single line. All variables are public to allow for easy
@@ -22,7 +23,7 @@ public class LineConfig {
   /** Colour of line plotted */
   public Color color = null;
 
-  /** Thickness of line plotted */
+  /** Thickness of line plotted (as a scale of graph defaults) */
   public int thickness;
 
   /** Whether to hide plot from the graph */
@@ -32,10 +33,18 @@ public class LineConfig {
   public MetricQuery query = null;
 
 
+  /**
+   * Instantiate a line configuration with a random UUID.
+   */
   public LineConfig() {
     this(UUID.randomUUID().toString());
   }
 
+  /**
+   * Instantiate a line with a given UUID.
+   * 
+   * @param uuid Unique identifier for line
+   */
   public LineConfig(String uuid) {
     this.uuid = uuid;
   }
@@ -63,6 +72,24 @@ public class LineConfig {
     } else if (!uuid.equals(other.uuid))
       return false;
     return true;
+  }
+
+  /**
+   * Do local validation of configuration.
+   * 
+   * @return Any issues with validation
+   */
+  public ErrorBuilder validate() {
+    ErrorBuilder eb = new ErrorBuilder();
+    if (color == null) {
+      eb.addError("An colour must be selected");
+    }
+    if (query == null) {
+      eb.addError("A query must be provided");
+    } else {
+      eb.append(query.validate());
+    }
+    return eb;
   }
 
 }

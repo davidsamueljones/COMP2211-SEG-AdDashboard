@@ -1,6 +1,7 @@
 package group33.seg.model.configs;
 
 import group33.seg.model.types.Metric;
+import group33.seg.controller.utilities.ErrorBuilder;
 import group33.seg.model.types.Interval;
 
 /**
@@ -69,6 +70,22 @@ public class MetricQuery {
           (bounceDef == null ? (other.bounceDef == null) : bounceDef.isEquals(other.bounceDef));
     }
     return equal;
+  }
+
+  /**
+   * Do local validation of configuration.
+   * 
+   * @return Any issues with validation
+   */
+  public ErrorBuilder validate() {
+    ErrorBuilder eb = new ErrorBuilder();
+    if (metric == null) {
+      eb.addError("A metric must be selected");
+    }
+    if (interval == null) {
+      eb.addError("An interval must be selected");
+    }
+    return eb;
   }
 
 }
