@@ -96,7 +96,7 @@ public class GraphLinesPanel extends JPanel {
         pnlLine.pnlLineProperties.txtIdentifier
             .setText(String.format("Line %d", tabsLines.getTabCount() + 1));
         pnlLine.pnlLineProperties.setColor(randomLineColor());
-        addLinePanel("Line ", pnlLine);
+        addLinePanel(pnlLine.pnlLineProperties.txtIdentifier.getText(), pnlLine);
         tabsLines.setSelectedComponent(pnlLine);
       }
     });
