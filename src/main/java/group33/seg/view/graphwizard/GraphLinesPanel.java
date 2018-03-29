@@ -4,6 +4,7 @@ import java.awt.GridBagLayout;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
@@ -103,6 +104,13 @@ public class GraphLinesPanel extends JPanel {
     btnRemove.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
+        int res = JOptionPane.showConfirmDialog(GraphLinesPanel.this,
+            "Are you sure you want to remove the current line?",
+            "Remove Line", JOptionPane.YES_NO_OPTION);
+        if (res != JOptionPane.YES_OPTION) {
+          return;
+        }
+        
         int idx = tabsLines.getSelectedIndex();
         if (idx >= 0) {
           tabsLines.remove(idx);

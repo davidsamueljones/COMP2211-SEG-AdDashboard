@@ -9,13 +9,13 @@ import group33.seg.model.configs.GraphConfig;
 import group33.seg.model.workspace.Workspace;
 
 public class WorkspaceHandler {
- 
+
   /** MVC model that sub-controller has knowledge of */
   private final DashboardMVC mvc;
-  
+
   /** Listeners for workspace changes */
   private List<WorkspaceListener> listeners = new ArrayList<>();
-  
+
   /**
    * Instantiate a workspace handler.
    * 
@@ -24,10 +24,10 @@ public class WorkspaceHandler {
   public WorkspaceHandler(DashboardMVC mvc) {
     this.mvc = mvc;
   }
- 
+
   public void putGraph(GraphConfig graph) {
     List<GraphConfig> graphs = getGraphs();
-    
+
     int cur = graphs.indexOf(graph);
     if (cur >= 0) {
       graphs.set(cur, graph);
@@ -37,10 +37,10 @@ public class WorkspaceHandler {
     notifyListeners(Type.GRAPHS);
     return;
   }
-  
+
   public boolean removeGraph(GraphConfig graphConfig) {
     boolean removed = false;
-    Iterator<GraphConfig> itrGraphs = getGraphs().iterator(); 
+    Iterator<GraphConfig> itrGraphs = getGraphs().iterator();
     while (itrGraphs.hasNext()) {
       GraphConfig graph = itrGraphs.next();
       if (graph.equals(graphConfig)) {
@@ -48,10 +48,10 @@ public class WorkspaceHandler {
         removed = true;
         notifyListeners(Type.GRAPHS);
       }
-    }  
+    }
     return removed;
   }
-  
+
   public List<GraphConfig> getGraphs() {
     Workspace workspace = mvc.model.getWorkspace();
     if (workspace != null) {
@@ -60,24 +60,24 @@ public class WorkspaceHandler {
       return null;
     }
   }
-  
+
   public void addListener(WorkspaceListener listener) {
     listeners.add(listener);
   }
-  
+
   public void notifyListeners(WorkspaceListener.Type type) {
     for (WorkspaceListener listener : listeners) {
       listener.update(type);
     }
   }
-  
+
   public interface WorkspaceListener {
     public void update(Type type);
-    
+
     public enum Type {
-      GRAPHS, STATISTICS;
+      WORKSPACE, GRAPHS, STATISTICS;
     }
-    
+
   }
-  
+
 }

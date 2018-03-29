@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import group33.seg.controller.DashboardController;
 import group33.seg.controller.handlers.GraphsHandler;
@@ -17,6 +18,7 @@ import group33.seg.model.configs.LineConfig;
 import group33.seg.model.configs.LineGraphConfig.Mode;
 import group33.seg.model.types.Interval;
 import group33.seg.model.types.Metric;
+import group33.seg.view.campaignimport.CampaignImportPanel;
 import group33.seg.model.configs.MetricQuery;
 import javax.swing.JTabbedPane;
 import java.awt.BorderLayout;
@@ -36,30 +38,6 @@ public class LineGraphWizardDialog extends JDialog {
   private GraphLinesPanel pnlLines;
   private LineGraphConfig base;
 
-//  public static void main(String[] args) {
-//    LineGraphConfig config = new LineGraphConfig();
-//    config.identifier = "IDENTIFIER";
-//    config.title = "Title";
-//    config.xAxisTitle = "X-Axis";
-//    config.yAxisTitle = "Y-Axis";
-//    config.mode = Mode.OVERLAY;
-//    config.showLegend = true;
-//    config.lines = new ArrayList<>();
-//    LineConfig line = new LineConfig();
-//    line.color = Color.RED;
-//    line.thickness = 75;
-//    line.hide = true;
-//    line.identifier = "abcdefghijklmnop";
-//    line.query = new MetricQuery();
-//    line.query.filter = new FilterConfig();
-//    line.query.bounceDef = new BounceConfig();
-//    line.query.metric = Metric.CLICKS;
-//    line.query.interval = Interval.MONTH;
-//
-//    config.lines.add(line);
-//    LineGraphWizardDialog dialog = new LineGraphWizardDialog(null, null, config);
-//    dialog.setVisible(true);
-//  }
 
   public LineGraphWizardDialog(Window parent, DashboardController controller) {
     this(parent, controller, null);
@@ -130,14 +108,20 @@ public class LineGraphWizardDialog extends JDialog {
     gbc_btnApplyClose.gridy = 1;
     pnlContent.add(btnApplyClose, gbc_btnApplyClose);
 
-    btnClose.addActionListener(new ActionListener() {  
+    btnClose.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
+        int res = JOptionPane.showConfirmDialog(LineGraphWizardDialog.this,
+            "Are you sure you want to close the wizard, any unapplied changes will be lost?",
+            "Close", JOptionPane.YES_NO_OPTION);
+        if (res != JOptionPane.YES_OPTION) {
+          return;
+        }
         setVisible(false);
         dispose();
       }
     });
-    
+
     btnApply.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -160,7 +144,7 @@ public class LineGraphWizardDialog extends JDialog {
     this.base = graph;
     pnlGraphProperties.loadGraph(graph);
     pnlLines.updateLines((graph == null ? null : graph.lines));
-  } 
+  }
 
   private void apply() {
     LineGraphConfig config = makeGraphConfig();
@@ -168,11 +152,11 @@ public class LineGraphWizardDialog extends JDialog {
     controller.graphs.displayGraph(config);
     loadGraph(config);
   }
-  
-  private LineGraphConfig makeGraphConfig() {  
+
+  private LineGraphConfig makeGraphConfig() {
     LineGraphConfig config;
     if (base != null) {
-   // Copy the uuid to identify the new instance as being a modification
+      // Copy the uuid to identify the new instance as being a modification
       config = new LineGraphConfig(base.uuid);
     } else {
       config = new LineGraphConfig();
@@ -184,7 +168,7 @@ public class LineGraphWizardDialog extends JDialog {
   }
 
   public LineGraphConfig getGraph() {
-    return null;
+    return base;
   }
 
 }
