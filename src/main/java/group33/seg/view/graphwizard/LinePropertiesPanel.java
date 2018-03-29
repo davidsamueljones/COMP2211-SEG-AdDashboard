@@ -27,10 +27,10 @@ public class LinePropertiesPanel extends JPanel {
   private static final long serialVersionUID = -5431944440857799069L;
   private static int DEFAULT_THICKNESS = 25;
   
-  private JTextField txtIdentifier;
-  private JSlider sldThickness;
-  private JCheckBox chckbxHideFromPlot;
-  private JPanel pnlPreview;
+  protected JTextField txtIdentifier;
+  protected JSlider sldThickness;
+  protected JCheckBox chckbxHideFromPlot;
+  protected JPanel pnlPreview;
   
   private BasicStroke lineStroke = new BasicStroke(1);
   private Color color = Color.BLACK;

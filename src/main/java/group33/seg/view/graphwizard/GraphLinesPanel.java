@@ -4,16 +4,25 @@ import java.awt.GridBagLayout;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JButton;
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import group33.seg.controller.utilities.DashboardUtilities;
 import group33.seg.model.configs.LineConfig;
 
 public class GraphLinesPanel extends JPanel {
@@ -131,6 +140,7 @@ public class GraphLinesPanel extends JPanel {
       LineConfig line = lines.get(i);
       Integer idx = getLineTabIndex(line);
       if (idx == -1) {
+        System.out.println("NO EXIST");
         // New line behaviour
         LinePanel pnlLine = new LinePanel(line);
         addLinePanel(line.identifier, pnlLine, i);
@@ -199,18 +209,29 @@ public class GraphLinesPanel extends JPanel {
    * @param panel Panel to add
    * @param idx Index for new line panel
    */
-  private void addLinePanel(String identifier, LinePanel panel, int idx) {
+  private void addLinePanel(String identifier, LinePanel pnlLine, int idx) {
+    // Enforce panel behaviour when part of hierarchy 
+    JTextField txtIdentifier = pnlLine.pnlLineProperties.txtIdentifier;
+    txtIdentifier.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        setTabProperties(Math.min(linePanels.size(), idx), txtIdentifier.getText());
+      }
+    });
+    DashboardUtilities.focusRequest(txtIdentifier);
+    
+    // Insert panel into hierarchy
     if (linePanels == null) {
       linePanels = new ArrayList<>();
     }
     if (idx > linePanels.size()) {
       // Insert behaviour
-      linePanels.add(idx, panel);
-      tabsLines.insertTab(null, null, panel, null, idx);
+      linePanels.add(idx, pnlLine);
+      tabsLines.insertTab(null, null, pnlLine, null, idx);
     } else {
       // Append behaviour
-      linePanels.add(panel);
-      tabsLines.add(panel);
+      linePanels.add(pnlLine);
+      tabsLines.add(pnlLine);
     }
     setTabProperties(Math.min(linePanels.size(), idx), identifier);
   }
@@ -226,6 +247,8 @@ public class GraphLinesPanel extends JPanel {
     String title = identifier;
     if (title.length() >= MAX_TAB_TITLE_LEN) {
       title = identifier.substring(0, MAX_TAB_TITLE_LEN - 3) + "...";
+    } else if (title.isEmpty()) {
+      title = "[ LINE ]";
     }
     tabsLines.setTitleAt(idx, title);
     tabsLines.setToolTipTextAt(idx, identifier);
@@ -257,5 +280,5 @@ public class GraphLinesPanel extends JPanel {
     linePanels = null;
     tabsLines.removeAll();
   }
-
+  
 }
