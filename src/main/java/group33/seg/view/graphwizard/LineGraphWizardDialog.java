@@ -4,27 +4,15 @@ import java.awt.Dimension;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import group33.seg.controller.DashboardController;
-import group33.seg.controller.handlers.GraphsHandler;
-import group33.seg.model.configs.BounceConfig;
-import group33.seg.model.configs.FilterConfig;
 import group33.seg.model.configs.LineGraphConfig;
-import group33.seg.model.configs.LineConfig;
-import group33.seg.model.configs.LineGraphConfig.Mode;
-import group33.seg.model.types.Interval;
-import group33.seg.model.types.Metric;
-import group33.seg.view.campaignimport.CampaignImportPanel;
-import group33.seg.model.configs.MetricQuery;
 import javax.swing.JTabbedPane;
-import java.awt.BorderLayout;
-import java.awt.Color;
+import javax.swing.SwingConstants;
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
@@ -77,8 +65,8 @@ public class LineGraphWizardDialog extends JDialog {
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
   }
 
-  /** 
-   * Initialise GUI and any event listeners. 
+  /**
+   * Initialise GUI and any event listeners.
    */
   private void initGUI() {
     // ************************************************************************************
@@ -93,7 +81,7 @@ public class LineGraphWizardDialog extends JDialog {
     gbl_pnlContent.rowWeights = new double[] {1.0, 0.0};
     pnlContent.setLayout(gbl_pnlContent);
 
-    JTabbedPane tabsProperties = new JTabbedPane(JTabbedPane.TOP);
+    JTabbedPane tabsProperties = new JTabbedPane(SwingConstants.TOP);
     GridBagConstraints gbc_tabsProperties = new GridBagConstraints();
     gbc_tabsProperties.gridwidth = 3;
     gbc_tabsProperties.insets = new Insets(0, 0, 5, 0);

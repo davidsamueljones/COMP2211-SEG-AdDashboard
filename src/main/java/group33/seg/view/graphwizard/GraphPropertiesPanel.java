@@ -11,9 +11,9 @@ import java.awt.GridBagConstraints;
 public class GraphPropertiesPanel extends JScrollPane {
   private static final long serialVersionUID = 3622228245996396838L;
 
-  private GeneralGraphPropertiesPanel pnlGeneralProperties;
-  private PlottingModePanel pnlPlottingMode;
-  
+  protected GeneralGraphPropertiesPanel pnlGeneralProperties;
+  protected PlottingModePanel pnlPlottingMode;
+
   /**
    * Initialise the simple panel, no external controllers required.
    */

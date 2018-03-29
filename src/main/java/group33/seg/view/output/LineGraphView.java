@@ -8,6 +8,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.time.*;
 import javax.swing.*;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -17,6 +18,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LineGraphView extends JPanel {
+  private static final long serialVersionUID = -7920465975957290150L;
+  private static float MIN_THICKNESS = 0.1f;
+  private static float MAX_THICKNESS = 5.0f;
+  
   private double scale;
   private TimeSeriesCollection dataset = new TimeSeriesCollection();
   private XYPlot plot;
@@ -104,6 +109,13 @@ public class LineGraphView extends JPanel {
   public void setFontScale(double scale) {
     this.scale = scale;
     applyFontScale();
+  }
+
+
+  public static BasicStroke getLineStroke(int scale) {
+    float dif = MAX_THICKNESS - MIN_THICKNESS;
+    float thickness = MIN_THICKNESS + dif * scale / 100.0f;
+    return new BasicStroke(thickness, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
   }
   
 }

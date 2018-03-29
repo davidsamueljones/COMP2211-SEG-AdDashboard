@@ -5,52 +5,48 @@ import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
-import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
-import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import group33.seg.controller.utilities.DashboardUtilities;
 import group33.seg.model.configs.LineConfig;
 
 public class GraphLinesPanel extends JPanel {
   private static final long serialVersionUID = -1169530766129778297L;
-
   private final static int MAX_TAB_TITLE_LEN = 15;
 
-  private JTabbedPane tabsLines;
-  private List<LinePanel> linePanels;
+  protected JTabbedPane tabsLines;
+  protected List<LinePanel> linePanels;
 
+  /**
+   * Initialise the panel.
+   */
   public GraphLinesPanel() {
-    this(null);
-  }
-
-  public GraphLinesPanel(List<LineConfig> lines) {
     initGUI();
-    updateLines(lines);
   }
 
+  /**
+   * Initialise GUI and any event listeners.
+   */
   private void initGUI() {
+    // ************************************************************************************
+    // * GUI HANDLING
+    // ************************************************************************************
+
     setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     GridBagLayout gbl_pnlMain = new GridBagLayout();
-    gbl_pnlMain.rowWeights = new double[] {0.0, 0.0, 0.0, 0.0, 1.0};
+    gbl_pnlMain.rowWeights = new double[] {0.0, 0.0, 0.0, 1.0};
     gbl_pnlMain.columnWeights = new double[] {0.0, 1.0};
     setLayout(gbl_pnlMain);
 
-    JButton btnNew = new JButton("New");
+    JButton btnNew = new JButton("New Line");
     GridBagConstraints gbc_btnNew = new GridBagConstraints();
     gbc_btnNew.fill = GridBagConstraints.HORIZONTAL;
     gbc_btnNew.insets = new Insets(0, 0, 5, 5);
@@ -75,22 +71,19 @@ public class GraphLinesPanel extends JPanel {
     // gbc_btnImport.gridy = 1;
     // add(btnImport, gbc_btnImport);
 
-    JSeparator separator = new JSeparator();
-    GridBagConstraints gbc_separator = new GridBagConstraints();
-    gbc_separator.insets = new Insets(0, 5, 5, 5);
-    gbc_separator.fill = GridBagConstraints.BOTH;
-    gbc_separator.gridx = 0;
-    gbc_separator.gridy = 2;
-    add(separator, gbc_separator);
-
-    JButton btnRemove = new JButton("Remove");
+    JButton btnRemove = new JButton("Remove Line");
     GridBagConstraints gbc_btnRemove = new GridBagConstraints();
     gbc_btnRemove.fill = GridBagConstraints.HORIZONTAL;
     gbc_btnRemove.insets = new Insets(0, 0, 0, 5);
     gbc_btnRemove.gridx = 0;
-    gbc_btnRemove.gridy = 3;
+    gbc_btnRemove.gridy = 2;
     add(btnRemove, gbc_btnRemove);
 
+    // ************************************************************************************
+    // * EVENT HANDLING
+    // ************************************************************************************
+
+    // Create a new line in the graph
     btnNew.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -101,16 +94,16 @@ public class GraphLinesPanel extends JPanel {
       }
     });
 
+    // Remove currently selected line from graph
     btnRemove.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
         int res = JOptionPane.showConfirmDialog(GraphLinesPanel.this,
-            "Are you sure you want to remove the current line?",
-            "Remove Line", JOptionPane.YES_NO_OPTION);
+            "Are you sure you want to remove the current line?", "Remove Line",
+            JOptionPane.YES_NO_OPTION);
         if (res != JOptionPane.YES_OPTION) {
           return;
         }
-        
         int idx = tabsLines.getSelectedIndex();
         if (idx >= 0) {
           tabsLines.remove(idx);
@@ -118,8 +111,8 @@ public class GraphLinesPanel extends JPanel {
         }
       }
     });
-  }
 
+  }
 
   /**
    * Handle line update, first ensuring any outdated lines are removed before applying updates and
@@ -148,7 +141,6 @@ public class GraphLinesPanel extends JPanel {
       LineConfig line = lines.get(i);
       Integer idx = getLineTabIndex(line);
       if (idx == -1) {
-        System.out.println("NO EXIST");
         // New line behaviour
         LinePanel pnlLine = new LinePanel(line);
         addLinePanel(line.identifier, pnlLine, i);
@@ -160,7 +152,6 @@ public class GraphLinesPanel extends JPanel {
       }
     }
   }
-
 
   /**
    * Remove any lines from the current view that do not exist in the latest configuration.
@@ -218,7 +209,7 @@ public class GraphLinesPanel extends JPanel {
    * @param idx Index for new line panel
    */
   private void addLinePanel(String identifier, LinePanel pnlLine, int idx) {
-    // Enforce panel behaviour when part of hierarchy 
+    // Enforce panel behaviour when part of hierarchy
     JTextField txtIdentifier = pnlLine.pnlLineProperties.txtIdentifier;
     txtIdentifier.addActionListener(new ActionListener() {
       @Override
@@ -227,7 +218,7 @@ public class GraphLinesPanel extends JPanel {
       }
     });
     DashboardUtilities.focusRequest(txtIdentifier);
-    
+
     // Insert panel into hierarchy
     if (linePanels == null) {
       linePanels = new ArrayList<>();
@@ -288,5 +279,5 @@ public class GraphLinesPanel extends JPanel {
     linePanels = null;
     tabsLines.removeAll();
   }
-  
+
 }

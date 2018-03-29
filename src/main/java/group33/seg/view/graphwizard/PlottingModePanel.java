@@ -13,8 +13,8 @@ import java.awt.Insets;
 public class PlottingModePanel extends JPanel {
   private static final long serialVersionUID = 4139382753869737135L;
 
-  private JRadioButton radOverlaid;
-  private JRadioButton radNormal;
+  protected JRadioButton radOverlaid;
+  protected JRadioButton radNormal;
 
   /**
    * Initialise the simple panel, no external controllers required.

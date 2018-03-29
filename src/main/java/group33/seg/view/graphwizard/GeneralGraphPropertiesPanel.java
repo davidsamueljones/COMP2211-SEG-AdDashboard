@@ -13,11 +13,11 @@ import javax.swing.JCheckBox;
 public class GeneralGraphPropertiesPanel extends JPanel {
   private static final long serialVersionUID = -1585475807433849072L;
 
-  private JTextField txtIdentifier;
-  private JTextField txtTitle;
-  private JTextField txtXAxisTitle;
-  private JTextField txtYAxisTitle;
-  private JCheckBox chckbxShowLegend;
+  protected JTextField txtIdentifier;
+  protected JTextField txtTitle;
+  protected JTextField txtXAxisTitle;
+  protected JTextField txtYAxisTitle;
+  protected JCheckBox chckbxShowLegend;
 
   /**
    * Initialise the simple panel, no external controllers required.

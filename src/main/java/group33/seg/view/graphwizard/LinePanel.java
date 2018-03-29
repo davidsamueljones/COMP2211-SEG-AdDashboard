@@ -4,12 +4,10 @@ import java.awt.GridBagLayout;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import group33.seg.model.configs.LineConfig;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
-import java.awt.event.FocusEvent;
 
 public class LinePanel extends JScrollPane {
   private static final long serialVersionUID = 5600109072945686314L;
@@ -27,7 +25,10 @@ public class LinePanel extends JScrollPane {
     initGUI();
     loadLine(line);
   }
-  
+
+  /**
+   * Initialise GUI and any event listeners.
+   */
   public void initGUI() {
     JPanel pnlMain = new JPanel();
     pnlMain.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
