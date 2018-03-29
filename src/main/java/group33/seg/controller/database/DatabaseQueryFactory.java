@@ -18,21 +18,22 @@ public class DatabaseQueryFactory {
     createStatisticTemplates();
   }
 
-  /** Define and store templates for every graph metric type.
-   *  generate_series is used to avoid straight lines on
-   *  graphs, when at a certain time the statistic value is 0.*/
+  /**
+   * Define and store templates for every graph metric type. generate_series is used to avoid
+   * straight lines on graphs, when at a certain time the statistic value is 0.
+   */
   private static void createGraphQueries() {
 
     // Total number of impressions over time
     graphQueries.put(
         Metric.IMPRESSIONS,
-            "SELECT xaxis, s.yaxis FROM" +
-                    "(SELECT date_trunc('<interval>', min(date)) AS start FROM impression_log WHERE <campaign>) AS min," +
-                    "(SELECT date_trunc('<interval>', max(date)) AS final FROM impression_log WHERE <campaign>) AS max," +
-                    "generate_series(<start>, <final>, '1 <interval>') AS xaxis" +
-                    "LEFT JOIN" +
-                    "(SELECT date_trunc('<interval>', date) AS dates, count(*) AS yaxis FROM impression_log WHERE <campaign> GROUP BY dates) AS s" +
-                    "ON xaxis = s.dates;");
+        "SELECT xaxis, s.yaxis FROM"
+            + "(SELECT date_trunc('<interval>', min(date)) AS start FROM impression_log WHERE <campaign>) AS min,"
+            + "(SELECT date_trunc('<interval>', max(date)) AS final FROM impression_log WHERE <campaign>) AS max,"
+            + "generate_series(<start>, <final>, '1 <interval>') AS xaxis"
+            + "LEFT JOIN"
+            + "(SELECT date_trunc('<interval>', date) AS dates, count(*) AS yaxis FROM impression_log WHERE <campaign> GROUP BY dates) AS s"
+            + "ON xaxis = s.dates;");
 
     // Total number of conversions over time
     graphQueries.put(
@@ -218,14 +219,22 @@ public class DatabaseQueryFactory {
 
     // If no campaign_id is specified, fetch all data
     else {
-      sql.replace("<campaign>", "1 == 1");
+      sql.replace("<campaign>", "1 = 1");
     }
 
-    // TODO filter configuration info
-    // Are there any filters?
-    if (request.filterConfig != null) {}
+    // TODO add rest of filtering options
+    if (request.filterConfig != null) {
+      /**
+       * Checking if there is a chosen date range. If there is no date range set, the query will
+       * default to using the minimum and maximum dates in the table
+       */
+      if (request.filterConfig.dates != null) {
+        sql =
+            sql.replace("<start>", "'" + request.filterConfig.dates.min + "'")
+                .replace("<final>", "'" + request.filterConfig.dates.max + "'");
+      } else sql = sql.replace("<start>", "start").replace("<final>", "final");
+    }
     return sql;
-
   }
 
   /**
