@@ -149,9 +149,11 @@ public class LineGraphWizardDialog extends JDialog {
     btnApplyClose.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        apply();
-        setVisible(false);
-        dispose();
+        boolean success = apply();
+        if (success) {
+          setVisible(false);
+          dispose();
+        }
       }
     });
 
@@ -172,17 +174,21 @@ public class LineGraphWizardDialog extends JDialog {
   /**
    * Handle behaviour for cementing changes made in the graph wizard. This involves updating the
    * current workspace and displaying the graph.
+   * 
+   * @return Whether apply was successful
    */
-  private void apply() {
+  private boolean apply() {
     LineGraphConfig config = makeGraphConfig();
     ErrorBuilder eb = config.validate();
     if (eb.isError()) {
       JOptionPane.showMessageDialog(null, eb.listComments("Configuration Error"),
           "Configuration Error", JOptionPane.ERROR_MESSAGE);
+      return false;
     } else {
       controller.workspace.putGraph(config);
       controller.graphs.displayGraph(config);
       loadGraph(config);
+      return true;
     }
   }
 
