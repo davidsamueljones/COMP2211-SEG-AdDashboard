@@ -103,44 +103,55 @@ public class DatabaseQueryFactory {
             + " (SELECT date_trunc('<interval>', max(entry_date)) AS final FROM server_log WHERE campaign_id = 3) AS max,"
             + " generate_series(<start>, <final>, '1 <interval>') AS xaxis;");
 
-    // TODO: All below this line
     // Average amount of money spent per conversion over time
     graphQueries.put(
         Metric.CPA,
-        "SELECT conversions.xaxis AS xaxis, (cost.impression_cost + cost.click_cost) / NULLIF(conversions.yaxis,0) AS yaxis"
+        "SELECT xaxis,"
+            + " (SELECT CASE conversions WHEN 0 THEN 0 ELSE (icost + ccost) / conversions END FROM"
+            + " (SELECT SUM(impression_cost) as icost FROM impression_log WHERE <campaign> AND date_trunc('<interval>', date) = xaxis) as il,"
+            + " (SELECT SUM(click_cost) as ccost FROM click_log WHERE <campaign> AND date_trunc('<interval>', date) = xaxis) as cl,"
+            + " (SELECT count(*) as conversions FROM server_log WHERE conversion=true AND <campaign> AND date_trunc('<interval>', entry_date) = xaxis) as iil) as yaxis"
             + " FROM"
-            + " (SELECT date_trunc('<interval>', entry_date) AS xaxis, sum(conversion::int) AS yaxis FROM server_log GROUP BY xaxis) AS conversions"
-            + " FULL OUTER JOIN"
-            + " ((SELECT date_trunc('<interval>', date) AS xaxis, sum(impression_cost) AS impression_cost FROM impression_log GROUP BY xaxis) AS impression_cost"
-            + " FULL OUTER JOIN"
-            + " (SELECT date_trunc('<interval>', date) AS xaxis2, sum(click_cost) AS click_cost FROM click_log GROUP BY xaxis2) AS click_cost"
-            + " ON impression_cost.xaxis = click_cost.xaxis2) AS cost"
-            + " ON conversions.xaxis = cost.xaxis");
+            + " (SELECT date_trunc('<interval>', min(entry_date)) AS start FROM server_log WHERE <campaign>) AS min,"
+            + " (SELECT date_trunc('<interval>', max(entry_date)) AS final FROM server_log WHERE <campaign>) AS max,"
+            + " generate_series(<start>, <final>, '1 <interval>') AS xaxis;");
 
     // Average amount of money spent per click over time
     graphQueries.put(
         Metric.CPC,
-        "SELECT date_trunc('<interval>', date) AS xaxis, avg(click_cost) AS yaxis FROM click_log GROUP BY xaxis ORDER BY xaxis;");
+        "SELECT xaxis,"
+            + " (SELECT CASE clicks WHEN 0 THEN 0 ELSE (icost + ccost) / clicks END FROM"
+            + " (SELECT SUM(impression_cost) as icost FROM impression_log WHERE <campaign> AND date_trunc('<interval>', date) = xaxis) as il,"
+            + " (SELECT SUM(click_cost) as ccost FROM click_log WHERE <campaign> AND date_trunc('<interval>', date) = xaxis) as cl,"
+            + " (SELECT count(*) as clicks FROM click_log WHERE <campaign> AND date_trunc('<interval>', date) = xaxis) as iil) as yaxis"
+            + " FROM"
+            + " (SELECT date_trunc('<interval>', min(date)) AS start FROM click_log WHERE campaign_id = 3) AS min,"
+            + " (SELECT date_trunc('<interval>', max(date)) AS final FROM click_log WHERE campaign_id = 3) AS max,"
+            + " generate_series(<start>, <final>, '1 <interval>') AS xaxis;");
 
     // Average amount of money spent per 1000 impressions over time
     graphQueries.put(
         Metric.CPM,
-        "SELECT impression_cost.xaxis AS xaxis, (click_cost.click_cost + impression_cost.impression_cost) / impressions * 1000 AS yaxis"
+        "SELECT xaxis,"
+            + " (SELECT (cost / impressions) * 1000 FROM"
+            + " (SELECT SUM(impression_cost) as cost FROM impression_log WHERE <campaign> AND date_trunc('<interval>', date) = xaxis) as il,"
+            + " (SELECT count(*) as impressions FROM impression_log WHERE <campaign> AND date_trunc('<interval>', date) = xaxis) as iil) as yaxis"
             + " FROM"
-            + " (SELECT date_trunc('<interval>', date) AS xaxis, sum(impression_cost) AS impression_cost, count(*) AS impressions FROM impression_log GROUP BY xaxis) AS impression_cost"
-            + " FULL OUTER JOIN"
-            + " (SELECT date_trunc('<interval>', date) AS xaxis2, sum(click_cost) AS click_cost FROM click_log GROUP BY xaxis2) AS click_cost"
-            + " ON impression_cost.xaxis = click_cost.xaxis2;");
+            + " (SELECT date_trunc('<interval>', min(entry_date)) AS start FROM server_log WHERE <campaign>) AS min,"
+            + " (SELECT date_trunc('<interval>', max(entry_date)) AS final FROM server_log WHERE <campaign>) AS max,"
+            + " generate_series(<start>, <final>, '1 <interval>') AS xaxis;");
 
     // Average number of clicks per impression over time
     graphQueries.put(
         Metric.CTR,
-        "SELECT il.xaxis AS xaxis, (cl.count::float) / (il.count::float) AS yaxis"
+        "SELECT xaxis, ("
+            + " SELECT cl.clicks::DECIMAL / il.impressions FROM"
+            + " (SELECT count(*) as clicks FROM click_log WHERE <campaign> AND date_trunc('<interval>', date) = xaxis) as cl,"
+            + " (SELECT count(*) as impressions FROM impression_log WHERE <campaign> AND date_trunc('<interval>', date) = xaxis) as il) as yaxis"
             + " FROM"
-            + " (SELECT date_trunc('<interval>', date) AS xaxis, count(*) AS count FROM impression_log GROUP BY xaxis) AS il"
-            + " LEFT JOIN"
-            + " (SELECT date_trunc('<interval>', date) AS xaxis, count(*) AS count FROM click_log GROUP BY xaxis) AS cl"
-            + " ON il.xaxis = cl.xaxis;");
+            + " (SELECT date_trunc('<interval>', min(date)) AS start FROM impression_log WHERE <campaign>) AS min,"
+            + " (SELECT date_trunc('<interval>', max(date)) AS final FROM impression_log WHERE <campaign>) AS max,"
+            + " generate_series(<start>, <final>, '1 <interval>') AS xaxis;");
   }
 
   /** Define and store templates for every statistic metric type. */
@@ -191,9 +202,9 @@ public class DatabaseQueryFactory {
     statisticQueries.put(
         Metric.CPA,
         "SELECT 'all' AS xaxis, (il.cost + cl.cost) / conversions AS yaxis FROM "
-            + " (SELECT sum(impression_cost) as cost FROM impression_log WHERE <campaign>) as il,"
-            + " (SELECT sum(click_cost) as cost FROM click_log WHERE <campaign>) as cl,"
-            + " (SELECT count(*) as conversions FROM server_log WHERE conversion=true AND <campaign>) as sl;");
+            + " (SELECT sum(impression_cost) AS cost FROM impression_log WHERE <campaign>) AS il,"
+            + " (SELECT sum(click_cost) AS cost FROM click_log WHERE <campaign>) AS cl,"
+            + " (SELECT count(*) AS conversions FROM server_log WHERE conversion=true AND <campaign>) AS sl;");
 
     // The average amount of money spent for each click (CPC)
     statisticQueries.put(
@@ -206,8 +217,8 @@ public class DatabaseQueryFactory {
     // The average amount of money spent per 1000 impressions (CPM)
     statisticQueries.put(
         Metric.CPM,
-        "SELECT 'all' AS xaxis, (il.cost) / impressions * 1000 AS yaxis FROM"
-            + " (SELECT sum(impression_cost) AS cost FROM impression_log WHERE <campaign>) as il,"
+        "SELECT 'all' AS xaxis, (il.cost / impressions) * 1000 AS yaxis FROM"
+            + " (SELECT sum(impression_cost) AS cost FROM impression_log WHERE <campaign>) AS il,"
             + " (SELECT count(*) AS impressions FROM impression_log WHERE <campaign>) AS iil;");
 
     // The average amount of clicks per impression (CTR)
