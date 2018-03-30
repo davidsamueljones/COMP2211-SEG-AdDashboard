@@ -18,7 +18,7 @@ public class ClickLogTable extends DatabaseTable {
   @Override
   public void createIndexes(Connection c) throws SQLException {
     Statement st = c.createStatement();
-    st.execute("CREATE INDEX CONCURRENTLY IF NOT EXISTS cl_date ON click_log(date);");
+    st.execute("CREATE INDEX CONCURRENTLY IF NOT EXISTS cl_date ON click_log(date, campaign_id);");
     st.close();
   }
 

@@ -17,7 +17,7 @@ public class ServerLogTable extends DatabaseTable {
   @Override
   public void createIndexes(Connection c) throws SQLException {
     Statement st = c.createStatement();
-    st.execute("CREATE INDEX CONCURRENTLY IF NOT EXISTS sl_date ON server_log(entry_date);");
+    st.execute("CREATE INDEX CONCURRENTLY IF NOT EXISTS sl_date ON server_log(entry_date,campaign_id);");
     st.close();
   }
 
