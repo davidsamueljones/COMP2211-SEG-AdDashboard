@@ -1,9 +1,8 @@
 package group33.seg.controller.handlers;
 
-import group33.seg.view.utilities.Accessibility;
-
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+import group33.seg.view.utilities.Accessibility;
 
 public class SettingsHandler {
   public static final String CUR_CAMPAIGN = "cur_campaign";

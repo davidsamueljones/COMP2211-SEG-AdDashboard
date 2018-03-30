@@ -1,5 +1,6 @@
 package group33.seg.controller.handlers;
 
+import java.util.List;
 import group33.seg.controller.DashboardController.DashboardMVC;
 import group33.seg.model.configs.LineConfig;
 import group33.seg.model.configs.LineGraphConfig;
@@ -8,8 +9,6 @@ import group33.seg.model.types.Interval;
 import group33.seg.model.types.Metric;
 import group33.seg.model.types.Pair;
 import group33.seg.view.output.Graph;
-
-import java.util.List;
 
 public class GraphHandler {
   /** MVC model that sub-controller has knowledge of */

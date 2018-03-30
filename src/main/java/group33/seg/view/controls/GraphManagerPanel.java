@@ -1,33 +1,30 @@
 package group33.seg.view.controls;
 
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Window;
-import javax.swing.border.BevelBorder;
-import group33.seg.controller.DashboardController;
-import group33.seg.model.configs.GraphConfig;
-import group33.seg.model.configs.LineGraphConfig;
-import group33.seg.view.graphwizard.LineGraphWizardDialog;
-import group33.seg.view.output.Graph;
-import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JList;
-import javax.swing.JSeparator;
-import javax.swing.SwingUtilities;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.border.EtchedBorder;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.awt.event.ActionEvent;
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import group33.seg.controller.DashboardController;
+import group33.seg.model.configs.GraphConfig;
+import group33.seg.view.graphwizard.LineGraphWizardDialog;
 
 public class GraphManagerPanel extends JPanel {
   private static final long serialVersionUID = 6541885932864334941L;
@@ -130,6 +127,7 @@ public class GraphManagerPanel extends JPanel {
     lstGraphs.setSelectedIndex(-1);
     
     btnNew.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         Window frmCurrent = SwingUtilities.getWindowAncestor(GraphManagerPanel.this);
         LineGraphWizardDialog wizard = new LineGraphWizardDialog(frmCurrent, controller, null);

@@ -1,23 +1,21 @@
 package group33.seg.view.preferences;
 
-import javax.swing.JPanel;
-import java.awt.GridBagLayout;
-import javax.swing.JScrollBar;
-import javax.swing.JSlider;
-import javax.swing.SwingConstants;
+import java.awt.Adjustable;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
-import javax.sound.midi.ControllerEventListener;
-import javax.swing.JLabel;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.util.prefs.Preferences;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import org.jdesktop.swingx.JXTitledSeparator;
 import group33.seg.controller.DashboardController;
 import group33.seg.controller.handlers.SettingsHandler;
 import group33.seg.view.utilities.Accessibility;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
 
 public class FontSizePanel extends JPanel {
   private static final long serialVersionUID = -2100128317422188877L;
@@ -56,7 +54,7 @@ public class FontSizePanel extends JPanel {
     sldFontSize.setMinorTickSpacing(10);
     sldFontSize.setMajorTickSpacing(50);
     sldFontSize.setValue((int) (currentScaling * 100));
-    sldFontSize.setOrientation(JScrollBar.HORIZONTAL);
+    sldFontSize.setOrientation(Adjustable.HORIZONTAL);
     sldFontSize.setPreferredSize(new Dimension(300, sldFontSize.getPreferredSize().height));
     GridBagConstraints gbc_sldFontSize = new GridBagConstraints();
     gbc_sldFontSize.fill = GridBagConstraints.HORIZONTAL;

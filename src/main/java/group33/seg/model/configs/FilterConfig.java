@@ -3,7 +3,6 @@ package group33.seg.model.configs;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.Set;
 import group33.seg.lib.Utilities;
 import group33.seg.model.utilities.Range;
 

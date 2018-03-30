@@ -1,6 +1,7 @@
 package group33.seg.controller.utilities;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.EventQueue;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;

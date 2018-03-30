@@ -1,13 +1,5 @@
 package group33.seg.controller.handlers;
 
-import group33.seg.controller.DashboardController.DashboardMVC;
-import group33.seg.controller.database.DatabaseConfig;
-import group33.seg.controller.database.DatabaseConnection;
-import group33.seg.controller.database.DatabaseQueryFactory;
-import group33.seg.controller.types.MetricQueryResponse;
-import group33.seg.model.configs.MetricQuery;
-import group33.seg.model.types.Pair;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -17,6 +9,13 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import group33.seg.controller.DashboardController.DashboardMVC;
+import group33.seg.controller.database.DatabaseConfig;
+import group33.seg.controller.database.DatabaseConnection;
+import group33.seg.controller.database.DatabaseQueryFactory;
+import group33.seg.controller.types.MetricQueryResponse;
+import group33.seg.model.configs.MetricQuery;
+import group33.seg.model.types.Pair;
 
 public class DatabaseHandler {
   

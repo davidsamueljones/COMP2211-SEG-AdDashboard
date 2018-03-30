@@ -1,14 +1,14 @@
 package group33.seg.view.graphwizard;
 
-import javax.swing.JPanel;
-import java.awt.GridBagLayout;
-import javax.swing.JLabel;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
-import javax.swing.JTextField;
-import group33.seg.model.configs.LineGraphConfig;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import group33.seg.model.configs.LineGraphConfig;
 
 public class GeneralGraphPropertiesPanel extends JPanel {
   private static final long serialVersionUID = -1585475807433849072L;

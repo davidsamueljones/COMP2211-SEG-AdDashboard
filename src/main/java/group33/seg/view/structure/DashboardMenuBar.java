@@ -12,12 +12,7 @@ import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import group33.seg.controller.DashboardController;
-import group33.seg.controller.handlers.SettingsHandler;
-import group33.seg.model.configs.CampaignConfig;
-import group33.seg.view.campaignimport.CampaignImportDialog;
-import group33.seg.view.controls.CampaignManagerPanel;
 import group33.seg.view.preferences.PreferencesDialog;
-import group33.seg.view.utilities.Accessibility;
 
 public class DashboardMenuBar extends JMenuBar {
   private static final long serialVersionUID = 7553179515259733852L;

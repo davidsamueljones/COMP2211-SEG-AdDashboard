@@ -1,21 +1,20 @@
 package group33.seg.view.controls;
 
-import javax.swing.JPanel;
-import group33.seg.controller.DashboardController;
-import group33.seg.controller.handlers.SettingsHandler;
-import group33.seg.model.configs.CampaignConfig;
-import group33.seg.view.campaignimport.CampaignImportDialog;
-import group33.seg.view.utilities.Accessibility;
-import java.awt.GridBagLayout;
-import javax.swing.JButton;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import group33.seg.controller.DashboardController;
+import group33.seg.controller.handlers.SettingsHandler;
+import group33.seg.model.configs.CampaignConfig;
+import group33.seg.view.campaignimport.CampaignImportDialog;
 
 public class CampaignManagerPanel extends JPanel {
   private static final long serialVersionUID = 8138446932363054396L;

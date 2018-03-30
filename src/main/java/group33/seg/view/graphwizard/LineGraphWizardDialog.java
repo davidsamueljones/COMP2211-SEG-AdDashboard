@@ -1,26 +1,30 @@
 package group33.seg.view.graphwizard;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.SwingConstants;
 import group33.seg.controller.DashboardController;
 import group33.seg.controller.handlers.GraphHandler;
-import group33.seg.model.configs.*;
+import group33.seg.model.configs.BounceConfig;
+import group33.seg.model.configs.FilterConfig;
+import group33.seg.model.configs.LineConfig;
+import group33.seg.model.configs.LineGraphConfig;
 import group33.seg.model.configs.LineGraphConfig.Mode;
+import group33.seg.model.configs.MetricQuery;
 import group33.seg.model.types.Interval;
 import group33.seg.model.types.Metric;
-
-import javax.swing.JTabbedPane;
-import java.awt.Color;
-import javax.swing.BorderFactory;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
 
 public class LineGraphWizardDialog extends JDialog {
   private static final long serialVersionUID = -2529642040023886708L;
@@ -89,7 +93,7 @@ public class LineGraphWizardDialog extends JDialog {
     gbl_pnlContent.rowWeights = new double[] {1.0, 0.0};
     pnlContent.setLayout(gbl_pnlContent);
 
-    JTabbedPane tabsProperties = new JTabbedPane(JTabbedPane.TOP);
+    JTabbedPane tabsProperties = new JTabbedPane(SwingConstants.TOP);
     GridBagConstraints gbc_tabsProperties = new GridBagConstraints();
     gbc_tabsProperties.gridwidth = 3;
     gbc_tabsProperties.insets = new Insets(0, 0, 5, 0);

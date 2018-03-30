@@ -1,6 +1,21 @@
 package group33.seg.view.controls;
 
+import java.awt.Component;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
@@ -15,24 +30,6 @@ import org.scijava.swing.checkboxtree.CheckBoxNodeEditor;
 import org.scijava.swing.checkboxtree.CheckBoxNodeRenderer;
 import group33.seg.model.configs.FilterConfig;
 import group33.seg.model.utilities.Range;
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import javax.swing.JLabel;
-import java.awt.Insets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 public class FilterSettingsPanel extends JPanel {
   private static final long serialVersionUID = -6373337720735697409L;

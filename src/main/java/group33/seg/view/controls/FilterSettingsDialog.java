@@ -1,17 +1,17 @@
 package group33.seg.view.controls;
 
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import group33.seg.model.configs.FilterConfig;
-import java.awt.GridBagLayout;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 public class FilterSettingsDialog extends JDialog {
   private static final long serialVersionUID = -6395675568821301037L;

@@ -1,21 +1,19 @@
 package group33.seg.view.graphwizard;
 
-import java.awt.GridBagLayout;
-import javax.swing.BorderFactory;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JButton;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
-import group33.seg.model.configs.LineGraphConfig;
+import javax.swing.SwingConstants;
 import group33.seg.model.configs.LineConfig;
 
 public class GraphLinesPanel extends JPanel {
@@ -48,7 +46,7 @@ public class GraphLinesPanel extends JPanel {
     gbc_btnNew.gridy = 0;
     add(btnNew, gbc_btnNew);
     
-    tabsLines = new JTabbedPane(JTabbedPane.TOP);
+    tabsLines = new JTabbedPane(SwingConstants.TOP);
     GridBagConstraints gbc_tabsLines = new GridBagConstraints();
     gbc_tabsLines.gridheight = 5;
     gbc_tabsLines.insets = new Insets(0, 0, 5, 0);

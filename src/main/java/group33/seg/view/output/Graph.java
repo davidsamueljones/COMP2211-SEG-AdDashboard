@@ -1,20 +1,20 @@
 package group33.seg.view.output;
 
-import group33.seg.model.types.Pair;
-import group33.seg.view.utilities.Accessibility;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JPanel;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.data.time.*;
-import javax.swing.*;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
+import org.jfree.data.time.Second;
+import org.jfree.data.time.TimeSeries;
+import org.jfree.data.time.TimeSeriesCollection;
+import group33.seg.model.types.Pair;
+import group33.seg.view.utilities.Accessibility;
 
 public class Graph extends JPanel {
   private double scale;

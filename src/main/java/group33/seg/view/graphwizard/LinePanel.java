@@ -1,15 +1,13 @@
 package group33.seg.view.graphwizard;
 
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import group33.seg.model.configs.LineConfig;
-import group33.seg.model.configs.LineGraphConfig;
-import javax.swing.JLabel;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
 
 public class LinePanel extends JScrollPane {
   private static final long serialVersionUID = 5600109072945686314L;

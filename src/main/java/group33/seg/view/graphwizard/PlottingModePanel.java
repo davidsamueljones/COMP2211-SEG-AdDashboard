@@ -1,14 +1,14 @@
 package group33.seg.view.graphwizard;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
-import java.awt.GridBagLayout;
 import javax.swing.JRadioButton;
 import group33.seg.model.configs.LineGraphConfig;
 import group33.seg.model.configs.LineGraphConfig.Mode;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
 
 public class PlottingModePanel extends JPanel {
   private static final long serialVersionUID = 4139382753869737135L;

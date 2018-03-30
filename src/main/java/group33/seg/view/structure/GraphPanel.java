@@ -1,13 +1,11 @@
 package group33.seg.view.structure;
 
-import javax.swing.JPanel;
 import java.awt.BorderLayout;
+import javax.swing.JButton;
+import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import group33.seg.controller.DashboardController;
-import group33.seg.controller.handlers.GraphHandler;
 import group33.seg.view.output.Graph;
-import javax.swing.JButton;
-import javax.swing.JLabel;
 
 public class GraphPanel extends JPanel {
   private static final long serialVersionUID = 6541885932864334941L;

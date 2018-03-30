@@ -1,6 +1,12 @@
 package group33.seg.controller;
 
-import group33.seg.controller.handlers.*;
+import group33.seg.controller.handlers.CampaignImportHandler;
+import group33.seg.controller.handlers.DatabaseHandler;
+import group33.seg.controller.handlers.DisplayHandler;
+import group33.seg.controller.handlers.GraphHandler;
+import group33.seg.controller.handlers.SettingsHandler;
+import group33.seg.controller.handlers.StatisticHandler;
+import group33.seg.controller.handlers.WorkspaceHandler;
 import group33.seg.model.DashboardModel;
 import group33.seg.view.DashboardView;
 

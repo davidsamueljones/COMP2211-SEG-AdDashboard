@@ -1,27 +1,26 @@
 package group33.seg.view.graphwizard;
 
-import javax.swing.JPanel;
-import java.awt.GridBagLayout;
-import javax.swing.JLabel;
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import group33.seg.model.configs.LineConfig;
-import javax.swing.JSlider;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
 
 public class LinePropertiesPanel extends JPanel {
   private static final long serialVersionUID = -5431944440857799069L;
@@ -149,6 +148,7 @@ public class LinePropertiesPanel extends JPanel {
     });
 
     btnSetColor.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         // Use JColorChooser, null returned on cancel
         Color colour =
