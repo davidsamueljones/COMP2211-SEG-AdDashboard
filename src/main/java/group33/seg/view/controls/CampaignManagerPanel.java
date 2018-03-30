@@ -93,7 +93,7 @@ public class CampaignManagerPanel extends JPanel {
         // Handle dialog result TODO: Determine if cancelled before import or not
         CampaignConfig campaign = controller.imports.getImportedCampaign();
         if (campaign != null) {
-          setCurrentCampaign(campaign.getName());
+          setCurrentCampaign(campaign.name);
         }
       }
     });

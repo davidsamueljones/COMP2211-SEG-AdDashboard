@@ -1,12 +1,9 @@
 package group33.seg.controller.handlers;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.prefs.BackingStoreException;
-import java.util.prefs.NodeChangeListener;
-import java.util.prefs.PreferenceChangeListener;
-import java.util.prefs.Preferences;
 import group33.seg.view.utilities.Accessibility;
+
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 
 public class SettingsHandler {
   public static final String CUR_CAMPAIGN = "cur_campaign";

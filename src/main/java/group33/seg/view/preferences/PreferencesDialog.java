@@ -1,4 +1,4 @@
-package group33.seg.view.utilities;
+package group33.seg.view.preferences;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;

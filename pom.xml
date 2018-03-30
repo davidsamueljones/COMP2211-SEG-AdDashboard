@@ -88,6 +88,13 @@
             <version>4.1</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.scijava/swing-checkbox-tree -->
+        <dependency>
+            <groupId>org.scijava</groupId>
+            <artifactId>swing-checkbox-tree</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+
     </dependencies>
 
 </project>

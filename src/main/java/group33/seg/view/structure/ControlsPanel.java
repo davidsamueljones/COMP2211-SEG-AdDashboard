@@ -5,13 +5,14 @@ import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.BevelBorder;
 import group33.seg.controller.DashboardController;
-import group33.seg.view.DashboardView;
 import group33.seg.view.controls.CampaignManagerPanel;
-import group33.seg.view.controls.GraphGeneratorPanel;
-import group33.seg.view.controls.StatisticViewer;
+import group33.seg.view.controls.GraphControlsPanel;
+import group33.seg.view.controls.GraphManagerPanel;
+import group33.seg.view.controls.StatisticManager;
+import group33.seg.view.utilities.Accessibility;
 import group33.seg.view.utilities.CollapsiblePanel;
 import java.awt.GridBagLayout;
-import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import javax.swing.BorderFactory;
 import java.awt.Insets;
@@ -22,8 +23,8 @@ public class ControlsPanel extends JScrollPane {
   private final DashboardController controller;
   
   private CampaignManagerPanel pnlCampaignManager;
-  private StatisticViewer pnlStatisticViewer;
-  private GraphGeneratorPanel pnlGraphGenerator;
+  private GraphManagerPanel pnlGraphManager;
+  private StatisticManager pnlStatisticManager;
 
   /**
    * Create the panel.
@@ -35,10 +36,10 @@ public class ControlsPanel extends JScrollPane {
     
     initGUI();
   }
-
+  
   private void initGUI() {
 
-    // Store control groups on a seperate panel
+    // Store control groups on a separate panel
     JPanel pnlControls = new JPanel();
     GridBagLayout gbl_pnlControls = new GridBagLayout();
     gbl_pnlControls.rowHeights = new int[] {0, 0, 0, 0, 0};
@@ -47,10 +48,13 @@ public class ControlsPanel extends JScrollPane {
     pnlControls.setLayout(gbl_pnlControls);
 
     {
+ 
       // Campaign manager
       CollapsiblePanel colpnlCampaignManager = new CollapsiblePanel("Campaign Manager");
+      applyCollapsiblePanelStyle(colpnlCampaignManager);
       pnlCampaignManager = new CampaignManagerPanel(controller);
       colpnlCampaignManager.setContentPane(pnlCampaignManager);
+      colpnlCampaignManager.getCollapsiblePane().setCollapsed(false);
       GridBagConstraints gbc_colpnlCampaignManager = new GridBagConstraints();
       gbc_colpnlCampaignManager.fill = GridBagConstraints.BOTH;
       gbc_colpnlCampaignManager.insets = new Insets(5, 5, 5, 5);
@@ -58,27 +62,44 @@ public class ControlsPanel extends JScrollPane {
       gbc_colpnlCampaignManager.gridy = 0;
       pnlControls.add(colpnlCampaignManager, gbc_colpnlCampaignManager);
 
+      // Graph controls
+      CollapsiblePanel colpnlGraphControls = new CollapsiblePanel("Graph Controls");
+      applyCollapsiblePanelStyle(colpnlGraphControls);
+      GraphControlsPanel pnlGraphControls = new GraphControlsPanel();
+      colpnlGraphControls.setContentPane(pnlGraphControls);
+      colpnlGraphControls.getCollapsiblePane().setCollapsed(true);
+      GridBagConstraints gbc_colpnlGraphControls = new GridBagConstraints();
+      gbc_colpnlGraphControls.fill = GridBagConstraints.BOTH;
+      gbc_colpnlGraphControls.insets = new Insets(0, 5, 5, 5);
+      gbc_colpnlGraphControls.gridx = 0;
+      gbc_colpnlGraphControls.gridy = 1;
+      pnlControls.add(colpnlGraphControls, gbc_colpnlGraphControls);
+      
+      // Graph Manager
+      CollapsiblePanel colpnlGraphManager = new CollapsiblePanel("Graph Manager");
+      applyCollapsiblePanelStyle(colpnlGraphManager);
+      pnlGraphManager = new GraphManagerPanel(controller);
+      colpnlGraphManager.setContentPane(pnlGraphManager);
+      colpnlGraphManager.getCollapsiblePane().setCollapsed(true);
+      GridBagConstraints gbc_colpnlGraphManager = new GridBagConstraints();
+      gbc_colpnlGraphManager.fill = GridBagConstraints.BOTH;
+      gbc_colpnlGraphManager.insets = new Insets(0, 5, 5, 5);
+      gbc_colpnlGraphManager.gridx = 0;
+      gbc_colpnlGraphManager.gridy = 2;
+      pnlControls.add(colpnlGraphManager, gbc_colpnlGraphManager);
+      
       // Statistic Viewer
-      CollapsiblePanel colpnlStatisticViewer = new CollapsiblePanel("Statistic Viewer");
-      pnlStatisticViewer = new StatisticViewer(controller);
-      colpnlStatisticViewer.setContentPane(pnlStatisticViewer);
-      GridBagConstraints gbc_colpnlStatisticViewer = new GridBagConstraints();
-      gbc_colpnlStatisticViewer.fill = GridBagConstraints.BOTH;
-      gbc_colpnlStatisticViewer.insets = new Insets(0, 5, 5, 5);
-      gbc_colpnlStatisticViewer.gridx = 0;
-      gbc_colpnlStatisticViewer.gridy = 1;
-      pnlControls.add(colpnlStatisticViewer, gbc_colpnlStatisticViewer);
-
-      // Graph Generator
-      CollapsiblePanel colpnlGraphGenerator = new CollapsiblePanel("Graph Generator");
-      pnlGraphGenerator = new GraphGeneratorPanel(controller);
-      colpnlGraphGenerator.setContentPane(pnlGraphGenerator);
-      GridBagConstraints gbc_colpnlGraphGenerator = new GridBagConstraints();
-      gbc_colpnlGraphGenerator.fill = GridBagConstraints.BOTH;
-      gbc_colpnlGraphGenerator.insets = new Insets(0, 5, 5, 5);
-      gbc_colpnlGraphGenerator.gridx = 0;
-      gbc_colpnlGraphGenerator.gridy = 2;
-      pnlControls.add(colpnlGraphGenerator, gbc_colpnlGraphGenerator);
+      CollapsiblePanel colpnlStatisticManager = new CollapsiblePanel("Statistic Manager");
+      applyCollapsiblePanelStyle(colpnlStatisticManager);
+      pnlStatisticManager = new StatisticManager(controller);
+      colpnlStatisticManager.setContentPane(pnlStatisticManager);
+      colpnlStatisticManager.getCollapsiblePane().setCollapsed(true);
+      GridBagConstraints gbc_colpnlStatisticManager = new GridBagConstraints();
+      gbc_colpnlStatisticManager.fill = GridBagConstraints.BOTH;
+      gbc_colpnlStatisticManager.insets = new Insets(0, 5, 5, 5);
+      gbc_colpnlStatisticManager.gridx = 0;
+      gbc_colpnlStatisticManager.gridy = 3;
+      pnlControls.add(colpnlStatisticManager, gbc_colpnlStatisticManager);
     }
 
     // Configure scroll pane
@@ -86,6 +107,14 @@ public class ControlsPanel extends JScrollPane {
     this.setViewportView(pnlControls);
     this.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
     this.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+    this.getVerticalScrollBar().setUnitIncrement(10);
+  }
+  
+  private void applyCollapsiblePanelStyle(CollapsiblePanel colpnl) {
+//    Font curFont = colpnl.getToggleButton().getFont();
+//    Font newFont = Accessibility.stripLaF(curFont.deriveFont(curFont.getStyle() | Font.BOLD));
+//    colpnl.getToggleButton().setFont(newFont);
+    Accessibility.scaleJComponentFontSize(colpnl.getToggleButton(), 1.25);
   }
 
 }

@@ -5,10 +5,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import group33.seg.controller.DashboardController;
-import group33.seg.controller.handlers.DisplayHandler;
-import group33.seg.controller.handlers.GraphHandler;
-import group33.seg.controller.handlers.StatisticHandler;
-import group33.seg.view.DashboardView;
 import javax.swing.JSplitPane;
 import javax.swing.JMenuBar;
 
@@ -49,10 +45,19 @@ public class DashboardFrame extends JFrame {
     ControlsPanel pnlControls = new ControlsPanel(controller);
     pnlControls.setMinimumSize(pnlControls.getPreferredSize());
     sppMain.setLeftComponent(pnlControls);
+    
+    // Split RHS into graph and table panels
+    JSplitPane sppView = new JSplitPane();
+    sppView.setResizeWeight(0.65);
+    sppView.setOrientation(JSplitPane.VERTICAL_SPLIT);
+    sppView.setOneTouchExpandable(true);
+    sppMain.setRightComponent(sppView);
 
-    // Use RHS as single panel
     GraphPanel pnlGraph = new GraphPanel(controller);
-    sppMain.setRightComponent(pnlGraph);
+    sppView.setLeftComponent(pnlGraph);
+    
+    WorkspaceStatisticsPanel pnlStatistics = new WorkspaceStatisticsPanel(controller);
+    sppView.setRightComponent(pnlStatistics);
 
   }
   

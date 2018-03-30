@@ -1,11 +1,9 @@
 package group33.seg.controller.handlers;
 
-import group33.seg.controller.DashboardController;
 import group33.seg.controller.DashboardController.DashboardMVC;
 import group33.seg.controller.types.MetricQueryResponse;
 import group33.seg.model.configs.MetricQuery;
 import group33.seg.model.types.Metric;
-import group33.seg.view.output.Graph;
 
 public class StatisticHandler {
 
@@ -23,7 +21,7 @@ public class StatisticHandler {
   
   public Integer impressionRequest() {
     DatabaseHandler db = new DatabaseHandler(null); // TODO: REMOVE ASAP
-    MetricQuery queryImpressions = new MetricQuery(null, Metric.IMPRESSIONS, null, null);
+    MetricQuery queryImpressions = new MetricQuery(Metric.IMPRESSIONS, null, null);
     MetricQueryResponse resImpressions = db.getQueryResponse(queryImpressions);
     if (!resImpressions.getResult().isEmpty()) {
       return resImpressions.getResult().get(0).value;

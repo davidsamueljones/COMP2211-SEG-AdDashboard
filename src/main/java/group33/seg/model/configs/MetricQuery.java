@@ -8,8 +8,6 @@ import group33.seg.model.types.Interval;
  * structure access.
  */
 public class MetricQuery {
-  /** Campaign to target */
-  public CampaignConfig campaign;
 
   /** Metric to fetch */
   public Metric metric;
@@ -18,20 +16,45 @@ public class MetricQuery {
   public Interval interval;
 
   /** Filtering configuration to use (null == ignored) */
-  public FilterConfig filter;
+  public FilterConfig filterConfig;
 
-  // add bounce rate definition (ignored if not relevant to metric)
+  /** Bounce rate definition (ignored if not relevant to metric) */
+  public BounceConfig bounceDef;
 
+  /** Campaign configuration for selecting a campaign through ID */
+  public CampaignConfig campaignConfig;
+  
   /** Instantiate an empty query. */
   public MetricQuery() {
-    this(null, null, null, null);
+    this(null, null, null, null, null);
   }
 
-  /** Instantiate a fully defined query. */
-  public MetricQuery(CampaignConfig campaign, Metric metric, Interval time, FilterConfig filter) {
-    this.campaign = campaign;
+  /** 
+   * Instantiate a query with no special definitions.
+   * 
+   * @param metric Metric type being requested
+   * @param time Interval to group by
+   * @param filter Filter to apply on query
+   * */
+  public MetricQuery(Metric metric, Interval time, FilterConfig filter) {
+    this(metric, time, filter, null, null);
+  }
+  
+  /** 
+   * Instantiate a fully defined query. 
+   * 
+   * @param metric Metric type being requested
+   * @param time Interval to group by
+   * @param filter Filter to apply on query
+   * @param bounceDef Definition to use for bounce if applicable
+   * @param campaignConfig Campaign to use
+   * */
+  public MetricQuery(Metric metric, Interval time, FilterConfig filter, BounceConfig bounceDef, CampaignConfig campaignConfig) {
     this.metric = metric;
     this.interval = time;
-    this.filter = filter;
+    this.filterConfig = filter;
+    this.bounceDef = bounceDef;
+    this.campaignConfig = campaignConfig;
   }
+  
 }

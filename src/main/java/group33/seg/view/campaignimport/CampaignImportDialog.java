@@ -1,9 +1,9 @@
 package group33.seg.view.campaignimport;
 
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,8 +18,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 import group33.seg.controller.DashboardController;
-import group33.seg.controller.handlers.CampaignImportHandler;
-import group33.seg.model.configs.CampaignConfig;
 import group33.seg.view.utilities.Accessibility;
 
 public class CampaignImportDialog extends JDialog {
@@ -41,19 +39,18 @@ public class CampaignImportDialog extends JDialog {
 
     this.controller = controller;
 
-    // Determine positioning
-    Point loc;
-    if (parent != null) {
-      loc = parent.getLocation();
-      loc.x += 80;
-      loc.y += 80;
-    } else {
-      loc = new Point(100, 100);
-    }
-
     // Initialise GUI
     initGUI();
-    setBounds(loc.x, loc.y, 700, 400);
+
+    // Determine positioning
+    setSize(new Dimension(800, 450));
+    if (parent != null) {
+      setLocationRelativeTo(parent);
+    } else {
+      setLocation(100, 100);
+    }
+
+    // Apply dialog properties
     setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
   }
 
@@ -87,7 +84,7 @@ public class CampaignImportDialog extends JDialog {
     gbl_pnlModes.rowWeights = new double[] {0.0, 0.0, 1.0};
     pnlNavigation.setLayout(gbl_pnlModes);
 
-    // Create 'Large' JButton for selecting CampaignImportPanel
+    // Create JButton for selecting CampaignImportPanel
     btnImportNew = new JButton("Import New");
     Accessibility.scaleJComponentFontSize(btnImportNew, 1.5);
     btnImportNew.setHorizontalAlignment(SwingConstants.LEFT);
@@ -102,7 +99,7 @@ public class CampaignImportDialog extends JDialog {
     pnlNavigation.add(btnImportNew, gbc_btnImportNew);
     pnlNavigation.setMinimumSize(btnImportNew.getPreferredSize());
 
-    // Create 'Large' JButton for exiting dialog
+    // Create JButton for exiting dialog
     btnClose = new JButton("Close");
     Accessibility.scaleJComponentFontSize(btnClose, 1.5);
     btnClose.setHorizontalAlignment(SwingConstants.LEFT);
@@ -117,9 +114,7 @@ public class CampaignImportDialog extends JDialog {
 
     // Controls Panel
     CampaignImportPanel pnlCampaignImport = new CampaignImportPanel(controller);
-    pnlCampaignImport.setBorder(
-        BorderFactory.createCompoundBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED),
-            BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+    pnlCampaignImport.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
     GridBagConstraints gbc_pnlCampaignImport = new GridBagConstraints();
     gbc_pnlCampaignImport.fill = GridBagConstraints.BOTH;
     gbc_pnlCampaignImport.insets = new Insets(5, 3, 5, 5);
@@ -133,21 +128,24 @@ public class CampaignImportDialog extends JDialog {
 
     // Close the dialog if an import is not ongoing
     btnClose.addActionListener(new ActionListener() {
-
       @Override
       public void actionPerformed(ActionEvent e) {
         closeDialog();
       }
     });
 
-    // Listen for any other window close event
+    // Listen for any other window close event so close behaviour is controlled
     addWindowListener(new WindowAdapter() {
+      @Override
       public void windowClosing(WindowEvent e) {
         closeDialog();
       }
     });
   }
 
+  /**
+   * Check if dialog can be closed before closing it.
+   */
   private void closeDialog() {
     if (controller.imports.isOngoing()) {
       JOptionPane.showMessageDialog(null,

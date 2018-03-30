@@ -5,9 +5,9 @@ import group33.seg.controller.database.DatabaseConfig;
 import group33.seg.controller.database.DatabaseConnection;
 import group33.seg.controller.database.DatabaseQueryFactory;
 import group33.seg.controller.types.MetricQueryResponse;
-import group33.seg.model.configs.CampaignConfig;
 import group33.seg.model.configs.MetricQuery;
 import group33.seg.model.types.Pair;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;

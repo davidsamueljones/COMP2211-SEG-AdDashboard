@@ -1,20 +1,14 @@
 package group33.seg.model.types;
 
+import group33.seg.lib.Utilities;
+
 /** Enumeration of time intervals between data. */
 public enum Interval {
-  HOUR("hour"),
-  DAY("day"),
-  WEEK("week"),
-  MONTH("month"),
-  YEAR("year");
+  HOUR, DAY, WEEK, MONTH, YEAR;
 
-  private String value;
-
-  Interval(String value) {
-    this.value = value;
+  @Override
+  public String toString() {
+    return Utilities.getTitleCase(super.toString());
   }
 
-  public String getValue() {
-    return value;
-  }
 }

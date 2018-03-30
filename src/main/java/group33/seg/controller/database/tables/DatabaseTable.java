@@ -15,12 +15,19 @@ public abstract class DatabaseTable {
   public abstract void createTable(Connection c) throws SQLException;
 
   /**
-   * Convert a set of string parameters to their correct format and create a prepared statement.
+   * Creates required indexes for that table
    *
-   * @param ps Prepared statement to apply params to
-   * @param params Params to apply to the prepared statement
+   * @param c Database connection
    */
-  public abstract void prepareInsert(PreparedStatement ps, String[] params) throws SQLException;
+  public abstract void createIndexes(Connection c) throws SQLException;
+
+  /**
+   * Convert a set of string parameters to their correct format and create a prepared statement.
+   *  @param ps Prepared statement to apply params to
+   * @param params Params to apply to the prepared statement
+   * @param campaignID for primary key reference
+   */
+  public abstract void prepareInsert(PreparedStatement ps, String[] params, int campaignID) throws SQLException;
 
   /** @return Template used for INSERT statements */
   public abstract String getInsertTemplate();
