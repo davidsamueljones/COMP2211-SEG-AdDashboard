@@ -1,11 +1,11 @@
 package group33.seg.controller.types;
 
+import group33.seg.model.configs.MetricQuery;
+import group33.seg.model.types.Pair;
+
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.List;
-
-import group33.seg.model.types.Pair;
-import group33.seg.model.configs.MetricQuery;
 
 public class MetricQueryResponse {
   private MetricQuery query;

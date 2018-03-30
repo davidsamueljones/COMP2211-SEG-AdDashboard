@@ -1,7 +1,6 @@
 package group33.seg.controller.database;
 
 import group33.seg.model.configs.BounceConfig;
-import group33.seg.model.configs.FilterConfig;
 import group33.seg.model.configs.MetricQuery;
 import group33.seg.model.types.Interval;
 import group33.seg.model.types.Metric;

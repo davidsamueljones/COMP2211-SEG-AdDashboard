@@ -1,8 +1,5 @@
 package group33.seg.controller.handlers;
 
-import java.io.File;
-import java.sql.*;
-import java.util.Set;
 import group33.seg.controller.DashboardController.DashboardMVC;
 import group33.seg.controller.database.DatabaseConfig;
 import group33.seg.controller.database.DatabaseConnection;
@@ -11,8 +8,12 @@ import group33.seg.controller.utilities.ErrorBuilder;
 import group33.seg.controller.utilities.ProgressListener;
 import group33.seg.model.configs.CampaignConfig;
 import group33.seg.model.configs.CampaignImportConfig;
+
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.sql.*;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Controller class handling import of campaign data using a separate thread and the current
