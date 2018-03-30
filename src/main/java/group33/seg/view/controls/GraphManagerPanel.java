@@ -1,50 +1,29 @@
 package group33.seg.view.controls;
 
-<<<<<<< HEAD
-=======
 import java.awt.Component;
->>>>>>> 30b20cd0524d5311eb0e60b5ccb23ae0df5b8349
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Window;
-<<<<<<< HEAD
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-=======
-import java.util.List;
->>>>>>> 30b20cd0524d5311eb0e60b5ccb23ae0df5b8349
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JList;
-<<<<<<< HEAD
-=======
 import javax.swing.JOptionPane;
->>>>>>> 30b20cd0524d5311eb0e60b5ccb23ae0df5b8349
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
-<<<<<<< HEAD
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import group33.seg.controller.DashboardController;
-import group33.seg.model.configs.GraphConfig;
-=======
 import group33.seg.controller.DashboardController;
 import group33.seg.controller.handlers.WorkspaceHandler.WorkspaceListener;
 import group33.seg.controller.types.GraphVisitor;
 import group33.seg.model.configs.GraphConfig;
 import group33.seg.model.configs.LineGraphConfig;
->>>>>>> 30b20cd0524d5311eb0e60b5ccb23ae0df5b8349
 import group33.seg.view.graphwizard.LineGraphWizardDialog;
 
 public class GraphManagerPanel extends JPanel {
@@ -178,16 +157,6 @@ public class GraphManagerPanel extends JPanel {
       btnViewModify.setEnabled(isSelection);
     });
     lstGraphs.setSelectedIndex(-1);
-<<<<<<< HEAD
-    
-    btnNew.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        Window frmCurrent = SwingUtilities.getWindowAncestor(GraphManagerPanel.this);
-        LineGraphWizardDialog wizard = new LineGraphWizardDialog(frmCurrent, controller, null);
-        wizard.setModal(true);
-        wizard.setVisible(true);
-=======
 
     // Delete the selected graph
     btnDelete.addActionListener(e -> {
@@ -196,7 +165,6 @@ public class GraphManagerPanel extends JPanel {
           JOptionPane.YES_NO_OPTION);
       if (res != JOptionPane.YES_OPTION) {
         return;
->>>>>>> 30b20cd0524d5311eb0e60b5ccb23ae0df5b8349
       }
       controller.workspace.removeGraph(lstGraphs.getSelectedValue());
     });

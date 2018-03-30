@@ -24,7 +24,7 @@ public class MetricQuery {
 
   /** Campaign configuration for selecting a campaign through ID */
   public CampaignConfig campaign;
-  
+
   /** Instantiate an empty query. */
   public MetricQuery() {
     this(null, null, null, null, null);
@@ -49,13 +49,15 @@ public class MetricQuery {
    * @param filter Filter to apply on query
    * @param bounceDef Definition to use for bounce if applicable
    * @param campaign Campaign to use
-   * */
-  public MetricQuery(Metric metric, Interval time, FilterConfig filter, BounceConfig bounceDef, CampaignConfig campaignConfig) {
+   */
+  public MetricQuery(Metric metric, Interval time, FilterConfig filter, BounceConfig bounceDef,
+      CampaignConfig campaign) {
     this.metric = metric;
     this.interval = time;
     this.filter = filter;
     this.bounceDef = bounceDef;
-    this.campaign = campaignConfig;
+    this.campaign = campaign;
+  }
 
   /**
    * Equality check between this instance and another instance. This equality check compares all
