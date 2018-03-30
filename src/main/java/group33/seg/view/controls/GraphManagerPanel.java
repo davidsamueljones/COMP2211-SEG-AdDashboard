@@ -1,34 +1,22 @@
 package group33.seg.view.controls;
 
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Window;
-import javax.swing.border.BevelBorder;
 import group33.seg.controller.DashboardController;
 import group33.seg.controller.handlers.WorkspaceHandler.WorkspaceListener;
 import group33.seg.controller.types.GraphVisitor;
 import group33.seg.model.configs.GraphConfig;
 import group33.seg.model.configs.LineGraphConfig;
 import group33.seg.view.graphwizard.LineGraphWizardDialog;
-import javax.swing.BorderFactory;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
+
+import javax.swing.*;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.border.EtchedBorder;
+import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
-import java.awt.event.ActionEvent;
 
 public class GraphManagerPanel extends JPanel {
   private static final long serialVersionUID = 6541885932864334941L;
@@ -144,69 +132,40 @@ public class GraphManagerPanel extends JPanel {
     // ************************************************************************************
 
     // Allow a new graph to be created using a fresh wizard
-    btnNew.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        displayWizard(null);
-      }
-    });
+    btnNew.addActionListener(e -> displayWizard(null));
     
     // Listen for changes in workspace graphs, updating list if required
-    controller.workspace.addListener(new WorkspaceListener() {
-      @Override
-      public void update(Type type) {
-        if (type == Type.WORKSPACE || type == Type.GRAPHS) {
-          SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-              refreshGraphs();
-            }
-          });
-        }
+    controller.workspace.addListener(type -> {
+      if (type == WorkspaceListener.Type.WORKSPACE || type == WorkspaceListener.Type.GRAPHS) {
+        SwingUtilities.invokeLater(() -> refreshGraphs());
       }
     });
 
     // Disable buttons when selection invalidates them
-    lstGraphs.addListSelectionListener(new ListSelectionListener() {
-      @Override
-      public void valueChanged(ListSelectionEvent e) {
-        boolean isSelection = lstGraphs.getSelectedIndex() != -1;
-        btnLoad.setEnabled(isSelection);
-        btnDelete.setEnabled(isSelection);
-        btnViewModify.setEnabled(isSelection);
-      }
+    lstGraphs.addListSelectionListener(e -> {
+      boolean isSelection = lstGraphs.getSelectedIndex() != -1;
+      btnLoad.setEnabled(isSelection);
+      btnDelete.setEnabled(isSelection);
+      btnViewModify.setEnabled(isSelection);
     });
     lstGraphs.setSelectedIndex(-1);
 
     // Delete the selected graph
-    btnDelete.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        int res = JOptionPane.showConfirmDialog(GraphManagerPanel.this,
-            "Are you sure you want to delete the selected graph?", "Delete Graph",
-            JOptionPane.YES_NO_OPTION);
-        if (res != JOptionPane.YES_OPTION) {
-          return;
-        }
-        controller.workspace.removeGraph(lstGraphs.getSelectedValue());
+    btnDelete.addActionListener(e -> {
+      int res = JOptionPane.showConfirmDialog(GraphManagerPanel.this,
+          "Are you sure you want to delete the selected graph?", "Delete Graph",
+          JOptionPane.YES_NO_OPTION);
+      if (res != JOptionPane.YES_OPTION) {
+        return;
       }
+      controller.workspace.removeGraph(lstGraphs.getSelectedValue());
     });
 
     // Open wizard for selected graph
-    btnViewModify.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        displayWizard(lstGraphs.getSelectedValue());
-      }
-    });
+    btnViewModify.addActionListener(e -> displayWizard(lstGraphs.getSelectedValue()));
 
     // Load the selected graph into the view
-    btnLoad.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        controller.graphs.displayGraph(lstGraphs.getSelectedValue());
-      }
-    });
+    btnLoad.addActionListener(e -> controller.graphs.displayGraph(lstGraphs.getSelectedValue()));
 
   }
 
@@ -221,12 +180,7 @@ public class GraphManagerPanel extends JPanel {
       displayNewWizard();
     } else {
       // Use graph visitor pattern to open appropriate wizard
-      config.accept(new GraphVisitor() {
-        @Override
-        public void visit(LineGraphConfig graph) {
-          displayLineWizard(graph);
-        }
-      });
+      config.accept(graph -> displayLineWizard(graph));
     }
   }
 
@@ -251,12 +205,7 @@ public class GraphManagerPanel extends JPanel {
     // Select new graph on wizard close
     GraphConfig newConfig = wizard.getGraph();
     if (newConfig != null) {
-      SwingUtilities.invokeLater(new Runnable() {
-        @Override
-        public void run() {
-          lstGraphs.setSelectedValue(newConfig, true);
-        }
-      });
+      SwingUtilities.invokeLater(() -> lstGraphs.setSelectedValue(newConfig, true));
     }
   }
 

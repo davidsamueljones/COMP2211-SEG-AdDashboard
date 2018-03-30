@@ -1,20 +1,14 @@
 package group33.seg.view.controls;
 
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import java.awt.GridBagLayout;
-import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
-import javax.swing.JLabel;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import javax.swing.JSpinner;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import group33.seg.model.configs.BounceConfig;
 import group33.seg.model.configs.BounceConfig.Type;
+
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class BounceDefinitionPanel extends JPanel {
   private static final long serialVersionUID = -4113181723451098077L;
@@ -98,12 +92,7 @@ public class BounceDefinitionPanel extends JPanel {
         radPageCount.setSelected(true);
       }
     });
-    nudPageCount.addChangeListener(new ChangeListener() {
-      @Override
-      public void stateChanged(ChangeEvent e) {
-        radPageCount.setSelected(true);
-      }
-    });
+    nudPageCount.addChangeListener(e -> radPageCount.setSelected(true));
 
     lblTime.addMouseListener(new MouseAdapter() {
       @Override
@@ -111,12 +100,7 @@ public class BounceDefinitionPanel extends JPanel {
         radTime.setSelected(true);
       }
     });
-    nudTime.addChangeListener(new ChangeListener() {
-      @Override
-      public void stateChanged(ChangeEvent e) {
-        radTime.setSelected(true);
-      }
-    });
+    nudTime.addChangeListener(e -> radTime.setSelected(true));
 
   }
 

@@ -1,17 +1,9 @@
 package group33.seg.view.controls;
 
-import javax.swing.BorderFactory;
-import javax.swing.JPanel;
-import java.awt.GridBagLayout;
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import javax.swing.JTabbedPane;
 import org.jdesktop.swingx.JXDatePicker;
-import javax.swing.JLabel;
-import javax.swing.JComboBox;
-import javax.swing.JButton;
-import javax.swing.JSpinner;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class GraphControlsPanel extends JPanel {
   private static final long serialVersionUID = -2452627668529824145L;

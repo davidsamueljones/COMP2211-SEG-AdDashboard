@@ -1,29 +1,11 @@
 package group33.seg.view.preferences;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Window;
+import group33.seg.controller.DashboardController;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-import javax.swing.border.BevelBorder;
-import group33.seg.controller.DashboardController;
-import group33.seg.controller.handlers.CampaignImportHandler;
-import group33.seg.model.configs.CampaignConfig;
-import group33.seg.view.campaignimport.CampaignImportPanel;
-import group33.seg.view.utilities.Accessibility;
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
 
 public class PreferencesDialog extends JDialog {
   private static final long serialVersionUID = -8083386947121993055L;
@@ -141,31 +123,24 @@ public class PreferencesDialog extends JDialog {
     // * EVENT HANDLING
     // ************************************************************************************
 
-    btnCancel.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        setVisible(false);
-        dispose();
-      }
+    btnCancel.addActionListener(e -> {
+      setVisible(false);
+      dispose();
     });
 
-    btnApplyConfirm.addActionListener(new ActionListener() {
-
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        if (pnlFontSize.hasChanged()) {
-          int res = JOptionPane.showConfirmDialog(PreferencesDialog.this,
-              "Updating the font size requires any open windows to refresh\r\n"
-                  + "This may clear any workspaces, are you sure you wish to continue?",
-              "Apply & Confirm", JOptionPane.YES_NO_OPTION);
-          if (res != JOptionPane.YES_OPTION) {
-            return;
-          }
-          pnlFontSize.updateSettingsScale();
+    btnApplyConfirm.addActionListener(e -> {
+      if (pnlFontSize.hasChanged()) {
+        int res = JOptionPane.showConfirmDialog(PreferencesDialog.this,
+            "Updating the font size requires any open windows to refresh\r\n"
+                + "This may clear any workspaces, are you sure you wish to continue?",
+            "Apply & Confirm", JOptionPane.YES_NO_OPTION);
+        if (res != JOptionPane.YES_OPTION) {
+          return;
         }
-        setVisible(false);
-        dispose();
+        pnlFontSize.updateSettingsScale();
       }
+      setVisible(false);
+      dispose();
     });
 
   }

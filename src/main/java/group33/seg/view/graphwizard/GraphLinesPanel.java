@@ -1,24 +1,16 @@
 package group33.seg.view.graphwizard;
 
-import java.awt.GridBagLayout;
-import javax.swing.BorderFactory;
-import javax.swing.JPanel;
-import javax.swing.JButton;
-import javax.swing.JOptionPane;
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
+import group33.seg.controller.utilities.DashboardUtilities;
+import group33.seg.model.configs.LineConfig;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import group33.seg.controller.utilities.DashboardUtilities;
-import group33.seg.model.configs.LineConfig;
 
 public class GraphLinesPanel extends JPanel {
   private static final long serialVersionUID = -1169530766129778297L;
@@ -89,33 +81,27 @@ public class GraphLinesPanel extends JPanel {
     // ************************************************************************************
 
     // Create a new line in the graph
-    btnNew.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        LinePanel pnlLine = new LinePanel();
-        pnlLine.pnlLineProperties.txtIdentifier
-            .setText(String.format("Line %d", tabsLines.getTabCount() + 1));
-        pnlLine.pnlLineProperties.setColor(randomLineColor());
-        addLinePanel(pnlLine.pnlLineProperties.txtIdentifier.getText(), pnlLine);
-        tabsLines.setSelectedComponent(pnlLine);
-      }
+    btnNew.addActionListener(e -> {
+      LinePanel pnlLine = new LinePanel();
+      pnlLine.pnlLineProperties.txtIdentifier
+          .setText(String.format("Line %d", tabsLines.getTabCount() + 1));
+      pnlLine.pnlLineProperties.setColor(randomLineColor());
+      addLinePanel(pnlLine.pnlLineProperties.txtIdentifier.getText(), pnlLine);
+      tabsLines.setSelectedComponent(pnlLine);
     });
 
     // Remove currently selected line from graph
-    btnRemove.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        int res = JOptionPane.showConfirmDialog(GraphLinesPanel.this,
-            "Are you sure you want to remove the current line?", "Remove Line",
-            JOptionPane.YES_NO_OPTION);
-        if (res != JOptionPane.YES_OPTION) {
-          return;
-        }
-        int idx = tabsLines.getSelectedIndex();
-        if (idx >= 0) {
-          tabsLines.remove(idx);
-          linePanels.remove(idx);
-        }
+    btnRemove.addActionListener(e -> {
+      int res = JOptionPane.showConfirmDialog(GraphLinesPanel.this,
+          "Are you sure you want to remove the current line?", "Remove Line",
+          JOptionPane.YES_NO_OPTION);
+      if (res != JOptionPane.YES_OPTION) {
+        return;
+      }
+      int idx = tabsLines.getSelectedIndex();
+      if (idx >= 0) {
+        tabsLines.remove(idx);
+        linePanels.remove(idx);
       }
     });
 
@@ -218,12 +204,7 @@ public class GraphLinesPanel extends JPanel {
   private void addLinePanel(String identifier, LinePanel pnlLine, int idx) {
     // Enforce panel behaviour when part of hierarchy
     JTextField txtIdentifier = pnlLine.pnlLineProperties.txtIdentifier;
-    txtIdentifier.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        setTabProperties(Math.min(linePanels.size(), idx), txtIdentifier.getText());
-      }
-    });
+    txtIdentifier.addActionListener(e -> setTabProperties(Math.min(linePanels.size(), idx), txtIdentifier.getText()));
     DashboardUtilities.focusRequest(txtIdentifier);
 
     // Insert panel into hierarchy

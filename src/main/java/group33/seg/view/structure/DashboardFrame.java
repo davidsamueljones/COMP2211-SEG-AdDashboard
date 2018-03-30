@@ -1,12 +1,10 @@
 package group33.seg.view.structure;
 
-import java.awt.GridLayout;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import group33.seg.controller.DashboardController;
-import javax.swing.JSplitPane;
-import javax.swing.JMenuBar;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
 
 public class DashboardFrame extends JFrame {
   private static final long serialVersionUID = 5064629396099335312L;

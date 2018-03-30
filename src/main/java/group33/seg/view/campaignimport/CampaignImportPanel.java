@@ -1,18 +1,5 @@
 package group33.seg.view.campaignimport;
 
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import java.awt.Insets;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.GridBagLayout;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import java.awt.GridBagConstraints;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import group33.seg.controller.DashboardController;
 import group33.seg.controller.utilities.DashboardUtilities;
 import group33.seg.controller.utilities.ErrorBuilder;
@@ -20,12 +7,9 @@ import group33.seg.controller.utilities.ProgressListener;
 import group33.seg.model.configs.CampaignImportConfig;
 import group33.seg.view.utilities.FileActionListener;
 import group33.seg.view.utilities.JDynamicScrollPane;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-import javax.swing.JTabbedPane;
-import java.awt.CardLayout;
-import java.awt.EventQueue;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class CampaignImportPanel extends JPanel {
   private static final long serialVersionUID = 845431833540626100L;
@@ -321,29 +305,25 @@ public class CampaignImportPanel extends JPanel {
     actFileBrowse.addMapping(btnBrowseServerLog, txtServerLog);
 
     // Handle import trigger
-    btnImportCampaign.addActionListener(new ActionListener() {
+    btnImportCampaign.addActionListener(e -> {
+      // Create configuration based off user input
+      CampaignImportConfig config;
+      if (tabsPathModes.getSelectedIndex() == 0) {
+        String folder = txtCSVFolder.getText();
+        config = new CampaignImportConfig(txtCampaignName.getText(), folder + "/click_log.csv",
+            folder + "/impression_log.csv", folder + "/server_log.csv");
+      } else {
+        config = new CampaignImportConfig(txtCampaignName.getText(), txtClickLog.getText(),
+            txtImpressionLog.getText(), txtServerLog.getText());
+      }
 
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        // Create configuration based off user input
-        CampaignImportConfig config;
-        if (tabsPathModes.getSelectedIndex() == 0) {
-          String folder = txtCSVFolder.getText();
-          config = new CampaignImportConfig(txtCampaignName.getText(), folder + "/click_log.csv",
-              folder + "/impression_log.csv", folder + "/server_log.csv");
-        } else {
-          config = new CampaignImportConfig(txtCampaignName.getText(), txtClickLog.getText(),
-              txtImpressionLog.getText(), txtServerLog.getText());
-        }
-
-        boolean started = controller.imports.doImport(config);
-        if (started) {
-          showView(View.IMPORTING);
-        } else {
-          ErrorBuilder eb = controller.imports.getErrors();
-          JOptionPane.showMessageDialog(null, eb.listComments("Configuration Error"),
-              "Configuration Error", JOptionPane.ERROR_MESSAGE);
-        }
+      boolean started = controller.imports.doImport(config);
+      if (started) {
+        showView(View.IMPORTING);
+      } else {
+        ErrorBuilder eb = controller.imports.getErrors();
+        JOptionPane.showMessageDialog(null, eb.listComments("Configuration Error"),
+            "Configuration Error", JOptionPane.ERROR_MESSAGE);
       }
     });
 
@@ -352,12 +332,9 @@ public class CampaignImportPanel extends JPanel {
 
       @Override
       public void progressUpdate(int progress) {
-        EventQueue.invokeLater(new Runnable() {
-          @Override
-          public void run() {
-            lblImportProgress.setText(String.format("Import progress %d%%...", progress));
-            pbarImportProgress.setValue(progress);
-          }
+        EventQueue.invokeLater(() -> {
+          lblImportProgress.setText(String.format("Import progress %d%%...", progress));
+          pbarImportProgress.setValue(progress);
         });
       }
 
@@ -384,16 +361,13 @@ public class CampaignImportPanel extends JPanel {
     });
 
     // Handle cancellation request
-    btnCancelImport.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        int res = JOptionPane.showConfirmDialog(CampaignImportPanel.this,
-            "Are you sure you want to cancel?", "Cancel", JOptionPane.YES_NO_OPTION);
-        if (res != JOptionPane.YES_OPTION) {
-          return;
-        }
-        controller.imports.cancelImport(true);
+    btnCancelImport.addActionListener(e -> {
+      int res = JOptionPane.showConfirmDialog(CampaignImportPanel.this,
+          "Are you sure you want to cancel?", "Cancel", JOptionPane.YES_NO_OPTION);
+      if (res != JOptionPane.YES_OPTION) {
+        return;
       }
+      controller.imports.cancelImport(true);
     });
 
   }

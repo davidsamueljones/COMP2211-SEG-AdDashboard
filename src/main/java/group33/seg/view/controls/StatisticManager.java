@@ -1,24 +1,12 @@
 package group33.seg.view.controls;
 
-import javax.swing.JPanel;
-import java.awt.GridBagLayout;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import java.awt.CardLayout;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import javax.swing.JLabel;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.JTextField;
-import javax.swing.border.BevelBorder;
 import group33.seg.controller.DashboardController;
-import group33.seg.controller.handlers.StatisticHandler;
 import group33.seg.model.configs.StatisticConfig;
-import javax.swing.border.TitledBorder;
+
+import javax.swing.*;
 import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
 
 public class StatisticManager extends JPanel {
   private static final long serialVersionUID = -4131564432533932331L;

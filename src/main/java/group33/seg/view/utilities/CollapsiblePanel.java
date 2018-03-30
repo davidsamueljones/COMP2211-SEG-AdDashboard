@@ -1,19 +1,9 @@
 package group33.seg.view.utilities;
 
-import javax.swing.JPanel;
-import javax.swing.UIManager;
-import javax.swing.border.BevelBorder;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Container;
-import javax.swing.Action;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import org.jdesktop.swingx.JXCollapsiblePane;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import javax.swing.SwingConstants;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class CollapsiblePanel extends JPanel {
   private static final long serialVersionUID = -7454210705099631961L;

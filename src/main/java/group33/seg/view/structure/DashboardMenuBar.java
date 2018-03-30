@@ -1,23 +1,13 @@
 package group33.seg.view.structure;
 
-import java.awt.Toolkit;
-import java.awt.Window;
+import group33.seg.controller.DashboardController;
+import group33.seg.view.preferences.PreferencesDialog;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import group33.seg.controller.DashboardController;
-import group33.seg.controller.handlers.SettingsHandler;
-import group33.seg.model.configs.CampaignConfig;
-import group33.seg.view.campaignimport.CampaignImportDialog;
-import group33.seg.view.controls.CampaignManagerPanel;
-import group33.seg.view.preferences.PreferencesDialog;
-import group33.seg.view.utilities.Accessibility;
 
 public class DashboardMenuBar extends JMenuBar {
   private static final long serialVersionUID = 7553179515259733852L;
@@ -92,19 +82,15 @@ public class DashboardMenuBar extends JMenuBar {
     mnHelp.add(mntmPreferences);
 
     mntmPreferences.addActionListener(
-        new ActionListener() {
-
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            // Use current panel's form as parent
-            Window frmCurrent = SwingUtilities.getWindowAncestor(DashboardMenuBar.this);
-            PreferencesDialog preferences = new PreferencesDialog(frmCurrent, controller);
-            preferences.setModal(true);
-            preferences.setVisible(true);
-            if (controller.display.isUIFontScalingOutdated()) {
-              controller.display.reloadDashboard();
-            }
-          }
-        });
+            e -> {
+              // Use current panel's form as parent
+              Window frmCurrent = SwingUtilities.getWindowAncestor(DashboardMenuBar.this);
+              PreferencesDialog preferences = new PreferencesDialog(frmCurrent, controller);
+              preferences.setModal(true);
+              preferences.setVisible(true);
+              if (controller.display.isUIFontScalingOutdated()) {
+                controller.display.reloadDashboard();
+              }
+            });
   }
 }

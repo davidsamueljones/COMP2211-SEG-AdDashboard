@@ -1,22 +1,14 @@
 package group33.seg.view.graphwizard;
 
-import javax.swing.BorderFactory;
-import javax.swing.JPanel;
 import group33.seg.model.configs.LineConfig;
 import group33.seg.model.configs.MetricQuery;
 import group33.seg.model.types.Interval;
 import group33.seg.model.types.Metric;
 import group33.seg.view.controls.BounceDefinitionPanel;
 import group33.seg.view.controls.FilterViewPanel;
-import java.awt.GridBagLayout;
-import javax.swing.JLabel;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.JComboBox;
-import javax.swing.JButton;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class LineDataPanel extends JPanel {
   private static final long serialVersionUID = -7116368239383924369L;
@@ -58,7 +50,7 @@ public class LineDataPanel extends JPanel {
     gbc_lblMetricType.gridy = 0;
     add(lblMetricType, gbc_lblMetricType);
 
-    cboMetric = new JComboBox<Metric>();
+    cboMetric = new JComboBox<>();
     for (Metric metric : Metric.values()) {
       cboMetric.addItem(metric);
     }
@@ -121,12 +113,7 @@ public class LineDataPanel extends JPanel {
     // ************************************************************************************
 
     // Make relevant controls visible depending on metric
-    cboMetric.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        pnlBounceRate.setVisible(Metric.BOUNCE_RATE.equals(cboMetric.getSelectedItem()));
-      }
-    });
+    cboMetric.addActionListener(e -> pnlBounceRate.setVisible(Metric.BOUNCE_RATE.equals(cboMetric.getSelectedItem())));
 
   }
 

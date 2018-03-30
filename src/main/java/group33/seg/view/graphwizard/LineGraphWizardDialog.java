@@ -1,22 +1,13 @@
 package group33.seg.view.graphwizard;
 
-import java.awt.Dimension;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import group33.seg.controller.DashboardController;
 import group33.seg.controller.utilities.ErrorBuilder;
 import group33.seg.model.configs.LineGraphConfig;
-import javax.swing.JTabbedPane;
-import javax.swing.SwingConstants;
-import javax.swing.BorderFactory;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class LineGraphWizardDialog extends JDialog {
   private static final long serialVersionUID = -2529642040023886708L;
@@ -123,37 +114,26 @@ public class LineGraphWizardDialog extends JDialog {
     // ************************************************************************************
 
     // Close the wizard, do not do any updates
-    btnClose.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        int res = JOptionPane.showConfirmDialog(LineGraphWizardDialog.this,
-            "Are you sure you want to close the wizard, any unapplied changes will be lost?",
-            "Close", JOptionPane.YES_NO_OPTION);
-        if (res != JOptionPane.YES_OPTION) {
-          return;
-        }
-        setVisible(false);
-        dispose();
+    btnClose.addActionListener(e -> {
+      int res = JOptionPane.showConfirmDialog(LineGraphWizardDialog.this,
+          "Are you sure you want to close the wizard, any unapplied changes will be lost?",
+          "Close", JOptionPane.YES_NO_OPTION);
+      if (res != JOptionPane.YES_OPTION) {
+        return;
       }
+      setVisible(false);
+      dispose();
     });
 
     // Handle apply behaviour, no other effects
-    btnApply.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        apply();
-      }
-    });
+    btnApply.addActionListener(e -> apply());
 
     // Handle apply behaviour and then close the wizard
-    btnApplyClose.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        boolean success = apply();
-        if (success) {
-          setVisible(false);
-          dispose();
-        }
+    btnApplyClose.addActionListener(e -> {
+      boolean success = apply();
+      if (success) {
+        setVisible(false);
+        dispose();
       }
     });
 

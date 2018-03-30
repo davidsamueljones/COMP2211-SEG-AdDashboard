@@ -1,12 +1,11 @@
 package group33.seg.view.utilities;
 
-import java.awt.Component;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
-import javax.swing.JFileChooser;
-import javax.swing.JTextField;
 
 public class FileActionListener implements ActionListener {
   private Map<Object, JTextField> mappings = new HashMap<>();

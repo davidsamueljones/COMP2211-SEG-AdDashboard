@@ -1,38 +1,21 @@
 package group33.seg.view.controls;
 
-import java.awt.GridBagLayout;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTree;
+import group33.seg.model.configs.FilterConfig;
+import group33.seg.model.utilities.Range;
+import org.jdesktop.swingx.JXDatePicker;
+import org.scijava.swing.checkboxtree.CheckBoxNodeData;
+import org.scijava.swing.checkboxtree.CheckBoxNodeEditor;
+import org.scijava.swing.checkboxtree.CheckBoxNodeRenderer;
+
+import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
-import org.jdesktop.swingx.JXDatePicker;
-import org.scijava.swing.checkboxtree.CheckBoxNodeData;
-import org.scijava.swing.checkboxtree.CheckBoxNodeEditor;
-import org.scijava.swing.checkboxtree.CheckBoxNodeRenderer;
-import group33.seg.model.configs.FilterConfig;
-import group33.seg.model.utilities.Range;
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import javax.swing.JLabel;
-import java.awt.Insets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Map;
+import java.awt.*;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 public class FilterSettingsPanel extends JPanel {
   private static final long serialVersionUID = -6373337720735697409L;
@@ -95,12 +78,7 @@ public class FilterSettingsPanel extends JPanel {
     add(dtpStartDate, gbc_dtpStartDate);
 
     btnStartDateClear = new JButton("Clear");
-    btnStartDateClear.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        dtpStartDate.setDate(null);
-      }
-    });
+    btnStartDateClear.addActionListener(e -> dtpStartDate.setDate(null));
     GridBagConstraints gbc_btnStartDateClear = new GridBagConstraints();
     gbc_btnStartDateClear.insets = new Insets(0, 0, 5, 0);
     gbc_btnStartDateClear.gridx = 2;
@@ -123,12 +101,7 @@ public class FilterSettingsPanel extends JPanel {
     add(dtpEndDate, gbc_dtpEndDate);
 
     btnEndDateClear = new JButton("Clear");
-    btnEndDateClear.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        dtpEndDate.setDate(null);
-      }
-    });
+    btnEndDateClear.addActionListener(e -> dtpEndDate.setDate(null));
     GridBagConstraints gbc_btnEndDateClear = new GridBagConstraints();
     gbc_btnEndDateClear.gridx = 2;
     gbc_btnEndDateClear.gridy = 2;
@@ -224,7 +197,7 @@ public class FilterSettingsPanel extends JPanel {
       Class<T> type, Collection<T> values, Collection<T> checked) {
     Map<T, DefaultMutableTreeNode> mappings = new HashMap<>();
     for (T value : values) {
-      boolean isChecked = (checked == null ? true : checked.contains(value));
+      boolean isChecked = (checked == null || checked.contains(value));
       DefaultMutableTreeNode node = addTreeCheckbox(parent, value.toString(), isChecked);
       mappings.put(value, node);
     }

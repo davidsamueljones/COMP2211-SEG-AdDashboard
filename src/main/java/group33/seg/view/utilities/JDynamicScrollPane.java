@@ -1,15 +1,11 @@
 package group33.seg.view.utilities;
 
-import java.awt.Component;
-import java.awt.Dimension;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.HashSet;
 import java.util.Set;
-import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
 /**
  * Extension of a normal JScrollPane that can track objects which may change height if the width of
@@ -67,29 +63,23 @@ public class JDynamicScrollPane extends JScrollPane {
    * scroll bar.
    */
   public void doResize() {
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
+    SwingUtilities.invokeLater(() -> {
 
-        // Set width of content to that of view
-        setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-        setWidth();
-        // Apply height deltas
-        SwingUtilities.invokeLater(new Runnable() {
-          @Override
-          public void run() {
-            applyHeightDelta();
-            setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+      // Set width of content to that of view
+      setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+      setWidth();
+      // Apply height deltas
+      SwingUtilities.invokeLater(() -> {
+        applyHeightDelta();
+        setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
-            // If this was the first time doResize was called, enable listeners
-            if (!initialised) {
-              initListeners();
-              initialised = true;
-              doResize();
-            }
-          }
-        });
-      }
+        // If this was the first time doResize was called, enable listeners
+        if (!initialised) {
+          initListeners();
+          initialised = true;
+          doResize();
+        }
+      });
     });
   }
 
@@ -103,7 +93,7 @@ public class JDynamicScrollPane extends JScrollPane {
       lastHeight = getViewport().getPreferredSize().height;
       deltaApplied = false;
     }
-    final int indent = (((Integer) UIManager.get("ScrollBar.width")).intValue());
+    final int indent = ((Integer) UIManager.get("ScrollBar.width"));
     int newWidth = getWidth() - indent;
     // Update width, being lenient on height
     // Height must be set to desired value with delta change
