@@ -21,6 +21,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import group33.seg.controller.DashboardController;
 import group33.seg.controller.handlers.WorkspaceHandler.WorkspaceListener;
+import group33.seg.controller.types.GraphVisitor;
 import group33.seg.model.configs.GraphConfig;
 import group33.seg.model.configs.LineGraphConfig;
 import group33.seg.view.graphwizard.LineGraphWizardDialog;
@@ -187,7 +188,14 @@ public class GraphManagerPanel extends JPanel {
       displayNewWizard();
     } else {
       // Use graph visitor pattern to open appropriate wizard
-      config.accept(graph -> displayLineWizard(graph));
+      config.accept(new GraphVisitor() {
+        
+        @Override
+        public void visit(LineGraphConfig graph) {
+         displayLineWizard(graph);
+        }
+      });
+      
     }
   }
 
