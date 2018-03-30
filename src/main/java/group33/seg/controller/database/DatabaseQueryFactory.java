@@ -259,8 +259,8 @@ public class DatabaseQueryFactory {
     }
 
     // Data for which campaign should be queried
-    if (request.campaignConfig != null) {
-      sql = sql.replace("<campaign>", "campaign_id = " + request.campaignConfig.uid);
+    if (request.campaign != null) {
+      sql = sql.replace("<campaign>", "campaign_id = " + request.campaign.uid);
     }
 
     // If no campaign_id is specified, fetch all data
@@ -269,15 +269,15 @@ public class DatabaseQueryFactory {
     }
 
     // TODO add rest of filtering options
-    if (request.filterConfig != null) {
+    if (request.filter != null) {
       /**
        * Checking if there is a chosen date range. If there is no date range set, the query will
        * default to using the minimum and maximum dates in the table
        */
-      if (request.filterConfig.dates != null) {
+      if (request.filter.dates != null) {
         sql =
-            sql.replace("<start>", "'" + request.filterConfig.dates.min + "'")
-                .replace("<final>", "'" + request.filterConfig.dates.max + "'");
+            sql.replace("<start>", "'" + request.filter.dates.min + "'")
+                .replace("<final>", "'" + request.filter.dates.max + "'");
       } else sql = sql.replace("<start>", "start").replace("<final>", "final");
     }
     return sql;

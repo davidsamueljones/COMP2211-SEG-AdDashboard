@@ -46,7 +46,7 @@ public class LineGraphWizardDialog extends JDialog {
     line.hide = true;
     line.identifier = "abcdefghijklmnop";
     line.query = new MetricQuery();
-    line.query.filterConfig = new FilterConfig();
+    line.query.filter = new FilterConfig();
     line.query.bounceDef = new BounceConfig();
     line.query.metric = Metric.CLICKS;
     line.query.interval = Interval.MONTH;

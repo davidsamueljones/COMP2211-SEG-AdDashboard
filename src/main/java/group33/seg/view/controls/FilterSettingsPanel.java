@@ -136,10 +136,10 @@ public class FilterSettingsPanel extends JPanel {
   }
 
   /**
-   * Load filterConfig enumerations into tree. Check values based on filterConfig config.
+   * Load filter enumerations into tree. Check values based on filter config.
    * 
    * @param tree Tree to configure/initialise
-   * @param filter Current filterConfig to load
+   * @param filter Current filter to load
    */
   private void initialiseTree(JTree tree, FilterConfig filter) {
     // Sub-methods expect non-null config
@@ -148,7 +148,7 @@ public class FilterSettingsPanel extends JPanel {
     }
     DefaultMutableTreeNode root = new DefaultMutableTreeNode();
 
-    // Create and fill filterConfig categories
+    // Create and fill filter categories
     DefaultMutableTreeNode tnAge = new DefaultMutableTreeNode("Age");
     ages = addTreeCheckboxes(tnAge, FilterConfig.Age.class,
         Arrays.asList(FilterConfig.Age.values()), filter.ages);
@@ -248,10 +248,10 @@ public class FilterSettingsPanel extends JPanel {
   }
 
   /**
-   * Using the current tree configuration and date components, create a corresponding filterConfig
+   * Using the current tree configuration and date components, create a corresponding filter
    * configuration.
    * 
-   * @return Generated filterConfig
+   * @return Generated filter
    */
   public FilterConfig generateFilter() {
     FilterConfig filter = new FilterConfig();
@@ -271,25 +271,25 @@ public class FilterSettingsPanel extends JPanel {
   }
 
   /**
-   * For a given set of mappings, find values that should be included in a filterConfig.
+   * For a given set of mappings, find values that should be included in a filter.
    * 
    * @param type Type of values associated with nodes
    * @param mappings Values and their corresponding nodes
    * @return Values which have a node that is checked, null if all nodes are checked
    */
   private <T> Collection<T> processFilterCategory(Class<T> type, Map<T, DefaultMutableTreeNode> mappings) {
-    // Create a set of checked values in the filterConfig
+    // Create a set of checked values in the filter
     Collection<T> inFilter = new ArrayList<>();
     for (Entry<T, DefaultMutableTreeNode> entry : mappings.entrySet()) {
       if (isNodeChecked(entry.getValue())) {
         inFilter.add(entry.getKey());
       }
     }
-    // No filterConfig need be applied
+    // No filter need be applied
     if (inFilter.size() == mappings.size()) {
       return null;
     }
-    // A filterConfig has been applied
+    // A filter has been applied
     return inFilter;
   }
 

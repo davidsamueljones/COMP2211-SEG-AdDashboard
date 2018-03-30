@@ -69,7 +69,7 @@ public class GraphHandler {
     boolean data = true;
     data &= original.query.metric.equals(updated.query.metric);
     data &= original.query.interval.equals(updated.query.interval);
-    data &= original.query.filterConfig.isEquals(updated.query.filterConfig);
+    data &= original.query.filter.isEquals(updated.query.filter);
     if (updated.query.metric.equals(Metric.BOUNCE_RATE)) {
       data &= original.query.bounceDef.isEquals(updated.query.bounceDef);
     }
