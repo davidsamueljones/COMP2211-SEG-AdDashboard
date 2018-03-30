@@ -1,9 +1,10 @@
 package group33.seg.view.utilities;
 
-import javax.swing.*;
-import javax.swing.UIManager.LookAndFeelInfo;
-import java.awt.*;
+import java.awt.Font;
 import java.util.Set;
+import javax.swing.JComponent;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 
 /**
  * General utility class holding methods to set application-wide accessibility options or helper

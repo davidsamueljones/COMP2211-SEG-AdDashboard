@@ -1,12 +1,11 @@
 package group33.seg.controller.database;
 
+import java.util.HashMap;
+import java.util.Map;
 import group33.seg.model.configs.BounceConfig;
 import group33.seg.model.configs.MetricQuery;
 import group33.seg.model.types.Interval;
 import group33.seg.model.types.Metric;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class DatabaseQueryFactory {
   private static final Map<Metric, String> graphQueries = new HashMap<>();

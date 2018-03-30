@@ -1,11 +1,15 @@
 package group33.seg.view.utilities;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.HashSet;
 import java.util.Set;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 /**
  * Extension of a normal JScrollPane that can track objects which may change height if the width of

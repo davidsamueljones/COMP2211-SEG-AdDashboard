@@ -1,9 +1,15 @@
 package group33.seg.view.utilities;
 
+import java.awt.Container;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import javax.swing.Action;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import org.jdesktop.swingx.JXCollapsiblePane;
-
-import javax.swing.*;
-import java.awt.*;
 
 public class CollapsiblePanel extends JPanel {
   private static final long serialVersionUID = -7454210705099631961L;

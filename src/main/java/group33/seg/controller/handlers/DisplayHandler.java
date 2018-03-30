@@ -2,7 +2,6 @@ package group33.seg.controller.handlers;
 
 import java.awt.EventQueue;
 import group33.seg.controller.DashboardController.DashboardMVC;
-import group33.seg.view.DashboardView;
 import group33.seg.view.structure.DashboardFrame;
 import group33.seg.view.utilities.Accessibility;
 import group33.seg.view.utilities.Accessibility.Appearance;

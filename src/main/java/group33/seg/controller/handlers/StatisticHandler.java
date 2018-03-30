@@ -1,6 +1,5 @@
 package group33.seg.controller.handlers;
 
-import group33.seg.controller.DashboardController;
 import group33.seg.controller.DashboardController.DashboardMVC;
 import group33.seg.controller.types.MetricQueryResponse;
 import group33.seg.model.configs.MetricQuery;
