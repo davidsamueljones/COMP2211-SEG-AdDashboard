@@ -1,15 +1,19 @@
 package group33.seg.view.structure;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import javax.swing.BorderFactory;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.border.BevelBorder;
 import group33.seg.controller.DashboardController;
 import group33.seg.view.controls.CampaignManagerPanel;
 import group33.seg.view.controls.GraphManagerPanel;
 import group33.seg.view.controls.StatisticManager;
 import group33.seg.view.utilities.Accessibility;
 import group33.seg.view.utilities.CollapsiblePanel;
-
-import javax.swing.*;
-import javax.swing.border.BevelBorder;
-import java.awt.*;
 
 public class ControlsPanel extends JScrollPane {
   private static final long serialVersionUID = 335036489710020302L;

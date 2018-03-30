@@ -1,12 +1,18 @@
 package group33.seg.view.controls;
 
-import group33.seg.controller.DashboardController;
-import group33.seg.model.configs.StatisticConfig;
-
-import javax.swing.*;
+import java.awt.CardLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
-import java.awt.*;
+import group33.seg.controller.DashboardController;
+import group33.seg.model.configs.StatisticConfig;
 
 public class StatisticManager extends JPanel {
   private static final long serialVersionUID = -4131564432533932331L;

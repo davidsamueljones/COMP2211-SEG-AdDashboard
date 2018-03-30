@@ -1,14 +1,18 @@
 package group33.seg.view.controls;
 
-import group33.seg.model.configs.BounceConfig;
-import group33.seg.model.configs.BounceConfig.Type;
-
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import java.awt.*;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JSpinner;
+import group33.seg.model.configs.BounceConfig;
+import group33.seg.model.configs.BounceConfig.Type;
 
 public class BounceDefinitionPanel extends JPanel {
   private static final long serialVersionUID = -4113181723451098077L;

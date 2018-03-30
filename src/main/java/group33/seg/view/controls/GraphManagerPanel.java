@@ -1,22 +1,29 @@
 package group33.seg.view.controls;
 
-import group33.seg.controller.DashboardController;
-import group33.seg.controller.handlers.WorkspaceHandler.WorkspaceListener;
-import group33.seg.controller.types.GraphVisitor;
-import group33.seg.model.configs.GraphConfig;
-import group33.seg.model.configs.LineGraphConfig;
-import group33.seg.view.graphwizard.LineGraphWizardDialog;
-
-import javax.swing.*;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Window;
+import java.util.List;
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.List;
+import group33.seg.controller.DashboardController;
+import group33.seg.controller.handlers.WorkspaceHandler.WorkspaceListener;
+import group33.seg.model.configs.GraphConfig;
+import group33.seg.model.configs.LineGraphConfig;
+import group33.seg.view.graphwizard.LineGraphWizardDialog;
 
 public class GraphManagerPanel extends JPanel {
   private static final long serialVersionUID = 6541885932864334941L;

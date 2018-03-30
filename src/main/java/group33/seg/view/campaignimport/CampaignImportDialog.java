@@ -1,13 +1,22 @@
 package group33.seg.view.campaignimport;
 
-import group33.seg.controller.DashboardController;
-import group33.seg.view.utilities.Accessibility;
-
-import javax.swing.*;
-import javax.swing.border.BevelBorder;
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.border.BevelBorder;
+import group33.seg.controller.DashboardController;
+import group33.seg.view.utilities.Accessibility;
 
 public class CampaignImportDialog extends JDialog {
   private static final long serialVersionUID = -8083386947121993055L;

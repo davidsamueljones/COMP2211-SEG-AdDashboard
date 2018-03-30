@@ -1,13 +1,16 @@
 package group33.seg.view.structure;
 
+import java.awt.Toolkit;
+import java.awt.Window;
+import java.awt.event.KeyEvent;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import group33.seg.controller.DashboardController;
 import group33.seg.view.preferences.PreferencesDialog;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 
 public class DashboardMenuBar extends JMenuBar {
   private static final long serialVersionUID = 7553179515259733852L;

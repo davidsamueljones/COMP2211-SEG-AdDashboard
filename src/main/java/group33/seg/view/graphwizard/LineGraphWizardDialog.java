@@ -1,13 +1,20 @@
 package group33.seg.view.graphwizard;
 
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Window;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.SwingConstants;
 import group33.seg.controller.DashboardController;
 import group33.seg.controller.utilities.ErrorBuilder;
 import group33.seg.model.configs.LineGraphConfig;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class LineGraphWizardDialog extends JDialog {
   private static final long serialVersionUID = -2529642040023886708L;

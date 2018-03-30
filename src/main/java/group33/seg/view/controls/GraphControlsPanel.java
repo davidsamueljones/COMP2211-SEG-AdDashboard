@@ -1,9 +1,17 @@
 package group33.seg.view.controls;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.JTabbedPane;
+import javax.swing.SwingConstants;
 import org.jdesktop.swingx.JXDatePicker;
-
-import javax.swing.*;
-import java.awt.*;
 
 public class GraphControlsPanel extends JPanel {
   private static final long serialVersionUID = -2452627668529824145L;
@@ -52,7 +60,7 @@ public class GraphControlsPanel extends JPanel {
     gbl_pnlXAxis.rowWeights = new double[] {1.0, 0.0};
     pnlXAxis.setLayout(gbl_pnlXAxis);
 
-    JTabbedPane tabsXAxis = new JTabbedPane(JTabbedPane.TOP);
+    JTabbedPane tabsXAxis = new JTabbedPane(SwingConstants.TOP);
     GridBagConstraints gbc_tabsXAxis = new GridBagConstraints();
     gbc_tabsXAxis.gridwidth = 2;
     gbc_tabsXAxis.fill = GridBagConstraints.BOTH;

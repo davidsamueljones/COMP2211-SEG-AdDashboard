@@ -1,16 +1,22 @@
 package group33.seg.view.graphwizard;
 
-import group33.seg.controller.utilities.DashboardUtilities;
-import group33.seg.model.configs.LineConfig;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import group33.seg.controller.utilities.DashboardUtilities;
+import group33.seg.model.configs.LineConfig;
 
 public class GraphLinesPanel extends JPanel {
   private static final long serialVersionUID = -1169530766129778297L;

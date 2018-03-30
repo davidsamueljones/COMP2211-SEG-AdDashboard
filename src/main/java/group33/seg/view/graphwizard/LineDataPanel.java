@@ -1,14 +1,20 @@
 package group33.seg.view.graphwizard;
 
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import group33.seg.model.configs.LineConfig;
 import group33.seg.model.configs.MetricQuery;
 import group33.seg.model.types.Interval;
 import group33.seg.model.types.Metric;
 import group33.seg.view.controls.BounceDefinitionPanel;
 import group33.seg.view.controls.FilterViewPanel;
-
-import javax.swing.*;
-import java.awt.*;
 
 public class LineDataPanel extends JPanel {
   private static final long serialVersionUID = -7116368239383924369L;

@@ -1,21 +1,33 @@
 package group33.seg.view.controls;
 
-import group33.seg.model.configs.FilterConfig;
-import group33.seg.model.utilities.Range;
-import org.jdesktop.swingx.JXDatePicker;
-import org.scijava.swing.checkboxtree.CheckBoxNodeData;
-import org.scijava.swing.checkboxtree.CheckBoxNodeEditor;
-import org.scijava.swing.checkboxtree.CheckBoxNodeRenderer;
-
-import javax.swing.*;
+import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTree;
 import javax.swing.border.BevelBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
-import java.awt.*;
-import java.util.*;
-import java.util.Map.Entry;
+import org.jdesktop.swingx.JXDatePicker;
+import org.scijava.swing.checkboxtree.CheckBoxNodeData;
+import org.scijava.swing.checkboxtree.CheckBoxNodeEditor;
+import org.scijava.swing.checkboxtree.CheckBoxNodeRenderer;
+import group33.seg.model.configs.FilterConfig;
+import group33.seg.model.utilities.Range;
 
 public class FilterSettingsPanel extends JPanel {
   private static final long serialVersionUID = -6373337720735697409L;

@@ -1,13 +1,19 @@
 package group33.seg.view.controls;
 
-import group33.seg.model.configs.FilterConfig;
-
-import javax.swing.*;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Window;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import group33.seg.model.configs.FilterConfig;
 
 public class FilterViewPanel extends JPanel {
   private static final long serialVersionUID = 8739821651130799927L;

@@ -1,5 +1,22 @@
 package group33.seg.view.campaignimport;
 
+import java.awt.CardLayout;
+import java.awt.EventQueue;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Window;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import group33.seg.controller.DashboardController;
 import group33.seg.controller.utilities.DashboardUtilities;
 import group33.seg.controller.utilities.ErrorBuilder;
@@ -7,9 +24,6 @@ import group33.seg.controller.utilities.ProgressListener;
 import group33.seg.model.configs.CampaignImportConfig;
 import group33.seg.view.utilities.FileActionListener;
 import group33.seg.view.utilities.JDynamicScrollPane;
-
-import javax.swing.*;
-import java.awt.*;
 
 public class CampaignImportPanel extends JPanel {
   private static final long serialVersionUID = 845431833540626100L;
