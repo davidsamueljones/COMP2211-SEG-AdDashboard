@@ -20,7 +20,7 @@ public class ImpressionLogTable extends DatabaseTable {
   public void createIndexes(Connection c) throws SQLException {
     Statement st = c.createStatement();
     st.execute("CREATE INDEX CONCURRENTLY IF NOT EXISTS il_date ON impression_log(date, campaign_id);");
-    st.execute("CREATE INDEX CONCURRENTLY IF NOT EXISTS il_dayDateTrunc ON impression_log(date_trunc('day' :: TEXT, date));");
+    st.execute("CREATE INDEX CONCURRENTLY IF NOT EXISTS il_dayDateTrunc ON impression_log(date_trunc('day', date));");
     st.close();
   }
 
