@@ -2,8 +2,6 @@ package group33.seg.view.structure;
 
 import java.awt.Toolkit;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
@@ -87,19 +85,15 @@ public class DashboardMenuBar extends JMenuBar {
     mnHelp.add(mntmPreferences);
 
     mntmPreferences.addActionListener(
-        new ActionListener() {
-
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            // Use current panel's form as parent
-            Window frmCurrent = SwingUtilities.getWindowAncestor(DashboardMenuBar.this);
-            PreferencesDialog preferences = new PreferencesDialog(frmCurrent, controller);
-            preferences.setModal(true);
-            preferences.setVisible(true);
-            if (controller.display.isUIFontScalingOutdated()) {
-              controller.display.reloadDashboard();
-            }
-          }
-        });
+            e -> {
+              // Use current panel's form as parent
+              Window frmCurrent = SwingUtilities.getWindowAncestor(DashboardMenuBar.this);
+              PreferencesDialog preferences = new PreferencesDialog(frmCurrent, controller);
+              preferences.setModal(true);
+              preferences.setVisible(true);
+              if (controller.display.isUIFontScalingOutdated()) {
+                controller.display.reloadDashboard();
+              }
+            });
   }
 }

@@ -11,8 +11,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import group33.seg.model.configs.BounceConfig;
 import group33.seg.model.configs.BounceConfig.Type;
 
@@ -98,12 +96,7 @@ public class BounceDefinitionPanel extends JPanel {
         radPageCount.setSelected(true);
       }
     });
-    nudPageCount.addChangeListener(new ChangeListener() {
-      @Override
-      public void stateChanged(ChangeEvent e) {
-        radPageCount.setSelected(true);
-      }
-    });
+    nudPageCount.addChangeListener(e -> radPageCount.setSelected(true));
 
     lblTime.addMouseListener(new MouseAdapter() {
       @Override
@@ -111,12 +104,7 @@ public class BounceDefinitionPanel extends JPanel {
         radTime.setSelected(true);
       }
     });
-    nudTime.addChangeListener(new ChangeListener() {
-      @Override
-      public void stateChanged(ChangeEvent e) {
-        radTime.setSelected(true);
-      }
-    });
+    nudTime.addChangeListener(e -> radTime.setSelected(true));
 
   }
 

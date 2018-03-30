@@ -4,8 +4,6 @@ import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -92,12 +90,7 @@ public class FilterSettingsPanel extends JPanel {
     add(dtpStartDate, gbc_dtpStartDate);
 
     btnStartDateClear = new JButton("Clear");
-    btnStartDateClear.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        dtpStartDate.setDate(null);
-      }
-    });
+    btnStartDateClear.addActionListener(e -> dtpStartDate.setDate(null));
     GridBagConstraints gbc_btnStartDateClear = new GridBagConstraints();
     gbc_btnStartDateClear.insets = new Insets(0, 0, 5, 0);
     gbc_btnStartDateClear.gridx = 2;
@@ -120,12 +113,7 @@ public class FilterSettingsPanel extends JPanel {
     add(dtpEndDate, gbc_dtpEndDate);
 
     btnEndDateClear = new JButton("Clear");
-    btnEndDateClear.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        dtpEndDate.setDate(null);
-      }
-    });
+    btnEndDateClear.addActionListener(e -> dtpEndDate.setDate(null));
     GridBagConstraints gbc_btnEndDateClear = new GridBagConstraints();
     gbc_btnEndDateClear.gridx = 2;
     gbc_btnEndDateClear.gridy = 2;
@@ -221,7 +209,7 @@ public class FilterSettingsPanel extends JPanel {
       Class<T> type, Collection<T> values, Collection<T> checked) {
     Map<T, DefaultMutableTreeNode> mappings = new HashMap<>();
     for (T value : values) {
-      boolean isChecked = (checked == null ? true : checked.contains(value));
+      boolean isChecked = (checked == null || checked.contains(value));
       DefaultMutableTreeNode node = addTreeCheckbox(parent, value.toString(), isChecked);
       mappings.put(value, node);
     }

@@ -5,8 +5,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -131,31 +129,24 @@ public class PreferencesDialog extends JDialog {
     // * EVENT HANDLING
     // ************************************************************************************
 
-    btnCancel.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        setVisible(false);
-        dispose();
-      }
+    btnCancel.addActionListener(e -> {
+      setVisible(false);
+      dispose();
     });
 
-    btnApplyConfirm.addActionListener(new ActionListener() {
-
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        if (pnlFontSize.hasChanged()) {
-          int res = JOptionPane.showConfirmDialog(PreferencesDialog.this,
-              "Updating the font size requires any open windows to refresh\r\n"
-                  + "This may clear any workspaces, are you sure you wish to continue?",
-              "Apply & Confirm", JOptionPane.YES_NO_OPTION);
-          if (res != JOptionPane.YES_OPTION) {
-            return;
-          }
-          pnlFontSize.updateSettingsScale();
+    btnApplyConfirm.addActionListener(e -> {
+      if (pnlFontSize.hasChanged()) {
+        int res = JOptionPane.showConfirmDialog(PreferencesDialog.this,
+            "Updating the font size requires any open windows to refresh\r\n"
+                + "This may clear any workspaces, are you sure you wish to continue?",
+            "Apply & Confirm", JOptionPane.YES_NO_OPTION);
+        if (res != JOptionPane.YES_OPTION) {
+          return;
         }
-        setVisible(false);
-        dispose();
+        pnlFontSize.updateSettingsScale();
       }
+      setVisible(false);
+      dispose();
     });
 
   }

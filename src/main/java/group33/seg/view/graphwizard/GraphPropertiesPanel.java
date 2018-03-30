@@ -11,19 +11,19 @@ import group33.seg.model.configs.LineGraphConfig;
 public class GraphPropertiesPanel extends JScrollPane {
   private static final long serialVersionUID = 3622228245996396838L;
 
+  protected GeneralGraphPropertiesPanel pnlGeneralProperties;
+  protected PlottingModePanel pnlPlottingMode;
 
-  private GeneralGraphPropertiesPanel pnlGeneralProperties;
-  private PlottingModePanel pnlPlottingMode;
-  
+  /**
+   * Initialise the simple panel, no external controllers required.
+   */
   public GraphPropertiesPanel() {
-    this(null);
-  }
-  
-  public GraphPropertiesPanel(LineGraphConfig config) {
     initGUI();
-    loadGraph(config);
   }
 
+  /**
+   * Initialise GUI and any event listeners.
+   */
   private void initGUI() {
     JPanel pnlMain = new JPanel();
     pnlMain.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -53,11 +53,19 @@ public class GraphPropertiesPanel extends JScrollPane {
     this.getVerticalScrollBar().setUnitIncrement(10);
   }
 
+  /**
+   * @param config Configuration to load into the view object
+   */
   public void loadGraph(LineGraphConfig config) {
     pnlGeneralProperties.loadGraph(config);
     pnlPlottingMode.loadGraph(config);
   }
 
+  /**
+   * Update corresponding fields of a given configuration using the view's respective field objects.
+   * 
+   * @param config Configuration to update
+   */
   public void updateConfig(LineGraphConfig config) {
     pnlGeneralProperties.updateConfig(config);
     pnlPlottingMode.updateConfig(config);

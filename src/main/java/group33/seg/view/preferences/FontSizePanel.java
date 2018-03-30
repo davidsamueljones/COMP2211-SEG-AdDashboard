@@ -10,8 +10,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.SwingConstants;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import org.jdesktop.swingx.JXTitledSeparator;
 import group33.seg.controller.DashboardController;
 import group33.seg.controller.handlers.SettingsHandler;
@@ -116,12 +114,7 @@ public class FontSizePanel extends JPanel {
     setFontScale(currentScaling);
     lblCurrentFontSize.setPreferredSize(preferred);
 
-    sldFontSize.addChangeListener(new ChangeListener() {
-      @Override
-      public void stateChanged(ChangeEvent e) {
-        setFontScale(getSliderScale());
-      }
-    });
+    sldFontSize.addChangeListener(e -> setFontScale(getSliderScale()));
   }
 
   private void setFontScale(double scale) {

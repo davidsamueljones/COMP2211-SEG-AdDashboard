@@ -13,16 +13,22 @@ import group33.seg.model.configs.LineGraphConfig;
 public class GeneralGraphPropertiesPanel extends JPanel {
   private static final long serialVersionUID = -1585475807433849072L;
 
-  private JTextField txtIdentifier;
-  private JTextField txtTitle;
-  private JTextField txtXAxisTitle;
-  private JTextField txtYAxisTitle;
-  private JCheckBox chckbxShowLegend;
+  protected JTextField txtIdentifier;
+  protected JTextField txtTitle;
+  protected JTextField txtXAxisTitle;
+  protected JTextField txtYAxisTitle;
+  protected JCheckBox chckbxShowLegend;
 
+  /**
+   * Initialise the simple panel, no external controllers required.
+   */
   public GeneralGraphPropertiesPanel() {
     initGUI();
   }
 
+  /**
+   * Initialise GUI and any event listeners.
+   */
   private void initGUI() {
     setBorder(BorderFactory.createCompoundBorder(
         BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "General Properties"),
@@ -108,6 +114,9 @@ public class GeneralGraphPropertiesPanel extends JPanel {
     add(chckbxShowLegend, gbc_chckbxShowLegend);
   }
 
+  /**
+   * @param config Configuration to load into the view object
+   */
   public void loadGraph(LineGraphConfig config) {
     if (config == null) {
       reset();
@@ -120,6 +129,9 @@ public class GeneralGraphPropertiesPanel extends JPanel {
     }
   }
 
+  /**
+   * Apply reset state to the view object.
+   */
   public void reset() {
     txtIdentifier.setText("");
     txtTitle.setText("");
@@ -128,6 +140,11 @@ public class GeneralGraphPropertiesPanel extends JPanel {
     chckbxShowLegend.setSelected(true);
   }
 
+  /**
+   * Update corresponding fields of a given configuration using the view's respective field objects.
+   * 
+   * @param config Configuration to update
+   */
   public void updateConfig(LineGraphConfig config) {
     config.identifier = txtIdentifier.getText();
     config.title = txtTitle.getText();

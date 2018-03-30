@@ -10,7 +10,6 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.border.BevelBorder;
 import group33.seg.controller.DashboardController;
 import group33.seg.view.controls.CampaignManagerPanel;
-import group33.seg.view.controls.GraphControlsPanel;
 import group33.seg.view.controls.GraphManagerPanel;
 import group33.seg.view.controls.StatisticManager;
 import group33.seg.view.utilities.Accessibility;
@@ -62,17 +61,17 @@ public class ControlsPanel extends JScrollPane {
       pnlControls.add(colpnlCampaignManager, gbc_colpnlCampaignManager);
 
       // Graph controls
-      CollapsiblePanel colpnlGraphControls = new CollapsiblePanel("Graph Controls");
-      applyCollapsiblePanelStyle(colpnlGraphControls);
-      GraphControlsPanel pnlGraphControls = new GraphControlsPanel();
-      colpnlGraphControls.setContentPane(pnlGraphControls);
-      colpnlGraphControls.getCollapsiblePane().setCollapsed(true);
-      GridBagConstraints gbc_colpnlGraphControls = new GridBagConstraints();
-      gbc_colpnlGraphControls.fill = GridBagConstraints.BOTH;
-      gbc_colpnlGraphControls.insets = new Insets(0, 5, 5, 5);
-      gbc_colpnlGraphControls.gridx = 0;
-      gbc_colpnlGraphControls.gridy = 1;
-      pnlControls.add(colpnlGraphControls, gbc_colpnlGraphControls);
+//      CollapsiblePanel colpnlGraphControls = new CollapsiblePanel("Graph Controls");
+//      applyCollapsiblePanelStyle(colpnlGraphControls);
+//      GraphControlsPanel pnlGraphControls = new GraphControlsPanel();
+//      colpnlGraphControls.setContentPane(pnlGraphControls);
+//      colpnlGraphControls.getCollapsiblePane().setCollapsed(true);
+//      GridBagConstraints gbc_colpnlGraphControls = new GridBagConstraints();
+//      gbc_colpnlGraphControls.fill = GridBagConstraints.BOTH;
+//      gbc_colpnlGraphControls.insets = new Insets(0, 5, 5, 5);
+//      gbc_colpnlGraphControls.gridx = 0;
+//      gbc_colpnlGraphControls.gridy = 1;
+//      pnlControls.add(colpnlGraphControls, gbc_colpnlGraphControls);
       
       // Graph Manager
       CollapsiblePanel colpnlGraphManager = new CollapsiblePanel("Graph Manager");

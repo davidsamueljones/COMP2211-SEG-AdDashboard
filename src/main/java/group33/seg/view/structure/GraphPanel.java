@@ -5,14 +5,14 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import group33.seg.controller.DashboardController;
-import group33.seg.view.output.Graph;
+import group33.seg.view.output.LineGraphView;
 
 public class GraphPanel extends JPanel {
   private static final long serialVersionUID = 6541885932864334941L;
 
   private DashboardController controller;
   
-  private Graph graph;
+  private LineGraphView graph;
 
   private JButton btnPointer;
   private JButton btnPan;
@@ -29,13 +29,13 @@ public class GraphPanel extends JPanel {
     initGUI();
     
     // Update controllers knowledge of graph to update in view
-    controller.graphs.setGraph(graph);
+    controller.graphs.setLineGraphView(graph);
   }
 
   private void initGUI() {
     setLayout(new BorderLayout(0, 0));
 
-    graph = new Graph("Number of Impressions", "Time", "Number of impressions");
+    graph = new LineGraphView("Number of Impressions", "Time", "Number of impressions");
     add(graph, BorderLayout.CENTER);
 
     JToolBar tlbControls = new JToolBar();

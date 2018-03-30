@@ -4,8 +4,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -79,21 +77,17 @@ public class CampaignManagerPanel extends JPanel {
     // ************************************************************************************
 
     // Load import campaign dialog and update view
-    btnChangeCampaign.addActionListener(new ActionListener() {
-
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        // Use current panels form as parent
-        Window frmCurrent = SwingUtilities.getWindowAncestor(CampaignManagerPanel.this);
-        // Show dialog
-        CampaignImportDialog cid = new CampaignImportDialog(frmCurrent, controller);
-        cid.setModal(true);
-        cid.setVisible(true);
-        // Handle dialog result TODO: Determine if cancelled before import or not
-        CampaignConfig campaign = controller.imports.getImportedCampaign();
-        if (campaign != null) {
-          setCurrentCampaign(campaign.name);
-        }
+    btnChangeCampaign.addActionListener(e -> {
+      // Use current panels form as parent
+      Window frmCurrent = SwingUtilities.getWindowAncestor(CampaignManagerPanel.this);
+      // Show dialog
+      CampaignImportDialog cid = new CampaignImportDialog(frmCurrent, controller);
+      cid.setModal(true);
+      cid.setVisible(true);
+      // Handle dialog result TODO: Determine if cancelled before import or not
+      CampaignConfig campaign = controller.imports.getImportedCampaign();
+      if (campaign != null) {
+        setCurrentCampaign(campaign.name);
       }
     });
   }

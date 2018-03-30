@@ -1,5 +1,6 @@
 package group33.seg.model.configs;
 
+import group33.seg.controller.utilities.ErrorBuilder;
 import group33.seg.model.types.Interval;
 import group33.seg.model.types.Metric;
 
@@ -29,19 +30,19 @@ public class MetricQuery {
     this(null, null, null, null, null);
   }
 
-  /** 
+  /**
    * Instantiate a query with no special definitions.
    * 
    * @param metric Metric type being requested
    * @param time Interval to group by
    * @param filter Filter to apply on query
-   * */
+   */
   public MetricQuery(Metric metric, Interval time, FilterConfig filter) {
     this(metric, time, filter, null, null);
   }
-  
-  /** 
-   * Instantiate a fully defined query. 
+
+  /**
+   * Instantiate a fully defined query.
    * 
    * @param metric Metric type being requested
    * @param time Interval to group by
@@ -55,6 +56,40 @@ public class MetricQuery {
     this.filter = filter;
     this.bounceDef = bounceDef;
     this.campaign = campaignConfig;
+
+  /**
+   * Equality check between this instance and another instance. This equality check compares all
+   * fields including non-final.
+   * 
+   * @param other Other instance to compare against
+   * @return Whether instances are the same
+   */
+  public boolean isEquals(MetricQuery other) {
+    boolean equal = true;
+    equal &= (metric == null ? (other.metric == null) : metric.equals(other.metric));
+    equal &= (interval == null ? (other.interval == null) : interval.equals(other.interval));
+    equal &= (filter == null ? (other.filter == null) : filter.isEquals(other.filter));
+    if (Metric.BOUNCE_RATE.equals(metric)) {
+      equal &=
+          (bounceDef == null ? (other.bounceDef == null) : bounceDef.isEquals(other.bounceDef));
+    }
+    return equal;
   }
-  
+
+  /**
+   * Do local validation of configuration.
+   * 
+   * @return Any issues with validation
+   */
+  public ErrorBuilder validate() {
+    ErrorBuilder eb = new ErrorBuilder();
+    if (metric == null) {
+      eb.addError("A metric must be selected");
+    }
+    if (interval == null) {
+      eb.addError("An interval must be selected");
+    }
+    return eb;
+  }
+
 }

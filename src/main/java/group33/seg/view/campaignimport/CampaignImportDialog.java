@@ -5,8 +5,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.BorderFactory;
@@ -127,12 +125,7 @@ public class CampaignImportDialog extends JDialog {
     // ************************************************************************************
 
     // Close the dialog if an import is not ongoing
-    btnClose.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        closeDialog();
-      }
-    });
+    btnClose.addActionListener(e -> closeDialog());
 
     // Listen for any other window close event so close behaviour is controlled
     addWindowListener(new WindowAdapter() {

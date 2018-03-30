@@ -21,31 +21,35 @@ import group33.seg.view.controls.FilterViewPanel;
 public class LineDataPanel extends JPanel {
   private static final long serialVersionUID = -7116368239383924369L;
 
-  private JComboBox<Metric> cboMetric;
-  private JComboBox<Interval> cboInterval;
-  private FilterViewPanel pnlFilter;
-  private BounceDefinitionPanel pnlBounceRate;
+  protected JComboBox<Metric> cboMetric;
+  protected JComboBox<Interval> cboInterval;
+  protected FilterViewPanel pnlFilter;
+  protected BounceDefinitionPanel pnlBounceRate;
 
-  
+  /**
+   * Initialise the panel.
+   */
   public LineDataPanel() {
-    this(null);
+    initGUI();
   }
 
-  public LineDataPanel(LineConfig line) {
-    initGUI();
-    loadLine(line);
-  }
-  
+  /**
+   * Initialise GUI and any event listeners.
+   */
   private void initGUI() {
+    // ************************************************************************************
+    // * GUI HANDLING
+    // ************************************************************************************
+
     setBorder(BorderFactory.createCompoundBorder(
         BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Data"),
         BorderFactory.createEmptyBorder(5, 5, 5, 5)));
-    
+
     GridBagLayout gridBagLayout = new GridBagLayout();
-    gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0};
-    gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0};
+    gridBagLayout.columnWeights = new double[] {0.0, 1.0, 0.0};
+    gridBagLayout.rowWeights = new double[] {0.0, 0.0, 0.0};
     setLayout(gridBagLayout);
-    
+
     JLabel lblMetricType = new JLabel("Metric Type:");
     GridBagConstraints gbc_lblMetricType = new GridBagConstraints();
     gbc_lblMetricType.anchor = GridBagConstraints.EAST;
@@ -53,8 +57,8 @@ public class LineDataPanel extends JPanel {
     gbc_lblMetricType.gridx = 0;
     gbc_lblMetricType.gridy = 0;
     add(lblMetricType, gbc_lblMetricType);
-    
-    cboMetric = new JComboBox<Metric>();
+
+    cboMetric = new JComboBox<>();
     for (Metric metric : Metric.values()) {
       cboMetric.addItem(metric);
     }
@@ -64,14 +68,14 @@ public class LineDataPanel extends JPanel {
     gbc_cboMetric.gridx = 1;
     gbc_cboMetric.gridy = 0;
     add(cboMetric, gbc_cboMetric);
-    
+
     JButton btnMetricHelp = new JButton("?");
     GridBagConstraints gbc_btnMetricHelp = new GridBagConstraints();
     gbc_btnMetricHelp.insets = new Insets(0, 0, 5, 0);
     gbc_btnMetricHelp.gridx = 2;
     gbc_btnMetricHelp.gridy = 0;
     add(btnMetricHelp, gbc_btnMetricHelp);
-    
+
     JLabel lblInterval = new JLabel("Interval:");
     GridBagConstraints gbc_lblInterval = new GridBagConstraints();
     gbc_lblInterval.insets = new Insets(0, 0, 5, 5);
@@ -83,7 +87,7 @@ public class LineDataPanel extends JPanel {
 
     cboInterval = new JComboBox<>();
     for (Interval interval : Interval.values()) {
-      cboInterval.addItem(interval);   
+      cboInterval.addItem(interval);
     }
     GridBagConstraints gbc_cboInterval = new GridBagConstraints();
     gbc_cboInterval.fill = GridBagConstraints.HORIZONTAL;
@@ -92,7 +96,7 @@ public class LineDataPanel extends JPanel {
     gbc_cboInterval.gridx = 1;
     gbc_cboInterval.gridy = 1;
     add(cboInterval, gbc_cboInterval);
-    
+
     pnlFilter = new FilterViewPanel();
     pnlFilter.setPreferredSize(new Dimension(pnlFilter.getPreferredSize().width, 150));
     GridBagConstraints gbc_pnlFilter = new GridBagConstraints();
@@ -102,7 +106,7 @@ public class LineDataPanel extends JPanel {
     gbc_pnlFilter.gridx = 0;
     gbc_pnlFilter.gridy = 2;
     add(pnlFilter, gbc_pnlFilter);
-    
+
     pnlBounceRate = new BounceDefinitionPanel();
     GridBagConstraints gbc_pnlBounceRate = new GridBagConstraints();
     gbc_pnlBounceRate.fill = GridBagConstraints.BOTH;
@@ -111,15 +115,19 @@ public class LineDataPanel extends JPanel {
     gbc_pnlBounceRate.gridx = 0;
     gbc_pnlBounceRate.gridy = 3;
     add(pnlBounceRate, gbc_pnlBounceRate);
-    
-    cboMetric.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        pnlBounceRate.setVisible(Metric.BOUNCE_RATE.equals(cboMetric.getSelectedItem()));
-      }
-    });
+
+    // ************************************************************************************
+    // * EVENT HANDLING
+    // ************************************************************************************
+
+    // Make relevant controls visible depending on metric
+    cboMetric.addActionListener(e -> pnlBounceRate.setVisible(Metric.BOUNCE_RATE.equals(cboMetric.getSelectedItem())));
+
   }
 
+  /**
+   * @param config Configuration to load into the view object
+   */
   public void loadLine(LineConfig line) {
     if (line == null || line.query == null) {
       clear();
@@ -131,9 +139,10 @@ public class LineDataPanel extends JPanel {
     pnlBounceRate.loadDef(line.query.bounceDef);
     pnlBounceRate.setVisible(Metric.BOUNCE_RATE.equals(line.query.metric));
   }
-  
 
-  
+  /**
+   * Apply reset state to the view object.
+   */
   public void clear() {
     cboMetric.setSelectedItem(null);
     cboInterval.setSelectedItem(null);
@@ -141,6 +150,11 @@ public class LineDataPanel extends JPanel {
     pnlBounceRate.setVisible(false);
   }
 
+  /**
+   * Update corresponding fields of a given configuration using the view's respective field objects.
+   * 
+   * @param config Configuration to update
+   */
   public void updateConfig(LineConfig config) {
     MetricQuery query = new MetricQuery();
     query.metric = (Metric) cboMetric.getSelectedItem();
@@ -150,5 +164,5 @@ public class LineDataPanel extends JPanel {
     query.campaign = config.campaignConfig;
     config.query = query;
   }
-  
+
 }

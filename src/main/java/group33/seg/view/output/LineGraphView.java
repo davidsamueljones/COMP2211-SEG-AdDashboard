@@ -1,5 +1,6 @@
 package group33.seg.view.output;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -16,14 +17,18 @@ import org.jfree.data.time.TimeSeriesCollection;
 import group33.seg.model.types.Pair;
 import group33.seg.view.utilities.Accessibility;
 
-public class Graph extends JPanel {
+public class LineGraphView extends JPanel {
+  private static final long serialVersionUID = -7920465975957290150L;
+  private static float MIN_THICKNESS = 2.0f;
+  private static float MAX_THICKNESS = 10.0f;
+  
   private double scale;
   private TimeSeriesCollection dataset = new TimeSeriesCollection();
   private XYPlot plot;
   private JFreeChart xylineChart;
   private ArrayList<TimeSeries> series = new ArrayList<TimeSeries>();
 
-  public Graph(String chartTitle, String xAxisLabel, String yAxisLabel) {
+  public LineGraphView(String chartTitle, String xAxisLabel, String yAxisLabel) {
     xylineChart =
         ChartFactory.createTimeSeriesChart(
             chartTitle, xAxisLabel, yAxisLabel, dataset, false, true, false);
@@ -104,6 +109,13 @@ public class Graph extends JPanel {
   public void setFontScale(double scale) {
     this.scale = scale;
     applyFontScale();
+  }
+
+
+  public static BasicStroke getLineStroke(int scale) {
+    float dif = MAX_THICKNESS - MIN_THICKNESS;
+    float thickness = MIN_THICKNESS + dif * scale / 100.0f;
+    return new BasicStroke(thickness, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
   }
   
 }

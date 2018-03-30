@@ -5,8 +5,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -68,12 +66,9 @@ public class FilterSettingsDialog extends JDialog {
     pnlMain.add(pnlFilterSettings, gbc_pnlFilterSettings);
 
     JButton btnCancel = new JButton("Cancel");
-    btnCancel.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        setVisible(false);
-        dispose();
-      }
+    btnCancel.addActionListener(e -> {
+      setVisible(false);
+      dispose();
     });
     GridBagConstraints gbc_btnCancel = new GridBagConstraints();
     gbc_btnCancel.anchor = GridBagConstraints.EAST;
@@ -83,13 +78,10 @@ public class FilterSettingsDialog extends JDialog {
     pnlMain.add(btnCancel, gbc_btnCancel);
 
     JButton btnConfirm = new JButton("Confirm");
-    btnConfirm.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        filter = pnlFilterSettings.generateFilter();
-        setVisible(false);
-        dispose();
-      }
+    btnConfirm.addActionListener(e -> {
+      filter = pnlFilterSettings.generateFilter();
+      setVisible(false);
+      dispose();
     });
     GridBagConstraints gbc_btnConfirm = new GridBagConstraints();
     gbc_btnConfirm.anchor = GridBagConstraints.WEST;

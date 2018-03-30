@@ -5,8 +5,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -70,7 +68,7 @@ public class FilterViewPanel extends JPanel {
     // gbc_cboCampaign.gridy = 0;
     // add(cboCampaign, gbc_cboCampaign);
 
-    txtFilter = new JTextArea();
+    txtFilter = new JTextArea(FilterConfig.NO_FILTER_TEXT);
     txtFilter.setEditable(false);
     JScrollPane scrFilter = new JScrollPane(txtFilter);
     scrFilter.setPreferredSize(new Dimension(0, scrFilter.getPreferredSize().height));
@@ -91,15 +89,12 @@ public class FilterViewPanel extends JPanel {
     gbc_btnModifyFilter.gridy = 2;
     add(btnModifyFilter, gbc_btnModifyFilter);
 
-    btnModifyFilter.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        Window frmCurrent = SwingUtilities.getWindowAncestor(FilterViewPanel.this);
-        FilterSettingsDialog dialog = new FilterSettingsDialog(frmCurrent, filter);
-        dialog.setModal(true);
-        dialog.setVisible(true);
-        loadFilter(dialog.getFilter());
-      }
+    btnModifyFilter.addActionListener(e -> {
+      Window frmCurrent = SwingUtilities.getWindowAncestor(FilterViewPanel.this);
+      FilterSettingsDialog dialog = new FilterSettingsDialog(frmCurrent, filter);
+      dialog.setModal(true);
+      dialog.setVisible(true);
+      loadFilter(dialog.getFilter());
     });
   }
   

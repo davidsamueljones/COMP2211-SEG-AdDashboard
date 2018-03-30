@@ -3,7 +3,7 @@ package group33.seg.controller;
 import group33.seg.controller.handlers.CampaignImportHandler;
 import group33.seg.controller.handlers.DatabaseHandler;
 import group33.seg.controller.handlers.DisplayHandler;
-import group33.seg.controller.handlers.GraphHandler;
+import group33.seg.controller.handlers.GraphsHandler;
 import group33.seg.controller.handlers.SettingsHandler;
 import group33.seg.controller.handlers.StatisticHandler;
 import group33.seg.controller.handlers.WorkspaceHandler;
@@ -25,7 +25,7 @@ public class DashboardController {
   public final CampaignImportHandler imports;
 
   /** Handler for graph updates */
-  public final GraphHandler graphs;
+  public final GraphsHandler graphs;
 
   /** Handler for statistic updates */
   public final StatisticHandler statistics;
@@ -52,7 +52,7 @@ public class DashboardController {
     display = new DisplayHandler(mvc);
     database = new DatabaseHandler(mvc);
     imports = new CampaignImportHandler(mvc);
-    graphs = new GraphHandler(mvc);
+    graphs = new GraphsHandler(mvc);
     statistics = new StatisticHandler(mvc);
     settings = new SettingsHandler();
     workspace = new WorkspaceHandler(mvc);
