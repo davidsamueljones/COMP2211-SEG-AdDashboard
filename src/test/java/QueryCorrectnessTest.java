@@ -14,7 +14,6 @@ import group33.seg.controller.database.DatabaseConfig;
 import group33.seg.controller.database.DatabaseConnection;
 import group33.seg.controller.handlers.CampaignImportHandler;
 import group33.seg.controller.handlers.DatabaseHandler;
-import group33.seg.controller.types.MetricQueryResponse;
 import group33.seg.model.configs.CampaignImportConfig;
 import group33.seg.model.configs.MetricQuery;
 import group33.seg.model.types.Interval;
@@ -25,16 +24,16 @@ import group33.seg.model.types.Pair;
  * Tests for correctness of queries on a small set of example data
  */
 public class QueryCorrectnessTest {
-  private static final String campaignName = "queryTest";
-  private static final String path = "exampleDataset/";
-  private static final String pathClickLog = path + "click_log.csv";
-  private static final String pathImpressionLog = path + "impression_log.csv";
-  private static final String pathServerLog = path + "server_log.csv";
+  private static final String CAMPAIGN_NAME = "queryTest";
+  private static final String PATH_TO_DATASET = "src/test/resources/example-dataset/";
+  private static final String PATH_CLICK_LOG = PATH_TO_DATASET + "click_log.csv";
+  private static final String PATH_IMPRESSION_LOG = PATH_TO_DATASET + "impression_log.csv";
+  private static final String PATH_SERVER_LOG = PATH_TO_DATASET + "server_log.csv";
 
-  private static final String databaseCredentials = "test.properties";
+  private static final String DATABASE_CREDENTIALS = "src/test/resources/test.properties";
 
   private DatabaseHandler databaseHandler;
-  private ArrayDeque<Interval> intervals;
+  private ArrayList<Interval> intervals;
 
   /**
    * Initialise tables and data for test
@@ -42,7 +41,7 @@ public class QueryCorrectnessTest {
   public QueryCorrectnessTest() {
     try{
       //setup intervals
-      intervals = new ArrayDeque<>();
+      intervals = new ArrayList<>();
       intervals.add(Interval.DAY);
       intervals.add(Interval.HOUR);
       intervals.add(Interval.MONTH);
@@ -50,11 +49,11 @@ public class QueryCorrectnessTest {
       intervals.add(Interval.YEAR);
 
       //get database connection
-      DatabaseConfig config = new DatabaseConfig(databaseCredentials);
+      DatabaseConfig config = new DatabaseConfig(DATABASE_CREDENTIALS);
       Connection conn = new DatabaseConnection(config.getHost(), config.getUser(), config.getPassword()).connectDatabase();
 
       //init tables
-      CampaignImportConfig importConfig = new CampaignImportConfig(campaignName, pathClickLog, pathImpressionLog, pathServerLog, databaseCredentials);
+      CampaignImportConfig importConfig = new CampaignImportConfig(CAMPAIGN_NAME, PATH_CLICK_LOG, PATH_IMPRESSION_LOG, PATH_SERVER_LOG, DATABASE_CREDENTIALS);
       CampaignImportHandler importHandler = new CampaignImportHandler(null);
       boolean importComplete = importHandler.doImport(importConfig);
 
@@ -64,7 +63,7 @@ public class QueryCorrectnessTest {
 
       //setup database handler
       if(importComplete){
-        databaseHandler = new DatabaseHandler(null, databaseCredentials);
+        databaseHandler = new DatabaseHandler(null, DATABASE_CREDENTIALS);
       } else {
         databaseHandler = null;
       }
