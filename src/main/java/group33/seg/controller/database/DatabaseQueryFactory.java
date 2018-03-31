@@ -97,8 +97,8 @@ public class DatabaseQueryFactory {
             + " (SELECT count(*) as bounces FROM server_log WHERE <bounce> AND <campaign> AND date_trunc('<interval>', entry_date) = xaxis) as sl,"
             + " (SELECT count(*) as clicks FROM click_log WHERE <campaign> AND date_trunc('<interval>', date) = xaxis) as cl) as yaxis"
             + " FROM"
-            + " (SELECT date_trunc('<interval>', min(entry_date)) AS start FROM server_log WHERE campaign_id = 3) AS min,"
-            + " (SELECT date_trunc('<interval>', max(entry_date)) AS final FROM server_log WHERE campaign_id = 3) AS max,"
+            + " (SELECT date_trunc('<interval>', min(entry_date)) AS start FROM server_log WHERE campaign_id = <campaign>) AS min,"
+            + " (SELECT date_trunc('<interval>', max(entry_date)) AS final FROM server_log WHERE campaign_id = <campaign>) AS max,"
             + " generate_series(<start>, <final>, '1 <interval>') AS xaxis;");
 
     // Average amount of money spent per conversion over time
@@ -123,8 +123,8 @@ public class DatabaseQueryFactory {
             + " (SELECT SUM(click_cost) as ccost FROM click_log WHERE <campaign> AND date_trunc('<interval>', date) = xaxis) as cl,"
             + " (SELECT count(*) as clicks FROM click_log WHERE <campaign> AND date_trunc('<interval>', date) = xaxis) as iil) as yaxis"
             + " FROM"
-            + " (SELECT date_trunc('<interval>', min(date)) AS start FROM click_log WHERE campaign_id = 3) AS min,"
-            + " (SELECT date_trunc('<interval>', max(date)) AS final FROM click_log WHERE campaign_id = 3) AS max,"
+            + " (SELECT date_trunc('<interval>', min(date)) AS start FROM click_log WHERE campaign_id = <campaign>) AS min,"
+            + " (SELECT date_trunc('<interval>', max(date)) AS final FROM click_log WHERE campaign_id = <campaign>) AS max,"
             + " generate_series(<start>, <final>, '1 <interval>') AS xaxis;");
 
     // Average amount of money spent per 1000 impressions over time
@@ -262,23 +262,33 @@ public class DatabaseQueryFactory {
       sql = sql.replace("<campaign>", "campaign_id = " + request.campaign.uid);
     }
 
-    // If no campaign_id is specified, fetch all data
-    else {
-      sql.replace("<campaign>", "1 = 1");
-    }
-
-    // TODO add rest of filtering options
+    // TODO: Add rest of filtering options
     if (request.filter != null) {
-      /**
-       * Checking if there is a chosen date range. If there is no date range set, the query will
-       * default to using the minimum and maximum dates in the table
-       */
+      
+      // Apply date filtering if provided in query
       if (request.filter.dates != null) {
-        sql =
-            sql.replace("<start>", "'" + request.filter.dates.min + "'")
-                .replace("<final>", "'" + request.filter.dates.max + "'");
-      } else sql = sql.replace("<start>", "start").replace("<final>", "final");
+        if (request.filter.dates.min != null) {
+          sql = sql.replace("<start>", "'" + request.filter.dates.min + "'");
+        }
+        if (request.filter.dates.max != null) {
+          sql = sql.replace("<final>", "'" + request.filter.dates.max + "'");
+        }                
+      }
+      
+      // TODO: Others
     }
+    sql = applyDefaultReplacements(sql);
+    
+    return sql;
+  }
+  
+  private static String applyDefaultReplacements(String sql) {
+    // No campaign_id specified so fetch all data
+    sql = sql.replace("<campaign>", "1 = 1");
+    // Replace any missing date fields with minimum or maximum possible
+    sql = sql.replace("<start>", "start");
+    sql = sql.replace("<final>", "final");
+    
     return sql;
   }
 
