@@ -189,17 +189,15 @@ public class DatabaseQueryFactory {
         Metric.UNIQUES,
         "SELECT 'all' AS xaxis, count(DISTINCT user_id) AS yaxis FROM click_log WHERE <campaign>;");
 
-    // Total number of bounces - the <bounce> placeholder handles the 2 type of bounce definition
-    // and specific values for them
+    // Total number of bounces - the <bounce> placeholder handles the 2 type of bounce definition and specific values for them
     statisticQueries.put(
         Metric.BOUNCES,
         "SELECT 'all' AS xaxis, count(*) AS yaxis FROM server_log WHERE <bounce> AND <campaign>;");
 
-    // Bounce rate - the <bounce> placeholder handles the 2 type of bounce definition and specific
-    // values for them
+    // Bounce rate - the <bounce> placeholder handles the 2 type of bounce definition and specific values for them
     statisticQueries.put(
         Metric.BOUNCE_RATE,
-        "SELECT 'all' AS xaxis, bounces / clicks AS yaxis FROM"
+        "SELECT 'all' AS xaxis, bounces / clicks * 100 AS yaxis FROM"
             + " (SELECT count(*) AS bounces FROM server_log WHERE <bounce> AND <campaign>) AS sl,"
             + " (SELECT count(*)::DECIMAL AS clicks FROM click_log WHERE <campaign>) AS cl;");
 
