@@ -19,9 +19,9 @@ public class BounceConfig {
    * @param other Other instance to compare against
    * @return Whether instances are the same
    */
-  public boolean isEquals(BounceConfig other) {
-    boolean equal = true;
-    equal &= (type == other.type);
+  public boolean isEqual(BounceConfig other) {
+    boolean equal;
+    equal = (type == other.type);
     equal &= (value == other.value);
     return equal;
   }

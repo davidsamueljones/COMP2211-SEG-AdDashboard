@@ -73,7 +73,7 @@ public class MetricQuery {
     equal &= (filter == null ? (other.filter == null) : filter.isEquals(other.filter));
     if (Metric.BOUNCE_RATE.equals(metric)) {
       equal &=
-          (bounceDef == null ? (other.bounceDef == null) : bounceDef.isEquals(other.bounceDef));
+          (bounceDef == null ? (other.bounceDef == null) : bounceDef.isEqual(other.bounceDef));
     }
     return equal;
   }
