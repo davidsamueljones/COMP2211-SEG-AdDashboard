@@ -14,10 +14,10 @@ public class LineGraphHandler implements GraphHandlerInterface<LineGraphConfig> 
   private final DashboardMVC mvc;
 
   /** Graph being controlled */
-  private final LineGraphView view;
+  protected final LineGraphView view;
 
   /** Currently loaded graph */
-  private LineGraphConfig graph = null;
+  protected LineGraphConfig graph = null;
 
   /**
    * Instantiate a line graph handler.

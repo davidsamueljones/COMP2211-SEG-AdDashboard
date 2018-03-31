@@ -16,8 +16,11 @@ public class GraphsHandler {
   private final DashboardMVC mvc;
 
   /** Line graph handler */
-  private GraphHandlerInterface<LineGraphConfig> lineGraphHandler;
+  private LineGraphHandler lineGraph;
 
+  /** Font scaling to apply to textual elements in charts */
+  private double scale = 1;
+  
   /**
    * Instantiate a graph handler.
    * 
@@ -31,8 +34,8 @@ public class GraphsHandler {
    * Create a new line handler making use of the given view output.
    */
   public void setLineGraphView(LineGraphView view) {
-    view.setFontScale(scale);
-    lineGraphHandler = new LineGraphHandler(mvc, view);
+    view.applyFontScale(scale);
+    lineGraph = new LineGraphHandler(mvc, view);
   }
 
   /**
@@ -64,8 +67,8 @@ public class GraphsHandler {
 
       @Override
       public void visit(LineGraphConfig graph) {
-        handleUpdate(lineGraphHandler, clear);
-        lineGraphHandler.displayGraph(graph);
+        handleUpdate(lineGraph, clear);
+        lineGraph.displayGraph(graph);
       }
 
       /**
@@ -80,16 +83,22 @@ public class GraphsHandler {
         } else if (clear) {
           next.clearGraph();
         }
-        currentHandler = lineGraphHandler;
+        currentHandler = lineGraph;
       }
     });
 
   }
 
-  // FIXME: Can remove when setting by theme
-  private double scale = 1;
+  /**
+   * Set font scale to apply to all current and future charts.
+   * 
+   * @param scale Scale to use
+   */
   public void setFontScale(double scale) {
     this.scale = scale;
+    if (lineGraph != null) {
+      lineGraph.view.applyFontScale(scale);
+    }
   }
 
   /**
