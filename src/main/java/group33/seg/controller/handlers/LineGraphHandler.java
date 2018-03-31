@@ -3,6 +3,7 @@ package group33.seg.controller.handlers;
 import java.util.List;
 import group33.seg.controller.DashboardController.DashboardMVC;
 import group33.seg.controller.handlers.GraphsHandler.Update;
+import group33.seg.controller.types.MetricQueryResponse;
 import group33.seg.model.configs.GraphConfig;
 import group33.seg.model.configs.LineConfig;
 import group33.seg.model.configs.LineGraphConfig;
@@ -54,10 +55,9 @@ public class LineGraphHandler implements GraphHandlerInterface<LineGraphConfig> 
    */
   @Override
   public void clearGraph() {
-    // TODO: Is this clear behaviour fully defined?
-    this.graph = null;
-    view.clearLines();
     System.out.println("CLEARING GRAPH");
+    this.graph = null;
+    view.clearGraph();
   }
 
   /**
@@ -66,8 +66,8 @@ public class LineGraphHandler implements GraphHandlerInterface<LineGraphConfig> 
    * 
    * @param graph Graph properties to load
    */
-  private void setGraphProperties(GraphConfig graph) {
-    // TODO: CALL VIEW UPDATES FOR TITLE/AXIS LABELS ON VIEW
+  private void setGraphProperties(LineGraphConfig graph) {
+    view.setGraphProperties(graph);
   }
 
   /**
@@ -150,15 +150,21 @@ public class LineGraphHandler implements GraphHandlerInterface<LineGraphConfig> 
    * @param update Update options
    */
   private void updateLine(LineConfig line, Update update) {
-    // TODO: This actual structure is not final (just gives the premise), change as required
-    if (update == Update.FULL || update == Update.DATA) {
-      // TODO: Query data and do line data update
-      System.out.println("UPDATING DATA: " + line.identifier);
-    }
+    // Add line record in view if it doesn't exist
+    view.addLine(line);
+    
+    // Do required view updates
     if (update == Update.FULL || update == Update.PROPERTIES) {
-      // TODO: Set line properties
       System.out.println("UPDATING PROPERTIES: " + line.identifier);
+      view.setLineProperties(line);
     }
+    if (update == Update.FULL || update == Update.DATA) {
+      System.out.println("UPDATING DATA: " + line.identifier);
+      // TODO: Improve performance with threading?
+      MetricQueryResponse mqr = mvc.controller.database.getQueryResponse(line.query);
+      view.setLineData(line, mqr.getResult());
+    }
+
   }
 
   /**
@@ -169,6 +175,7 @@ public class LineGraphHandler implements GraphHandlerInterface<LineGraphConfig> 
   private void removeLine(LineConfig line) {
     // TODO: Use the unique identifier to remove line from graph view
     System.out.println("REMOVING: " + line.identifier);
+    view.removeLine(line);
   }
 
   /**
