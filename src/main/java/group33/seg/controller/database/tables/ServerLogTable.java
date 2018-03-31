@@ -23,6 +23,11 @@ public class ServerLogTable extends DatabaseTable {
   public void createIndexes(Connection c) throws SQLException {
     Statement st = c.createStatement();
     st.execute("CREATE INDEX CONCURRENTLY IF NOT EXISTS sl_date ON server_log(entry_date,campaign_id);");
+    st.execute("CREATE INDEX CONCURRENTLY IF NOT EXISTS sl_dayDateTrunc ON server_log(date_trunc('day', entry_date));");
+    st.execute("CREATE INDEX CONCURRENTLY IF NOT EXISTS sl_hourDateTrunc ON server_log(date_trunc('hour', entry_date));");
+    st.execute("CREATE INDEX CONCURRENTLY IF NOT EXISTS sl_monthDateTrunc ON server_log(date_trunc('month', entry_date));");
+    st.execute("CREATE INDEX CONCURRENTLY IF NOT EXISTS sl_weekDateTrunc ON server_log(date_trunc('week', entry_date));");
+    st.execute("CREATE INDEX CONCURRENTLY IF NOT EXISTS sl_yearDateTrunc ON server_log(date_trunc('year', entry_date));");
     st.close();
   }
 
