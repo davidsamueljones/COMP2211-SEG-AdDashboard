@@ -30,3 +30,4 @@ dependency-reduced-pom.xml
 .DS_Store
 *.zip
 config.properties
+.csv#
