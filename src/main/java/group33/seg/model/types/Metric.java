@@ -1,15 +1,14 @@
 package group33.seg.model.types;
 
 /**
- * Enumeration of available metrics types. Can be fetched in their short and long string
- * representations.
+ * Enumeration of available metrics types.
  */
 public enum Metric {
-  IMPRESSIONS("Impressions", "Number of Impressions"),
-  CLICKS("Clicks", "Number of Clicks"),
-  UNIQUES("Uniques", "Number of Uniques"),
-  BOUNCES("Bounces", "Number of Bounces"),
-  CONVERSIONS("Conversions", "Number of Conversions"),
+  IMPRESSIONS("Number of Impressions"),
+  CLICKS("Number of Clicks"),
+  UNIQUES("Number of Uniques"),
+  BOUNCES("Number of Bounces"),
+  CONVERSIONS("Number of Conversions"),
   TOTAL_COST("Total Cost"),
   CTR("CTR"),
   CPA("CPA"),
@@ -18,36 +17,19 @@ public enum Metric {
   BOUNCE_RATE("Bounce Rate");
 
   /* Class configuration */
-  private String shortStr;
-  private String longStr;
+  private String string;
 
   /**
    * Initialise enum type.
    *
-   * @param str String to use for long and short representation.
+   * @param string String to use for toString representation
    */
-  private Metric(String str) {
-    this(str, str);
+  private Metric(String string) {
+    this.string = string;
   }
-
-  /**
-   * Initialise enum type.
-   *
-   * @param shortStr String to use for short representation
-   * @param longStr String to use for long representation
-   */
-  private Metric(String shortStr, String longStr) {
-    this.shortStr = shortStr;
-    this.longStr = longStr;
-  }
-
-  /** @return Short representation */
-  public String getShortStr() {
-    return shortStr;
-  }
-
-  /** @return Long representation */
-  public String getLongStr() {
-    return longStr;
+  
+  @Override
+  public String toString() {
+    return string;
   }
 }

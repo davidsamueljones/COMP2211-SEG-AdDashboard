@@ -67,29 +67,23 @@ public class JDynamicScrollPane extends JScrollPane {
    * scroll bar.
    */
   public void doResize() {
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
+    SwingUtilities.invokeLater(() -> {
 
-        // Set width of content to that of view
-        setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-        setWidth();
-        // Apply height deltas
-        SwingUtilities.invokeLater(new Runnable() {
-          @Override
-          public void run() {
-            applyHeightDelta();
-            setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+      // Set width of content to that of view
+      setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+      setWidth();
+      // Apply height deltas
+      SwingUtilities.invokeLater(() -> {
+        applyHeightDelta();
+        setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
-            // If this was the first time doResize was called, enable listeners
-            if (!initialised) {
-              initListeners();
-              initialised = true;
-              doResize();
-            }
-          }
-        });
-      }
+        // If this was the first time doResize was called, enable listeners
+        if (!initialised) {
+          initListeners();
+          initialised = true;
+          doResize();
+        }
+      });
     });
   }
 
@@ -103,7 +97,7 @@ public class JDynamicScrollPane extends JScrollPane {
       lastHeight = getViewport().getPreferredSize().height;
       deltaApplied = false;
     }
-    final int indent = (((Integer) UIManager.get("ScrollBar.width")).intValue());
+    final int indent = ((Integer) UIManager.get("ScrollBar.width"));
     int newWidth = getWidth() - indent;
     // Update width, being lenient on height
     // Height must be set to desired value with delta change

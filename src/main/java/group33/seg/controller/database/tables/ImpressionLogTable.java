@@ -1,6 +1,10 @@
 package group33.seg.controller.database.tables;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
 
 public class ImpressionLogTable extends DatabaseTable {
 
@@ -19,7 +23,8 @@ public class ImpressionLogTable extends DatabaseTable {
   @Override
   public void createIndexes(Connection c) throws SQLException {
     Statement st = c.createStatement();
-    st.execute("CREATE INDEX CONCURRENTLY IF NOT EXISTS il_date ON impression_log(date);");
+    st.execute("CREATE INDEX CONCURRENTLY IF NOT EXISTS il_date ON impression_log(date, campaign_id);");
+    st.execute("CREATE INDEX CONCURRENTLY IF NOT EXISTS il_dayDateTrunc ON impression_log(date_trunc('day', date));");
     st.close();
   }
 

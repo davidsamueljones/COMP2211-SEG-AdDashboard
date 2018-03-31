@@ -1,7 +1,5 @@
 package group33.seg.model.configs;
 
-import org.apache.commons.lang3.ObjectUtils;
-
 /**
  * Structure-like class for constructing a bounce rate configuration. All variables are public to
  * allow for easy structure access.

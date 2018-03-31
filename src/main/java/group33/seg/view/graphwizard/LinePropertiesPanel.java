@@ -1,50 +1,50 @@
 package group33.seg.view.graphwizard;
 
-import javax.swing.JPanel;
-import java.awt.GridBagLayout;
-import javax.swing.JLabel;
-import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.RenderingHints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.JCheckBox;
-import javax.swing.JColorChooser;
-import javax.swing.JTextField;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import group33.seg.model.configs.LineConfig;
-import javax.swing.JSlider;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JColorChooser;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
+import group33.seg.model.configs.LineConfig;
+import group33.seg.view.output.LineGraphView;
 
 public class LinePropertiesPanel extends JPanel {
   private static final long serialVersionUID = -5431944440857799069L;
-  private static int DEFAULT_THICKNESS = 25;
-  
-  private JTextField txtIdentifier;
-  private JSlider sldThickness;
-  private JCheckBox chckbxHideFromPlot;
-  private JPanel pnlPreview;
-  
-  private BasicStroke lineStroke = new BasicStroke(1);
+  private static int DEFAULT_THICKNESS = 50;
+
+  protected JTextField txtIdentifier;
+  protected JSlider sldThickness;
+  protected JCheckBox chckbxHideFromPlot;
+  protected JPanel pnlPreview;
+
   private Color color = Color.BLACK;
 
+  /**
+   * Initialise the panel.
+   */
   public LinePropertiesPanel() {
-    this(null);
-  }
-
-  public LinePropertiesPanel(LineConfig line) {
     initGUI();
-    loadLine(line);
   }
 
+  /**
+   * Initialise GUI and any event listeners.
+   */
   private void initGUI() {
+
+    // ************************************************************************************
+    // * GUI HANDLING
+    // ************************************************************************************
+
     setBorder(BorderFactory.createCompoundBorder(
         BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Properties"),
         BorderFactory.createEmptyBorder(5, 5, 5, 5)));
@@ -83,6 +83,7 @@ public class LinePropertiesPanel extends JPanel {
     sldThickness.setMajorTickSpacing(100);
     sldThickness.setMinorTickSpacing(10);
     sldThickness.setPaintTicks(true);
+    sldThickness.setValue(DEFAULT_THICKNESS);
     GridBagConstraints gbc_sldThickness = new GridBagConstraints();
     gbc_sldThickness.fill = GridBagConstraints.HORIZONTAL;
     gbc_sldThickness.insets = new Insets(0, 0, 5, 5);
@@ -114,7 +115,7 @@ public class LinePropertiesPanel extends JPanel {
       public void paintComponent(Graphics gr) {
         super.paintComponent(gr);
         Graphics2D g = (Graphics2D) gr;
-        g.setStroke(lineStroke);
+        g.setStroke(LineGraphView.getLineStroke(sldThickness.getValue()));
         g.setColor(color);
         g.setRenderingHints(
             new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON));
@@ -130,8 +131,7 @@ public class LinePropertiesPanel extends JPanel {
     gbc_pnlPreview.gridx = 1;
     gbc_pnlPreview.gridy = 2;
     add(pnlPreview, gbc_pnlPreview);
-
-
+    
     chckbxHideFromPlot = new JCheckBox("Hide from plot");
     GridBagConstraints gbc_chckbxHideFromPlot = new GridBagConstraints();
     gbc_chckbxHideFromPlot.insets = new Insets(0, 0, 0, 5);
@@ -140,40 +140,44 @@ public class LinePropertiesPanel extends JPanel {
     gbc_chckbxHideFromPlot.gridy = 3;
     add(chckbxHideFromPlot, gbc_chckbxHideFromPlot);
 
-    sldThickness.addChangeListener(new ChangeListener() {
-      @Override
-      public void stateChanged(ChangeEvent e) {
-        lineStroke = getLineStroke(sldThickness.getValue());
+    // ************************************************************************************
+    // * EVENT HANDLING
+    // ************************************************************************************
+
+    // Update line preview in line with slider value
+    sldThickness.addChangeListener(e -> updatePreview());
+
+    // Allow selection of a new colour
+    btnSetColor.addActionListener(e -> {
+      // Use JColorChooser, null returned on cancel
+      Color colour =
+          JColorChooser.showDialog(null, "Line Colour Chooser", LinePropertiesPanel.this.color);
+      if (colour != null) {
+        LinePropertiesPanel.this.color = colour;
         updatePreview();
       }
     });
 
-    btnSetColor.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        // Use JColorChooser, null returned on cancel
-        Color colour =
-            JColorChooser.showDialog(null, "Line Colour Chooser", LinePropertiesPanel.this.color);
-        if (colour != null) {
-          LinePropertiesPanel.this.color = colour;
-          updatePreview();
-        }
-      }
-    });
   }
 
+  /**
+   * @param config Configuration to load into the view object
+   */
   public void loadLine(LineConfig line) {
     if (line == null) {
       clear();
       return;
     }
-    
     txtIdentifier.setText(line.identifier);
     sldThickness.setValue(line.thickness);
     this.color = line.color;
     chckbxHideFromPlot.setSelected(line.hide);
     updatePreview();
   }
-  
+
+  /**
+   * Apply reset (clear) state to the view object.
+   */
   public void clear() {
     txtIdentifier.setText("");
     sldThickness.setValue(DEFAULT_THICKNESS);
@@ -181,25 +185,41 @@ public class LinePropertiesPanel extends JPanel {
     chckbxHideFromPlot.setSelected(false);
     updatePreview();
   }
-  
-  private static float MIN_THICKNESS = 0.1f;
-  private static float MAX_THICKNESS = 5.0f;
 
-  private void updatePreview() {
-    pnlPreview.repaint();
-  }
-
-  private static BasicStroke getLineStroke(int scale) {
-    float dif = MAX_THICKNESS - MIN_THICKNESS;
-    float thickness = MIN_THICKNESS + dif * scale / 100.0f;
-    return new BasicStroke(thickness, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-  }
-
+  /**
+   * Update corresponding fields of a given configuration using the view's respective field objects.
+   * 
+   * @param config Configuration to update
+   */
   public void updateConfig(LineConfig config) {
     config.identifier = txtIdentifier.getText();
     config.color = color;
     config.thickness = sldThickness.getValue();
     config.hide = chckbxHideFromPlot.isSelected();
+  }
+
+  /**
+   * Update the preview to be in line with view object's fields.
+   */
+  public void updatePreview() {
+    pnlPreview.repaint();
+  }
+
+  /**
+   * @return The current line colour
+   */
+  protected Color getColor() {
+    return color;
+  }
+
+  /**
+   * Update the line's colour property. Updating the preview respectively.
+   * 
+   * @param color New colour to use
+   */
+  protected void setColor(Color color) {
+    this.color = color;
+    updatePreview();
   }
 
 }

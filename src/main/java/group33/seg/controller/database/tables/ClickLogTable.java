@@ -1,6 +1,10 @@
 package group33.seg.controller.database.tables;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
 
 public class ClickLogTable extends DatabaseTable {
 
@@ -18,7 +22,7 @@ public class ClickLogTable extends DatabaseTable {
   @Override
   public void createIndexes(Connection c) throws SQLException {
     Statement st = c.createStatement();
-    st.execute("CREATE INDEX CONCURRENTLY IF NOT EXISTS cl_date ON click_log(date);");
+    st.execute("CREATE INDEX CONCURRENTLY IF NOT EXISTS cl_date ON click_log(date, campaign_id);");
     st.close();
   }
 

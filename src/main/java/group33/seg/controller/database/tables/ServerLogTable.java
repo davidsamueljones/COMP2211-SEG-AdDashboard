@@ -1,6 +1,11 @@
 package group33.seg.controller.database.tables;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.sql.Types;
 
 public class ServerLogTable extends DatabaseTable {
   @Override
@@ -17,7 +22,7 @@ public class ServerLogTable extends DatabaseTable {
   @Override
   public void createIndexes(Connection c) throws SQLException {
     Statement st = c.createStatement();
-    st.execute("CREATE INDEX CONCURRENTLY IF NOT EXISTS sl_date ON server_log(entry_date);");
+    st.execute("CREATE INDEX CONCURRENTLY IF NOT EXISTS sl_date ON server_log(entry_date,campaign_id);");
     st.close();
   }
 
