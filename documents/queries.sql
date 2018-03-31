@@ -1,3 +1,4 @@
+--STATISTIC QUERIES
 --Number of impressions (bash: awk 'END {print NR}' impression_log.csv (-1 for the header))
 SELECT
   'all'    AS xaxis,
@@ -23,10 +24,10 @@ SELECT
 FROM
   (SELECT sum(impression_cost) AS cost
    FROM impression_log
-   WHERE campaign_id = 3) AS il,
+   WHERE campaign_id = 1) AS il,
   (SELECT sum(click_cost) AS cost
    FROM click_log
-   WHERE campaign_id = 3) AS cl;
+   WHERE campaign_id = 1) AS cl;
 
 --Number of uniques
 SELECT
@@ -39,7 +40,7 @@ SELECT
   'all'    AS xaxis,
   count(*) AS yaxis
 FROM server_log
-WHERE (pages_viewed <= 2);
+WHERE (pages_viewed <= 1);
 
 --Number of bounces (time spent)
 SELECT
@@ -55,7 +56,7 @@ SELECT
 FROM
   (SELECT count(*) AS bounces
    FROM server_log
-   WHERE (pages_viewed <= 2)) AS sl,
+   WHERE (pages_viewed <= 1)) AS sl,
   (SELECT count(*) :: DECIMAL AS clicks
    FROM click_log) AS cl;
 
@@ -123,16 +124,16 @@ SELECT
 FROM
   (SELECT date_trunc('hour', min(date)) AS start
    FROM impression_log
-   WHERE campaign_id = 3) AS min,
+   WHERE campaign_id = 1) AS min,
   (SELECT date_trunc('hour', max(date)) AS final
    FROM impression_log
-   WHERE campaign_id = 3) AS max,
+   WHERE campaign_id = 1) AS max,
       generate_series(start, final, '1 hour') AS xaxis LEFT JOIN
   (SELECT
      date_trunc('hour', date) AS dates,
      COUNT(*)                 AS yaxis
    FROM impression_log
-   WHERE campaign_id = 3
+   WHERE campaign_id = 1
    GROUP BY dates) AS s
     ON xaxis = s.dates;
 
@@ -141,18 +142,18 @@ SELECT
   xaxis,
   s.yaxis
 FROM
-  (SELECT date_trunc('hour', min(entry_date)) AS start
+  (SELECT date_trunc('day', min(entry_date)) AS start
    FROM server_log
-   WHERE campaign_id = 3) AS min,
-  (SELECT date_trunc('hour', max(entry_date)) AS final
+   WHERE campaign_id = 1) AS min,
+  (SELECT date_trunc('day', max(entry_date)) AS final
    FROM server_log
-   WHERE campaign_id = 3) AS max,
-      generate_series(start, final, '1 hour') AS xaxis LEFT JOIN
+   WHERE campaign_id = 1) AS max,
+      generate_series(start, final, '1 day') AS xaxis LEFT JOIN
   (SELECT
-     date_trunc('hour', entry_date) AS dates,
-     COUNT(*)                       AS yaxis
+     date_trunc('day', entry_date) AS dates,
+     COUNT(*)                      AS yaxis
    FROM server_log
-   WHERE campaign_id = 3 AND conversion = TRUE
+   WHERE campaign_id = 1 AND conversion = TRUE
    GROUP BY dates) AS s
     ON xaxis = s.dates;
 
@@ -161,18 +162,18 @@ SELECT
   xaxis,
   s.yaxis
 FROM
-  (SELECT date_trunc('minute', min(date)) AS start
+  (SELECT date_trunc('week', min(date)) AS start
    FROM click_log
-   WHERE campaign_id = 3) AS min,
-  (SELECT date_trunc('minute', max(date)) AS final
+   WHERE campaign_id = 1) AS min,
+  (SELECT date_trunc('week', max(date)) AS final
    FROM click_log
-   WHERE campaign_id = 3) AS max,
-      generate_series(start, final, '1 minute') AS xaxis LEFT JOIN
+   WHERE campaign_id = 1) AS max,
+      generate_series(start, final, '1 week') AS xaxis LEFT JOIN
   (SELECT
-     date_trunc('minute', date) AS dates,
-     COUNT(*)                   AS yaxis
+     date_trunc('week', date) AS dates,
+     COUNT(*)                 AS yaxis
    FROM click_log
-   WHERE campaign_id = 3
+   WHERE campaign_id = 1
    GROUP BY dates) AS s
     ON xaxis = s.dates;
 
@@ -183,10 +184,10 @@ SELECT
 FROM
   (SELECT date_trunc('hour', min(date)) AS start
    FROM impression_log
-   WHERE campaign_id = 3) AS min,
+   WHERE campaign_id = 1) AS min,
   (SELECT date_trunc('hour', max(date)) AS final
    FROM impression_log
-   WHERE campaign_id = 3) AS max,
+   WHERE campaign_id = 1) AS max,
       generate_series(start, final, '1 hour') AS xaxis LEFT JOIN
   (SELECT
      dates,
@@ -196,13 +197,13 @@ FROM
         date_trunc('hour', date) AS dates,
         impression_cost          AS cost
       FROM impression_log
-      WHERE campaign_id = 3
+      WHERE campaign_id = 1
       UNION ALL
       SELECT
         date_trunc('hour', date) AS dates,
         click_cost               AS cost
       FROM click_log
-      WHERE campaign_id = 3) AS t
+      WHERE campaign_id = 1) AS t
    GROUP BY dates
   ) AS al
     ON xaxis = al.dates;
@@ -214,16 +215,16 @@ SELECT
 FROM
   (SELECT date_trunc('hour', min(date)) AS start
    FROM click_log
-   WHERE campaign_id = 3) AS min,
+   WHERE campaign_id = 1) AS min,
   (SELECT date_trunc('hour', max(date)) AS final
    FROM click_log
-   WHERE campaign_id = 3) AS max,
+   WHERE campaign_id = 1) AS max,
       generate_series(start, final, '1 hour') AS xaxis LEFT JOIN
   (SELECT
      date_trunc('hour', date) AS dates,
      count(DISTINCT user_id)  AS yaxis
    FROM click_log
-   WHERE campaign_id = 3
+   WHERE campaign_id = 1
    GROUP BY dates) AS s
     ON xaxis = s.dates;
 
@@ -234,16 +235,16 @@ SELECT
 FROM
   (SELECT date_trunc('hour', min(entry_date)) AS start
    FROM server_log
-   WHERE campaign_id = 3) AS min,
+   WHERE campaign_id = 1) AS min,
   (SELECT date_trunc('hour', max(entry_date)) AS final
    FROM server_log
-   WHERE campaign_id = 3) AS max,
+   WHERE campaign_id = 1) AS max,
       generate_series(start, final, '1 hour') AS xaxis LEFT JOIN
   (SELECT
      date_trunc('hour', entry_date) AS dates,
      count(*)                       AS yaxis
    FROM server_log
-   WHERE pages_viewed < 2 AND campaign_id = 3
+   WHERE pages_viewed < 2 AND campaign_id = 1
    GROUP BY dates) AS s
     ON xaxis = s.dates;
 
@@ -251,22 +252,22 @@ FROM
 SELECT
   xaxis,
   (
-    SELECT sl.bounces :: DECIMAL / cl.clicks
+    SELECT sl.bounces :: DECIMAL / cl.clicks * 100
     FROM
       (SELECT count(*) AS bounces
        FROM server_log
-       WHERE pages_viewed <= 2 AND campaign_id = 3 AND date_trunc('hour', entry_date) = xaxis) AS sl,
+       WHERE pages_viewed <= 2 AND campaign_id = 1 AND date_trunc('year', entry_date) = xaxis) AS sl,
       (SELECT count(*) AS clicks
        FROM click_log
-       WHERE campaign_id = 3 AND date_trunc('hour', date) = xaxis) AS cl) AS yaxis
+       WHERE campaign_id = 1 AND date_trunc('year', date) = xaxis) AS cl) AS yaxis
 FROM
-  (SELECT date_trunc('hour', min(entry_date)) AS start
+  (SELECT date_trunc('year', min(entry_date)) AS start
    FROM server_log
-   WHERE campaign_id = 3) AS min,
-  (SELECT date_trunc('hour', max(entry_date)) AS final
+   WHERE campaign_id = 1) AS min,
+  (SELECT date_trunc('year', max(entry_date)) AS final
    FROM server_log
-   WHERE campaign_id = 3) AS max,
-      generate_series(start, final, '1 hour') AS xaxis;
+   WHERE campaign_id = 1) AS max,
+      generate_series(start, final, '1 year') AS xaxis;
 
 --CPA - money spent per conversion (total cost over number of conversions)
 SELECT
@@ -279,21 +280,21 @@ SELECT
     FROM
       (SELECT SUM(impression_cost) AS icost
        FROM impression_log
-       WHERE campaign_id = 3 AND date_trunc('hour', date) = xaxis) AS il,
+       WHERE campaign_id = 1 AND date_trunc('hour', date) = xaxis) AS il,
       (SELECT SUM(click_cost) AS ccost
        FROM click_log
-       WHERE campaign_id = 3 AND date_trunc('hour', date) = xaxis) AS cl,
+       WHERE campaign_id = 1 AND date_trunc('hour', date) = xaxis) AS cl,
       (SELECT count(*) AS conversions
        FROM server_log
-       WHERE conversion = TRUE AND campaign_id = 3 AND date_trunc('hour', entry_date) = xaxis) AS iil
+       WHERE conversion = TRUE AND campaign_id = 1 AND date_trunc('hour', entry_date) = xaxis) AS iil
   ) AS yaxis
 FROM
   (SELECT date_trunc('hour', min(entry_date)) AS start
    FROM server_log
-   WHERE campaign_id = 3) AS min,
+   WHERE campaign_id = 1) AS min,
   (SELECT date_trunc('hour', max(entry_date)) AS final
    FROM server_log
-   WHERE campaign_id = 3) AS max,
+   WHERE campaign_id = 1) AS max,
       generate_series(start, final, '1 hour') AS xaxis;
 
 --CPC - avg amount of money spent per click (total cost over number of clicks)
@@ -307,21 +308,21 @@ SELECT
     FROM
       (SELECT SUM(impression_cost) AS icost
        FROM impression_log
-       WHERE campaign_id = 3 AND date_trunc('hour', date) = xaxis) AS il,
+       WHERE campaign_id = 1 AND date_trunc('hour', date) = xaxis) AS il,
       (SELECT SUM(click_cost) AS ccost
        FROM click_log
-       WHERE campaign_id = 3 AND date_trunc('hour', date) = xaxis) AS cl,
+       WHERE campaign_id = 1 AND date_trunc('hour', date) = xaxis) AS cl,
       (SELECT count(*) AS clicks
        FROM click_log
-       WHERE campaign_id = 3 AND date_trunc('hour', date) = xaxis) AS iil
+       WHERE campaign_id = 1 AND date_trunc('hour', date) = xaxis) AS iil
   ) AS yaxis
 FROM
   (SELECT date_trunc('hour', min(date)) AS start
    FROM click_log
-   WHERE campaign_id = 3) AS min,
+   WHERE campaign_id = 1) AS min,
   (SELECT date_trunc('hour', max(date)) AS final
    FROM click_log
-   WHERE campaign_id = 3) AS max,
+   WHERE campaign_id = 1) AS max,
       generate_series(start, final, '1 hour') AS xaxis;
 
 --CPM - average amount of money pent per 1000 impressions (impression_cost over number of impressions *1000)
@@ -332,18 +333,18 @@ SELECT
     FROM
       (SELECT SUM(impression_cost) AS cost
        FROM impression_log
-       WHERE campaign_id = 3 AND date_trunc('hour', date) = xaxis) AS il,
+       WHERE campaign_id = 1 AND date_trunc('hour', date) = xaxis) AS il,
       (SELECT count(*) AS impressions
        FROM impression_log
-       WHERE campaign_id = 3 AND date_trunc('hour', date) = xaxis) AS iil
+       WHERE campaign_id = 1 AND date_trunc('hour', date) = xaxis) AS iil
   ) AS yaxis
 FROM
   (SELECT date_trunc('hour', min(entry_date)) AS start
    FROM server_log
-   WHERE campaign_id = 3) AS min,
+   WHERE campaign_id = 1) AS min,
   (SELECT date_trunc('hour', max(entry_date)) AS final
    FROM server_log
-   WHERE campaign_id = 3) AS max,
+   WHERE campaign_id = 1) AS max,
       generate_series(start, final, '1 hour') AS xaxis;
 
 --CTR - average amount of clicks per impression (number of clicks over number of impressions)
@@ -354,17 +355,17 @@ SELECT
     FROM
       (SELECT count(*) AS clicks
        FROM click_log
-       WHERE campaign_id = 3 AND date_trunc('hour', date) = xaxis) AS cl,
+       WHERE campaign_id = 1 AND date_trunc('hour', date) = xaxis) AS cl,
       (SELECT count(*) AS impressions
        FROM impression_log
-       WHERE campaign_id = 3 AND date_trunc('hour', date) = xaxis) AS il) AS yaxis
+       WHERE campaign_id = 1 AND date_trunc('hour', date) = xaxis) AS il) AS yaxis
 FROM
   (SELECT date_trunc('hour', min(date)) AS start
    FROM impression_log
-   WHERE campaign_id = 3) AS min,
+   WHERE campaign_id = 1) AS min,
   (SELECT date_trunc('hour', max(date)) AS final
    FROM impression_log
-   WHERE campaign_id = 3) AS max,
+   WHERE campaign_id = 1) AS max,
       generate_series(start, final, '1 hour') AS xaxis;
 
 --DELETE TABLES
