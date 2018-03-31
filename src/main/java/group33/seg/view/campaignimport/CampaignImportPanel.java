@@ -63,8 +63,8 @@ public class CampaignImportPanel extends JPanel {
     showView(View.CONTROLS);
   }
 
-  /** 
-   * Initialise GUI and any event listeners. 
+  /**
+   * Initialise GUI and any event listeners.
    */
   private void initGUI() {
 
@@ -325,10 +325,10 @@ public class CampaignImportPanel extends JPanel {
       if (tabsPathModes.getSelectedIndex() == 0) {
         String folder = txtCSVFolder.getText();
         config = new CampaignImportConfig(txtCampaignName.getText(), folder + "/click_log.csv",
-            folder + "/impression_log.csv", folder + "/server_log.csv");
+            folder + "/impression_log.csv", folder + "/server_log.csv", "config.properties");
       } else {
         config = new CampaignImportConfig(txtCampaignName.getText(), txtClickLog.getText(),
-            txtImpressionLog.getText(), txtServerLog.getText());
+            txtImpressionLog.getText(), txtServerLog.getText(), "config.properties");
       }
 
       boolean started = controller.imports.doImport(config);
