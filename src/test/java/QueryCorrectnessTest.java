@@ -19,11 +19,22 @@ import group33.seg.model.configs.MetricQuery;
 import group33.seg.model.types.Interval;
 import group33.seg.model.types.Metric;
 import group33.seg.model.types.Pair;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * Tests for correctness of queries on a small set of example data
  */
+@RunWith(MockitoJUnitRunner.class)
 public class QueryCorrectnessTest {
+
+  @Mock
+  DatabaseConnection conn;
+
+  @Mock
+  DatabaseConfig config;
+
   private static final String CAMPAIGN_NAME = "queryTest";
   private static final String PATH_TO_DATASET = "src/test/resources/example-dataset/";
   private static final String PATH_CLICK_LOG = PATH_TO_DATASET + "click_log.csv";
@@ -48,9 +59,6 @@ public class QueryCorrectnessTest {
       intervals.add(Interval.WEEK);
       intervals.add(Interval.YEAR);
 
-      //get database connection
-      DatabaseConfig config = new DatabaseConfig(DATABASE_CREDENTIALS);
-      Connection conn = new DatabaseConnection(config.getHost(), config.getUser(), config.getPassword()).connectDatabase();
 
       //init tables
       CampaignImportConfig importConfig = new CampaignImportConfig(CAMPAIGN_NAME, PATH_CLICK_LOG, PATH_IMPRESSION_LOG, PATH_SERVER_LOG, DATABASE_CREDENTIALS);
@@ -67,7 +75,7 @@ public class QueryCorrectnessTest {
       } else {
         databaseHandler = null;
       }
-    } catch (InterruptedException | FileNotFoundException e) {
+    } catch (InterruptedException e) {
       e.printStackTrace();
     }
   }
@@ -88,5 +96,55 @@ public class QueryCorrectnessTest {
     List<Pair<String, Integer>> response = databaseHandler.getQueryResponse(statQuery).getResult();
     
     assertTrue("Statistic wrong for impressions, should have been 50 but was " + response.get(0).value, response.equals(expectedResponse));
+  }
+
+  @Test
+  public void clicksTest() {
+
+  }
+
+  @Test
+  public void conversionsTest() {
+
+  }
+
+  @Test
+  public void uniquesTest() {
+
+  }
+
+  @Test
+  public void totalCostTest() {
+
+  }
+
+  @Test
+  public void ctrTest() {
+
+  }
+
+  @Test
+  public void cpaTest() {
+
+  }
+
+  @Test
+  public void cpmTest() {
+
+  }
+
+  @Test
+  public void pagesViewedTest() {
+
+  }
+
+  @Test
+  public void timeSpentTest() {
+
+  }
+
+  @Test
+  public void bounceRateTest() {
+
   }
 }
