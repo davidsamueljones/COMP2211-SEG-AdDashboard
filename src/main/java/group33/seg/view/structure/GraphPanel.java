@@ -14,9 +14,6 @@ public class GraphPanel extends JPanel {
   
   private LineGraphView graph;
 
-  private JButton btnPointer;
-  private JButton btnPan;
-  private JButton btnZoom;
 
   /**
    * Create the panel.
@@ -35,26 +32,10 @@ public class GraphPanel extends JPanel {
   private void initGUI() {
     setLayout(new BorderLayout(0, 0));
 
-    graph = new LineGraphView("Number of Impressions", "Time", "Number of impressions");
+    graph = new LineGraphView();
     add(graph, BorderLayout.CENTER);
 
-    JToolBar tlbControls = new JToolBar();
-    tlbControls.setRollover(true);
-    add(tlbControls, BorderLayout.SOUTH);
 
-    btnPointer = new JButton("Pointer");
-    tlbControls.add(btnPointer);
-
-    btnPan = new JButton("Pan");
-    tlbControls.add(btnPan);
-
-    btnZoom = new JButton("Zoom");
-    tlbControls.add(btnZoom);
-
-    tlbControls.addSeparator();
-
-    // FIXME: Hidden controls until functionality implemented
-    tlbControls.setVisible(false);
   }
 
 }
