@@ -7,6 +7,13 @@ import group33.seg.model.configs.MetricQuery;
 import group33.seg.model.types.Interval;
 import group33.seg.model.types.Metric;
 
+/**
+ * This class stores all SQL queries for statistics and graphs data.
+ * It makes use of placeholders to adjust user preferences, such as
+ * filters (date range, context, income, age, gender) and campaign
+ * which the user wants data for.
+ * If the user does not have preferences, placeholders are changed to default settings.
+ */
 public class DatabaseQueryFactory {
   private static final Map<Metric, String> graphQueries = new HashMap<>();
   private static final Map<Metric, String> statisticQueries = new HashMap<>();
@@ -93,12 +100,12 @@ public class DatabaseQueryFactory {
     graphQueries.put(
         Metric.BOUNCE_RATE,
         "SELECT xaxis, ("
-            + " SELECT sl.bounces::DECIMAL / cl.clicks FROM"
+            + " SELECT sl.bounces::DECIMAL / cl.clicks * 100 FROM"
             + " (SELECT count(*) as bounces FROM server_log WHERE <bounce> AND <campaign> AND date_trunc('<interval>', entry_date) = xaxis) as sl,"
             + " (SELECT count(*) as clicks FROM click_log WHERE <campaign> AND date_trunc('<interval>', date) = xaxis) as cl) as yaxis"
             + " FROM"
-            + " (SELECT date_trunc('<interval>', min(entry_date)) AS start FROM server_log WHERE campaign_id = <campaign>) AS min,"
-            + " (SELECT date_trunc('<interval>', max(entry_date)) AS final FROM server_log WHERE campaign_id = <campaign>) AS max,"
+            + " (SELECT date_trunc('<interval>', min(entry_date)) AS start FROM server_log WHERE <campaign>) AS min,"
+            + " (SELECT date_trunc('<interval>', max(entry_date)) AS final FROM server_log WHERE <campaign>) AS max,"
             + " generate_series(<start>, <final>, '1 <interval>') AS xaxis;");
 
     // Average amount of money spent per conversion over time
@@ -123,8 +130,8 @@ public class DatabaseQueryFactory {
             + " (SELECT SUM(click_cost) as ccost FROM click_log WHERE <campaign> AND date_trunc('<interval>', date) = xaxis) as cl,"
             + " (SELECT count(*) as clicks FROM click_log WHERE <campaign> AND date_trunc('<interval>', date) = xaxis) as iil) as yaxis"
             + " FROM"
-            + " (SELECT date_trunc('<interval>', min(date)) AS start FROM click_log WHERE campaign_id = <campaign>) AS min,"
-            + " (SELECT date_trunc('<interval>', max(date)) AS final FROM click_log WHERE campaign_id = <campaign>) AS max,"
+            + " (SELECT date_trunc('<interval>', min(date)) AS start FROM click_log WHERE <campaign>) AS min,"
+            + " (SELECT date_trunc('<interval>', max(date)) AS final FROM click_log WHERE <campaign>) AS max,"
             + " generate_series(<start>, <final>, '1 <interval>') AS xaxis;");
 
     // Average amount of money spent per 1000 impressions over time
@@ -237,7 +244,8 @@ public class DatabaseQueryFactory {
     String sql;
 
     if (request.interval != null) {
-      // Create graph query
+
+      // Create  graph query and apply grouping
       sql = graphQueries.get(request.metric);
       sql = applyGrouping(sql, request.interval);
     } else {
@@ -245,7 +253,7 @@ public class DatabaseQueryFactory {
       sql = statisticQueries.get(request.metric);
     }
 
-    // Adjust placeholders according to bounce definition preference
+    // Adjust <bounce> placeholder according to bounce definition preference
     if (request.bounceDef != null) {
       if (request.bounceDef.type == BounceConfig.Type.TIME) {
         sql =
@@ -257,38 +265,40 @@ public class DatabaseQueryFactory {
       }
     }
 
-    // Data for which campaign should be queried
+    // Adjust <campaign> placeholder according to the campaign the user wants to see data for
     if (request.campaign != null) {
       sql = sql.replace("<campaign>", "campaign_id = " + request.campaign.uid);
     }
 
-    // TODO: Add rest of filtering options
     if (request.filter != null) {
-      
-      // Apply date filtering if provided in query
+      // Apply date range query (if provided by user)
       if (request.filter.dates != null) {
         if (request.filter.dates.min != null) {
           sql = sql.replace("<start>", "'" + request.filter.dates.min + "'");
         }
         if (request.filter.dates.max != null) {
           sql = sql.replace("<final>", "'" + request.filter.dates.max + "'");
-        }                
+        }
       }
-      
-      // TODO: Others
+      // TODO: Other filters
     }
+    // Apply default settings, if null
     sql = applyDefaultReplacements(sql);
-    
+
     return sql;
   }
-  
+
+  /**
+   * Apply default filtering, if not specified by the user If there is no campaignID specified,
+   * fetch all the data If there is no date range filter applied, then use the min and max date from
+   * the 'date' column in the table
+   *
+   * @param sql SQL statement with placeholders to be adjusted
+   * @return Modified SQL statement
+   */
   private static String applyDefaultReplacements(String sql) {
-    // No campaign_id specified so fetch all data
-    sql = sql.replace("<campaign>", "1 = 1");
-    // Replace any missing date fields with minimum or maximum possible
-    sql = sql.replace("<start>", "start");
-    sql = sql.replace("<final>", "final");
-    
+    sql =
+        sql.replace("<campaign>", "1 = 1").replace("<start>", "start").replace("<final>", "final");
     return sql;
   }
 
