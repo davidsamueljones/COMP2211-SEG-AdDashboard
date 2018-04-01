@@ -196,10 +196,6 @@ public class QueryCorrectnessTest {
     MetricQuery graphQuery = new MetricQuery(Metric.CPC, Interval.WEEK, null);
     List<Pair<String, Integer>> weekResponse = databaseHandler.getQueryResponse(graphQuery).getResult();
 
-    for(Pair p : weekResponse){
-      System.out.println(p.key + " " + p.value);
-    }
-
     assertTrue("Time interval test wrong for clicks metric", weekResponse.equals(expectedWeekResponse));
   }
 
@@ -214,21 +210,18 @@ public class QueryCorrectnessTest {
     assertTrue("Statistic wrong for CPM, should have been 1 but was " + response.get(0).value, response.equals(expectedResponse));
 
     List<Pair<String,Integer>> expectedWeekResponse = new LinkedList<>();
-    expectedWeekResponse.add(new Pair<>("2015-01-05 00:00:00", 10));
-    expectedWeekResponse.add(new Pair<>("2015-01-12 00:00:00", 10));
-    expectedWeekResponse.add(new Pair<>("2015-01-19 00:00:00", 4));
-    expectedWeekResponse.add(new Pair<>("2015-01-26 00:00:00", 4));
-    expectedWeekResponse.add(new Pair<>("2015-02-02 00:00:00", 5));
-    expectedWeekResponse.add(new Pair<>("2015-02-09 00:00:00", 7));
-    expectedWeekResponse.add(new Pair<>("2015-02-16 00:00:00", 7));
-    expectedWeekResponse.add(new Pair<>("2015-02-23 00:00:00", 5));
+    expectedWeekResponse.add(new Pair<>("2014-12-29 00:00:00", 2));
+    expectedWeekResponse.add(new Pair<>("2015-01-05 00:00:00", 1));
+    expectedWeekResponse.add(new Pair<>("2015-01-12 00:00:00", 1));
+    expectedWeekResponse.add(new Pair<>("2015-01-19 00:00:00", 0));
+    expectedWeekResponse.add(new Pair<>("2015-01-26 00:00:00", 0));
+    expectedWeekResponse.add(new Pair<>("2015-02-02 00:00:00", 1));
+    expectedWeekResponse.add(new Pair<>("2015-02-09 00:00:00", 1));
+    expectedWeekResponse.add(new Pair<>("2015-02-16 00:00:00", 0));
+    expectedWeekResponse.add(new Pair<>("2015-02-23 00:00:00", 1));
 
     MetricQuery graphQuery = new MetricQuery(Metric.CPM, Interval.WEEK, null);
     List<Pair<String, Integer>> weekResponse = databaseHandler.getQueryResponse(graphQuery).getResult();
-
-    for(Pair p : weekResponse){
-      System.out.println(p.key + " " + p.value);
-    }
 
     assertTrue("Time interval test wrong for clicks metric", weekResponse.equals(expectedWeekResponse));
   }
