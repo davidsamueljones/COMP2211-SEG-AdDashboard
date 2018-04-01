@@ -23,6 +23,11 @@ public class ClickLogTable extends DatabaseTable {
   public void createIndexes(Connection c) throws SQLException {
     Statement st = c.createStatement();
     st.execute("CREATE INDEX CONCURRENTLY IF NOT EXISTS cl_date ON click_log(date, campaign_id);");
+    st.execute("CREATE INDEX CONCURRENTLY IF NOT EXISTS cl_dayDateTrunc ON click_log(date_trunc('day', date));");
+    st.execute("CREATE INDEX CONCURRENTLY IF NOT EXISTS cl_hourDateTrunc ON click_log(date_trunc('hour', date));");
+    st.execute("CREATE INDEX CONCURRENTLY IF NOT EXISTS cl_monthDateTrunc ON click_log(date_trunc('month', date));");
+    st.execute("CREATE INDEX CONCURRENTLY IF NOT EXISTS cl_weekDateTrunc ON click_log(date_trunc('week', date));");
+    st.execute("CREATE INDEX CONCURRENTLY IF NOT EXISTS cl_yearDateTrunc ON click_log(date_trunc('year', date));");
     st.close();
   }
 

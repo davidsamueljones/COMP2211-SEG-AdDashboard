@@ -75,10 +75,8 @@ public class DatabaseHandler {
     //    if (cachedResponses.containsKey(request)) {
     //      return cachedResponses.get(request);
     //    } else {
-    MetricQueryResponse response =
-        new MetricQueryResponse(request, pool.submit(() -> getGraphData(request)));
     //      cachedResponses.put(request, response);
-    return response;
+    return new MetricQueryResponse(request, pool.submit(() -> getGraphData(request)));
   }
 
   private List<Pair<String, Integer>> getGraphData(MetricQuery request) {

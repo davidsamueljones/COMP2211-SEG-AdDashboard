@@ -23,8 +23,13 @@ public class ImpressionLogTable extends DatabaseTable {
   @Override
   public void createIndexes(Connection c) throws SQLException {
     Statement st = c.createStatement();
+
     st.execute("CREATE INDEX CONCURRENTLY IF NOT EXISTS il_date ON impression_log(date, campaign_id);");
     st.execute("CREATE INDEX CONCURRENTLY IF NOT EXISTS il_dayDateTrunc ON impression_log(date_trunc('day', date));");
+    st.execute("CREATE INDEX CONCURRENTLY IF NOT EXISTS il_hourDateTrunc ON impression_log(date_trunc('hour', date));");
+    st.execute("CREATE INDEX CONCURRENTLY IF NOT EXISTS il_monthDateTrunc ON impression_log(date_trunc('month', date));");
+    st.execute("CREATE INDEX CONCURRENTLY IF NOT EXISTS il_weekDateTrunc ON impression_log(date_trunc('week', date));");
+    st.execute("CREATE INDEX CONCURRENTLY IF NOT EXISTS il_yearDateTrunc ON impression_log(date_trunc('year', date));");
     st.close();
   }
 

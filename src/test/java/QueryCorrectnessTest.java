@@ -3,61 +3,58 @@ import static org.junit.Assert.fail;
 
 import java.io.FileNotFoundException;
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import group33.seg.model.configs.*;
 import org.junit.Test;
 
-import group33.seg.controller.database.DatabaseConfig;
-import group33.seg.controller.database.DatabaseConnection;
 import group33.seg.controller.handlers.CampaignImportHandler;
 import group33.seg.controller.handlers.DatabaseHandler;
-import group33.seg.controller.types.MetricQueryResponse;
-import group33.seg.model.configs.CampaignImportConfig;
-import group33.seg.model.configs.MetricQuery;
 import group33.seg.model.types.Interval;
 import group33.seg.model.types.Metric;
 import group33.seg.model.types.Pair;
 
-/**
- * Tests for correctness of queries on a small set of example data
- */
+/** Tests for correctness of queries on a small set of example data */
 public class QueryCorrectnessTest {
-  private static final String campaignName = "queryTest";
-  private static final String path = "exampleDataset/";
-  private static final String pathClickLog = path + "click_log.csv";
-  private static final String pathImpressionLog = path + "impression_log.csv";
-  private static final String pathServerLog = path + "server_log.csv";
 
-  private static final String databaseCredentials = "test.properties";
+  private static final String CAMPAIGN_NAME = "queryTest";
+  private static final String PATH_TO_DATASET = "src/test/resources/example-dataset/";
+  private static final String PATH_CLICK_LOG = PATH_TO_DATASET + "click_log.csv";
+  private static final String PATH_IMPRESSION_LOG = PATH_TO_DATASET + "impression_log.csv";
+  private static final String PATH_SERVER_LOG = PATH_TO_DATASET + "server_log.csv";
+
+  private static final String DATABASE_CREDENTIALS = "src/test/resources/test.properties";
 
   private DatabaseHandler databaseHandler;
 
-  /**
-   * Initialise tables and data for test
-   */
-  public QueryCorrectnessTest() {
-    try{
-      //get database connection
-      DatabaseConfig config = new DatabaseConfig(databaseCredentials);
-      Connection conn = new DatabaseConnection(config.getHost(), config.getUser(), config.getPassword()).connectDatabase();
+  /** Initialise tables and data for test */
+  public QueryCorrectnessTest() throws FileNotFoundException {
+    try {
 
-      //init tables
-      CampaignImportConfig importConfig = new CampaignImportConfig(campaignName, pathClickLog, pathImpressionLog, pathServerLog, databaseCredentials);
+      // init tables
+      CampaignImportConfig importConfig =
+          new CampaignImportConfig(
+              CAMPAIGN_NAME,
+              PATH_CLICK_LOG,
+              PATH_IMPRESSION_LOG,
+              PATH_SERVER_LOG,
+              DATABASE_CREDENTIALS);
       CampaignImportHandler importHandler = new CampaignImportHandler(null);
       boolean importComplete = importHandler.doImport(importConfig);
 
-      while(importHandler.isOngoing()){
+      while (importHandler.isOngoing()) {
         Thread.sleep(10);
       }
 
-      //setup database handler
-      if(importComplete){
-        databaseHandler = new DatabaseHandler(null, databaseCredentials);
+      // setup database handler
+      if (importComplete) {
+        databaseHandler = new DatabaseHandler(null, DATABASE_CREDENTIALS);
       } else {
         databaseHandler = null;
       }
-    } catch (InterruptedException | FileNotFoundException e) {
+    } catch (InterruptedException e) {
       e.printStackTrace();
     }
   }
@@ -70,9 +67,8 @@ public class QueryCorrectnessTest {
   }
 
   @Test
-  public void impressionsTest () {
-    List<Pair<String,Integer>> expectedResponse = new LinkedList<>();
-    expectedResponse.add(new Pair<>("all", 50));
+  public void impressionsTest() {
+    List<Pair<String, Integer>> expectedResponse = response("all", 50);
 
     MetricQuery statQuery = new MetricQuery(Metric.IMPRESSIONS, null, null);
     List<Pair<String, Integer>> response = databaseHandler.getQueryResponse(statQuery).getResult();
