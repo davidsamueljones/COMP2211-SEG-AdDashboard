@@ -50,7 +50,18 @@ public class ClickLogTable extends DatabaseTable {
   }
 
   @Override
+  public String fromCSV(String input, int campaignID) {
+    return input.concat("," + campaignID);
+  }
+  
+  @Override
+  public String getCopyTemplate(String source) {
+    return String.format("COPY click_log FROM %s WITH DELIMITER ',' CSV HEADER", source);
+  }
+  
+  @Override
   public String getTableName() {
     return "click_log";
   }
+  
 }

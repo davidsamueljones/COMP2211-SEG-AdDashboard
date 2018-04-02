@@ -57,7 +57,18 @@ public class ServerLogTable extends DatabaseTable {
   }
 
   @Override
+  public String fromCSV(String input, int campaignID) {
+    return input.concat("," + campaignID);
+  }
+  
+  @Override
+  public String getCopyTemplate(String source) {
+    return String.format("COPY server_log FROM %s WITH DELIMITER ',' CSV HEADER NULL 'n/a'", source);
+  }
+
+  @Override
   public String getTableName() {
     return "server_log";
   }
+  
 }

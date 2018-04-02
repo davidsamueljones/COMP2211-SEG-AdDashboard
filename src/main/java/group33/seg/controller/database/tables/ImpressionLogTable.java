@@ -58,7 +58,19 @@ public class ImpressionLogTable extends DatabaseTable {
         + "values (?, ?, ?, ?::age, ?::income, ?::context, ?, ?)";
   }
 
-  /** Initialise the required enums for the impression log table. */
+  @Override
+  public String fromCSV(String input, int campaignID) {
+    return input.replace(",Male,", ",false,").replace(",Female,", ",true,").concat("," + campaignID);
+  }
+  
+  @Override
+  public String getCopyTemplate(String source) {
+    return "COPY impression_log FROM stdin WITH DELIMITER ',' CSV HEADER";
+  }
+  
+  /** 
+   * Initialise the required enums for the impression log table. 
+   */
   public static void initEnums(Connection c) {
     final String enumAge = "CREATE TYPE age AS ENUM ('<25' , '25-34' , '35-44' ,  '45-54' , '>54')";
     final String enumType =
@@ -93,4 +105,5 @@ public class ImpressionLogTable extends DatabaseTable {
   public String getTableName() {
     return "impression_log";
   }
+  
 }
