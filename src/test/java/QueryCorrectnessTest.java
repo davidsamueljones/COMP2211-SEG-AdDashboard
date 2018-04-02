@@ -132,7 +132,7 @@ public class QueryCorrectnessTest {
     List<Pair<String, Number>> expectedWeekResponse = new LinkedList<>();
     expectedWeekResponse.add(new Pair<>("2014-12-29 00:00:00", 1L));
     expectedWeekResponse.add(new Pair<>("2015-01-05 00:00:00", null));
-    expectedWeekResponse.add(new Pair<>("2015-01-12 00:00:00", null));
+    expectedWeekResponse.add(new Pair<>("2015-01-12 00:00:00", null));  
     expectedWeekResponse.add(new Pair<>("2015-01-19 00:00:00", null));
     expectedWeekResponse.add(new Pair<>("2015-01-26 00:00:00", null));
     expectedWeekResponse.add(new Pair<>("2015-02-02 00:00:00", 1L));
@@ -142,10 +142,6 @@ public class QueryCorrectnessTest {
 
     MetricQuery graphQuery = new MetricQuery(Metric.CONVERSIONS, Interval.WEEK, null);
     List<Pair<String, Number>> weekResponse = databaseHandler.getQueryResponse(graphQuery).getResult();
-
-    for(Pair p : weekResponse){
-      System.out.println(p.key + " " + p.value);
-    }
 
     assertTrue("Time interval test wrong for conversions metric", weekResponse.equals(expectedWeekResponse));
   }
@@ -228,5 +224,147 @@ public class QueryCorrectnessTest {
     List<Pair<String, Number>> weekResponse = databaseHandler.getQueryResponse(graphQuery).getResult();
 
     assertTrue("Time interval test wrong for CPM metric", weekResponse.equals(expectedWeekResponse));
+  }
+
+  @Test
+  public void ctrTest () {
+    List<Pair<String, Number>> expectedResponse = new LinkedList<>();
+    expectedResponse.add(new Pair<>("all", 1.0));
+
+    MetricQuery statQuery = new MetricQuery(Metric.CTR, null, null);
+    List<Pair<String, Number>> response = databaseHandler.getQueryResponse(statQuery).getResult();
+    
+    assertTrue("Statistic wrong for CTR, should have been 1.0 but was " + response.get(0).value, response.equals(expectedResponse));
+
+    List<Pair<String,Number>> expectedWeekResponse = new LinkedList<>();
+    expectedWeekResponse.add(new Pair<>("2014-12-29 00:00:00", 0.0));
+    expectedWeekResponse.add(new Pair<>("2015-01-05 00:00:00", 0.6666666666666666));
+    expectedWeekResponse.add(new Pair<>("2015-01-12 00:00:00", 0.5));
+    expectedWeekResponse.add(new Pair<>("2015-01-19 00:00:00", 1.4));
+    expectedWeekResponse.add(new Pair<>("2015-01-26 00:00:00", 0.8));
+    expectedWeekResponse.add(new Pair<>("2015-02-02 00:00:00", 1.25));
+    expectedWeekResponse.add(new Pair<>("2015-02-09 00:00:00", 0.8571428571428571));
+    expectedWeekResponse.add(new Pair<>("2015-02-16 00:00:00", 1.375));
+    expectedWeekResponse.add(new Pair<>("2015-02-23 00:00:00", 0.8888888888888888));
+
+    MetricQuery graphQuery = new MetricQuery(Metric.CTR, Interval.WEEK, null);
+    List<Pair<String, Number>> weekResponse = databaseHandler.getQueryResponse(graphQuery).getResult();
+
+    assertTrue("Time interval test wrong for CTR metric", weekResponse.equals(expectedWeekResponse));
+  }
+
+  @Test
+  public void totalCostTest () {
+    List<Pair<String, Number>> expectedResponse = new LinkedList<>();
+    expectedResponse.add(new Pair<>("all", 328.54808599999984));
+
+    MetricQuery statQuery = new MetricQuery(Metric.TOTAL_COST, null, null);
+    List<Pair<String, Number>> response = databaseHandler.getQueryResponse(statQuery).getResult();
+    
+    assertTrue("Statistic wrong for total cost, should have been 328.54808599999984 but was " + response.get(0).value, response.equals(expectedResponse));
+
+    List<Pair<String,Number>> expectedWeekResponse = new LinkedList<>();
+    expectedWeekResponse.add(new Pair<>("2014-12-29 00:00:00", 0.002345));
+    expectedWeekResponse.add(new Pair<>("2015-01-05 00:00:00", 21.80319));
+    expectedWeekResponse.add(new Pair<>("2015-01-12 00:00:00", 20.176677));
+    expectedWeekResponse.add(new Pair<>("2015-01-19 00:00:00", 32.008084999999994));
+    expectedWeekResponse.add(new Pair<>("2015-01-26 00:00:00", 18.876013));
+    expectedWeekResponse.add(new Pair<>("2015-02-02 00:00:00", 58.197251));
+    expectedWeekResponse.add(new Pair<>("2015-02-09 00:00:00", 44.082891));
+    expectedWeekResponse.add(new Pair<>("2015-02-16 00:00:00", 86.722779));
+    expectedWeekResponse.add(new Pair<>("2015-02-23 00:00:00", 46.678855));
+
+    MetricQuery graphQuery = new MetricQuery(Metric.TOTAL_COST, Interval.WEEK, null);
+    List<Pair<String, Number>> weekResponse = databaseHandler.getQueryResponse(graphQuery).getResult();
+
+    assertTrue("Time interval test wrong for total cost metric", weekResponse.equals(expectedWeekResponse));
+  }
+
+  @Test
+  public void uniquesTest () {
+    List<Pair<String, Number>> expectedResponse = new LinkedList<>();
+    expectedResponse.add(new Pair<>("all", 50L));
+
+    MetricQuery statQuery = new MetricQuery(Metric.UNIQUES, null, null);
+    List<Pair<String, Number>> response = databaseHandler.getQueryResponse(statQuery).getResult();
+    
+    assertTrue("Statistic wrong for uniques, should have been 50 but was " + response.get(0).value, response.equals(expectedResponse));
+
+    List<Pair<String,Number>> expectedWeekResponse = new LinkedList<>();
+    expectedWeekResponse.add(new Pair<>("2015-01-05 00:00:00", 2L));
+    expectedWeekResponse.add(new Pair<>("2015-01-12 00:00:00", 2L));
+    expectedWeekResponse.add(new Pair<>("2015-01-19 00:00:00", 7L));
+    expectedWeekResponse.add(new Pair<>("2015-01-26 00:00:00", 4L));
+    expectedWeekResponse.add(new Pair<>("2015-02-02 00:00:00", 10L));
+    expectedWeekResponse.add(new Pair<>("2015-02-09 00:00:00", 6L));
+    expectedWeekResponse.add(new Pair<>("2015-02-16 00:00:00", 11L));
+    expectedWeekResponse.add(new Pair<>("2015-02-23 00:00:00", 8L));
+
+    MetricQuery graphQuery = new MetricQuery(Metric.UNIQUES, Interval.WEEK, null);
+    List<Pair<String, Number>> weekResponse = databaseHandler.getQueryResponse(graphQuery).getResult();
+    
+    assertTrue("Time interval test wrong for uniques metric", weekResponse.equals(expectedWeekResponse));
+  }
+
+  @Test
+  public void bouncesTest () {
+    List<Pair<String, Number>> expectedResponse = new LinkedList<>();
+    expectedResponse.add(new Pair<>("all", 27L));
+
+    BounceConfig bounceConfig = new BounceConfig();
+    bounceConfig.type = BounceConfig.Type.PAGES;
+    bounceConfig.value = 2;
+
+    MetricQuery statQuery = new MetricQuery(Metric.BOUNCES, null, null, bounceConfig, null);
+    List<Pair<String, Number>> response = databaseHandler.getQueryResponse(statQuery).getResult();
+    
+    assertTrue("Statistic wrong for bounces, should have been 27 but was " + response.get(0).value, response.equals(expectedResponse));
+
+    List<Pair<String,Number>> expectedWeekResponse = new LinkedList<>();
+    expectedWeekResponse.add(new Pair<>("2014-12-29 00:00:00", 4L));
+    expectedWeekResponse.add(new Pair<>("2015-01-05 00:00:00", 2L));
+    expectedWeekResponse.add(new Pair<>("2015-01-12 00:00:00", 4L));
+    expectedWeekResponse.add(new Pair<>("2015-01-19 00:00:00", 5L));
+    expectedWeekResponse.add(new Pair<>("2015-01-26 00:00:00", 3L));
+    expectedWeekResponse.add(new Pair<>("2015-02-02 00:00:00", null));
+    expectedWeekResponse.add(new Pair<>("2015-02-09 00:00:00", 4L));
+    expectedWeekResponse.add(new Pair<>("2015-02-16 00:00:00", 3L));
+    expectedWeekResponse.add(new Pair<>("2015-02-23 00:00:00", 2L));
+
+    MetricQuery graphQuery = new MetricQuery(Metric.BOUNCES, Interval.WEEK, null, bounceConfig, null);
+    List<Pair<String, Number>> weekResponse = databaseHandler.getQueryResponse(graphQuery).getResult();
+
+    assertTrue("Time interval test wrong for bounces metric", weekResponse.equals(expectedWeekResponse));
+  }
+
+  @Test
+  public void bounceRateTest () {
+    List<Pair<String, Number>> expectedResponse = new LinkedList<>();
+    expectedResponse.add(new Pair<>("all", 54.0));
+
+    BounceConfig bounceConfig = new BounceConfig();
+    bounceConfig.type = BounceConfig.Type.PAGES;
+    bounceConfig.value = 2;
+
+    MetricQuery statQuery = new MetricQuery(Metric.BOUNCE_RATE, null, null, bounceConfig, null);
+    List<Pair<String, Number>> response = databaseHandler.getQueryResponse(statQuery).getResult();
+    
+    assertTrue("Statistic wrong for bounce rate, should have been 54.0 but was " + response.get(0).value, response.equals(expectedResponse));
+
+    List<Pair<String,Number>> expectedWeekResponse = new LinkedList<>();
+    expectedWeekResponse.add(new Pair<>("2014-12-29 00:00:00", null));
+    expectedWeekResponse.add(new Pair<>("2015-01-05 00:00:00", 100.0));
+    expectedWeekResponse.add(new Pair<>("2015-01-12 00:00:00", 200.0));
+    expectedWeekResponse.add(new Pair<>("2015-01-19 00:00:00", 71.42857142857143));
+    expectedWeekResponse.add(new Pair<>("2015-01-26 00:00:00", 75.0));
+    expectedWeekResponse.add(new Pair<>("2015-02-02 00:00:00", 0.0));
+    expectedWeekResponse.add(new Pair<>("2015-02-09 00:00:00", 66.66666666666666));
+    expectedWeekResponse.add(new Pair<>("2015-02-16 00:00:00", 27.27272727272727));
+    expectedWeekResponse.add(new Pair<>("2015-02-23 00:00:00", 25.0));
+
+    MetricQuery graphQuery = new MetricQuery(Metric.BOUNCE_RATE, Interval.WEEK, null, bounceConfig, null);
+    List<Pair<String, Number>> weekResponse = databaseHandler.getQueryResponse(graphQuery).getResult();
+
+    assertTrue("Time interval test wrong for bounce rate metric", weekResponse.equals(expectedWeekResponse));
   }
 }
