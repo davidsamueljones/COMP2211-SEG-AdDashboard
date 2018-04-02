@@ -99,7 +99,7 @@ public class FilterConfig {
     equal &= (genders == null ? (other.genders == null) : genders.equals(other.genders));
     equal &= (incomes == null ? (other.incomes == null) : incomes.equals(other.incomes));
     equal &= (contexts == null ? (other.contexts == null) : contexts.equals(other.contexts));
-    equal &= (dates == null ? (other.dates == null) : dates.equals(dates));
+    equal &= (dates == null ? (other.dates == null) : dates.equals(other.dates));
     return equal;
   }
 
