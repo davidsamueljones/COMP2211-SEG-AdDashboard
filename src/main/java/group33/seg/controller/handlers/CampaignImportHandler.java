@@ -98,7 +98,7 @@ public class CampaignImportHandler {
 
       try {
         // Create connection
-        conn = getConnection();
+        conn = getConnection(importConfig.databaseConfigFile);
         // Create a new campaign
         campaignID = createNewCampaign(conn, importConfig.campaignName);
 
@@ -168,10 +168,10 @@ public class CampaignImportHandler {
   /**
    * TODO: Move
    */
-  private Connection getConnection() throws ImportException, RuntimeException {
+  private Connection getConnection(String path) throws ImportException, RuntimeException {
     try {
       // TODO: Use database controller to get a connection
-      DatabaseConfig config = new DatabaseConfig("config.properties");
+      DatabaseConfig config = new DatabaseConfig(path);
       DatabaseConnection dbConn =
           new DatabaseConnection(config.getHost(), config.getUser(), config.getPassword());
       Connection conn = dbConn.connectDatabase();
