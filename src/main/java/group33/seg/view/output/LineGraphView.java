@@ -8,23 +8,17 @@ import java.awt.Stroke;
 import java.awt.event.InputEvent;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
-import org.apache.commons.collections.MapUtils;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.LegendItem;
 import org.jfree.chart.LegendItemCollection;
 import org.jfree.chart.StandardChartTheme;
-import org.jfree.chart.plot.SeriesRenderingOrder;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.time.Second;
@@ -338,7 +332,7 @@ public class LineGraphView extends JPanel {
     }
     return legend;
   }
-  
+
   /**
    * Enable mouse drag pan and scroll zoom behaviour for the current chart panel.
    */
