@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashSet;
 import java.util.Set;
+import org.postgresql.util.PSQLState;
 import group33.seg.controller.DashboardController.DashboardMVC;
 import group33.seg.controller.database.DatabaseConfig;
 import group33.seg.controller.database.DatabaseConnection;
@@ -91,56 +92,15 @@ public class CampaignImportHandler {
       // Reset import progress
       updateProgress(0);
 
-      // Create local table objects
-      ClickLogTable clickLogTable = new ClickLogTable();
-      ImpressionLogTable impressionLogTable = new ImpressionLogTable();
-      ServerLogTable serverLogTable = new ServerLogTable();
-      CampaignTable campaignTable = new CampaignTable();
-
       // Use a single connection for the entire transaction
       Connection conn = null;
-
       int campaignID = -1;
 
       try {
-        // TODO: TEMPORARY - Use interface database connection, error handling needs better
-        // handling lower down in the stack, current behaviour is inconsistent
-        try {
-          DatabaseConfig config = new DatabaseConfig(importConfig.databaseConfigFile);
-          DatabaseConnection dbConn =
-              new DatabaseConnection(config.getHost(), config.getUser(), config.getPassword());
-          conn = dbConn.connectDatabase();
-
-          //add tables so that that the clearing doesn't complain that they don't exist
-          //TODO: Remove table creation when table clearing is removed
-          ImpressionLogTable.initEnums(conn);
-          campaignTable.createTable(conn);
-          clickLogTable.createTable(conn);
-          impressionLogTable.createTable(conn);
-          serverLogTable.createTable(conn);
-
-          // Remove existing tables data (TODO: Not to be kept)
-          clickLogTable.clearTable(conn);
-          impressionLogTable.clearTable(conn);
-          serverLogTable.clearTable(conn);
-
-          PreparedStatement ps = conn.prepareStatement(campaignTable.getInsertTemplate(),
-              Statement.RETURN_GENERATED_KEYS);
-          campaignTable.prepareInsert(ps, new String[] {importConfig.campaignName}, -1);
-          ps.executeUpdate();
-          ResultSet rs = ps.getGeneratedKeys();
-          if (rs.next()) {
-            campaignID = rs.getInt(1);
-          }
-        } catch (FileNotFoundException e) {
-          eb.addError("Database configuration '" + importConfig.databaseConfigFile + "' not found");
-          throw new ImportException();
-        } catch (Exception e) {
-          eb.addError("Unknown Error");
-          e.printStackTrace();
-          throw new ImportException();
-        }
-
+        // Create connection
+        conn = getConnection();
+        // Create a new campaign
+        campaignID = createNewCampaign(conn, importConfig.campaignName);
 
         // Use the file size to determine the proportions when importing
         double sizeImpressionLog = new File(importConfig.pathImpressionLog).length();
@@ -149,23 +109,20 @@ public class CampaignImportHandler {
         double totalSize = sizeImpressionLog + sizeClickLog + sizeServerLog;
 
         // Import click log
-        importTable(clickLogTable, conn, importConfig.pathClickLog, sizeClickLog / totalSize,
+        importTable(new ClickLogTable(), conn, importConfig.pathClickLog, sizeClickLog / totalSize,
             campaignID);
-
-        // Import impression log and ensure enums are set
-        ImpressionLogTable.initEnums(conn);
-        importTable(impressionLogTable, conn, importConfig.pathImpressionLog,
+        // Import impression log
+        importTable(new ImpressionLogTable(), conn, importConfig.pathImpressionLog,
             sizeImpressionLog / totalSize, campaignID);
-
         // Import server log
-        importTable(serverLogTable, conn, importConfig.pathServerLog, sizeServerLog / totalSize,
-            campaignID);
+        importTable(new ServerLogTable(), conn, importConfig.pathServerLog,
+            sizeServerLog / totalSize, campaignID);
 
         // Create campaign configuration (storing as last import)
-        // TODO: GET CORRECT ID FROM SERVER
-        CampaignConfig c = new CampaignConfig(0);
-        c.name = importConfig.campaignName;
-        setImportedCampaign(c);
+        CampaignConfig campaign = new CampaignConfig(campaignID);
+        campaign.name = importConfig.campaignName;
+        setImportedCampaign(campaign);
+
         // Alert listeners that import is finished
         alertFinished(true);
         finished = true;
@@ -174,13 +131,20 @@ public class CampaignImportHandler {
         alertCancelled();
       } catch (ImportException e) {
         alertFinished(false);
-      }
-
-      // Remove 'corrupted' data if import did not finish successfully
-      if (conn != null && !finished) {
-        clickLogTable.clearTable(conn);
-        impressionLogTable.clearTable(conn);
-        serverLogTable.clearTable(conn);
+      } catch (Exception e) {
+        eb.addError("Unknown Error");
+        e.printStackTrace();
+        alertFinished(false);
+      } finally {
+        // Remove 'corrupted' data if import did not finish successfully
+        if (conn != null && !finished && campaignID != -1) {
+          removeCampaign(conn, campaignID);
+        }
+        try {
+          conn.close();
+        } catch (SQLException e) {
+          // couldn't close, ignore
+        }
       }
       threadImport = null;
     });
@@ -189,6 +153,71 @@ public class CampaignImportHandler {
     this.importedCampaign = null;
     threadImport.start();
     return true;
+  }
+
+  private void removeCampaign(Connection conn, int campaignID) {
+    try {
+      Statement st = conn.createStatement();
+      // TODO: Enable CASCADE in Campaign table (currently will cause exception)
+      st.execute(String.format("DELETE FROM %s WHERE id = %d", (new CampaignTable()).getTableName(), campaignID));
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * TODO: Move
+   */
+  private Connection getConnection() throws ImportException, RuntimeException {
+    try {
+      // TODO: Use database controller to get a connection
+      DatabaseConfig config = new DatabaseConfig("config.properties");
+      DatabaseConnection dbConn =
+          new DatabaseConnection(config.getHost(), config.getUser(), config.getPassword());
+      Connection conn = dbConn.connectDatabase();
+      return conn;
+    } catch (FileNotFoundException e) {
+      eb.addError(String.format("Database configuration '%s' not found"));
+      throw new ImportException();
+    } catch (SQLException e) {
+      if (PSQLState.CONNECTION_UNABLE_TO_CONNECT.getState().equals(e.getSQLState())) {
+        eb.addError(
+            "Connection to server refused, check hostname, port, username and password are correct");
+        throw new ImportException();
+      } else {
+        throw new RuntimeException(e);
+      }
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  /**
+   * Create a new campaign on the server. If the campaign table doesn't exist it is created.
+   * 
+   * @param conn Connection to use
+   * @param name Name of campaign to add
+   * @return UID from server pertaining to campaign entry (primary key)
+   */
+  private int createNewCampaign(Connection conn, String name) throws ImportException {
+    int campaignID = -1;
+    CampaignTable campaignTable = new CampaignTable();
+    try {
+      // Create campaign table if it doesn't exist
+      campaignTable.createTable(conn);
+      // Create a new campaign, tracking the generated primary key
+      PreparedStatement ps =
+          conn.prepareStatement(campaignTable.getInsertTemplate(), Statement.RETURN_GENERATED_KEYS);
+      campaignTable.prepareInsert(ps, new String[] {name}, -1);
+      ps.executeUpdate();
+      ResultSet rs = ps.getGeneratedKeys();
+      rs.next();
+      campaignID = rs.getInt(1);
+    } catch (SQLException e) {
+      eb.addError("Unable to create new campaign");
+      throw new ImportException();
+    }
+    return campaignID;
   }
 
   /**
@@ -217,6 +246,7 @@ public class CampaignImportHandler {
     // Create worker thread handling import
     Thread worker = new Thread(() -> {
       try {
+        System.out.println(campaignID);
         importer.importCSV(table, conn, path, campaignID);
       } catch (Exception e) {
         e.printStackTrace();
