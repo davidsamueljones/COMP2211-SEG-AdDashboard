@@ -1,14 +1,11 @@
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
 import group33.seg.model.configs.*;
 import org.junit.Test;
-
 import group33.seg.controller.handlers.CampaignImportHandler;
 import group33.seg.controller.handlers.DatabaseHandler;
 import group33.seg.model.types.Interval;
@@ -27,25 +24,22 @@ public class QueryCorrectnessTest {
   private static final String DATABASE_CREDENTIALS = "src/test/resources/test.properties";
 
   private DatabaseHandler databaseHandler;
+  private CampaignConfig campaign;
 
   /** Initialise tables and data for test */
   public QueryCorrectnessTest() throws FileNotFoundException {
     try {
 
       // init tables
-      CampaignImportConfig importConfig =
-          new CampaignImportConfig(
-              CAMPAIGN_NAME,
-              PATH_CLICK_LOG,
-              PATH_IMPRESSION_LOG,
-              PATH_SERVER_LOG,
-              DATABASE_CREDENTIALS);
+      CampaignImportConfig importConfig = new CampaignImportConfig(CAMPAIGN_NAME, PATH_CLICK_LOG,
+          PATH_IMPRESSION_LOG, PATH_SERVER_LOG, DATABASE_CREDENTIALS);
       CampaignImportHandler importHandler = new CampaignImportHandler(null);
       boolean importComplete = importHandler.doImport(importConfig);
 
       while (importHandler.isOngoing()) {
         Thread.sleep(10);
       }
+      campaign = importHandler.getImportedCampaign();
 
       // setup database handler
       if (importComplete) {
@@ -70,11 +64,10 @@ public class QueryCorrectnessTest {
     List<Pair<String, Integer>> expectedResponse = response("all", 50);
 
     MetricQuery statQuery = new MetricQuery(Metric.IMPRESSIONS, null, null);
+    statQuery.campaign = this.campaign;
     List<Pair<String, Integer>> response = databaseHandler.getQueryResponse(statQuery).getResult();
-    assertTrue(
-        "Statistic wrong for total Number of Impressions, should have been 50 but was "
-            + response.get(0).value,
-        response.equals(expectedResponse));
+    assertTrue("Statistic wrong for total Number of Impressions, should have been 50 but was "
+        + response.get(0).value, response.equals(expectedResponse));
   }
 
   @Test
@@ -83,12 +76,11 @@ public class QueryCorrectnessTest {
     expectedResponse.add(new Pair<>("all", 50));
 
     MetricQuery statQuery = new MetricQuery(Metric.CLICKS, null, null);
+    statQuery.campaign = this.campaign;
     List<Pair<String, Integer>> response = databaseHandler.getQueryResponse(statQuery).getResult();
 
-    assertTrue(
-        "Statistic wrong for total number of clicks, should have been 50 but was "
-            + response.get(0).value,
-        response.equals(expectedResponse));
+    assertTrue("Statistic wrong for total number of clicks, should have been 50 but was "
+        + response.get(0).value, response.equals(expectedResponse));
   }
 
   @Test
@@ -96,12 +88,11 @@ public class QueryCorrectnessTest {
     List<Pair<String, Integer>> expectedResponse = response("all", 1);
 
     MetricQuery statQuery = new MetricQuery(Metric.CONVERSIONS, null, null);
+    statQuery.campaign = this.campaign;
     List<Pair<String, Integer>> response = databaseHandler.getQueryResponse(statQuery).getResult();
 
-    assertTrue(
-        "Statistic wrong for total number of conversions, should have been 1 but was "
-            + response.get(0).value,
-        response.equals(expectedResponse));
+    assertTrue("Statistic wrong for total number of conversions, should have been 1 but was "
+        + response.get(0).value, response.equals(expectedResponse));
   }
 
   @Test
@@ -109,12 +100,11 @@ public class QueryCorrectnessTest {
     List<Pair<String, Integer>> expectedResponse = response("all", 50);
 
     MetricQuery statQuery = new MetricQuery(Metric.UNIQUES, null, null);
+    statQuery.campaign = this.campaign;
     List<Pair<String, Integer>> response = databaseHandler.getQueryResponse(statQuery).getResult();
 
-    assertTrue(
-        "Statistic wrong for total number of uniques, should have been 50 but was "
-            + response.get(0).value,
-        response.equals(expectedResponse));
+    assertTrue("Statistic wrong for total number of uniques, should have been 50 but was "
+        + response.get(0).value, response.equals(expectedResponse));
   }
 
   // FIXME the actual result should be 291.828175
@@ -123,12 +113,11 @@ public class QueryCorrectnessTest {
     List<Pair<String, Integer>> expectedResponse = response("all", 291);
 
     MetricQuery statQuery = new MetricQuery(Metric.TOTAL_COST, null, null);
+    statQuery.campaign = this.campaign;
     List<Pair<String, Integer>> response = databaseHandler.getQueryResponse(statQuery).getResult();
 
-    assertTrue(
-        "Statistic wrong for total cost, should have been 291.828175 but was "
-            + response.get(0).value,
-        response.equals(expectedResponse));
+    assertTrue("Statistic wrong for total cost, should have been 291.828175 but was "
+        + response.get(0).value, response.equals(expectedResponse));
   }
 
   @Test
@@ -136,12 +125,11 @@ public class QueryCorrectnessTest {
     List<Pair<String, Integer>> expectedResponse = response("all", 1);
 
     MetricQuery statQuery = new MetricQuery(Metric.CTR, null, null);
+    statQuery.campaign = this.campaign;
     List<Pair<String, Integer>> response = databaseHandler.getQueryResponse(statQuery).getResult();
 
-    assertTrue(
-            "Statistic wrong for CTR, should have been 1 but was "
-                    + response.get(0).value,
-            response.equals(expectedResponse));
+    assertTrue("Statistic wrong for CTR, should have been 1 but was " + response.get(0).value,
+        response.equals(expectedResponse));
   }
 
   @Test
@@ -149,36 +137,35 @@ public class QueryCorrectnessTest {
     List<Pair<String, Integer>> expectedResponse = response("all", 291);
 
     MetricQuery statQuery = new MetricQuery(Metric.CPA, null, null);
+    statQuery.campaign = this.campaign;
     List<Pair<String, Integer>> response = databaseHandler.getQueryResponse(statQuery).getResult();
 
-    assertTrue(
-            "Statistic wrong for CPA, should have been 291 but was "
-                    + response.get(0).value,
-            response.equals(expectedResponse));
+    assertTrue("Statistic wrong for CPA, should have been 291 but was " + response.get(0).value,
+        response.equals(expectedResponse));
   }
 
   // FIXME the actual result should be 5.8365635
   @Test
   public void cpcTest() {
     List<Pair<String, Integer>> expectedResponse = response("all", 5);
-    MetricQuery statQuery = new MetricQuery(Metric.CPC, null,null);
+    MetricQuery statQuery = new MetricQuery(Metric.CPC, null, null);
+    statQuery.campaign = this.campaign;
     List<Pair<String, Integer>> response = databaseHandler.getQueryResponse(statQuery).getResult();
 
-    assertTrue(
-            "Statistic wrong for CPC, should have been 1.1915 but was " + response.get(0).value,
-            response.equals(expectedResponse));
+    assertTrue("Statistic wrong for CPC, should have been 1.1915 but was " + response.get(0).value,
+        response.equals(expectedResponse));
   }
 
-  //FIXME the actual result should be 1.1915
+  // FIXME the actual result should be 1.1915
   @Test
   public void cpmTest() {
     List<Pair<String, Integer>> expectedResponse = response("all", 1);
-    MetricQuery statQuery = new MetricQuery(Metric.CPM, null,null);
+    MetricQuery statQuery = new MetricQuery(Metric.CPM, null, null);
+    statQuery.campaign = this.campaign;
     List<Pair<String, Integer>> response = databaseHandler.getQueryResponse(statQuery).getResult();
 
-    assertTrue(
-            "Statistic wrong for CPM, should have been 1.1915 but was " + response.get(0).value,
-            response.equals(expectedResponse));
+    assertTrue("Statistic wrong for CPM, should have been 1.1915 but was " + response.get(0).value,
+        response.equals(expectedResponse));
   }
 
   @Test
@@ -189,10 +176,10 @@ public class QueryCorrectnessTest {
     b.type = BounceConfig.Type.PAGES;
     b.value = 2;
     MetricQuery statQuery = new MetricQuery(Metric.BOUNCES, null, null, b, null);
+    statQuery.campaign = this.campaign;
     List<Pair<String, Integer>> response = databaseHandler.getQueryResponse(statQuery).getResult();
 
-    assertTrue(
-        "Statistic wrong for bounces, should have been 23 but was " + response.get(0).value,
+    assertTrue("Statistic wrong for bounces, should have been 23 but was " + response.get(0).value,
         response.equals(expectedResponse));
   }
 
@@ -204,10 +191,10 @@ public class QueryCorrectnessTest {
     b.type = BounceConfig.Type.TIME;
     b.value = 1;
     MetricQuery statQuery = new MetricQuery(Metric.BOUNCES, null, null, b, null);
+    statQuery.campaign = this.campaign;
     List<Pair<String, Integer>> response = databaseHandler.getQueryResponse(statQuery).getResult();
 
-    assertTrue(
-        "Statistic wrong for bounces, should have been 3 but was " + response.get(0).value,
+    assertTrue("Statistic wrong for bounces, should have been 3 but was " + response.get(0).value,
         response.equals(expectedResponse));
   }
 
@@ -219,11 +206,12 @@ public class QueryCorrectnessTest {
     b.type = BounceConfig.Type.PAGES;
     b.value = 1;
     MetricQuery statQuery = new MetricQuery(Metric.BOUNCE_RATE, null, null, b, null);
+    statQuery.campaign = this.campaign;
     List<Pair<String, Integer>> response = databaseHandler.getQueryResponse(statQuery).getResult();
 
     assertTrue(
-            "Statistic wrong for bounce rate, should have been 46 but was " + response.get(0).value,
-            response.equals(expectedResponse));
+        "Statistic wrong for bounce rate, should have been 46 but was " + response.get(0).value,
+        response.equals(expectedResponse));
 
   }
 
