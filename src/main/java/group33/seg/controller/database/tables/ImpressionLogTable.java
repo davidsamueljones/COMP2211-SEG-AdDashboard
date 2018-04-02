@@ -10,6 +10,9 @@ public class ImpressionLogTable extends DatabaseTable {
 
   @Override
   public void createTable(Connection c) throws SQLException {
+    // Ensure required enums are initialised
+    initEnums(c);
+    // Create the table
     Statement st = c.createStatement();
     st.execute(
         "CREATE TABLE IF NOT EXISTS impression_log (date TIMESTAMP,"
