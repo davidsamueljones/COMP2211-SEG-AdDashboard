@@ -156,7 +156,7 @@ public class LineGraphView extends JPanel {
    * @param data Dataset to replace existing with
    * @return Whether the data was updated successfully
    */
-  public boolean setLineData(LineConfig line, List<Pair<String, Integer>> data) {
+  public boolean setLineData(LineConfig line, List<Pair<String, Number>> data) {
     TimeSeries ts = getLineSeries(line);
     if (ts == null) {
       return false;
@@ -218,9 +218,9 @@ public class LineGraphView extends JPanel {
    * @param ts Time series for which to set data
    * @param data Replacement data
    */
-  private void setSeriesData(TimeSeries ts, List<Pair<String, Integer>> data) {
+  private void setSeriesData(TimeSeries ts, List<Pair<String, Number>> data) {
     ts.clear();
-    for (Pair<String, Integer> d : data) {
+    for (Pair<String, Number> d : data) {
       ts.add(Second.parseSecond(d.key), d.value);
     }
   }

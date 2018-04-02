@@ -19,7 +19,7 @@ public class StatisticHandler {
     this.mvc = mvc;
   }
   
-  public Integer impressionRequest() {
+  public Number impressionRequest() {
     DatabaseHandler db = new DatabaseHandler(null, "config.properties"); // TODO: REMOVE ASAP
     MetricQuery queryImpressions = new MetricQuery(Metric.IMPRESSIONS, null, null);
     MetricQueryResponse resImpressions = db.getQueryResponse(queryImpressions);

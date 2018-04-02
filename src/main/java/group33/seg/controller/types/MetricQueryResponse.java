@@ -9,9 +9,9 @@ import group33.seg.model.types.Pair;
 //FIXME Cannot assume that the answer is going to be Integer
 public class MetricQueryResponse {
   private MetricQuery query;
-  private Future<List<Pair<String, Integer>>> result;
+  private Future<List<Pair<String, Number>>> result;
 
-  public MetricQueryResponse(MetricQuery query, Future<List<Pair<String, Integer>>> result) {
+  public MetricQueryResponse(MetricQuery query, Future<List<Pair<String, Number>>> result) {
     this.query = query;
     this.result = result;
   }
@@ -20,7 +20,7 @@ public class MetricQueryResponse {
     return query;
   }
 
-  public List<Pair<String, Integer>> getResult() {
+  public List<Pair<String, Number>> getResult() {
     try {
       return result.get();
     } catch (InterruptedException | ExecutionException e) {

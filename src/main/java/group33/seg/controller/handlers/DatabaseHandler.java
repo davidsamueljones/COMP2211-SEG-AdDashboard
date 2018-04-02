@@ -79,17 +79,17 @@ public class DatabaseHandler {
     return new MetricQueryResponse(request, pool.submit(() -> getGraphData(request)));
   }
 
-  private List<Pair<String, Integer>> getGraphData(MetricQuery request) {
+  private List<Pair<String, Number>> getGraphData(MetricQuery request) {
     DatabaseConnection connection = getConnection();
     String sql = DatabaseQueryFactory.generateSQL(request);
-    List<Pair<String, Integer>> result = new LinkedList<>();
+    List<Pair<String, Number>> result = new LinkedList<>();
 
     try {
       Statement cs = connection.connectDatabase().createStatement();
       ResultSet rs = cs.executeQuery(sql);
 
       while (rs.next()) {
-        result.add(new Pair<>(rs.getString("xaxis"), rs.getInt("yaxis")));
+        result.add(new Pair<>(rs.getString("xaxis"), (Number) rs.getObject("yaxis")));
       }
     } catch (SQLException e) {
       e.printStackTrace();
