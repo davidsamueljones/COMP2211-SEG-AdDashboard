@@ -24,6 +24,7 @@ public class Main {
 
     DashboardView view = new DashboardView();
     DashboardController controller = new DashboardController(model, view);
+    controller.database.refreshConnections(workspace.database, 10);
     
     // Start view's dashboard
     controller.display.openDashboard();
