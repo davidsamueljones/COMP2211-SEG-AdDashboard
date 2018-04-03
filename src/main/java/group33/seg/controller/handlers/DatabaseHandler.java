@@ -134,11 +134,15 @@ public class DatabaseHandler {
     if (pid > 0) {
       try {
         // Create an independent server connection
-        Connection conn = getConnection().connectDatabase();
+        DatabaseConnection db = getConnection();
+        Connection conn = db.connectDatabase();
         // Request cancellation of current transaction
         PreparedStatement ps = conn.prepareStatement(String.format("SELECT %s(%d)",
             force ? "pg_terminate_backend" : "pg_cancel_backend", pid));
         ps.execute();
+        // Close connection
+        conn.close();
+        returnConnection(db);
       } catch (Exception e) {
         System.err.println("Unable to request process cancellation");
       }
