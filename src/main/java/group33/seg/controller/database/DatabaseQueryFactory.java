@@ -115,7 +115,7 @@ public class DatabaseQueryFactory {
             + " (SELECT CASE conversions WHEN 0 THEN 0 ELSE (icost + ccost) / conversions END FROM"
             + " (SELECT SUM(impression_cost) as icost FROM impression_log WHERE <campaign> AND date_trunc('<interval>', date) = xaxis) as il,"
             + " (SELECT SUM(click_cost) as ccost FROM click_log WHERE <campaign> AND date_trunc('<interval>', date) = xaxis) as cl,"
-            + " (SELECT count(*) as conversions FROM server_log WHERE conversion=true AND <campaign> AND date_trunc('<interval>', entry_date) = xaxis) as iil) as yaxis"
+            + " (SELECT sum(conversion::int) as conversions FROM server_log WHERE <campaign> AND date_trunc('<interval>', entry_date) = xaxis) as iil) as yaxis"
             + " FROM"
             + " (SELECT date_trunc('<interval>', min(entry_date)) AS start FROM server_log WHERE <campaign>) AS min,"
             + " (SELECT date_trunc('<interval>', max(entry_date)) AS final FROM server_log WHERE <campaign>) AS max,"
@@ -207,7 +207,7 @@ public class DatabaseQueryFactory {
         "SELECT 'all' AS xaxis, (il.cost + cl.cost) / conversions AS yaxis FROM "
             + " (SELECT sum(impression_cost) AS cost FROM impression_log WHERE <campaign>) AS il,"
             + " (SELECT sum(click_cost) AS cost FROM click_log WHERE <campaign>) AS cl,"
-            + " (SELECT count(*) AS conversions FROM server_log WHERE conversion=true AND <campaign>) AS sl;");
+            + " (SELECT sum(conversion::int) AS conversions FROM server_log WHERE <campaign>) AS sl;");
 
     // The average amount of money spent for each click (CPC)
     statisticQueries.put(
