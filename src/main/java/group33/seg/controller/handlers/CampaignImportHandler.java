@@ -60,13 +60,13 @@ public class CampaignImportHandler {
   }
 
   /**
-   * Import CSV files into tables using the current database connection. The imported data will
-   * replace any data residing in the database. Progress listeners are kept updated on status of
-   * import. As the import is handled on another thread, {@link CampaignImportHandler#cancelImport}
-   * must be used to interrupt an ongoing import. Any errors are built up using the instances
-   * internal ErrorBuilder.
+   * Import CSV files into tables using a pool database connection. Data will be imported as a new
+   * campaign with existing data unaffected. Progress listeners are kept updated on status of import
+   * and any errors are built up using the instances internal ErrorBuilder. As the import is handled
+   * on another thread, {@link CampaignImportHandler#cancelImport} must be used to interrupt an
+   * ongoing import.
    *
-   * @param importConfig Campaign information required for import.
+   * @param importConfig Campaign information required for import
    * @return Whether import started successfully
    */
   public boolean doImport(CampaignImportConfig importConfig) {
@@ -85,67 +85,7 @@ public class CampaignImportHandler {
 
     // Handle import on a separate thread
     threadImport = new Thread(() -> {
-      boolean finished = false;
-
-      // Alert listeners that import is starting
-      alertStart();
-      // Reset import progress
-      updateProgress(0);
-
-      // Use a single connection for the entire transaction
-      Connection conn = null;
-      int campaignID = -1;
-
-      try {
-        // Create connection
-        conn = getConnection(importConfig.databaseConfigFile);
-        // Create a new campaign
-        campaignID = createNewCampaign(conn, importConfig.campaignName);
-
-        // Use the file size to determine the proportions when importing
-        double sizeImpressionLog = new File(importConfig.pathImpressionLog).length();
-        double sizeClickLog = new File(importConfig.pathClickLog).length();
-        double sizeServerLog = new File(importConfig.pathServerLog).length();
-        double totalSize = sizeImpressionLog + sizeClickLog + sizeServerLog;
-
-        // Import click log
-        importTable(new ClickLogTable(), conn, importConfig.pathClickLog, sizeClickLog / totalSize,
-            campaignID);
-        // Import impression log
-        importTable(new ImpressionLogTable(), conn, importConfig.pathImpressionLog,
-            sizeImpressionLog / totalSize, campaignID);
-        // Import server log
-        importTable(new ServerLogTable(), conn, importConfig.pathServerLog,
-            sizeServerLog / totalSize, campaignID);
-
-        // Create campaign configuration (storing as last import)
-        CampaignConfig campaign = new CampaignConfig(campaignID);
-        campaign.name = importConfig.campaignName;
-        setImportedCampaign(campaign);
-
-        // Alert listeners that import is finished
-        alertFinished(true);
-        finished = true;
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-        alertCancelled();
-      } catch (ImportException e) {
-        alertFinished(false);
-      } catch (Exception e) {
-        eb.addError("Unknown Error");
-        e.printStackTrace();
-        alertFinished(false);
-      } finally {
-        // Remove 'corrupted' data if import did not finish successfully
-        if (conn != null && !finished && campaignID != -1) {
-          removeCampaign(conn, campaignID);
-        }
-        try {
-          conn.close();
-        } catch (SQLException e) {
-          // couldn't close, ignore
-        }
-      }
+      importCampaign(importConfig);
       threadImport = null;
     });
 
@@ -155,40 +95,98 @@ public class CampaignImportHandler {
     return true;
   }
 
+  /**
+   * Import control method, should be called using {@link doImport}.
+   * 
+   * @param importConfig Campaign information required for import
+   */
+  private void importCampaign(CampaignImportConfig importConfig) {
+    boolean finished = false;
+
+    // Alert listeners that import is starting
+    alertStart();
+    // Reset import progress
+    updateProgress(0);
+
+    // Use a single connection for the entire transaction
+    DatabaseConnection db = null;
+    Connection conn = null;
+    int campaignID = -1;
+
+    try {
+      // Create connection
+      db = mvc.controller.database.getConnection();
+      try {
+        conn = db.connectDatabase();
+      } catch (SQLException e) {
+        if (PSQLState.CONNECTION_UNABLE_TO_CONNECT.getState().equals(e.getSQLState())) {
+          eb.addError(
+              "Connection to server refused, check hostname, port, username and password are correct");
+          throw new ImportException();
+        } else {
+          throw new RuntimeException(e);
+        }
+      }
+
+      // Create a new campaign
+      campaignID = createNewCampaign(conn, importConfig.campaignName);
+
+      // Use the file size to determine the proportions when importing
+      double sizeImpressionLog = new File(importConfig.pathImpressionLog).length();
+      double sizeClickLog = new File(importConfig.pathClickLog).length();
+      double sizeServerLog = new File(importConfig.pathServerLog).length();
+      double totalSize = sizeImpressionLog + sizeClickLog + sizeServerLog;
+
+      // Import click log
+      importTable(new ClickLogTable(), conn, importConfig.pathClickLog, sizeClickLog / totalSize,
+          campaignID);
+      // Import impression log
+      importTable(new ImpressionLogTable(), conn, importConfig.pathImpressionLog,
+          sizeImpressionLog / totalSize, campaignID);
+      // Import server log
+      importTable(new ServerLogTable(), conn, importConfig.pathServerLog, sizeServerLog / totalSize,
+          campaignID);
+
+      // Create campaign configuration (storing as last import)
+      CampaignConfig campaign = new CampaignConfig(campaignID);
+      campaign.name = importConfig.campaignName;
+      setImportedCampaign(campaign);
+
+      // Alert listeners that import is finished
+      alertFinished(true);
+      finished = true;
+    } catch (InterruptedException e) {
+      alertCancelled();
+    } catch (ImportException e) {
+      alertFinished(false);
+    } catch (Exception e) {
+      eb.addError("Unknown Error");
+      e.printStackTrace();
+      alertFinished(false);
+    } finally {
+      // Remove 'corrupted' data if import did not finish successfully
+      if (conn != null && !finished && campaignID != -1) {
+        removeCampaign(conn, campaignID);
+      }
+      try {
+        conn.close();
+      } catch (SQLException e) {
+        // Couldn't close ignore
+      } finally {
+        // Return database connection
+        mvc.controller.database.returnConnection(db);
+      }
+    }
+  }
+
   private void removeCampaign(Connection conn, int campaignID) {
     try {
       Statement st = conn.createStatement();
       // TODO: Enable CASCADE in Campaign table (currently will cause exception)
-      st.execute(String.format("DELETE FROM %s WHERE id = %d", (new CampaignTable()).getTableName(), campaignID));
+      st.execute(String.format("DELETE FROM %s WHERE id = %d", (new CampaignTable()).getTableName(),
+          campaignID));
     } catch (SQLException e) {
       e.printStackTrace();
-    }
-  }
-
-  /**
-   * TODO: Move
-   */
-  private Connection getConnection(String path) throws ImportException, RuntimeException {
-    try {
-      // TODO: Use database controller to get a connection
-      DatabaseConfig config = new DatabaseConfig(path);
-      DatabaseConnection dbConn =
-          new DatabaseConnection(config.getHost(), config.getUser(), config.getPassword());
-      Connection conn = dbConn.connectDatabase();
-      return conn;
-    } catch (FileNotFoundException e) {
-      eb.addError(String.format("Database configuration '%s' not found"));
-      throw new ImportException();
-    } catch (SQLException e) {
-      if (PSQLState.CONNECTION_UNABLE_TO_CONNECT.getState().equals(e.getSQLState())) {
-        eb.addError(
-            "Connection to server refused, check hostname, port, username and password are correct");
-        throw new ImportException();
-      } else {
-        throw new RuntimeException(e);
-      }
-    } catch (Exception e) {
-      throw new RuntimeException(e);
     }
   }
 
