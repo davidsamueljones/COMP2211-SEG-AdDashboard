@@ -15,7 +15,7 @@ public class DatabaseConnection {
     this.password = password;
   }
 
-  public Connection connectDatabase() {
+  public Connection connectDatabase() throws SQLException {
     if (host == null || user == null) {
       throw new IllegalArgumentException("Host and user cannot be null!");
     }
@@ -23,9 +23,8 @@ public class DatabaseConnection {
     try {
       Class.forName("org.postgresql.Driver");
       return DriverManager.getConnection(host, user, password);
-    } catch (SQLException | ClassNotFoundException e) {
-      e.printStackTrace();
-      return null;
+    } catch (ClassNotFoundException e) {
+      throw new RuntimeException(e);
     }
   }
 }
