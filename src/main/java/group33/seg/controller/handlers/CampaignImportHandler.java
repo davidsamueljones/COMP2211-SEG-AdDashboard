@@ -228,7 +228,7 @@ public class CampaignImportHandler {
    */
   private void importTable(DatabaseTable table, Connection conn, String path, double weight,
       int campaignID) throws InterruptedException {
-    DatabaseTableImporter importer = new DatabaseTableImporter();
+    DatabaseTableImporter importer = new DatabaseTableImporter(mvc.controller.database);
     final int curProgress = progress;
 
     // Ensure table is created
@@ -244,8 +244,7 @@ public class CampaignImportHandler {
     // Create worker thread handling import
     Thread worker = new Thread(() -> {
       try {
-        System.out.println(campaignID);
-        importer.importCSV(table, conn, path, campaignID);
+        importer.doImport(path, table, campaignID);
       } catch (Exception e) {
         e.printStackTrace();
         // do nothing, let main import thread handle
@@ -265,7 +264,7 @@ public class CampaignImportHandler {
       // Check for interrupts
       if (interrupt || Thread.currentThread().isInterrupted()) {
         worker.interrupt();
-        worker.join(0);
+        worker.join();
         throw new InterruptedException();
       }
       // Update progress
