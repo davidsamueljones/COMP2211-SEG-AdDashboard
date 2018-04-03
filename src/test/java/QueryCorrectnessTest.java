@@ -71,7 +71,7 @@ public class QueryCorrectnessTest {
     List<Pair<String, Number>> expectedResponse = new LinkedList<>();
     expectedResponse.add(new Pair<>("all", 50L));
 
-    MetricQuery statQuery = new MetricQuery(Metric.IMPRESSIONS, null, null);
+    MetricQuery statQuery = new MetricQuery(Metric.IMPRESSIONS, null, null, null, campaign);
     List<Pair<String, Number>> response = databaseHandler.getQueryResponse(statQuery).getResult();
 
     assertTrue("Statistic wrong for impressions, should have been 50 but was " + response.get(0).value, response.equals(expectedResponse));
@@ -87,7 +87,7 @@ public class QueryCorrectnessTest {
     expectedWeekResponse.add(new Pair<>("2015-02-16 00:00:00", 8L));
     expectedWeekResponse.add(new Pair<>("2015-02-23 00:00:00", 9L));
 
-    MetricQuery graphQuery = new MetricQuery(Metric.IMPRESSIONS, Interval.WEEK, null);
+    MetricQuery graphQuery = new MetricQuery(Metric.IMPRESSIONS, Interval.WEEK, null, null, campaign);
     List<Pair<String, Number>> weekResponse = databaseHandler.getQueryResponse(graphQuery).getResult();
     
     assertTrue("Time interval test wrong for impression metric", weekResponse.equals(expectedWeekResponse));
@@ -98,7 +98,7 @@ public class QueryCorrectnessTest {
     List<Pair<String, Number>> expectedResponse = new LinkedList<>();
     expectedResponse.add(new Pair<>("all", 50L));
 
-    MetricQuery statQuery = new MetricQuery(Metric.CLICKS, null, null);
+    MetricQuery statQuery = new MetricQuery(Metric.CLICKS, null, null, null, campaign);
     List<Pair<String, Number>> response = databaseHandler.getQueryResponse(statQuery).getResult();
     
     assertTrue("Statistic wrong for clicks, should have been 50 but was " + response.get(0).value, response.equals(expectedResponse));
@@ -113,7 +113,7 @@ public class QueryCorrectnessTest {
     expectedWeekResponse.add(new Pair<>("2015-02-16 00:00:00", 11L));
     expectedWeekResponse.add(new Pair<>("2015-02-23 00:00:00", 8L));
 
-    MetricQuery graphQuery = new MetricQuery(Metric.CLICKS, Interval.WEEK, null);
+    MetricQuery graphQuery = new MetricQuery(Metric.CLICKS, Interval.WEEK, null, null, campaign);
     List<Pair<String, Number>> weekResponse = databaseHandler.getQueryResponse(graphQuery).getResult();
     
     assertTrue("Time interval test wrong for clicks metric", weekResponse.equals(expectedWeekResponse));
@@ -124,7 +124,7 @@ public class QueryCorrectnessTest {
     List<Pair<String, Number>> expectedResponse = new LinkedList<>();
     expectedResponse.add(new Pair<>("all", 3L));
 
-    MetricQuery statQuery = new MetricQuery(Metric.CONVERSIONS, null, null);
+    MetricQuery statQuery = new MetricQuery(Metric.CONVERSIONS, null, null, null, campaign);
     List<Pair<String, Number>> response = databaseHandler.getQueryResponse(statQuery).getResult();
     
     assertTrue("Statistic wrong for conversions, should have been 3 but was " + response.get(0).value, response.equals(expectedResponse));
@@ -140,7 +140,7 @@ public class QueryCorrectnessTest {
     expectedWeekResponse.add(new Pair<>("2015-02-16 00:00:00", null));
     expectedWeekResponse.add(new Pair<>("2015-02-23 00:00:00", 1L));
 
-    MetricQuery graphQuery = new MetricQuery(Metric.CONVERSIONS, Interval.WEEK, null);
+    MetricQuery graphQuery = new MetricQuery(Metric.CONVERSIONS, Interval.WEEK, null, null, campaign);
     List<Pair<String, Number>> weekResponse = databaseHandler.getQueryResponse(graphQuery).getResult();
 
     assertTrue("Time interval test wrong for conversions metric", weekResponse.equals(expectedWeekResponse));
@@ -151,7 +151,7 @@ public class QueryCorrectnessTest {
     List<Pair<String, Number>> expectedResponse = new LinkedList<>();
     expectedResponse.add(new Pair<>("all", 109.51602866666661));
 
-    MetricQuery statQuery = new MetricQuery(Metric.CPA, null, null);
+    MetricQuery statQuery = new MetricQuery(Metric.CPA, null, null, null, campaign);
     List<Pair<String, Number>> response = databaseHandler.getQueryResponse(statQuery).getResult();
     
     assertTrue("Statistic wrong for CPA, should have been 109.51602866666661 but was " + response.get(0).value, response.equals(expectedResponse));
@@ -167,7 +167,7 @@ public class QueryCorrectnessTest {
     expectedWeekResponse.add(new Pair<>("2015-02-16 00:00:00", 0.0));
     expectedWeekResponse.add(new Pair<>("2015-02-23 00:00:00", 46.678855));
 
-    MetricQuery graphQuery = new MetricQuery(Metric.CPA, Interval.WEEK, null);
+    MetricQuery graphQuery = new MetricQuery(Metric.CPA, Interval.WEEK, null, null, campaign);
     List<Pair<String, Number>> weekResponse = databaseHandler.getQueryResponse(graphQuery).getResult();
 
     assertTrue("Time interval test wrong for CPA metric", weekResponse.equals(expectedWeekResponse));
@@ -178,7 +178,7 @@ public class QueryCorrectnessTest {
     List<Pair<String, Number>> expectedResponse = new LinkedList<>();
     expectedResponse.add(new Pair<>("all", 6.570961719999997));
 
-    MetricQuery statQuery = new MetricQuery(Metric.CPC, null, null);
+    MetricQuery statQuery = new MetricQuery(Metric.CPC, null, null, null, campaign);
     List<Pair<String, Number>> response = databaseHandler.getQueryResponse(statQuery).getResult();
     
     assertTrue("Statistic wrong for CPC, should have been 6.570961719999997 but was " + response.get(0).value, response.equals(expectedResponse));
@@ -193,7 +193,7 @@ public class QueryCorrectnessTest {
     expectedWeekResponse.add(new Pair<>("2015-02-16 00:00:00", 7.883889000000002));
     expectedWeekResponse.add(new Pair<>("2015-02-23 00:00:00", 5.834856875));
 
-    MetricQuery graphQuery = new MetricQuery(Metric.CPC, Interval.WEEK, null);
+    MetricQuery graphQuery = new MetricQuery(Metric.CPC, Interval.WEEK, null, null, campaign);
     List<Pair<String, Number>> weekResponse = databaseHandler.getQueryResponse(graphQuery).getResult();
 
     assertTrue("Time interval test wrong for clicks metric", weekResponse.equals(expectedWeekResponse));
@@ -204,7 +204,7 @@ public class QueryCorrectnessTest {
     List<Pair<String, Number>> expectedResponse = new LinkedList<>();
     expectedResponse.add(new Pair<>("all", 1.0916200000000003));
 
-    MetricQuery statQuery = new MetricQuery(Metric.CPM, null, null);
+    MetricQuery statQuery = new MetricQuery(Metric.CPM, null, null, null, campaign);
     List<Pair<String, Number>> response = databaseHandler.getQueryResponse(statQuery).getResult();
     
     assertTrue("Statistic wrong for CPM, should have been 1.0916200000000003 but was " + response.get(0).value, response.equals(expectedResponse));
@@ -220,7 +220,7 @@ public class QueryCorrectnessTest {
     expectedWeekResponse.add(new Pair<>("2015-02-16 00:00:00", 0.8975000000000001));
     expectedWeekResponse.add(new Pair<>("2015-02-23 00:00:00", 1.3465555555555557));
 
-    MetricQuery graphQuery = new MetricQuery(Metric.CPM, Interval.WEEK, null);
+    MetricQuery graphQuery = new MetricQuery(Metric.CPM, Interval.WEEK, null, null, campaign);
     List<Pair<String, Number>> weekResponse = databaseHandler.getQueryResponse(graphQuery).getResult();
 
     assertTrue("Time interval test wrong for CPM metric", weekResponse.equals(expectedWeekResponse));
@@ -231,7 +231,7 @@ public class QueryCorrectnessTest {
     List<Pair<String, Number>> expectedResponse = new LinkedList<>();
     expectedResponse.add(new Pair<>("all", 1.0));
 
-    MetricQuery statQuery = new MetricQuery(Metric.CTR, null, null);
+    MetricQuery statQuery = new MetricQuery(Metric.CTR, null, null, null, campaign);
     List<Pair<String, Number>> response = databaseHandler.getQueryResponse(statQuery).getResult();
     
     assertTrue("Statistic wrong for CTR, should have been 1.0 but was " + response.get(0).value, response.equals(expectedResponse));
@@ -247,7 +247,7 @@ public class QueryCorrectnessTest {
     expectedWeekResponse.add(new Pair<>("2015-02-16 00:00:00", 1.375));
     expectedWeekResponse.add(new Pair<>("2015-02-23 00:00:00", 0.8888888888888888));
 
-    MetricQuery graphQuery = new MetricQuery(Metric.CTR, Interval.WEEK, null);
+    MetricQuery graphQuery = new MetricQuery(Metric.CTR, Interval.WEEK, null, null, campaign);
     List<Pair<String, Number>> weekResponse = databaseHandler.getQueryResponse(graphQuery).getResult();
 
     assertTrue("Time interval test wrong for CTR metric", weekResponse.equals(expectedWeekResponse));
@@ -258,7 +258,7 @@ public class QueryCorrectnessTest {
     List<Pair<String, Number>> expectedResponse = new LinkedList<>();
     expectedResponse.add(new Pair<>("all", 328.54808599999984));
 
-    MetricQuery statQuery = new MetricQuery(Metric.TOTAL_COST, null, null);
+    MetricQuery statQuery = new MetricQuery(Metric.TOTAL_COST, null, null, null, campaign);
     List<Pair<String, Number>> response = databaseHandler.getQueryResponse(statQuery).getResult();
     
     assertTrue("Statistic wrong for total cost, should have been 328.54808599999984 but was " + response.get(0).value, response.equals(expectedResponse));
@@ -274,7 +274,7 @@ public class QueryCorrectnessTest {
     expectedWeekResponse.add(new Pair<>("2015-02-16 00:00:00", 86.722779));
     expectedWeekResponse.add(new Pair<>("2015-02-23 00:00:00", 46.678855));
 
-    MetricQuery graphQuery = new MetricQuery(Metric.TOTAL_COST, Interval.WEEK, null);
+    MetricQuery graphQuery = new MetricQuery(Metric.TOTAL_COST, Interval.WEEK, null, null, campaign);
     List<Pair<String, Number>> weekResponse = databaseHandler.getQueryResponse(graphQuery).getResult();
 
     assertTrue("Time interval test wrong for total cost metric", weekResponse.equals(expectedWeekResponse));
@@ -285,7 +285,7 @@ public class QueryCorrectnessTest {
     List<Pair<String, Number>> expectedResponse = new LinkedList<>();
     expectedResponse.add(new Pair<>("all", 50L));
 
-    MetricQuery statQuery = new MetricQuery(Metric.UNIQUES, null, null);
+    MetricQuery statQuery = new MetricQuery(Metric.UNIQUES, null, null, null, campaign);
     List<Pair<String, Number>> response = databaseHandler.getQueryResponse(statQuery).getResult();
     
     assertTrue("Statistic wrong for uniques, should have been 50 but was " + response.get(0).value, response.equals(expectedResponse));
@@ -300,7 +300,7 @@ public class QueryCorrectnessTest {
     expectedWeekResponse.add(new Pair<>("2015-02-16 00:00:00", 11L));
     expectedWeekResponse.add(new Pair<>("2015-02-23 00:00:00", 8L));
 
-    MetricQuery graphQuery = new MetricQuery(Metric.UNIQUES, Interval.WEEK, null);
+    MetricQuery graphQuery = new MetricQuery(Metric.UNIQUES, Interval.WEEK, null, null, campaign);
     List<Pair<String, Number>> weekResponse = databaseHandler.getQueryResponse(graphQuery).getResult();
     
     assertTrue("Time interval test wrong for uniques metric", weekResponse.equals(expectedWeekResponse));
@@ -315,7 +315,7 @@ public class QueryCorrectnessTest {
     bounceConfig.type = BounceConfig.Type.PAGES;
     bounceConfig.value = 2;
 
-    MetricQuery statQuery = new MetricQuery(Metric.BOUNCES, null, null, bounceConfig, null);
+    MetricQuery statQuery = new MetricQuery(Metric.BOUNCES, null, null, bounceConfig, campaign);
     List<Pair<String, Number>> response = databaseHandler.getQueryResponse(statQuery).getResult();
     
     assertTrue("Statistic wrong for bounces, should have been 27 but was " + response.get(0).value, response.equals(expectedResponse));
@@ -331,7 +331,7 @@ public class QueryCorrectnessTest {
     expectedWeekResponse.add(new Pair<>("2015-02-16 00:00:00", 3L));
     expectedWeekResponse.add(new Pair<>("2015-02-23 00:00:00", 2L));
 
-    MetricQuery graphQuery = new MetricQuery(Metric.BOUNCES, Interval.WEEK, null, bounceConfig, null);
+    MetricQuery graphQuery = new MetricQuery(Metric.BOUNCES, Interval.WEEK, null, bounceConfig, campaign);
     List<Pair<String, Number>> weekResponse = databaseHandler.getQueryResponse(graphQuery).getResult();
 
     assertTrue("Time interval test wrong for bounces metric", weekResponse.equals(expectedWeekResponse));
@@ -346,7 +346,7 @@ public class QueryCorrectnessTest {
     bounceConfig.type = BounceConfig.Type.PAGES;
     bounceConfig.value = 2;
 
-    MetricQuery statQuery = new MetricQuery(Metric.BOUNCE_RATE, null, null, bounceConfig, null);
+    MetricQuery statQuery = new MetricQuery(Metric.BOUNCE_RATE, null, null, bounceConfig, campaign);
     List<Pair<String, Number>> response = databaseHandler.getQueryResponse(statQuery).getResult();
     
     assertTrue("Statistic wrong for bounce rate, should have been 54.0 but was " + response.get(0).value, response.equals(expectedResponse));
@@ -362,7 +362,7 @@ public class QueryCorrectnessTest {
     expectedWeekResponse.add(new Pair<>("2015-02-16 00:00:00", 27.27272727272727));
     expectedWeekResponse.add(new Pair<>("2015-02-23 00:00:00", 25.0));
 
-    MetricQuery graphQuery = new MetricQuery(Metric.BOUNCE_RATE, Interval.WEEK, null, bounceConfig, null);
+    MetricQuery graphQuery = new MetricQuery(Metric.BOUNCE_RATE, Interval.WEEK, null, bounceConfig, campaign);
     List<Pair<String, Number>> weekResponse = databaseHandler.getQueryResponse(graphQuery).getResult();
 
     assertTrue("Time interval test wrong for bounce rate metric", weekResponse.equals(expectedWeekResponse));
