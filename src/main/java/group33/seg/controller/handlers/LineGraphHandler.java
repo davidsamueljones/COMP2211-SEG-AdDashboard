@@ -90,14 +90,12 @@ public class LineGraphHandler implements GraphHandlerInterface<LineGraphConfig> 
     // Get list of existing lines
     List<LineConfig> exLines = (this.graph == null ? null : graph.lines);
     for (LineConfig line : lines) {
-      if (!line.hide) {
-        // Update line if it exists, otherwise add it
-        int idx = (exLines == null ? -1 : exLines.indexOf(line));
-        if (idx >= 0) {
-          updateLine(line, getLineUpdate(exLines.get(idx), line));
-        } else {
-          addLine(line);
-        }
+      // Update line if it exists, otherwise add it
+      int idx = (exLines == null ? -1 : exLines.indexOf(line));
+      if (idx >= 0) {
+        updateLine(line, getLineUpdate(exLines.get(idx), line));
+      } else {
+        addLine(line);
       }
     }
   }
@@ -114,19 +112,10 @@ public class LineGraphHandler implements GraphHandlerInterface<LineGraphConfig> 
     if (exLines == null) {
       return;
     }
-    // Remove existing lines that no longer exist or are hidden after update
+    // Remove existing lines that no longer exist after update
     for (LineConfig exLine : exLines) {
-      boolean remove = false;
       int idx = lines.indexOf(exLine);
-      if (idx >= 0) {
-        LineConfig line = lines.get(idx);
-        if ((exLine.hide != line.hide) && line.hide) {
-          remove = true;
-        }
-      } else {
-        remove = true;
-      }
-      if (remove) {
+      if (idx < 0) {
         removeLine(exLine);
       }
     }
@@ -152,7 +141,7 @@ public class LineGraphHandler implements GraphHandlerInterface<LineGraphConfig> 
   private void updateLine(LineConfig line, Update update) {
     // Add line record in view if it doesn't exist
     view.addLine(line);
-    
+
     // Do required view updates
     if (update == Update.FULL || update == Update.PROPERTIES) {
       System.out.println("UPDATING PROPERTIES: " + line.identifier);
@@ -173,7 +162,6 @@ public class LineGraphHandler implements GraphHandlerInterface<LineGraphConfig> 
    * @param line Line to remove
    */
   private void removeLine(LineConfig line) {
-    // TODO: Use the unique identifier to remove line from graph view
     System.out.println("REMOVING: " + line.identifier);
     view.removeLine(line);
   }

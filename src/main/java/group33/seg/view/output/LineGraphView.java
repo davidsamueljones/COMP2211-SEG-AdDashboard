@@ -2,9 +2,12 @@ package group33.seg.view.output;
 
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Font;
+import java.awt.Stroke;
 import java.awt.event.InputEvent;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.JButton;
@@ -13,6 +16,8 @@ import javax.swing.JToolBar;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.LegendItem;
+import org.jfree.chart.LegendItemCollection;
 import org.jfree.chart.StandardChartTheme;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
@@ -27,15 +32,19 @@ import group33.seg.view.utilities.Accessibility;
 public class LineGraphView extends JPanel {
   private static final long serialVersionUID = -7920465975957290150L;
 
-  public static float MIN_THICKNESS = 2.0f;
-  public static float MAX_THICKNESS = 10.0f;
+  public static float MIN_THICKNESS = 1.0f;
+  public static float MAX_THICKNESS = 5.0f;
 
   private ChartPanel pnlChart;
 
-  private TimeSeriesCollection dataset;
   private JFreeChart chart;
   private XYPlot plot;
   private XYLineAndShapeRenderer renderer;
+
+  private TimeSeriesCollection dataset;
+  private List<LineConfig> configs;
+
+  private boolean legendEnabled;
 
   /**
    * Fully configure an empty chart and its controls.
@@ -99,6 +108,7 @@ public class LineGraphView extends JPanel {
    * Initialise an empty chart.
    */
   private void initChart() {
+    this.configs = new ArrayList<>();
     this.dataset = new TimeSeriesCollection();
     this.chart = ChartFactory.createTimeSeriesChart("", "", "", dataset, true, true, false);
     this.plot = chart.getXYPlot();
@@ -111,10 +121,7 @@ public class LineGraphView extends JPanel {
    * Initialise the default control scheme of the chart.
    */
   private void initControlScheme() {
-    enableGlobalBehaviour(pnlChart);
-    // Enable panning
-    plot.setRangePannable(true);
-    plot.setDomainPannable(true);
+    enableGlobalBehaviour();
     // Enable zoom using scroll as default
     enablePanMode();
   }
@@ -129,6 +136,7 @@ public class LineGraphView extends JPanel {
     chart.setTitle(graph.title);
     plot.getDomainAxis().setLabel(graph.xAxisTitle);
     plot.getRangeAxis().setLabel(graph.yAxisTitle);
+    setLegendEnabled(graph.showLegend);
   }
 
   /**
@@ -142,6 +150,7 @@ public class LineGraphView extends JPanel {
     TimeSeries ex = getLineSeries(line);
     if (ex == null) {
       TimeSeries ts = new TimeSeries(line.uuid);
+      configs.add(line);
       dataset.addSeries(ts);
       return true;
     }
@@ -175,8 +184,8 @@ public class LineGraphView extends JPanel {
     TimeSeries ts = getLineSeries(line);
     if (ts != null) {
       int idx = dataset.indexOf(ts);
-      renderer.setSeriesPaint(idx, line.color);
-      renderer.setSeriesStroke(idx, getLineStroke(line.thickness));
+      configs.set(idx, line);
+      setSeriesStyle(idx, line.color, getLineStroke(line.thickness), line.hide);
     }
   }
 
@@ -189,7 +198,9 @@ public class LineGraphView extends JPanel {
   public boolean removeLine(LineConfig line) {
     TimeSeries ex = getLineSeries(line);
     if (ex != null) {
+      configs.remove(line);
       dataset.removeSeries(ex);
+      applySeriesStyles();
       return true;
     }
     return false;
@@ -209,6 +220,7 @@ public class LineGraphView extends JPanel {
    * Remove all plotted data from the graph.
    */
   public void clearLines() {
+    configs.clear();
     dataset.removeAllSeries();
   }
 
@@ -226,23 +238,99 @@ public class LineGraphView extends JPanel {
   }
 
   /**
+   * Update the renderer style for a single series.
+   * 
+   * @param idx Index of series in renderer
+   * @param color Colour to use for series
+   * @param stroke Stroke to use for series
+   */
+  private void setSeriesStyle(int idx, Color color, Stroke stroke, boolean hidden) {
+    renderer.setSeriesPaint(idx, color);
+    renderer.setSeriesStroke(idx, stroke);
+    renderer.setSeriesVisible(idx, !hidden);
+  }
+
+  /**
    * Find the time series of a given line configuration.
    * 
    * @param line Line for which to find a configuration
    * @return Corresponding time series if it exists, otherwise null
    */
   private TimeSeries getLineSeries(LineConfig line) {
+    List<TimeSeries> tss = getSeries();
+    for (TimeSeries ts : tss) {
+      if (ts.getKey().equals(line.uuid)) {
+        return ts;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Get all time series in the current dataset safely casted.
+   * 
+   * @return List of time series in dataset
+   */
+  private List<TimeSeries> getSeries() {
+    List<TimeSeries> series = new ArrayList<>();
     Iterator<?> itrDataset = dataset.getSeries().iterator();
     while (itrDataset.hasNext()) {
       Object obj = itrDataset.next();
       if (obj instanceof TimeSeries) {
         TimeSeries ts = (TimeSeries) obj;
-        if (ts.getKey().equals(line.uuid)) {
-          return ts;
-        }
+        series.add(ts);
       }
     }
-    return null;
+    return series;
+  }
+
+  /**
+   * Apply all line configuration settings to the renderer in their current order. This has the
+   * effect of reapplying all line rendering properties to make renderer in line with plot.
+   */
+  private void applySeriesStyles() {
+    int idx = 0;
+    for (LineConfig config : configs) {
+      setSeriesStyle(idx, config.color, getLineStroke(config.thickness), config.hide);
+      idx++;
+    }
+  }
+
+  /**
+   * Set whether legend is enabled, redrawing automatically to reflect this.
+   */
+  private void setLegendEnabled(boolean enabled) {
+    legendEnabled = enabled;
+    redrawLegend();
+  }
+
+  /**
+   * Handle whether a legend should be displayed and the generation of it if required.
+   */
+  private void redrawLegend() {
+    if (legendEnabled) {
+      plot.setFixedLegendItems(generateLegend());
+    } else {
+      plot.setFixedLegendItems(new LegendItemCollection());
+    }
+  }
+
+  /**
+   * Using the current lines in the view, create a corresponding legend using their configuration.
+   * 
+   * @return A set of legend items to be used as a legend
+   */
+  private LegendItemCollection generateLegend() {
+    LegendItemCollection legend = new LegendItemCollection();
+    // Generate full legend
+    for (LineConfig config : configs) {
+      if (!config.hide) {
+        LegendItem item = new LegendItem(config.identifier, config.color);
+        item.setToolTipText("[TEST TOOLTIP]");
+        legend.add(item);
+      }
+    }
+    return legend;
   }
 
   /**
@@ -266,12 +354,18 @@ public class LineGraphView extends JPanel {
    * 
    * @param chartPanel Chart panel to set behaviour for
    */
-  private static void enableGlobalBehaviour(ChartPanel chartPanel) {
-    chartPanel.addMouseWheelListener(arg0 -> chartPanel.restoreAutoRangeBounds());
+  private void enableGlobalBehaviour() {
+    // Enable panning
+    plot.setRangePannable(true);
+    plot.setDomainPannable(true);
+    // Enable plot reset
+    pnlChart.addMouseWheelListener(arg0 -> pnlChart.restoreAutoRangeBounds());
+    dataset.addChangeListener(arg0 -> redrawLegend());
+    renderer.addChangeListener(arg0 -> redrawLegend());
   }
 
   /**
-   * For the given chart panel, set it up to use the pointer for zooming using a drag-box. THis will
+   * For the given chart panel, set it up to use the pointer for zooming using a drag-box. This will
    * everse effects of using scroll zoom due to incompatabilities between using both at the same
    * time.
    * 

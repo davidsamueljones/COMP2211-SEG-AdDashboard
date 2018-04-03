@@ -44,7 +44,18 @@ public class CampaignTable extends DatabaseTable {
   }
 
   @Override
+  public String fromCSV(String input, int campaignID) {
+    throw new IllegalStateException("Campaign table has no expected CSV string format");
+  }
+  
+  @Override
+  public String getCopyTemplate(String source) {
+    throw new IllegalStateException("Campaign table has no copy template");
+  }
+
+  @Override
   public String getTableName() {
     return "campaign";
   }
+
 }

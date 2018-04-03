@@ -25,17 +25,38 @@ public abstract class DatabaseTable {
    * Convert a set of string parameters to their correct format and create a prepared statement.
    *  @param ps Prepared statement to apply params to
    * @param params Params to apply to the prepared statement
-   * @param campaignID for primary key reference
+   * @param campaignID For primary key reference
    */
   public abstract void prepareInsert(PreparedStatement ps, String[] params, int campaignID) throws SQLException;
 
-  /** @return Template used for INSERT statements */
+  /** 
+   * @return Template used for INSERT statements 
+   */
   public abstract String getInsertTemplate();
 
-  /** @return Name of table */
+  /**
+   * Convert a CSV string to be in table format.
+   * 
+   * @param input CSV string to convert
+   * @param campaignID Common data item, set to -1 if not needed
+   * @return Converted string
+   */
+  public abstract String fromCSV(String input, int campaignID);
+  
+  /**
+   * @param Source for copy, paths must be single quoted
+   * @return Template used for COPY statements
+   */
+  public abstract String getCopyTemplate(String source);
+  
+  /**
+   *  @return Name of table 
+   */
   public abstract String getTableName();
 
-  /** Clear all rows from table. */
+  /** 
+   * Clear all rows from table. 
+   */
   public final void clearTable(Connection c) {
     Statement cs;
     try {
@@ -43,7 +64,7 @@ public abstract class DatabaseTable {
       cs.execute(String.format("TRUNCATE TABLE %s", getTableName()));
     } catch (SQLException e) {
       e.printStackTrace();
-      // FIXME: Do not ignore this error, throw and handle
     }
   }
+  
 }

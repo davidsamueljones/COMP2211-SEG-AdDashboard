@@ -28,7 +28,7 @@ public class DatabaseTest {
   @Mock private Connection conn;
 
   @Test(expected = IllegalArgumentException.class)
-  public void connectionArgsTest() {
+  public void connectionArgsTest() throws SQLException {
     new DatabaseConnection(config.getHost(), null, config.getPassword()).connectDatabase();
   }
 
