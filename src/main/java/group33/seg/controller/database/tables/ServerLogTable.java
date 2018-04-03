@@ -15,7 +15,7 @@ public class ServerLogTable extends DatabaseTable {
         "CREATE TABLE IF NOT EXISTS server_log (entry_date TIMESTAMP, user_id BIGINT NOT NULL,"
             + "exit_date TIMESTAMP, pages_viewed INTEGER, conversion BOOLEAN,  campaign_id integer,"
             + "CONSTRAINT server_log_campaign_id_fkey FOREIGN KEY (campaign_id)"
-            + "REFERENCES campaign (id) MATCH SIMPLE)");
+            + "REFERENCES campaign (id) MATCH SIMPLE ON DELETE CASCADE)");
     st.close();
   }
 

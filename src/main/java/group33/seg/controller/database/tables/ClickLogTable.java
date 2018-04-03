@@ -15,7 +15,7 @@ public class ClickLogTable extends DatabaseTable {
         "CREATE TABLE IF NOT EXISTS click_log (date TIMESTAMP, "
             + "user_id BIGINT NOT NULL, click_cost DOUBLE PRECISION , campaign_id integer,"
             + "CONSTRAINT click_log_campaign_id_fkey FOREIGN KEY (campaign_id)"
-            + "REFERENCES campaign (id) MATCH SIMPLE);");
+            + "REFERENCES campaign (id) MATCH SIMPLE ON DELETE CASCADE);");
     st.close();
   }
 

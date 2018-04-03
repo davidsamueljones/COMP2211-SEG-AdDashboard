@@ -1,7 +1,6 @@
 package group33.seg.controller.handlers;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,7 +10,6 @@ import java.util.HashSet;
 import java.util.Set;
 import org.postgresql.util.PSQLState;
 import group33.seg.controller.DashboardController.DashboardMVC;
-import group33.seg.controller.database.DatabaseConfig;
 import group33.seg.controller.database.DatabaseConnection;
 import group33.seg.controller.database.tables.CampaignTable;
 import group33.seg.controller.database.tables.ClickLogTable;
@@ -153,6 +151,7 @@ public class CampaignImportHandler {
       setImportedCampaign(campaign);
 
       // Alert listeners that import is finished
+      updateProgress(100);
       alertFinished(true);
       finished = true;
     } catch (InterruptedException e) {

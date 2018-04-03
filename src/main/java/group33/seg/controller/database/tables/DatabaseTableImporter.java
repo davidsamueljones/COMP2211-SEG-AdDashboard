@@ -59,7 +59,6 @@ public class DatabaseTableImporter {
   public void doImport(String path, DatabaseTable table, int campaignID) {
     // Start import on new thread
     Thread t = new Thread(() -> {
-      System.out.println("Starting import...");
       try {
         start(path, table, campaignID);
         successful = true;
@@ -71,9 +70,7 @@ public class DatabaseTableImporter {
     // Wait for import to finish, but allow for cancellation through interrupt
     try {
       t.join();
-      System.out.println("Finished import...");
     } catch (InterruptedException e) {
-      System.out.println("Cancelling import...");
       cancel();
       try {
         t.join();
@@ -91,7 +88,7 @@ public class DatabaseTableImporter {
    * @param path Path to file for import
    * @param table Table type to handle input data as
    * @param campaignID Campaign to use for table manipulation
-   * @return
+   * @return Number of rows written
    */
   private long start(String path, DatabaseTable table, int campaighID) {
     DatabaseConnection db = null;
@@ -162,7 +159,6 @@ public class DatabaseTableImporter {
     try {
       // Initialise copy, routing input file through buffered reader
       in = new BufferedReader(new FileReader(new File(path)));
-
       int toImport = DashboardUtilities.countFileLines(path) - 1;
       CopyManager copyManager = new CopyManager(conn);
       cp = copyManager.copyIn(table.getCopyTemplate("STDIN"));
@@ -182,8 +178,7 @@ public class DatabaseTableImporter {
         // If line would overflow buffer write the buffer now
         if (payload + bline.length > BUFFER_SIZE) {
           push(cp, buf, 0, payload);
-          cp.flushCopy();
-          this.progress = (int) (100 * imported / (double) toImport);
+          this.progress = (int) (90 * imported / (double) toImport);
           payload = 0;
         }
 
@@ -196,9 +191,7 @@ public class DatabaseTableImporter {
       }
       // Write any remaining bytes
       push(cp, buf, 0, payload);
-      System.out.println("FINISHING");
       long rows = cp.endCopy();
-      System.out.println(toImport + " " + rows);
       progress = 100;
       return rows;
     } finally {
