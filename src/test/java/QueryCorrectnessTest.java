@@ -265,9 +265,9 @@ public class QueryCorrectnessTest {
 
     List<Pair<String,Number>> expectedWeekResponse = new LinkedList<>();
     expectedWeekResponse.add(new Pair<>("2014-12-29 00:00:00", 0.002345));
-    expectedWeekResponse.add(new Pair<>("2015-01-05 00:00:00", 21.80319));
-    expectedWeekResponse.add(new Pair<>("2015-01-12 00:00:00", 20.176677));
-    expectedWeekResponse.add(new Pair<>("2015-01-19 00:00:00", 32.008084999999994));
+    expectedWeekResponse.add(new Pair<>("2015-01-05 00:00:00", 21.803190000000004));
+    expectedWeekResponse.add(new Pair<>("2015-01-12 00:00:00", 20.176677000000005));
+    expectedWeekResponse.add(new Pair<>("2015-01-19 00:00:00", 32.008085));
     expectedWeekResponse.add(new Pair<>("2015-01-26 00:00:00", 18.876013));
     expectedWeekResponse.add(new Pair<>("2015-02-02 00:00:00", 58.197251));
     expectedWeekResponse.add(new Pair<>("2015-02-09 00:00:00", 44.082891));
