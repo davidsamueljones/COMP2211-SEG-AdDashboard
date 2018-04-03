@@ -122,5 +122,47 @@ public class DatabaseHandler {
 
     return result;
   }
+  
+  /**
+   * Request that the database server cancels the given process as defined by its process ID (PID).
+   * Default behaviour is a cancel request whereas forced behaviour is termination.
+   * 
+   * @param pid Process ID to cancel
+   * @param force Whether to force cancellation
+   */
+  public void cancelProcessRequest(int pid, boolean force) {
+    if (pid > 0) {
+      try {
+        // Create an independent server connection
+        Connection conn = getConnection().connectDatabase();
+        // Request cancellation of current transaction
+        PreparedStatement ps = conn.prepareStatement(String.format("SELECT %s(%d)",
+            force ? "pg_terminate_backend" : "pg_cancel_backend", pid));
+        ps.execute();
+      } catch (Exception e) {
+        System.err.println("Unable to request process cancellation");
+      }
+    }
+  }
+
+  /**
+   * Get the process ID of the next transaction for a given connection.
+   * 
+   * @param conn Connection to use
+   * @return PID if connection is valid, otherwise -1
+   */
+  public static int getPID(Connection conn) {
+    PreparedStatement ps;
+    try {
+      ps = conn.prepareStatement("SELECT pg_backend_pid()");
+      ps.executeQuery();
+      ResultSet rs = ps.getResultSet();
+      rs.next();
+      int pid = rs.getInt(1);
+      return pid;
+    } catch (SQLException e) {
+      return -1;
+    }
+  }
 
 }
