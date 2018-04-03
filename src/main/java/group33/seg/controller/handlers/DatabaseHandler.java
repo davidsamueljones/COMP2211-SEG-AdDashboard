@@ -1,12 +1,14 @@
 package group33.seg.controller.handlers;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import group33.seg.controller.DashboardController.DashboardMVC;
@@ -18,64 +20,86 @@ import group33.seg.model.configs.MetricQuery;
 import group33.seg.model.types.Pair;
 
 public class DatabaseHandler {
-  
+
   /** MVC model that sub-controller has knowledge of */
   private final DashboardMVC mvc;
 
-  private final String databaseConfig;
-  
-  private Map<DatabaseConnection, Boolean> connections = new ConcurrentHashMap<>();
+  /** Managed connection pool */
+  private final Map<DatabaseConnection, Boolean> connections = new HashMap<>();
 
-  private Map<MetricQuery, MetricQueryResponse> cachedResponses = new ConcurrentHashMap<>();
-  
+  /** Number of query threads */
+  private final ExecutorService pool = Executors.newFixedThreadPool(10);
+
   /**
    * Instantiate a database handler.
    * 
    * @param mvc Knowledge of full system as model view controller
    */
-  public DatabaseHandler(DashboardMVC mvc, String databaseConfig) {
+  public DatabaseHandler(DashboardMVC mvc) {
     this.mvc = mvc;
-    this.databaseConfig = databaseConfig;
   }
 
-  /** Number of query threads */
-  private final ExecutorService pool = Executors.newFixedThreadPool(10);
+  /**
+   * Using the given configuration, stop handling all old connections and recreate the given number
+   * of connections. This pool serves as all managed connections, therefore if a request is made
+   * when no connection is available it must wait until a connection is freed.
+   * 
+   * @param config Database configuration to use for connection creation
+   * @param count Number of connections to create
+   */
+  public void refreshConnections(DatabaseConfig config, int count) {
+    synchronized (connections) {
+      connections.clear();
+      for (int i = 0; i < count; i++) {
+        DatabaseConnection connection =
+            new DatabaseConnection(config.getHost(), config.getUser(), config.getPassword());
+        connections.put(connection, true);
+      }
+      connections.notify();
+    }
+  }
 
-  private synchronized DatabaseConnection getConnection() {
-    for (DatabaseConnection c : connections.keySet()) {
-      // true if available
-      if (connections.get(c)) {
-        connections.put(c, false);
-        return c;
+  /**
+   * Get an available database connection, if no database connection is available it will wait for a
+   * new connection to be available. This call will not timeout and thus must be interrupted to
+   * return if no connection gets freed.
+   * 
+   * @return Connection to database from pool
+   */
+  public DatabaseConnection getConnection() {
+    synchronized (connections) {
+      while (true) {
+        // Check to see if existing connections available
+        for (DatabaseConnection c : connections.keySet()) {
+          // true if available
+          if (connections.get(c)) {
+            connections.put(c, false);
+            return c;
+          }
+        }
+        // Wait for notification of possible open connection before trying again
+        try {
+          connections.wait();
+        } catch (InterruptedException e) {
+          return null;
+        }
       }
     }
-    
-    try {
-      DatabaseConfig config = new DatabaseConfig(databaseConfig);
-      DatabaseConnection connection =
-          new DatabaseConnection(config.getHost(), config.getUser(), config.getPassword());
-      connections.put(connection, false);
-      return connection;
-    } catch (Exception e) {
-      return null;
-    }
-
   }
 
-  private void returnConnection(DatabaseConnection c) {
-    connections.put(c, true);
+  /**
+   * Return a database connection to the pool so it can be used again.
+   * 
+   * @param c Connection to return to pool
+   */
+  public void returnConnection(DatabaseConnection c) {
+    synchronized (connections) {
+      connections.put(c, true);
+      connections.notify();
+    }
   }
 
   public MetricQueryResponse getQueryResponse(MetricQuery request) {
-    // TODO: MetricQuery does not and will not implement hashcode and equals to do anything other
-    // than checking if the same object is being compared, caching must use then converted SQL
-    // otherwise the same query will cache multiple times
-    // TODO: Caching quickly eats RAM when graph data is considered, this needs to be improved or
-    // removed
-    //    if (cachedResponses.containsKey(request)) {
-    //      return cachedResponses.get(request);
-    //    } else {
-    //      cachedResponses.put(request, response);
     return new MetricQueryResponse(request, pool.submit(() -> getGraphData(request)));
   }
 
@@ -94,9 +118,9 @@ public class DatabaseHandler {
     } catch (SQLException e) {
       e.printStackTrace();
     }
-
     returnConnection(connection);
 
     return result;
   }
+
 }
