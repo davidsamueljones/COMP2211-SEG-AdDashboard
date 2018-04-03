@@ -32,14 +32,14 @@ public class QueryCorrectnessTest {
 
   /** Initialise tables and data for test */
   public QueryCorrectnessTest() throws FileNotFoundException {
-    try {    
+    try {
       // Initialise a controller for these tests (no model or view needed)
       controller = new DashboardController(null, null);
       controller.database.refreshConnections(new DatabaseConfig(DATABASE_CREDENTIALS), 5);
-      
+
       // Do import using custom test configuration
       CampaignImportConfig importConfig = new CampaignImportConfig(CAMPAIGN_NAME, PATH_CLICK_LOG,
-          PATH_IMPRESSION_LOG, PATH_SERVER_LOG, DATABASE_CREDENTIALS);
+          PATH_IMPRESSION_LOG, PATH_SERVER_LOG);
       boolean importComplete = controller.imports.doImport(importConfig);
 
       while (controller.imports.isOngoing()) {

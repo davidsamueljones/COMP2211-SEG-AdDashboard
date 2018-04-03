@@ -13,8 +13,6 @@ public class CampaignImportConfig {
   public final String pathImpressionLog;
   public final String pathServerLog;
 
-  public final String databaseConfigFile;
-
   /**
    * Initialise a campaign import configuration.
    *
@@ -24,17 +22,16 @@ public class CampaignImportConfig {
    * @param pathServerLog Path to server log csv
    */
   public CampaignImportConfig(String campaignName, String pathClickLog, String pathImpressionLog,
-      String pathServerLog, String databaseConfigFile) {
+      String pathServerLog) {
     this.campaignName = campaignName;
     this.pathClickLog = pathClickLog;
     this.pathImpressionLog = pathImpressionLog;
     this.pathServerLog = pathServerLog;
-    this.databaseConfigFile = databaseConfigFile;
   }
 
   /**
-   * Do local validation of configuration. For import configurations this
-   * includes validation of import paths.
+   * Do local validation of configuration. For import configurations this includes validation of
+   * import paths.
    * 
    * @return Any issues with validation
    */
@@ -54,5 +51,5 @@ public class CampaignImportConfig {
     }
     return eb;
   }
-  
+
 }
