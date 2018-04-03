@@ -19,7 +19,7 @@ public class ImpressionLogTable extends DatabaseTable {
             + "user_id BIGINT NOT NULL, female BOOLEAN, age age, "
             + "income income, context context, impression_cost DOUBLE PRECISION, campaign_id integer,"
             + "CONSTRAINT impression_log_campaign_id_fkey FOREIGN KEY (campaign_id)"
-            + "REFERENCES campaign (id) MATCH SIMPLE)");
+            + "REFERENCES campaign (id) MATCH SIMPLE ON DELETE CASCADE)");
     st.close();
   }
 
