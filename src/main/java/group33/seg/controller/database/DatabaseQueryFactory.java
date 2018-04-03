@@ -48,7 +48,7 @@ public class DatabaseQueryFactory {
             + " (SELECT date_trunc('<interval>', max(entry_date)) AS final FROM server_log WHERE <campaign>) AS max,"
             + " generate_series(<start>, <final>,'1 <interval>') AS xaxis"
             + " LEFT JOIN"
-            + " (SELECT date_trunc('<interval>', entry_date) AS dates, count(*) AS yaxis FROM server_log WHERE <campaign> AND conversion = TRUE GROUP BY dates) AS s"
+            + " (SELECT date_trunc('<interval>', entry_date) AS dates, count(*) AS yaxis FROM server_log WHERE <campaign> AND conversion GROUP BY dates) AS s"
             + " ON xaxis = s.dates;");
 
     // Total number of clicks over time
@@ -115,7 +115,7 @@ public class DatabaseQueryFactory {
             + " (SELECT CASE conversions WHEN 0 THEN 0 ELSE (icost + ccost) / conversions END FROM"
             + " (SELECT SUM(impression_cost) as icost FROM impression_log WHERE <campaign> AND date_trunc('<interval>', date) = xaxis) as il,"
             + " (SELECT SUM(click_cost) as ccost FROM click_log WHERE <campaign> AND date_trunc('<interval>', date) = xaxis) as cl,"
-            + " (SELECT sum(conversion::int) as conversions FROM server_log WHERE <campaign> AND date_trunc('<interval>', entry_date) = xaxis) as iil) as yaxis"
+            + " (SELECT count(*) as conversions FROM server_log WHERE conversion AND <campaign> AND date_trunc('<interval>', entry_date) = xaxis) as iil) as yaxis"
             + " FROM"
             + " (SELECT date_trunc('<interval>', min(entry_date)) AS start FROM server_log WHERE <campaign>) AS min,"
             + " (SELECT date_trunc('<interval>', max(entry_date)) AS final FROM server_log WHERE <campaign>) AS max,"
@@ -175,7 +175,7 @@ public class DatabaseQueryFactory {
     // Total number of conversions
     statisticQueries.put(
         Metric.CONVERSIONS,
-        "SELECT 'all' AS xaxis, sum(conversion::int) AS yaxis FROM server_log WHERE <campaign>;");
+        "SELECT 'all' AS xaxis, count(*) AS yaxis FROM server_log WHERE conversion AND <campaign>;");
 
     // Total cost - includes both click and impression cost
     statisticQueries.put(
@@ -207,7 +207,7 @@ public class DatabaseQueryFactory {
         "SELECT 'all' AS xaxis, (il.cost + cl.cost) / conversions AS yaxis FROM "
             + " (SELECT sum(impression_cost) AS cost FROM impression_log WHERE <campaign>) AS il,"
             + " (SELECT sum(click_cost) AS cost FROM click_log WHERE <campaign>) AS cl,"
-            + " (SELECT sum(conversion::int) AS conversions FROM server_log WHERE <campaign>) AS sl;");
+            + " (SELECT count(*) AS conversions FROM server_log WHERE conversion AND <campaign>) AS sl;");
 
     // The average amount of money spent for each click (CPC)
     statisticQueries.put(
