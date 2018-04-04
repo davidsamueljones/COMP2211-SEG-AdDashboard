@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import group33.seg.controller.DashboardController.DashboardMVC;
 import group33.seg.controller.handlers.WorkspaceHandler.WorkspaceListener.Type;
+import group33.seg.model.configs.CampaignConfig;
 import group33.seg.model.configs.GraphConfig;
 import group33.seg.model.workspace.Workspace;
 
@@ -25,6 +26,17 @@ public class WorkspaceHandler {
     this.mvc = mvc;
   }
 
+  public void setCampaign(CampaignConfig campaign) {
+    Workspace workspace = mvc.model.getWorkspace();
+    workspace.campaign = campaign;
+    notifyListeners(Type.CAMPAIGN);
+  }
+  
+  public CampaignConfig getCampaign() {
+    Workspace workspace = mvc.model.getWorkspace();
+    return workspace.campaign;
+  }
+  
   public void putGraph(GraphConfig graph) {
     List<GraphConfig> graphs = getGraphs();
 
@@ -65,7 +77,7 @@ public class WorkspaceHandler {
     listeners.add(listener);
   }
 
-  public void notifyListeners(WorkspaceListener.Type type) {
+  public void notifyListeners(Type type) {
     for (WorkspaceListener listener : listeners) {
       listener.update(type);
     }
@@ -75,7 +87,7 @@ public class WorkspaceHandler {
     public void update(Type type);
 
     public enum Type {
-      WORKSPACE, GRAPHS, STATISTICS;
+      WORKSPACE, CAMPAIGN, GRAPHS, STATISTICS;
     }
 
   }
