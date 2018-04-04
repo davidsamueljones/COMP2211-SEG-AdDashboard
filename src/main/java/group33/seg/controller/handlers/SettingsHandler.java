@@ -5,7 +5,6 @@ import java.util.prefs.Preferences;
 import group33.seg.view.utilities.Accessibility;
 
 public class SettingsHandler {
-  public static final String CUR_CAMPAIGN = "cur_campaign";
   public static final String FONT_SCALING = "font_scaling";
 
   public final Preferences prefs;
@@ -39,7 +38,6 @@ public class SettingsHandler {
 
   public void setDefaults() {
     // Assign default preferences
-    prefs.remove(CUR_CAMPAIGN);
     prefs.putDouble(FONT_SCALING, Accessibility.DEFAULT_SCALING);
   }
 
