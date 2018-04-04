@@ -18,9 +18,12 @@ public class GraphsHandler {
   /** Line graph handler */
   private LineGraphHandler lineGraph;
 
+  /** Handler currently in use */
+  private GraphHandlerInterface<?> currentHandler = null;
+
   /** Font scaling to apply to textual elements in charts */
   private double scale = 1;
-  
+
   /**
    * Instantiate a graph handler.
    * 
@@ -36,6 +39,15 @@ public class GraphsHandler {
   public void setLineGraphView(LineGraphView view) {
     view.applyFontScale(scale);
     lineGraph = new LineGraphHandler(mvc, view);
+  }
+
+  /**
+   * Reloads the graph using the current handler.
+   */
+  public void reloadGraph() {
+    if (currentHandler != null) {
+      currentHandler.reloadGraph();
+    }
   }
 
   /**
@@ -61,9 +73,6 @@ public class GraphsHandler {
   public void displayGraph(GraphConfig graph, boolean clear) {
     // Handle display behaviour depending on the type of graph
     graph.accept(new GraphVisitor() {
-
-      /** Handler currently in use */
-      private GraphHandlerInterface<?> currentHandler = null;
 
       @Override
       public void visit(LineGraphConfig graph) {

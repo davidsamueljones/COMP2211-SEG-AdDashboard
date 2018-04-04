@@ -31,6 +31,11 @@ public class LineGraphHandler implements GraphHandlerInterface<LineGraphConfig> 
     this.view = view;
   }
 
+  @Override
+  public void reloadGraph() {
+    displayGraph(this.graph);
+  }
+
   /**
    * Update the line graph displayed in the view. As an update, behaviour means that if the
    * currently displayed graph is the same as the input graph, only changes will be reflected. In

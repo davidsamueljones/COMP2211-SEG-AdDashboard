@@ -91,6 +91,7 @@ public class CampaignManagerPanel extends JPanel {
     controller.workspace.addListener(t -> {
       if (t == WorkspaceListener.Type.CAMPAIGN) {
         setCurrentCampaign(controller.workspace.getCampaign());
+        controller.graphs.reloadGraph();
       }
     });
   }
