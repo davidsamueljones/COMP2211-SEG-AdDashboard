@@ -1,5 +1,6 @@
 package group33.seg.view.campaignimport;
 
+import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -18,11 +19,12 @@ import javax.swing.border.BevelBorder;
 import group33.seg.controller.DashboardController;
 import group33.seg.view.utilities.Accessibility;
 
-public class CampaignImportDialog extends JDialog {
+public class CampaignSelectionDialog extends JDialog {
   private static final long serialVersionUID = -8083386947121993055L;
 
   private DashboardController controller;
 
+  private JButton btnAvailable;
   private JButton btnImportNew;
   private JButton btnClose;
 
@@ -32,8 +34,8 @@ public class CampaignImportDialog extends JDialog {
    * @param parent Window to treat as a parent
    * @param controller Controller for this view object
    */
-  public CampaignImportDialog(Window parent, DashboardController controller) {
-    super(parent, "Campaign Importer");
+  public CampaignSelectionDialog(Window parent, DashboardController controller) {
+    super(parent, "Campaign Selector");
 
     this.controller = controller;
 
@@ -77,10 +79,24 @@ public class CampaignImportDialog extends JDialog {
     pnlDialog.add(pnlNavigation, gbc_pnlNavigation);
 
     GridBagLayout gbl_pnlModes = new GridBagLayout();
-    gbl_pnlModes.rowHeights = new int[] {0, 0, 0};
+    gbl_pnlModes.rowHeights = new int[] {0, 0, 0, 0};
     gbl_pnlModes.columnWeights = new double[] {1.0};
-    gbl_pnlModes.rowWeights = new double[] {0.0, 0.0, 1.0};
+    gbl_pnlModes.rowWeights = new double[] {0.0, 0.0, 0.0, 1.0};
     pnlNavigation.setLayout(gbl_pnlModes);
+
+    // Create JButton for selecting AvailableCampaignsPanel
+    btnAvailable = new JButton("Available");
+    Accessibility.scaleJComponentFontSize(btnAvailable, 1.5);
+    btnAvailable.setHorizontalAlignment(SwingConstants.LEFT);
+    btnAvailable.setIconTextGap(Math.min(btnAvailable.getFont().getSize(), 20));
+    btnAvailable.setIcon(new ImageIcon(getClass().getResource("/icons/folder-open.png")));
+    btnAvailable.setMargin(new Insets(5, 5, 5, 20));
+    GridBagConstraints gbc_btnAvailable = new GridBagConstraints();
+    gbc_btnAvailable.fill = GridBagConstraints.HORIZONTAL;
+    gbc_btnAvailable.gridx = 0;
+    gbc_btnAvailable.gridy = 0;
+    pnlNavigation.add(btnAvailable, gbc_btnAvailable);
+    pnlNavigation.setMinimumSize(btnAvailable.getPreferredSize());
 
     // Create JButton for selecting CampaignImportPanel
     btnImportNew = new JButton("Import New");
@@ -89,11 +105,10 @@ public class CampaignImportDialog extends JDialog {
     btnImportNew.setIconTextGap(Math.min(btnImportNew.getFont().getSize(), 20));
     btnImportNew.setIcon(new ImageIcon(getClass().getResource("/icons/file.png")));
     btnImportNew.setMargin(new Insets(5, 5, 5, 20));
-    btnImportNew.setEnabled(false);
     GridBagConstraints gbc_btnImportNew = new GridBagConstraints();
     gbc_btnImportNew.fill = GridBagConstraints.HORIZONTAL;
     gbc_btnImportNew.gridx = 0;
-    gbc_btnImportNew.gridy = 0;
+    gbc_btnImportNew.gridy = 1;
     pnlNavigation.add(btnImportNew, gbc_btnImportNew);
     pnlNavigation.setMinimumSize(btnImportNew.getPreferredSize());
 
@@ -107,22 +122,58 @@ public class CampaignImportDialog extends JDialog {
     GridBagConstraints gbc_btnClose = new GridBagConstraints();
     gbc_btnClose.fill = GridBagConstraints.HORIZONTAL;
     gbc_btnClose.gridx = 0;
-    gbc_btnClose.gridy = 1;
+    gbc_btnClose.gridy = 2;
     pnlNavigation.add(btnClose, gbc_btnClose);
 
     // Controls Panel
+    CardLayout cl_pnlControls = new CardLayout();
+    JPanel pnlControls = new JPanel(cl_pnlControls);
+
+    pnlControls.setBorder(
+        BorderFactory.createCompoundBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED),
+            BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+    GridBagConstraints gbc_pnlControls = new GridBagConstraints();
+    gbc_pnlControls.fill = GridBagConstraints.BOTH;
+    gbc_pnlControls.insets = new Insets(5, 5, 5, 5);
+    gbc_pnlControls.gridx = 1;
+    gbc_pnlControls.gridy = 0;
+    pnlDialog.add(pnlControls, gbc_pnlControls);
+
+    // Available Panel
+    AvailableCampaignsPanel pnlAvailable = new AvailableCampaignsPanel(controller);
+    pnlControls.add(pnlAvailable);
+    cl_pnlControls.addLayoutComponent(pnlAvailable, View.AVAILABLE.toString());
+
+    // Import Panel
     CampaignImportPanel pnlCampaignImport = new CampaignImportPanel(controller);
-    pnlCampaignImport.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-    GridBagConstraints gbc_pnlCampaignImport = new GridBagConstraints();
-    gbc_pnlCampaignImport.fill = GridBagConstraints.BOTH;
-    gbc_pnlCampaignImport.insets = new Insets(5, 3, 5, 5);
-    gbc_pnlCampaignImport.gridx = 1;
-    gbc_pnlCampaignImport.gridy = 0;
-    pnlDialog.add(pnlCampaignImport, gbc_pnlCampaignImport);
+    pnlControls.add(pnlCampaignImport);
+    cl_pnlControls.addLayoutComponent(pnlCampaignImport, View.IMPORTING.toString());
+
+    // Select initial screen
+    btnAvailable.setEnabled(false);
+    cl_pnlControls.show(pnlControls, View.AVAILABLE.toString());
 
     // ************************************************************************************
     // * EVENT HANDLING
     // ************************************************************************************
+
+    // Allow switching between two panels
+    btnAvailable.addActionListener(e -> {
+      if (controller.imports.isOngoing()) {
+        JOptionPane.showMessageDialog(null,
+            "Cannot change view whilst importing, either cancel or wait for import to finish.",
+            "View Error", JOptionPane.ERROR_MESSAGE);
+      } else {
+        cl_pnlControls.show(pnlControls, View.AVAILABLE.toString());
+        btnAvailable.setEnabled(false);
+        btnImportNew.setEnabled(true);
+      }
+    });
+    btnImportNew.addActionListener(e -> {
+      cl_pnlControls.show(pnlControls, View.IMPORTING.toString());
+      btnAvailable.setEnabled(true);
+      btnImportNew.setEnabled(false);
+    });
 
     // Close the dialog if an import is not ongoing
     btnClose.addActionListener(e -> closeDialog());
@@ -134,6 +185,11 @@ public class CampaignImportDialog extends JDialog {
         closeDialog();
       }
     });
+  }
+
+  /** Available views for CampaignSelectionDialog */
+  private enum View {
+    AVAILABLE, IMPORTING
   }
 
   /**

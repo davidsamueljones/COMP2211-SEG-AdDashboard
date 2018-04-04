@@ -11,8 +11,9 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import group33.seg.controller.DashboardController;
 import group33.seg.controller.handlers.SettingsHandler;
+import group33.seg.controller.handlers.WorkspaceHandler.WorkspaceListener;
 import group33.seg.model.configs.CampaignConfig;
-import group33.seg.view.campaignimport.CampaignImportDialog;
+import group33.seg.view.campaignimport.CampaignSelectionDialog;
 
 public class CampaignManagerPanel extends JPanel {
   private static final long serialVersionUID = 8138446932363054396L;
@@ -31,7 +32,7 @@ public class CampaignManagerPanel extends JPanel {
     this.controller = controller;
 
     initGUI();
-    setCurrentCampaign(controller.settings.prefs.get(SettingsHandler.CUR_CAMPAIGN, null));
+    setCurrentCampaign(controller.workspace.getCampaign());
   }
 
   private void initGUI() {
@@ -81,22 +82,22 @@ public class CampaignManagerPanel extends JPanel {
       // Use current panels form as parent
       Window frmCurrent = SwingUtilities.getWindowAncestor(CampaignManagerPanel.this);
       // Show dialog
-      CampaignImportDialog cid = new CampaignImportDialog(frmCurrent, controller);
+      CampaignSelectionDialog cid = new CampaignSelectionDialog(frmCurrent, controller);
       cid.setModal(true);
       cid.setVisible(true);
-      // Handle dialog result TODO: Determine if cancelled before import or not
-      CampaignConfig campaign = controller.imports.getImportedCampaign();
-      if (campaign != null) {
-        setCurrentCampaign(campaign.name);
+    });
+    
+    // Watch for changes in workspace campaign
+    controller.workspace.addListener(t -> {
+      if (t == WorkspaceListener.Type.CAMPAIGN) {
+        setCurrentCampaign(controller.workspace.getCampaign());
       }
     });
   }
 
-  // TODO: Change to use campaign
-  private void setCurrentCampaign(String campaign) {
+  private void setCurrentCampaign(CampaignConfig campaign) {
     if (campaign != null) {
-      controller.settings.prefs.put(SettingsHandler.CUR_CAMPAIGN, campaign);
-      txtCurrentCampaign.setText(campaign);
+      txtCurrentCampaign.setText(campaign.name);
     } else {
       txtCurrentCampaign.setText("No Campaign Set");
     }
