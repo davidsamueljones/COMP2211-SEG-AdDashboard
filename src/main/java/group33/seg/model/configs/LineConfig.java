@@ -32,10 +32,6 @@ public class LineConfig {
   /** Query to fetch data with, uses graph grouping */
   public MetricQuery query = null;
 
-  /** Campaign */
-  public CampaignConfig campaignConfig;
-
-
   /**
    * Instantiate a line configuration with a random UUID.
    */
