@@ -1,20 +1,20 @@
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import java.io.FileNotFoundException;
-import java.sql.Connection;
-import java.util.ArrayList;
+import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
-import group33.seg.model.configs.*;
 import org.junit.Test;
 import group33.seg.controller.DashboardController;
 import group33.seg.controller.database.DatabaseConfig;
-import group33.seg.controller.handlers.CampaignImportHandler;
 import group33.seg.controller.handlers.DatabaseHandler;
+import group33.seg.model.configs.BounceConfig;
+import group33.seg.model.configs.CampaignConfig;
+import group33.seg.model.configs.CampaignImportConfig;
+import group33.seg.model.configs.MetricQuery;
 import group33.seg.model.types.Interval;
 import group33.seg.model.types.Metric;
 import group33.seg.model.types.Pair;
-import group33.seg.model.workspace.Workspace;
 
 /** Tests for correctness of queries on a small set of example data */
 public class QueryCorrectnessTest {
@@ -35,8 +35,16 @@ public class QueryCorrectnessTest {
   public QueryCorrectnessTest() throws FileNotFoundException {
     try {
       // Initialise a controller for these tests (no model or view needed)
-      controller = new DashboardController(null, null);
-      controller.database.refreshConnections(new DatabaseConfig(DATABASE_CREDENTIALS), 5);
+      controller = new DashboardController(null, null);   
+      try {
+        DatabaseConfig database = new DatabaseConfig(DATABASE_CREDENTIALS);
+        controller.database.refreshConnections(database, 10);
+      } catch (FileNotFoundException e) {
+        System.err.println("Unable to test database connection configuration file");
+      } catch (SQLException e) {
+        System.err.println("Unable to create database connections, check that hostname, "
+            + "port, username and password are all correct in the configuration file");
+      }
 
       // Do import using custom test configuration
       CampaignImportConfig importConfig = new CampaignImportConfig(CAMPAIGN_NAME, PATH_CLICK_LOG,

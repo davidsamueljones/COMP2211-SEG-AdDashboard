@@ -25,7 +25,7 @@ public class DatabaseHandler {
   private final DashboardMVC mvc;
 
   /** Managed connection pool */
-  private final Map<DatabaseConnection, Boolean> connections = new HashMap<>();
+  private final Map<Connection, Boolean> connections = new HashMap<>();
 
   /** Number of query threads */
   private final ExecutorService pool = Executors.newFixedThreadPool(10);
@@ -46,17 +46,44 @@ public class DatabaseHandler {
    * 
    * @param config Database configuration to use for connection creation
    * @param count Number of connections to create
+   * @throws SQLException If a connection could not be created
    */
-  public void refreshConnections(DatabaseConfig config, int count) {
+  public void refreshConnections(DatabaseConfig config, int count) throws SQLException {
     synchronized (connections) {
+      // Close any existing connections
+      closeConnections();
       connections.clear();
+      // Open new connections with the given configuration
+      DatabaseConnection connection =
+          new DatabaseConnection(config.getHost(), config.getUser(), config.getPassword());
       for (int i = 0; i < count; i++) {
-        DatabaseConnection connection =
-            new DatabaseConnection(config.getHost(), config.getUser(), config.getPassword());
-        connections.put(connection, true);
+        connections.put(connection.connectDatabase(), true);
       }
       connections.notify();
     }
+  }
+
+  /**
+   * Close all connections currently in the pool, if a connection could not be closed it is ignored
+   * but the return code will reflect this.
+   * 
+   * @return True if all connections are closed, otherwise false
+   */
+  public boolean closeConnections() {
+    boolean allClosed = true;
+    synchronized (connections) {
+      // Close any existing connections
+      for (Connection conn : connections.keySet()) {
+        try {
+          conn.close();
+        } catch (SQLException e) {
+          allClosed = false;
+          System.err.println(
+              "Unable to close connection to database, connection may have been left open");
+        }
+      }
+    }
+    return allClosed;
   }
 
   /**
@@ -66,15 +93,14 @@ public class DatabaseHandler {
    * 
    * @return Connection to database from pool
    */
-  public DatabaseConnection getConnection() {
+  public Connection getConnection() {
     synchronized (connections) {
       while (true) {
         // Check to see if existing connections available
-        for (DatabaseConnection c : connections.keySet()) {
-          // true if available
-          if (connections.get(c)) {
-            connections.put(c, false);
-            return c;
+        for (Connection conn : connections.keySet()) {
+          if (connections.get(conn)) {
+            connections.put(conn, false);
+            return conn;
           }
         }
         // Wait for notification of possible open connection before trying again
@@ -92,9 +118,9 @@ public class DatabaseHandler {
    * 
    * @param c Connection to return to pool
    */
-  public void returnConnection(DatabaseConnection c) {
+  public void returnConnection(Connection conn) {
     synchronized (connections) {
-      connections.put(c, true);
+      connections.put(conn, true);
       connections.notify();
     }
   }
@@ -104,12 +130,12 @@ public class DatabaseHandler {
   }
 
   private List<Pair<String, Number>> getGraphData(MetricQuery request) {
-    DatabaseConnection connection = getConnection();
+    Connection conn = getConnection();
     String sql = DatabaseQueryFactory.generateSQL(request);
     List<Pair<String, Number>> result = new LinkedList<>();
 
     try {
-      Statement cs = connection.connectDatabase().createStatement();
+      Statement cs = conn.createStatement();
       ResultSet rs = cs.executeQuery(sql);
 
       while (rs.next()) {
@@ -118,11 +144,11 @@ public class DatabaseHandler {
     } catch (SQLException e) {
       e.printStackTrace();
     }
-    returnConnection(connection);
+    returnConnection(conn);
 
     return result;
   }
-  
+
   /**
    * Request that the database server cancels the given process as defined by its process ID (PID).
    * Default behaviour is a cancel request whereas forced behaviour is termination.
@@ -134,15 +160,12 @@ public class DatabaseHandler {
     if (pid > 0) {
       try {
         // Create an independent server connection
-        DatabaseConnection db = getConnection();
-        Connection conn = db.connectDatabase();
+        Connection conn = getConnection();
         // Request cancellation of current transaction
         PreparedStatement ps = conn.prepareStatement(String.format("SELECT %s(%d)",
             force ? "pg_terminate_backend" : "pg_cancel_backend", pid));
         ps.execute();
-        // Close connection
-        conn.close();
-        returnConnection(db);
+        returnConnection(conn);
       } catch (Exception e) {
         System.err.println("Unable to request process cancellation");
       }

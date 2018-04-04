@@ -10,9 +10,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.postgresql.util.PSQLState;
 import group33.seg.controller.DashboardController.DashboardMVC;
-import group33.seg.controller.database.DatabaseConnection;
 import group33.seg.controller.database.tables.CampaignTable;
 import group33.seg.controller.database.tables.ClickLogTable;
 import group33.seg.controller.database.tables.DatabaseTable;
@@ -130,14 +128,12 @@ public class CampaignImportHandler {
     updateProgress(0);
 
     // Use a single connection for the entire transaction
-    DatabaseConnection db = null;
     Connection conn = null;
     int campaignID = -1;
 
     try {
-      // Create connection
-      db = mvc.controller.database.getConnection();
-      conn = getConnection(db);
+      // Get pooled connection
+      conn = mvc.controller.database.getConnection();
 
       // Create a new campaign
       campaignID = createNewCampaign(conn, importConfig.campaignName);
@@ -180,16 +176,8 @@ public class CampaignImportHandler {
       if (conn != null && !finished && campaignID != -1) {
         removeCampaign(conn, campaignID);
       }
-      try {
-        if (conn != null) {
-          conn.close();
-        }
-      } catch (SQLException e) {
-        // Couldn't close ignore
-      } finally {
-        // Return database connection
-        mvc.controller.database.returnConnection(db);
-      }
+      // Return database connection
+      mvc.controller.database.returnConnection(conn);
     }
   }
 
@@ -199,23 +187,13 @@ public class CampaignImportHandler {
    * @return List of campaigns as fully defined configurations
    */
   public List<CampaignConfig> getAvailableCampaigns() {
-    DatabaseConnection db = null;
     Connection conn = null;
     try {
-      db = mvc.controller.database.getConnection();
-      conn = getConnection(db);
+      conn = mvc.controller.database.getConnection();
       return getAvailableCampaigns(conn);
     } finally {
-      try {
-        if (conn != null) {
-          conn.close();
-        }
-      } catch (SQLException e) {
-        // Couldn't close ignore
-      } finally {
-        // Return database connection
-        mvc.controller.database.returnConnection(db);
-      }
+      // Return database connection
+      mvc.controller.database.returnConnection(conn);
     }
   }
 
@@ -343,26 +321,6 @@ public class CampaignImportHandler {
       eb.addError(String
           .format("Error importing file '%s', check that the file is of the correct format", path));
       throw new ImportException();
-    }
-  }
-
-  /**
-   * Get a connection, handling error behaviour appropriately for context.
-   * 
-   * @param db Database connection to use
-   * @return Connection to database
-   */
-  private Connection getConnection(DatabaseConnection db) throws ImportException, RuntimeException {
-    try {
-      return db.connectDatabase();
-    } catch (SQLException e) {
-      if (PSQLState.CONNECTION_UNABLE_TO_CONNECT.getState().equals(e.getSQLState())) {
-        eb.addError(
-            "Connection to server refused, check hostname, port, username and password are correct");
-        throw new ImportException();
-      } else {
-        throw new RuntimeException(e);
-      }
     }
   }
 
