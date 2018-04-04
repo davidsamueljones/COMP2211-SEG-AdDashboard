@@ -1,6 +1,7 @@
 package group33.seg.controller.handlers;
 
 import java.util.List;
+import com.rits.cloning.Cloner;
 import group33.seg.controller.DashboardController.DashboardMVC;
 import group33.seg.controller.handlers.GraphsHandler.Update;
 import group33.seg.controller.types.MetricQueryResponse;
@@ -44,6 +45,12 @@ public class LineGraphHandler implements GraphHandlerInterface<LineGraphConfig> 
     if (this.graph == null || !this.graph.uuid.equals(graph.uuid)) {
       clearGraph();
     }
+
+    // Create a copy of the input graph, this allows any changes to the original passed object to
+    // be handled by the handler's update structure appropriately on a load
+    Cloner cloner = new Cloner();
+    graph = cloner.deepClone(graph);
+
     // Configure graph view
     setGraphProperties(graph);
     updateGraphLines(graph.lines);
@@ -90,6 +97,8 @@ public class LineGraphHandler implements GraphHandlerInterface<LineGraphConfig> 
     // Get list of existing lines
     List<LineConfig> exLines = (this.graph == null ? null : graph.lines);
     for (LineConfig line : lines) {
+      // Ensure campaign is current with workspace (FIXME: INCREMENT 2 FEATURE)
+      line.query.campaign = mvc.controller.workspace.getCampaign();
       // Update line if it exists, otherwise add it
       int idx = (exLines == null ? -1 : exLines.indexOf(line));
       if (idx >= 0) {

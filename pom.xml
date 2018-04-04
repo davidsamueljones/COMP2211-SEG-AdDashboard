@@ -95,6 +95,12 @@
             <version>1.0.2</version>
         </dependency>
 
+        <dependency>
+            <groupId>uk.com.robust-it</groupId>
+            <artifactId>cloning</artifactId>
+            <version>1.9.9</version>
+        </dependency>
+        
     </dependencies>
 
 </project>
