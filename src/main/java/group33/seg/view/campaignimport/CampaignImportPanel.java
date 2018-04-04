@@ -50,7 +50,7 @@ public class CampaignImportPanel extends JPanel {
   private JButton btnCancelImport;
   private JPanel pnlControls;
 
-  /**
+  /**   
    * Create the panel.
    * 
    * @param controller Controller for this view object
@@ -358,6 +358,7 @@ public class CampaignImportPanel extends JPanel {
           Window frmCurrent = SwingUtilities.getWindowAncestor(CampaignImportPanel.this);
           frmCurrent.setVisible(false);
           frmCurrent.dispose();
+          controller.workspace.setCampaign(controller.imports.getImportedCampaign());
           JOptionPane.showMessageDialog(null, "Import Successful", "Import Successful",
               JOptionPane.INFORMATION_MESSAGE);
         } else {
