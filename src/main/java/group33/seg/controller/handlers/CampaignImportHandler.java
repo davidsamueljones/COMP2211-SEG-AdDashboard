@@ -6,7 +6,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.postgresql.util.PSQLState;
 import group33.seg.controller.DashboardController.DashboardMVC;
@@ -94,6 +96,27 @@ public class CampaignImportHandler {
   }
 
   /**
+   * Cancel an ongoing import (if one is ongoing). Let importer control how cancellation occurs.
+   *
+   * @param wait Whether to halt the current thread until cancellation is finished
+   * @return Whether import was cancelled
+   */
+  public boolean cancelImport(boolean wait) {
+    if (isOngoing()) {
+      threadImport.interrupt();
+      if (wait) {
+        try {
+          threadImport.join();
+          return true;
+        } catch (InterruptedException e) {
+          return false;
+        }
+      }
+    }
+    return false;
+  }
+
+  /**
    * Import control method, should be called using {@link doImport}.
    * 
    * @param importConfig Campaign information required for import
@@ -114,17 +137,7 @@ public class CampaignImportHandler {
     try {
       // Create connection
       db = mvc.controller.database.getConnection();
-      try {
-        conn = db.connectDatabase();
-      } catch (SQLException e) {
-        if (PSQLState.CONNECTION_UNABLE_TO_CONNECT.getState().equals(e.getSQLState())) {
-          eb.addError(
-              "Connection to server refused, check hostname, port, username and password are correct");
-          throw new ImportException();
-        } else {
-          throw new RuntimeException(e);
-        }
-      }
+      conn = getConnection(db);
 
       // Create a new campaign
       campaignID = createNewCampaign(conn, importConfig.campaignName);
@@ -168,7 +181,9 @@ public class CampaignImportHandler {
         removeCampaign(conn, campaignID);
       }
       try {
-        conn.close();
+        if (conn != null) {
+          conn.close();
+        }
       } catch (SQLException e) {
         // Couldn't close ignore
       } finally {
@@ -178,15 +193,53 @@ public class CampaignImportHandler {
     }
   }
 
-  private void removeCampaign(Connection conn, int campaignID) {
+  /**
+   * Get a list of campaigns currently on the server utilising a pooled connection.
+   * 
+   * @return List of campaigns as fully defined configurations
+   */
+  public List<CampaignConfig> getAvailableCampaigns() {
+    DatabaseConnection db = null;
+    Connection conn = null;
     try {
-      Statement st = conn.createStatement();
-      // TODO: Enable CASCADE in Campaign table (currently will cause exception)
-      st.execute(String.format("DELETE FROM %s WHERE id = %d", (new CampaignTable()).getTableName(),
-          campaignID));
-    } catch (SQLException e) {
-      e.printStackTrace();
+      db = mvc.controller.database.getConnection();
+      conn = getConnection(db);
+      return getAvailableCampaigns(conn);
+    } finally {
+      try {
+        if (conn != null) {
+          conn.close();
+        }
+      } catch (SQLException e) {
+        // Couldn't close ignore
+      } finally {
+        // Return database connection
+        mvc.controller.database.returnConnection(db);
+      }
     }
+  }
+
+  /**
+   * Get a list of campaigns currently on the server utilising a given connection.
+   * 
+   * @param conn Connection to use
+   * @return List of campaigns as fully defined configurations
+   */
+  protected List<CampaignConfig> getAvailableCampaigns(Connection conn) {
+    List<CampaignConfig> campaigns = new ArrayList<CampaignConfig>();
+    PreparedStatement ps;
+    try {
+      ps = conn.prepareStatement("SELECT id, name FROM " + new CampaignTable().getTableName());
+      ResultSet rs = ps.executeQuery();
+      while (rs.next()) {
+        CampaignConfig campaign = new CampaignConfig(rs.getInt(1));
+        campaign.name = rs.getString(2);
+        campaigns.add(campaign);
+      }
+    } catch (SQLException e) {
+      eb.addError("Unable to fetch campaign list");
+    }
+    return campaigns;
   }
 
   /**
@@ -196,7 +249,7 @@ public class CampaignImportHandler {
    * @param name Name of campaign to add
    * @return UID from server pertaining to campaign entry (primary key)
    */
-  private int createNewCampaign(Connection conn, String name) throws ImportException {
+  protected int createNewCampaign(Connection conn, String name) throws ImportException {
     int campaignID = -1;
     CampaignTable campaignTable = new CampaignTable();
     try {
@@ -215,6 +268,22 @@ public class CampaignImportHandler {
       throw new ImportException();
     }
     return campaignID;
+  }
+
+  /**
+   * Handles deletion of the given campaign (and any referenced data) on the server.
+   * 
+   * @param conn Connection to use
+   * @param campaignID Campaign to remove
+   */
+  protected void removeCampaign(Connection conn, int campaignID) {
+    try {
+      Statement st = conn.createStatement();
+      st.execute(String.format("DELETE FROM %s WHERE id = %d", (new CampaignTable()).getTableName(),
+          campaignID));
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
   }
 
   /**
@@ -278,24 +347,23 @@ public class CampaignImportHandler {
   }
 
   /**
-   * Cancel an ongoing import (if one is ongoing). Let importer control how cancellation occurs.
-   *
-   * @param wait Whether to halt the current thread until cancellation is finished
-   * @return Whether import was cancelled
+   * Get a connection, handling error behaviour appropriately for context.
+   * 
+   * @param db Database connection to use
+   * @return Connection to database
    */
-  public boolean cancelImport(boolean wait) {
-    if (isOngoing()) {
-      threadImport.interrupt();
-      if (wait) {
-        try {
-          threadImport.join();
-          return true;
-        } catch (InterruptedException e) {
-          return false;
-        }
+  private Connection getConnection(DatabaseConnection db) throws ImportException, RuntimeException {
+    try {
+      return db.connectDatabase();
+    } catch (SQLException e) {
+      if (PSQLState.CONNECTION_UNABLE_TO_CONNECT.getState().equals(e.getSQLState())) {
+        eb.addError(
+            "Connection to server refused, check hostname, port, username and password are correct");
+        throw new ImportException();
+      } else {
+        throw new RuntimeException(e);
       }
     }
-    return false;
   }
 
   /**
@@ -387,6 +455,13 @@ public class CampaignImportHandler {
     for (ProgressListener listener : progressListeners) {
       listener.progressUpdate(progress);
     }
+  }
+
+  /**
+   * Set a new error builder for the instance to clear any errors.
+   */
+  public void clearErrors() {
+    eb = new ErrorBuilder();
   }
 
   /**
