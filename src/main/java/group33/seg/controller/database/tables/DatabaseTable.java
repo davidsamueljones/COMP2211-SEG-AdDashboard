@@ -66,5 +66,19 @@ public abstract class DatabaseTable {
       e.printStackTrace();
     }
   }
+
+  /**
+   * Delete the table from the database
+   *
+   */
+  public final void dropTable(Connection c) {
+    Statement cs;
+    try {
+      cs = c.createStatement();
+      cs.execute(String.format("DROP TABLE %s", getTableName()));
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+  }
   
 }
