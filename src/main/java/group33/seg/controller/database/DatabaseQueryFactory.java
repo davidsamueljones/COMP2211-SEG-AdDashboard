@@ -3,7 +3,6 @@ package group33.seg.controller.database;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.sun.tools.javah.Gen;
 import group33.seg.model.configs.BounceConfig;
 import group33.seg.model.configs.FilterConfig;
 import group33.seg.model.configs.MetricQuery;
