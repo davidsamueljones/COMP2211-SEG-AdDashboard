@@ -31,3 +31,4 @@ dependency-reduced-pom.xml
 *.zip
 config.properties
 .csv#
+src/test/resources/test\.properties
