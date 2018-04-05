@@ -37,7 +37,7 @@ public class DatabaseQueryFactory {
             + " (SELECT date_trunc('<interval>', max(date)) AS final FROM impression_log WHERE <campaign>) AS max,"
             + " generate_series(<start>, <final>, '1 <interval>') AS xaxis"
             + " LEFT JOIN"
-            + " (SELECT date_trunc('<interval>', date) AS dates, count(*) AS yaxis FROM impression_log WHERE <campaign> GROUP BY dates) AS s"
+            + " (SELECT date_trunc('<interval>', date) AS dates, count(*) AS yaxis FROM impression_log WHERE <campaign> <AND filter> GROUP BY dates) AS s"
             + " ON xaxis = s.dates;");
 
     // Total number of conversions over time - conversions are calculated per entry_date
@@ -165,7 +165,7 @@ public class DatabaseQueryFactory {
     // Total number of impressions
     statisticQueries.put(
         Metric.IMPRESSIONS,
-        "SELECT 'all' AS xaxis, count(*) AS yaxis FROM impression_log WHERE (<campaign>);");
+        "SELECT 'all' AS xaxis, count(*) AS yaxis FROM impression_log WHERE (<campaign>) <AND filter>;");
 
     // Total number of clicks
     statisticQueries.put(
@@ -278,8 +278,24 @@ public class DatabaseQueryFactory {
           sql = sql.replace("<final>", "'" + request.filter.dates.max + "'");
         }
       }
-      // TODO: Other filters
+      if(request.filter.ages != null) {
+        //Apply age filter (if provided by user)
+        sql = sql.replace("<AND filter>", "AND " + request.filter.ages + "");
+      }
+      if(request.filter.contexts != null) {
+        //Apply context filter (if provided by user)
+        sql = sql.replace("<AND filter>", "AND " + request.filter.contexts + "");
+      }
+      if(request.filter.incomes != null) {
+        //Apply income filter (if provided by user)
+        sql = sql.replace("<AND filter>", "AND " + request.filter.incomes + "");
+      }
+      if(request.filter.genders != null) {
+        //Apply gender filter (if provided by user)
+        sql = sql.replace("<AND filter>", "AND " + request.filter.genders + "");
+      }
     }
+
     // Apply default settings, if null
     sql = applyDefaultReplacements(sql);
 
@@ -296,7 +312,7 @@ public class DatabaseQueryFactory {
    */
   private static String applyDefaultReplacements(String sql) {
     sql =
-        sql.replace("<campaign>", "1 = 1").replace("<start>", "start").replace("<final>", "final");
+        sql.replace("<campaign>", "1 = 1").replace("<start>", "start").replace("<final>", "final").replace("<AND filter>", "");
     return sql;
   }
 
