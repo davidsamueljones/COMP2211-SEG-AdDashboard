@@ -2,7 +2,10 @@ package group33.seg.controller.database;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import com.sun.tools.javah.Gen;
 import group33.seg.model.configs.BounceConfig;
+import group33.seg.model.configs.FilterConfig;
 import group33.seg.model.configs.MetricQuery;
 import group33.seg.model.types.Interval;
 import group33.seg.model.types.Metric;
@@ -280,19 +283,22 @@ public class DatabaseQueryFactory {
       }
       if(request.filter.ages != null) {
         //Apply age filter (if provided by user)
-        sql = sql.replace("<AND filter>", "AND " + request.filter.ages + "");
+        sql = sql.replace("<AND filter>", "AND age = '" + request.filter.ages + "'");
       }
       if(request.filter.contexts != null) {
         //Apply context filter (if provided by user)
-        sql = sql.replace("<AND filter>", "AND " + request.filter.contexts + "");
+        sql = sql.replace("<AND filter>", "AND context = '" + request.filter.contexts + "'");
       }
       if(request.filter.incomes != null) {
         //Apply income filter (if provided by user)
-        sql = sql.replace("<AND filter>", "AND " + request.filter.incomes + "");
+        sql = sql.replace("<AND filter>", "AND income = '" + request.filter.incomes + "'");
       }
       if(request.filter.genders != null) {
         //Apply gender filter (if provided by user)
-        sql = sql.replace("<AND filter>", "AND " + request.filter.genders + "");
+        if(request.filter.genders.contains(FilterConfig.Gender.FEMALE))
+        sql = sql.replace("<AND filter>", "AND female = 'true'");
+        if(request.filter.genders.contains(FilterConfig.Gender.MALE))
+        sql = sql.replace("<AND filter>", "AND female = 'false'");
       }
     }
 
