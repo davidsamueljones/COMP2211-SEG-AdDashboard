@@ -10,11 +10,10 @@ import group33.seg.model.types.Interval;
 import group33.seg.model.types.Metric;
 
 /**
- * This class stores all SQL queries for statistics and graphs data.
- * It makes use of placeholders to adjust user preferences, such as
- * filters (date range, context, income, age, gender) and campaign
- * which the user wants data for.
- * If the user does not have preferences, placeholders are changed to default settings.
+ * This class stores all SQL queries for statistics and graphs data. It makes use of placeholders to
+ * adjust user preferences, such as filters (date range, context, income, age, gender) and campaign
+ * which the user wants data for. If the user does not have preferences, placeholders are changed to
+ * default settings.
  */
 public class DatabaseQueryFactory {
   private static final Map<Metric, String> graphQueries = new HashMap<>();
@@ -167,71 +166,72 @@ public class DatabaseQueryFactory {
     // Total number of impressions
     statisticQueries.put(
         Metric.IMPRESSIONS,
-        "SELECT 'all' AS xaxis, count(*) AS yaxis FROM impression_log WHERE (<campaign>);");
+        "SELECT 'all' AS xaxis, count(*) AS yaxis FROM impression_log WHERE <campaign> AND <filterAge> AND <filterIncome> AND <filterGender>;");
 
     // Total number of clicks
     statisticQueries.put(
-        Metric.CLICKS,
-        "SELECT 'all' AS xaxis, count(*) AS yaxis FROM click_log WHERE (<campaign>);");
+        Metric.CLICKS, "SELECT 'all' AS xaxis, count(*) AS yaxis FROM <click_log> WHERE <campaign>;");
 
     // Total number of conversions
     statisticQueries.put(
         Metric.CONVERSIONS,
-        "SELECT 'all' AS xaxis, count(*) AS yaxis FROM server_log WHERE conversion AND <campaign>;");
+        "SELECT 'all' AS xaxis, count(*) AS yaxis FROM <server_log> WHERE conversion AND <campaign>;");
 
     // Total cost - includes both click and impression cost
     statisticQueries.put(
         Metric.TOTAL_COST,
         "SELECT 'all' AS xaxis, il.cost + cl.cost AS yaxis FROM"
-            + " (SELECT sum(impression_cost) AS cost FROM impression_log WHERE <campaign>) AS il,"
-            + " (SELECT sum(click_cost) AS cost FROM click_log WHERE <campaign>) AS cl;");
+            + " (SELECT sum(impression_cost) AS cost FROM impression_log WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS il,"
+            + " (SELECT sum(click_cost) AS cost FROM <click_log> WHERE <campaign>) AS cl;");
 
     // Total number of uniques
     statisticQueries.put(
         Metric.UNIQUES,
-        "SELECT 'all' AS xaxis, count(DISTINCT user_id) AS yaxis FROM click_log WHERE <campaign>;");
+        "SELECT 'all' AS xaxis, count(DISTINCT user_id) AS yaxis FROM <click_log> WHERE <campaign>;");
 
-    // Total number of bounces - the <bounce> placeholder handles the 2 type of bounce definition and specific values for them
+    // Total number of bounces - the <bounce> placeholder handles the 2 type of bounce definition
+    // and specific values for them
     statisticQueries.put(
         Metric.BOUNCES,
-        "SELECT 'all' AS xaxis, count(*) AS yaxis FROM server_log WHERE <bounce> AND <campaign>;");
+        "SELECT 'all' AS xaxis, count(*) AS yaxis FROM <server_log> WHERE <bounce> AND <campaign>;");
 
-    // Bounce rate - the <bounce> placeholder handles the 2 type of bounce definition and specific values for them
+    // Bounce rate - the <bounce> placeholder handles the 2 type of bounce definition and specific
+    // values for them
     statisticQueries.put(
         Metric.BOUNCE_RATE,
         "SELECT 'all' AS xaxis, bounces / NULLIF(clicks, 0) * 100 AS yaxis FROM"
-            + " (SELECT count(*) AS bounces FROM server_log WHERE <bounce> AND <campaign>) AS sl,"
-            + " (SELECT count(*)::double precision AS clicks FROM click_log WHERE <campaign>) AS cl;");
+            + " (SELECT count(*) AS bounces FROM <server_log> WHERE <bounce> AND <campaign>) AS sl,"
+            + " (SELECT count(*)::double precision AS clicks FROM <click_log> WHERE <campaign>) AS cl;");
 
     // Average amount of money spent on a campaign for each conversion (CPA)
     statisticQueries.put(
         Metric.CPA,
         "SELECT 'all' AS xaxis, (il.cost + cl.cost) / conversions AS yaxis FROM "
-            + " (SELECT sum(impression_cost) AS cost FROM impression_log WHERE <campaign>) AS il,"
-            + " (SELECT sum(click_cost) AS cost FROM click_log WHERE <campaign>) AS cl,"
-            + " (SELECT count(*) AS conversions FROM server_log WHERE conversion AND <campaign>) AS sl;");
+            + " (SELECT sum(impression_cost) AS cost FROM impression_log WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS il,"
+            + " (SELECT sum(click_cost) AS cost FROM <click_log> WHERE <campaign>) AS cl,"
+            + " (SELECT count(*) AS conversions FROM <server_log> WHERE conversion AND <campaign>) AS sl;");
 
     // The average amount of money spent for each click (CPC)
     statisticQueries.put(
         Metric.CPC,
         "SELECT 'all' AS xaxis, (il.cost + cl.cost) / clicks AS yaxis FROM "
-            + " (SELECT sum(impression_cost) AS cost FROM impression_log WHERE <campaign>) AS il,"
-            + " (SELECT  sum(click_cost) AS cost FROM click_log WHERE <campaign>) AS cl,"
-            + " (SELECT count(*) AS clicks FROM click_log WHERE <campaign>) AS ccl;");
+            + " (SELECT sum(impression_cost) AS cost FROM impression_log WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS il,"
+            + " (SELECT  sum(click_cost) AS cost FROM <click_log> WHERE <campaign>) AS cl,"
+            + " (SELECT count(*) AS clicks FROM <click_log> WHERE <campaign>) AS ccl;");
 
     // The average amount of money spent per 1000 impressions (CPM)
     statisticQueries.put(
         Metric.CPM,
         "SELECT 'all' AS xaxis, (il.cost / impressions) * 1000 AS yaxis FROM"
-            + " (SELECT sum(impression_cost) AS cost FROM impression_log WHERE <campaign>) AS il,"
-            + " (SELECT count(*) AS impressions FROM impression_log WHERE <campaign>) AS iil;");
+            + " (SELECT sum(impression_cost) AS cost FROM impression_log WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS il,"
+            + " (SELECT count(*) AS impressions FROM impression_log WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS iil;");
 
     // The average amount of clicks per impression (CTR)
     statisticQueries.put(
         Metric.CTR,
         "SELECT 'all' AS xaxis, (clicks::double precision) / impressions AS yaxis FROM"
-            + " (SELECT count(*) AS clicks FROM click_log WHERE <campaign>) AS cl,"
-            + " (SELECT count(*) AS impressions FROM impression_log WHERE <campaign>) AS il;");
+            + " (SELECT count(*) AS clicks FROM <click_log> WHERE <campaign>) AS cl,"
+            + " (SELECT count(*) AS impressions FROM impression_log WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS il;");
   }
 
   /**
@@ -257,9 +257,9 @@ public class DatabaseQueryFactory {
     if (request.bounceDef != null) {
       if (request.bounceDef.type == BounceConfig.Type.TIME) {
         sql =
-            sql.replace(
-                "<bounce>",
-                "EXTRACT(EPOCH FROM (exit_date - entry_date)) <= " + request.bounceDef.value);
+                sql.replace(
+                        "<bounce>",
+                        "EXTRACT(EPOCH FROM (exit_date - entry_date)) <= " + request.bounceDef.value);
       } else {
         sql = sql.replace("<bounce>", "pages_viewed <= " + request.bounceDef.value);
       }
@@ -270,7 +270,18 @@ public class DatabaseQueryFactory {
       sql = sql.replace("<campaign>", "campaign_id = " + request.campaign.uid);
     }
 
+    //If the user applies a filter, a 'new table' containing user_id, income, context, age and gender is generated.
+    //This aims to simplify the filtering as much as possible, by integrating filter information from impression_log into the other two logs.
     if (request.filter != null) {
+      sql =
+              sql.replace(
+                      "<server_log>",
+                      "(SELECT DISTINCT sl.*, il.age, il.female, il.income, il.context FROM server_log AS sl INNER JOIN impression_log AS il ON il.user_id = sl.user_id WHERE il.<campaign> AND sl.<campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS t");
+      sql =
+              sql.replace(
+                      "<click_log",
+                      "(SELECT DISTINCT cl.*, il.age, il.female, il.income, il.context FROM click_log AS sl INNER JOIN impression_log AS il ON il.user_id = cl.user_id WHERE il.<campaign> AND cl.<campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS t");
+
       // Apply date range query (if provided by user)
       if (request.filter.dates != null) {
         if (request.filter.dates.min != null) {
@@ -281,123 +292,77 @@ public class DatabaseQueryFactory {
         }
       }
 
-      //FIXME these should be fixed...
-      if(request.filter.ages != null) {
-        StringBuilder ages = new StringBuilder();
-        for(FilterConfig.Age a: request.filter.ages) {
-          if (ages.length() != 0)
-            ages.append("OR");
-            switch (a) {
-              case LESS_25:
-                ages.append("age = '<25'");
-                break;
-              case BETWEEN_25_34:
-                ages.append("age = '25-34'");
-                break;
-              case BETWEEN_35_44:
-                ages.append("age = '35-44'");
-                break;
-              case BETWEEN_45_54:
-                ages.append("age = '45-54'");
-                break;
-              case MORE_54:
-                ages.append("age = '>54'");
-                break;
-            }
-          }
-        sql = sql.replace("<filterAge>", ages.toString());
+      //Add age preference (if provided by user); Also allows for selecting multiple age filters
+      if (request.filter.ages != null) {
+        StringBuilder ages = new StringBuilder("age IN (");
+        for (FilterConfig.Age a : request.filter.ages) {
+          ages.append("'").append(a).append("',");
         }
+        ages.deleteCharAt(ages.length() - 1);
+        ages.append(")");
+
+        sql = sql.replace("<filterAge>", ages.toString());
       }
 
-      //FIXME should be slightly different
-      if(request.filter.contexts != null) {
-        StringBuilder contexts = new StringBuilder();
-        for(FilterConfig.Context cont: request.filter.contexts) {
-          if (contexts.length() != 0)
-            contexts.append("OR");
-          switch (cont) {
-            case BLOG:
-              contexts.append("context = 'Blog'");
-              break;
-            case NEWS:
-              contexts.append("context = 'News'");
-              break;
-            case TRAVEL:
-              contexts.append("context = 'Travel'");
-              break;
-            case HOBBIES:
-              contexts.append("context = 'Hobbies'");
-              break;
-            case SHOPPING:
-              contexts.append("context = 'Shopping'");
-              break;
-            case SOCIAL_MEDIA:
-              contexts.append("context = 'Social Media'");
-              break;
-          }
+      //Add context preference (if provided by user); Also allows for selecting multiple context filters
+      if (request.filter.contexts != null) {
+        StringBuilder contexts = new StringBuilder("context IN (");
+        for (FilterConfig.Context cont : request.filter.contexts) {
+          contexts.append("'").append(cont).append("',");
         }
+        contexts.deleteCharAt(contexts.length() - 1);
+        contexts.append(")");
+
         sql = sql.replace("<filterContext>", contexts.toString());
       }
 
-      //FIXME should be slightly different
-      if(request.filter.incomes != null) {
-        StringBuilder incomes = new StringBuilder();
-        for(FilterConfig.Income inc: request.filter.incomes) {
-          if (incomes.length() != 0)
-            incomes.append("OR");
-          switch (inc) {
-            case LOW:
-              incomes.append("income = 'Low'");
-              break;
-            case MEDIUM:
-              incomes.append("income = 'Medium");
-              break;
-            case HIGH:
-              incomes.append("income = 'High'");
-              break;
-          }
+      if (request.filter.incomes != null) {
+        StringBuilder incomes = new StringBuilder("income IN (");
+        for (FilterConfig.Income inc : request.filter.incomes) {
+          incomes.append("'").append(inc).append("',");
         }
+        incomes.deleteCharAt(incomes.length() - 1);
+        incomes.append(")");
+
         sql = sql.replace("<filterIncome>", incomes.toString());
       }
 
-      //FIXME should be slightly different
-      if(request.filter.genders != null) {
-        //Apply gender filter (if provided by user)
-        if(request.filter.genders.contains(FilterConfig.Gender.FEMALE))
-        sql = sql.replace("<filterGender>", "AND female");
-        if(request.filter.genders.contains(FilterConfig.Gender.MALE))
-        sql = sql.replace("<filterGender>", "AND female = 'false'");
+      if (request.filter.genders != null) {
+        // Apply gender filter (if provided by user)
+        if (request.filter.genders.contains(FilterConfig.Gender.FEMALE))
+          sql = sql.replace("<filterGender>", "female");
+        if (request.filter.genders.contains(FilterConfig.Gender.MALE))
+          sql = sql.replace("<filterGender>", "female = 'false'");
       }
 
-    // Apply default settings, if null
-    sql = applyDefaultReplacements(sql);
-
+      // Apply default settings, if filters are null
+      sql = applyDefaultReplacements(sql);
+    }
     return sql;
   }
 
-
   /**
-   * Apply default filtering, if not specified by the user If there is no campaignID specified,
-   * fetch all the data If there is no date range filter applied, then use the min and max date from
-   * the 'date' column in the table
-   *
+   * Apply default filtering, if not specified by the user
+   * If there is no campaignID or filtering specified, fetch all the data
+   * If there is no date range filter applied, then use the min and max date from the 'date' ('entry_date' for server_log) column in the table
    * @param sql SQL statement with placeholders to be adjusted
    * @return Modified SQL statement
    */
   private static String applyDefaultReplacements(String sql) {
-    sql =
-        sql.replace("<campaign>", "1 = 1")
-                .replace("<start>", "start")
-                .replace("<final>", "final")
-                .replace("<filterAge>", "")
-                .replace("<filterContext>", "")
-                .replace("<filterIncome>", "")
-                .replace("<filterGender>", "");
+    sql = sql.replace("<campaign>", "1 = 1")
+            .replace("<start>", "start")
+            .replace("<final>", "final")
+            .replace("<filterAge>", "1 = 1")
+            .replace("<filterContext>", "1 = 1")
+            .replace("<filterIncome>", "1 = 1")
+            .replace("<filterGender>", "1 = 1")
+            .replace("<server_log>", "server_log")
+            .replace("<click_log>", "click_log");
     return sql;
   }
 
   /**
-   * Helper function to modify template code to apply specific grouping.
+   * Helper function to modify template code to apply specific interval grouping.
    *
    * @param sql SQL to apply grouping to
    * @param interval Interval to apply
