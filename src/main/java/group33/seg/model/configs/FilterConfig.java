@@ -150,7 +150,7 @@ public class FilterConfig {
    * Enumeration of possible contexts for filtering.
    */
   public enum Context {
-    SHOPPING, BLOG, SOCIAL_MEDIA, NEWS;
+    SHOPPING, BLOG, SOCIAL_MEDIA, NEWS, TRAVEL, HOBBIES;
 
     @Override
     public String toString() {
