@@ -39,7 +39,7 @@ public class DatabaseQueryFactory {
             + " (SELECT date_trunc('<interval>', max(date)) AS final FROM impression_log WHERE <campaign>) AS max,"
             + " generate_series(<start>, <final>, '1 <interval>') AS xaxis"
             + " LEFT JOIN"
-            + " (SELECT date_trunc('<interval>', date) AS dates, count(*) AS yaxis FROM impression_log WHERE <campaign> <AND filter> GROUP BY dates) AS s"
+            + " (SELECT date_trunc('<interval>', date) AS dates, count(*) AS yaxis FROM impression_log WHERE <campaign> GROUP BY dates) AS s"
             + " ON xaxis = s.dates;");
 
     // Total number of conversions over time - conversions are calculated per entry_date
@@ -167,7 +167,7 @@ public class DatabaseQueryFactory {
     // Total number of impressions
     statisticQueries.put(
         Metric.IMPRESSIONS,
-        "SELECT 'all' AS xaxis, count(*) AS yaxis FROM impression_log WHERE (<campaign>) <AND filter>;");
+        "SELECT 'all' AS xaxis, count(*) AS yaxis FROM impression_log WHERE (<campaign>);");
 
     // Total number of clicks
     statisticQueries.put(
@@ -280,24 +280,32 @@ public class DatabaseQueryFactory {
           sql = sql.replace("<final>", "'" + request.filter.dates.max + "'");
         }
       }
+
+      //FIXME these should be fixed...
       if(request.filter.ages != null) {
         //Apply age filter (if provided by user)
-        sql = sql.replace("<AND filter>", "AND age = '" + request.filter.ages + "'");
+        sql = sql.replace("<filterAge>", "AND age = '" + request.filter.ages + "'");
       }
+
+      //FIXME should be slightly different
       if(request.filter.contexts != null) {
         //Apply context filter (if provided by user)
-        sql = sql.replace("<AND filter>", "AND context = '" + request.filter.contexts + "'");
+        sql = sql.replace("<filterContext>", "AND context = '" + request.filter.contexts + "'");
       }
+
+      //FIXME should be slightly different
       if(request.filter.incomes != null) {
         //Apply income filter (if provided by user)
-        sql = sql.replace("<AND filter>", "AND income = '" + request.filter.incomes + "'");
+        sql = sql.replace("<filter>", "AND income = '" + request.filter.incomes + "'");
       }
+
+      //FIXME should be slightly different
       if(request.filter.genders != null) {
         //Apply gender filter (if provided by user)
         if(request.filter.genders.contains(FilterConfig.Gender.FEMALE))
-        sql = sql.replace("<AND filter>", "AND female = 'true'");
+        sql = sql.replace("<filter>", "AND female = 'true'");
         if(request.filter.genders.contains(FilterConfig.Gender.MALE))
-        sql = sql.replace("<AND filter>", "AND female = 'false'");
+        sql = sql.replace("<filter>", "AND female = 'false'");
       }
     }
 
@@ -317,7 +325,13 @@ public class DatabaseQueryFactory {
    */
   private static String applyDefaultReplacements(String sql) {
     sql =
-        sql.replace("<campaign>", "1 = 1").replace("<start>", "start").replace("<final>", "final").replace("<AND filter>", "");
+        sql.replace("<campaign>", "1 = 1")
+                .replace("<start>", "start")
+                .replace("<final>", "final")
+                .replace("<filterAge>", "")
+                .replace("<filterContext>", "")
+                .replace("<filterIncome>", "")
+                .replace("<filterGender>", "");
     return sql;
   }
 
