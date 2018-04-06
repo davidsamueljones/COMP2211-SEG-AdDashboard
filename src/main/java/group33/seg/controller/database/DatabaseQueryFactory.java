@@ -283,37 +283,98 @@ public class DatabaseQueryFactory {
 
       //FIXME these should be fixed...
       if(request.filter.ages != null) {
-        //Apply age filter (if provided by user)
-        sql = sql.replace("<filterAge>", "AND age = '" + request.filter.ages + "'");
+        StringBuilder ages = new StringBuilder();
+        for(FilterConfig.Age a: request.filter.ages) {
+          if (ages.length() != 0)
+            ages.append("OR");
+            switch (a) {
+              case LESS_25:
+                ages.append("age = '<25'");
+                break;
+              case BETWEEN_25_34:
+                ages.append("age = '25-34'");
+                break;
+              case BETWEEN_35_44:
+                ages.append("age = '35-44'");
+                break;
+              case BETWEEN_45_54:
+                ages.append("age = '45-54'");
+                break;
+              case MORE_54:
+                ages.append("age = '>54'");
+                break;
+            }
+          }
+        sql = sql.replace("<filterAge>", ages.toString());
+        }
       }
 
       //FIXME should be slightly different
       if(request.filter.contexts != null) {
-        //Apply context filter (if provided by user)
-        sql = sql.replace("<filterContext>", "AND context = '" + request.filter.contexts + "'");
+        StringBuilder contexts = new StringBuilder();
+        for(FilterConfig.Context cont: request.filter.contexts) {
+          if (contexts.length() != 0)
+            contexts.append("OR");
+          switch (cont) {
+            case BLOG:
+              contexts.append("context = 'Blog'");
+              break;
+            case NEWS:
+              contexts.append("context = 'News'");
+              break;
+            case TRAVEL:
+              contexts.append("context = 'Travel'");
+              break;
+            case HOBBIES:
+              contexts.append("context = 'Hobbies'");
+              break;
+            case SHOPPING:
+              contexts.append("context = 'Shopping'");
+              break;
+            case SOCIAL_MEDIA:
+              contexts.append("context = 'Social Media'");
+              break;
+          }
+        }
+        sql = sql.replace("<filterContext>", contexts.toString());
       }
 
       //FIXME should be slightly different
       if(request.filter.incomes != null) {
-        //Apply income filter (if provided by user)
-        sql = sql.replace("<filter>", "AND income = '" + request.filter.incomes + "'");
+        StringBuilder incomes = new StringBuilder();
+        for(FilterConfig.Income inc: request.filter.incomes) {
+          if (incomes.length() != 0)
+            incomes.append("OR");
+          switch (inc) {
+            case LOW:
+              incomes.append("income = 'Low'");
+              break;
+            case MEDIUM:
+              incomes.append("income = 'Medium");
+              break;
+            case HIGH:
+              incomes.append("income = 'High'");
+              break;
+          }
+        }
+        sql = sql.replace("<filterIncome>", incomes.toString());
       }
 
       //FIXME should be slightly different
       if(request.filter.genders != null) {
         //Apply gender filter (if provided by user)
         if(request.filter.genders.contains(FilterConfig.Gender.FEMALE))
-        sql = sql.replace("<filter>", "AND female = 'true'");
+        sql = sql.replace("<filterGender>", "AND female");
         if(request.filter.genders.contains(FilterConfig.Gender.MALE))
-        sql = sql.replace("<filter>", "AND female = 'false'");
+        sql = sql.replace("<filterGender>", "AND female = 'false'");
       }
-    }
 
     // Apply default settings, if null
     sql = applyDefaultReplacements(sql);
 
     return sql;
   }
+
 
   /**
    * Apply default filtering, if not specified by the user If there is no campaignID specified,
