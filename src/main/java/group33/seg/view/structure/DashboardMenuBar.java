@@ -72,6 +72,7 @@ public class DashboardMenuBar extends JMenuBar {
     mnView.addSeparator();
 
     JCheckBoxMenuItem mntmDefinitions = new JCheckBoxMenuItem("Definitions");
+    mntmDefinitions.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, CMD_MODIFIER));
     mntmDefinitions.setSelected(false);
     mnView.add(mntmDefinitions);
 

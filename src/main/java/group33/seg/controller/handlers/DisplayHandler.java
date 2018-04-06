@@ -112,7 +112,6 @@ public class DisplayHandler {
   }
 
   public boolean isDefinitionWindowVisible() {
-    System.out.println(definitionsVisible);
     return definitionsVisible;
   }
 
