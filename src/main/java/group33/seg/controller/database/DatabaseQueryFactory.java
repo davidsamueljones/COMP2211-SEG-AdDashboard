@@ -279,7 +279,7 @@ public class DatabaseQueryFactory {
                       "(SELECT DISTINCT sl.*, il.age, il.female, il.income, il.context FROM server_log AS sl INNER JOIN impression_log AS il ON il.user_id = sl.user_id WHERE il.<campaign> AND sl.<campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS t");
       sql =
               sql.replace(
-                      "<click_log",
+                      "<click_log>",
                       "(SELECT DISTINCT cl.*, il.age, il.female, il.income, il.context FROM click_log AS sl INNER JOIN impression_log AS il ON il.user_id = cl.user_id WHERE il.<campaign> AND cl.<campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS t");
 
       // Apply date range query (if provided by user)
@@ -334,10 +334,9 @@ public class DatabaseQueryFactory {
         if (request.filter.genders.contains(FilterConfig.Gender.MALE))
           sql = sql.replace("<filterGender>", "female = 'false'");
       }
-
-      // Apply default settings, if filters are null
-      sql = applyDefaultReplacements(sql);
     }
+    // Apply default settings, if filters are null
+    sql = applyDefaultReplacements(sql);
     return sql;
   }
 
