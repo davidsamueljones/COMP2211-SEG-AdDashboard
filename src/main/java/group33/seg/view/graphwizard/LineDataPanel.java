@@ -4,11 +4,14 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import javax.sound.midi.ControllerEventListener;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JToolTip;
+import group33.seg.controller.DashboardController;
 import group33.seg.model.configs.LineConfig;
 import group33.seg.model.configs.MetricQuery;
 import group33.seg.model.types.Interval;
@@ -18,16 +21,21 @@ import group33.seg.view.controls.FilterViewPanel;
 
 public class LineDataPanel extends JPanel {
   private static final long serialVersionUID = -7116368239383924369L;
-
+  
+  private DashboardController controller;
+  
   protected JComboBox<Metric> cboMetric;
   protected JComboBox<Interval> cboInterval;
   protected FilterViewPanel pnlFilter;
   protected BounceDefinitionPanel pnlBounceRate;
 
   /**
-   * Initialise the panel.
+   * Create the panel.
+   *
+   * @param controller Controller for this view object
    */
-  public LineDataPanel() {
+  public LineDataPanel(DashboardController controller) {
+    this.controller = controller;
     initGUI();
   }
 
@@ -119,7 +127,24 @@ public class LineDataPanel extends JPanel {
     // ************************************************************************************
 
     // Make relevant controls visible depending on metric
-    cboMetric.addActionListener(e -> pnlBounceRate.setVisible(Metric.BOUNCE_RATE.equals(cboMetric.getSelectedItem())));
+    cboMetric.addActionListener(e -> {
+      // Show bounce rate definition if metric requires it
+      Metric item = (Metric) cboMetric.getSelectedItem();
+      boolean needsBounceDef = Metric.BOUNCES == item || Metric.BOUNCE_RATE == item;
+      pnlBounceRate.setVisible(needsBounceDef);
+      // Display appropriate help
+      if (item == null) {
+        btnMetricHelp.setToolTipText(null);
+      } else {
+        btnMetricHelp.setToolTipText("<html><p width=\"250\">" + item.definition +"</p></html>");
+      }
+     
+    });
+    
+    // Show definition panel if it is not already displayed
+    btnMetricHelp.addActionListener(e -> {
+      controller.display.showDefinitions();
+    });
 
   }
 

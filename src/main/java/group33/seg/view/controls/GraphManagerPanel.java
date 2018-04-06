@@ -1,6 +1,7 @@
 package group33.seg.view.controls;
 
 import java.awt.Component;
+import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -215,7 +216,7 @@ public class GraphManagerPanel extends JPanel {
   public void displayLineWizard(LineGraphConfig config) {
     Window frmCurrent = SwingUtilities.getWindowAncestor(GraphManagerPanel.this);
     LineGraphWizardDialog wizard = new LineGraphWizardDialog(frmCurrent, controller, config);
-    wizard.setModal(true);
+    wizard.setModalityType(ModalityType.APPLICATION_MODAL);
     wizard.setVisible(true);
     // Select new graph on wizard close
     GraphConfig newConfig = wizard.getGraph();

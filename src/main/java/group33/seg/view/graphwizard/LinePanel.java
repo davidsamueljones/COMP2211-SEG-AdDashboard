@@ -7,21 +7,36 @@ import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
+import group33.seg.controller.DashboardController;
 import group33.seg.model.configs.LineConfig;
 
 public class LinePanel extends JScrollPane {
   private static final long serialVersionUID = 5600109072945686314L;
 
+  private DashboardController controller;
+  
   protected LineDataPanel pnlLineData;
   protected LinePropertiesPanel pnlLineProperties;
 
   private LineConfig base;
 
-  public LinePanel() {
-    this(null);
+  /**
+   * Create the panel.
+   *
+   * @param controller Controller for this view object
+   */
+  public LinePanel(DashboardController controller) {
+    this(null, controller);
   }
 
-  public LinePanel(LineConfig line) {
+  /**
+   * Create the panel and load an initial line.
+   *
+   * @param line Line to load
+   * @param controller Controller for this view object
+   */
+  public LinePanel(LineConfig line, DashboardController controller) {
+    this.controller = controller;
     initGUI();
     loadLine(line);
   }
@@ -46,7 +61,7 @@ public class LinePanel extends JScrollPane {
     gbc_pnlLineProperties.gridy = 0;
     pnlMain.add(pnlLineProperties, gbc_pnlLineProperties);
 
-    pnlLineData = new LineDataPanel();
+    pnlLineData = new LineDataPanel(controller);
     GridBagConstraints gbc_pnlLineData = new GridBagConstraints();
     gbc_pnlLineData.fill = GridBagConstraints.BOTH;
     gbc_pnlLineData.insets = new Insets(0, 0, 0, 0);

@@ -92,7 +92,7 @@ public class LineGraphWizardDialog extends JDialog {
     pnlGraphProperties = new GraphPropertiesPanel();
     tabsProperties.add("Graph Properties", pnlGraphProperties);
 
-    pnlLines = new GraphLinesPanel();
+    pnlLines = new GraphLinesPanel(controller);
     tabsProperties.add("Lines", pnlLines);
 
     JButton btnClose = new JButton("Close");

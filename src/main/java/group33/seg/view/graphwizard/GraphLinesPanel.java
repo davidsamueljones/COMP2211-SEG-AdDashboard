@@ -15,12 +15,15 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import group33.seg.controller.DashboardController;
 import group33.seg.controller.utilities.DashboardUtilities;
 import group33.seg.model.configs.LineConfig;
 
 public class GraphLinesPanel extends JPanel {
   private static final long serialVersionUID = -1169530766129778297L;
   private final static int MAX_TAB_TITLE_LEN = 15;
+  
+  private DashboardController controller;
   
   /** Randomiser for line colours */
   private Random random = new Random();
@@ -29,9 +32,12 @@ public class GraphLinesPanel extends JPanel {
   protected List<LinePanel> linePanels;
 
   /**
-   * Initialise the panel.
+   * Create the panel.
+   *
+   * @param controller Controller for this view object
    */
-  public GraphLinesPanel() {
+  public GraphLinesPanel(DashboardController controller) {
+    this.controller = controller;
     initGUI();
   }
 
@@ -88,7 +94,7 @@ public class GraphLinesPanel extends JPanel {
 
     // Create a new line in the graph
     btnNew.addActionListener(e -> {
-      LinePanel pnlLine = new LinePanel();
+      LinePanel pnlLine = new LinePanel(controller);
       pnlLine.pnlLineProperties.txtIdentifier
           .setText(String.format("Line %d", tabsLines.getTabCount() + 1));
       pnlLine.pnlLineProperties.setColor(randomLineColor());
@@ -141,7 +147,7 @@ public class GraphLinesPanel extends JPanel {
       Integer idx = getLineTabIndex(line);
       if (idx == -1) {
         // New line behaviour
-        LinePanel pnlLine = new LinePanel(line);
+        LinePanel pnlLine = new LinePanel(line, controller);
         addLinePanel(line.identifier, pnlLine, i);
       } else {
         // Update behaviour
