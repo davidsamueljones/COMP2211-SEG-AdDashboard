@@ -1,8 +1,9 @@
 package group33.seg.controller.handlers;
 
 import java.awt.Dialog.ModalExclusionType;
-import java.awt.Dialog.ModalityType;
 import java.awt.EventQueue;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import javax.swing.WindowConstants;
 import group33.seg.controller.DashboardController.DashboardMVC;
 import group33.seg.view.structure.DashboardFrame;
@@ -16,8 +17,8 @@ public class DisplayHandler {
   /** MVC model that sub-controller has knowledge of */
   private final DashboardMVC mvc;
 
-  private boolean fontScalingOutdated = false;
-
+  private volatile boolean fontScalingOutdated = false;
+  private volatile boolean definitionsVisible = false;
 
   /**
    * Instantiate a display handler.
@@ -92,6 +93,17 @@ public class DisplayHandler {
         definitions.setAlwaysOnTop(true);
         definitions.setAutoRequestFocus(true);
         definitions.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+        definitions.addComponentListener(new ComponentAdapter() {
+          @Override
+          public void componentShown(ComponentEvent e) {
+            definitionsVisible = true;
+          }
+
+          @Override
+          public void componentHidden(ComponentEvent e) {
+            definitionsVisible = false;
+          }
+        });
         mvc.view.setDefinitions(definitions);
       }
 
@@ -99,8 +111,18 @@ public class DisplayHandler {
     });
   }
 
+  public boolean isDefinitionWindowVisible() {
+    System.out.println(definitionsVisible);
+    return definitionsVisible;
+  }
+
   public void hideDefinitions() {
-    mvc.view.getDefinitions().setVisible(false);
+    EventQueue.invokeLater(() -> {
+      DefinitionFrame definitions = mvc.view.getDefinitions();
+      if (definitions != null) {
+        mvc.view.getDefinitions().setVisible(false);
+      }
+    });
   }
 
   /**
