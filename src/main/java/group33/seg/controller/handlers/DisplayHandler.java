@@ -91,7 +91,7 @@ public class DisplayHandler {
         definitions = new DefinitionFrame();
         definitions.setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
         definitions.setAlwaysOnTop(true);
-        definitions.setAutoRequestFocus(true);
+        definitions.setFocusableWindowState(false);
         definitions.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         definitions.addComponentListener(new ComponentAdapter() {
           @Override
