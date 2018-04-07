@@ -32,7 +32,7 @@ public class QueryCorrectnessTest {
   private static final String PATH_IMPRESSION_LOG = PATH_TO_DATASET + "impression_log.csv";
   private static final String PATH_SERVER_LOG = PATH_TO_DATASET + "server_log.csv";
 
-  private static final Double MARGIN_OF_ERROR = 0.0001;
+  private static final double MARGIN_OF_ERROR = 0.01;
 
   private static final String DATABASE_CREDENTIALS = "src/test/resources/test.properties";
 
@@ -101,7 +101,10 @@ public class QueryCorrectnessTest {
    *
    * @return True if the actual value is within the margin of error
    */
-  private boolean withinMarginOfError(Number expected, Number actual){
+  public boolean withinMarginOfError(Number expected, Number actual){
+    if(expected.doubleValue() == 0.0 & actual.doubleValue() == 0.0){
+      return true;
+    }
     return Math.abs(1.0 - (actual.doubleValue() / expected.doubleValue())) < MARGIN_OF_ERROR;
   }
 
@@ -120,9 +123,12 @@ public class QueryCorrectnessTest {
     }
 
     //actually compare values
-    for (Pair<String, Number> expected : expectedList) {
-      Pair<String, Number> actual = expected;
+    for (int i = 0; i < expectedList.size(); i++) {
+      Pair<String, Number> expected = expectedList.get(i);
+      Pair<String, Number> actual = actualList.get(i);
 
+      System.out.println(expected.key + " " + expected.value);
+      System.out.println(actual.key + " " + actual.value);
       //comparing keys
       if (!expected.key.equals(actual.key)) {
         return false;
