@@ -1,7 +1,31 @@
 # Ad Auction Dashboard - Group 33
 
 The Ad Auction Dashboard is an application that will be used for easier evaluation of custom made campaigns.
-The project is currently under development and it only has the functionality that we promised to deliver in our **Sprint One** Backlog.
+The project is developed using Agile methodologies and it is separated into 3 Increments. 
+
+![Main Application](documents/application/Main-ubuntu dark theme.png?raw=true "Application")
+
+
+##Functionality
+The project is currently under development and it has the functionality that we promised to deliver in **Sprint One** and **Sprint Two** Backlogs.
+Currently a user of the system is able to see all key metrics as total statistics and as a graph. Other functionality the application supports includes:
+* Upload a new campaign 
+* Select from a list of already uploaded campaigns
+* Create custom graph, x and y axis name 
+* Customise line name, colour, thickness
+* Add multiple lines on a single graph 
+* Filter data by age, income, context, gender, date range
+* Generate data for specific intervals (minute, hour, day, week, or month)
+
+##Future Development
+In **Sprint Three** backlog we have the rest of the user stories that we have not delivered in the previous two sprints.
+The features we are intending to include are:
+* Click costs histogram
+* Comparing audience segments
+* Comparing data from different campaigns
+* Time of day statistics
+* Specific day statistics
+* Colour change option
 
 ## Getting Started
 The instructions below will guide you through the steps for running the code.
