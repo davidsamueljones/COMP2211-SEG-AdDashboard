@@ -107,8 +107,8 @@ public class FilterConfig {
    * Enumeration of possible ages for filtering.
    */
   public enum Age {
-    LESS_25("< 25"), BETWEEN_25_34("25-34"), BETWEEN_35_44("35-44"), BETWEEN_45_54(
-        "45-54"), MORE_54("> 54");
+    LESS_25("<25"), BETWEEN_25_34("25-34"), BETWEEN_35_44("35-44"), BETWEEN_45_54(
+        "45-54"), MORE_54(">54");
 
     private String string;
 
