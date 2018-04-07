@@ -3,7 +3,7 @@
 The Ad Auction Dashboard is an application that will be used for easier evaluation of custom made campaigns.
 The project is developed using Agile methodologies and it is separated into 3 Increments. 
 
-![Main Application](documents/application/Main-ubuntu dark theme.png?raw=true "Application")
+![Main Application](documents/application/Main-ubuntu-dark-theme.png "Application")
 
 
 ##Functionality
