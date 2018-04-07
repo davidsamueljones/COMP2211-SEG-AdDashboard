@@ -10,7 +10,6 @@ import org.postgresql.copy.CopyIn;
 import org.postgresql.copy.CopyManager;
 import org.postgresql.core.BaseConnection;
 import org.postgresql.core.Encoding;
-import group33.seg.controller.database.DatabaseConnection;
 import group33.seg.controller.handlers.DatabaseHandler;
 import group33.seg.controller.utilities.DashboardUtilities;
 
@@ -64,7 +63,7 @@ public class DatabaseTableImporter {
         successful = true;
       } catch (Exception e) {
         successful = false;
-      }      
+      }
     });
     t.start();
     // Wait for import to finish, but allow for cancellation through interrupt
@@ -91,7 +90,6 @@ public class DatabaseTableImporter {
    * @return Number of rows written
    */
   private long start(String path, DatabaseTable table, int campaighID) {
-    DatabaseConnection db = null;
     Connection conn = null;
     BaseConnection bconn = null;
 
@@ -102,17 +100,12 @@ public class DatabaseTableImporter {
 
     long written = -1;
     try {
-      try {
-        // Create server connection
-        db = databaseHandler.getConnection();
-        conn = db.connectDatabase();
-        if (conn instanceof BaseConnection) {
-          bconn = (BaseConnection) conn;
-        } else {
-          throw new RuntimeException("Database connection did not generate a BaseConnection type");
-        }
-      } catch (SQLException e) {
-        throw new RuntimeException("Unable to make database connection", e);
+      // Create server connection
+      conn = databaseHandler.getConnection();
+      if (conn instanceof BaseConnection) {
+        bconn = (BaseConnection) conn;
+      } else {
+        throw new RuntimeException("Database connection is not a BaseConnection type");
       }
 
       // Track PID for cancellation requests
@@ -128,12 +121,7 @@ public class DatabaseTableImporter {
         throw new RuntimeException("Unable to read from import file", e);
       }
     } finally {
-      try {
-        conn.close();
-      } catch (SQLException e) {
-        // unable to close connection, ignore
-      }
-      databaseHandler.returnConnection(db);
+      databaseHandler.returnConnection(conn);
       this.pid = -1;
       this.ongoing = false;
       this.cancelling = false;

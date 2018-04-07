@@ -81,13 +81,6 @@
             <version>1.6.1</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/com.opencsv/opencsv -->
-        <dependency>
-            <groupId>com.opencsv</groupId>
-            <artifactId>opencsv</artifactId>
-            <version>4.1</version>
-        </dependency>
-
         <!-- https://mvnrepository.com/artifact/org.scijava/swing-checkbox-tree -->
         <dependency>
             <groupId>org.scijava</groupId>
@@ -95,12 +88,20 @@
             <version>1.0.2</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/uk.com.robust-it/cloning -->
         <dependency>
             <groupId>uk.com.robust-it</groupId>
             <artifactId>cloning</artifactId>
             <version>1.9.9</version>
         </dependency>
         
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-text -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>1.3</version>
+        </dependency>
+
     </dependencies>
 
 </project>

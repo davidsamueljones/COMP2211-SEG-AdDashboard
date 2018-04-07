@@ -9,6 +9,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 import group33.seg.controller.DashboardController;
 import group33.seg.view.preferences.PreferencesDialog;
 
@@ -18,7 +20,6 @@ public class DashboardMenuBar extends JMenuBar {
 
   private final DashboardController controller;
 
-  
   /**
    * Initialise the menu bar.
    * 
@@ -26,10 +27,10 @@ public class DashboardMenuBar extends JMenuBar {
    */
   public DashboardMenuBar(DashboardController controller) {
     this.controller = controller;
-    
+
     initMenuBar();
   }
-  
+
   private void initMenuBar() {
     // Initialise menu bar items
     initMenuBarItemFile();
@@ -67,6 +68,38 @@ public class DashboardMenuBar extends JMenuBar {
     JCheckBoxMenuItem mntmGraph = new JCheckBoxMenuItem("Graph");
     mntmGraph.setSelected(true);
     mnView.add(mntmGraph);
+
+    mnView.addSeparator();
+
+    JCheckBoxMenuItem mntmDefinitions = new JCheckBoxMenuItem("Definitions");
+    mntmDefinitions.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, CMD_MODIFIER));
+    mntmDefinitions.setSelected(false);
+    mnView.add(mntmDefinitions);
+
+    // Menu bar click behaviour
+    mnView.addMenuListener(new MenuListener() {
+
+      @Override
+      public void menuSelected(MenuEvent e) {
+        mntmDefinitions.setSelected(controller.display.isDefinitionWindowVisible());
+      }
+
+      @Override
+      public void menuDeselected(MenuEvent e) {}
+
+      @Override
+      public void menuCanceled(MenuEvent e) {}
+
+    });
+
+    // Toggle definitions item click behaviour
+    mntmDefinitions.addActionListener(e -> {
+      if (mntmDefinitions.isSelected()) {
+        controller.display.showDefinitions();
+      } else {
+        controller.display.hideDefinitions();
+      }
+    });
   }
 
   private void initMenuBarItemHelp() {
@@ -84,16 +117,15 @@ public class DashboardMenuBar extends JMenuBar {
     mntmPreferences.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, CMD_MODIFIER));
     mnHelp.add(mntmPreferences);
 
-    mntmPreferences.addActionListener(
-            e -> {
-              // Use current panel's form as parent
-              Window frmCurrent = SwingUtilities.getWindowAncestor(DashboardMenuBar.this);
-              PreferencesDialog preferences = new PreferencesDialog(frmCurrent, controller);
-              preferences.setModal(true);
-              preferences.setVisible(true);
-              if (controller.display.isUIFontScalingOutdated()) {
-                controller.display.reloadDashboard();
-              }
-            });
+    mntmPreferences.addActionListener(e -> {
+      // Use current panel's form as parent
+      Window frmCurrent = SwingUtilities.getWindowAncestor(DashboardMenuBar.this);
+      PreferencesDialog preferences = new PreferencesDialog(frmCurrent, controller);
+      preferences.setModal(true);
+      preferences.setVisible(true);
+      if (controller.display.isUIFontScalingOutdated()) {
+        controller.display.reloadDashboard();
+      }
+    });
   }
 }
