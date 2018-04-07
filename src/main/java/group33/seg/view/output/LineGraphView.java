@@ -5,15 +5,22 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Stroke;
+import java.awt.Toolkit;
 import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
+import javax.swing.SwingUtilities;
 import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartMouseEvent;
+import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.LegendItem;
@@ -62,13 +69,14 @@ public class LineGraphView extends JPanel {
     setLayout(new BorderLayout(0, 0));
 
     // Chart panel
-    pnlChart = new ChartPanel(chart, false);
-    // Apply minimum and maximum draw sizing to avoid distortion
-    pnlChart.setMaximumDrawHeight(Integer.MAX_VALUE);
-    pnlChart.setMaximumDrawWidth(Integer.MAX_VALUE);
-    pnlChart.setMinimumDrawWidth(10);
-    pnlChart.setMinimumDrawHeight(10);
-
+    // Configure chart with:
+    // * No preferred size, let view control
+    // * Apply low minimum and high maximum draw sizing to avoid distortion
+    // * Do not use buffered image as this reduces quality on retina displays (TODO: Add toggle
+    // for better performance option?)
+    // * Disable property changing menu item, allow the rest
+    pnlChart = new ChartPanel(chart, 0, 0, 10, 10, Integer.MAX_VALUE, Integer.MAX_VALUE, false,
+        false, true, true, true, true, true);
     this.add(pnlChart, BorderLayout.CENTER);
 
     // Chart controls
@@ -76,12 +84,36 @@ public class LineGraphView extends JPanel {
     tlbControls.setRollover(true);
     add(tlbControls, BorderLayout.SOUTH);
 
-    JButton btnPan = new JButton("Pan");
+    JButton btnPan = new JButton();
+    btnPan.setToolTipText("<html>Enable panning controls for the current chart."
+        + "<br><br><b>Scheme controls:</b><p>- Mouse Drag: Pan the view</p>"
+        + "<p>- Scroll Wheel: Zoom in/out the range and domain</p>"
+        + "<p>- Ctrl/Cmd + Scroll Wheel: Zoom in/out the the range</p>"
+        + "<p>- Alt + Scroll Wheel: Zoom in/out the the domain</p>"
+        + "<p>- Double Mouse Click: Reset axis");
+    btnPan.setIcon(new ImageIcon(getClass().getResource("/icons/hand-empty.png")));
     btnPan.setSelected(true);
     tlbControls.add(btnPan);
 
-    JButton btnZoom = new JButton("Zoom");
+    JButton btnZoom = new JButton();
+    btnZoom.setToolTipText(
+        "<html>Enable zooming controls for the current chart.<br><br><b>Scheme controls:</b>"
+            + "<p>- Mouse Drag: Zoom axis to match created box</p>"
+            + "<p>- Alt + Mouse Drag: Pan the view</p><p>- Double Mouse Click: Reset axis");
+    btnZoom.setIcon(new ImageIcon(getClass().getResource("/icons/magnifying-glass.png")));
     tlbControls.add(btnZoom);
+
+    tlbControls.addSeparator();
+
+    JButton btnSave = new JButton("Export");
+    btnSave.setToolTipText("Export the currently displayed graph as an image");
+    btnSave.setIcon(new ImageIcon(getClass().getResource("/icons/save.png")));
+    tlbControls.add(btnSave);
+
+    JButton btnPrint = new JButton("Print");
+    btnPrint.setToolTipText("Print the currently displayed graph");
+    btnPrint.setIcon(new ImageIcon(getClass().getResource("/icons/print.png")));
+    tlbControls.add(btnPrint);
 
     tlbControls.addSeparator();
 
@@ -101,6 +133,20 @@ public class LineGraphView extends JPanel {
         btnZoom.setSelected(true);
         enableBoxZoom();
       }
+    });
+
+    // Display user save option
+    btnSave.addActionListener(e -> {
+      try {
+        pnlChart.doSaveAs();
+      } catch (IOException e1) {
+        System.err.println("Unable to save image");
+      }
+    });
+
+    // Display user print option
+    btnPrint.addActionListener(e -> {
+      pnlChart.createChartPrintJob();
     });
   }
 
@@ -235,6 +281,7 @@ public class LineGraphView extends JPanel {
     for (Pair<String, Number> d : data) {
       ts.add(Second.parseSecond(d.key), d.value);
     }
+    pnlChart.restoreAutoBounds();
   }
 
   /**
@@ -338,14 +385,14 @@ public class LineGraphView extends JPanel {
    */
   public void enablePanMode() {
     setPanModifier(pnlChart, InputEvent.BUTTON1_MASK);
-    useScrollZoom(pnlChart, true, true);
+    useScrollZoom(pnlChart);
   }
 
   /**
    * Enable box zoom behaviour for the current chart panel.
    */
   public void enableBoxZoom() {
-    setPanModifier(pnlChart, InputEvent.ALT_MASK);
+    setPanModifier(pnlChart, InputEvent.ALT_MASK | InputEvent.BUTTON1_MASK);
     useBoxZoom(pnlChart);
   }
 
@@ -358,15 +405,42 @@ public class LineGraphView extends JPanel {
     // Enable panning
     plot.setRangePannable(true);
     plot.setDomainPannable(true);
-    // Enable plot reset
-    pnlChart.addMouseWheelListener(arg0 -> pnlChart.restoreAutoRangeBounds());
+    // Modify zoom scroll behaviour depending on held modifiers
+    pnlChart.addMouseWheelListener(e -> {
+      boolean range = (e.getModifiers() & InputEvent.ALT_MASK) == 0;
+      pnlChart.setRangeZoomable(range);
+      boolean domain =
+          (e.getModifiers() & Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) == 0;
+      pnlChart.setDomainZoomable(domain);
+
+      // Re-enable all once this event has been consumed
+      SwingUtilities.invokeLater(() -> {
+        pnlChart.setDomainZoomable(true);
+        pnlChart.setRangeZoomable(true);
+      });
+    });
+    // Enable plot reset on double mouse click
+    pnlChart.addChartMouseListener(new ChartMouseListener() {
+
+      @Override
+      public void chartMouseMoved(ChartMouseEvent e) {}
+
+      @Override
+      public void chartMouseClicked(ChartMouseEvent e) {
+        MouseEvent e1 = e.getTrigger();
+        if ((e1.getModifiers() & InputEvent.BUTTON1_MASK) != 0 && e1.getClickCount() == 2) {
+          pnlChart.restoreAutoBounds();
+        }
+      }
+    });
+    // Redraw legends manually for any events that could affect them
     dataset.addChangeListener(arg0 -> redrawLegend());
     renderer.addChangeListener(arg0 -> redrawLegend());
   }
 
   /**
    * For the given chart panel, set it up to use the pointer for zooming using a drag-box. This will
-   * everse effects of using scroll zoom due to incompatabilities between using both at the same
+   * reverse effects of using scroll zoom due to incompatibilities between using both at the same
    * time.
    * 
    * @param chartPanel Chart panel to modify zoom behaviour for
@@ -375,8 +449,6 @@ public class LineGraphView extends JPanel {
     chartPanel.setZoomTriggerDistance(10);
     chartPanel.setMouseZoomable(true);
     chartPanel.setMouseWheelEnabled(false);
-    chartPanel.setDomainZoomable(true);
-    chartPanel.setRangeZoomable(true);
     chartPanel.setZoomAroundAnchor(false);
   }
 
@@ -385,15 +457,11 @@ public class LineGraphView extends JPanel {
    * effects of using box zoom due to incompatibilities between using both at the same time.
    * 
    * @param chartPanel Chart panel to modify zoom behaviour for
-   * @param domain Whether scrolling should occur in the domain
-   * @param range Whether scrolling should occur in the range
    */
-  private static void useScrollZoom(ChartPanel chartPanel, boolean domain, boolean range) {
+  private static void useScrollZoom(ChartPanel chartPanel) {
     chartPanel.setZoomTriggerDistance(Integer.MAX_VALUE);
     chartPanel.setMouseZoomable(false);
     chartPanel.setMouseWheelEnabled(true);
-    chartPanel.setDomainZoomable(domain);
-    chartPanel.setRangeZoomable(range);
     chartPanel.setZoomAroundAnchor(true);
   }
 
