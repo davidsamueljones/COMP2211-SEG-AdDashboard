@@ -5,6 +5,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import group33.seg.controller.DashboardController;
 
@@ -39,6 +40,7 @@ public class DashboardFrame extends JFrame {
 
     // Split panel into LHS and RHS
     sppMain = new JSplitPane();
+    sppMain.setResizeWeight(0);
     pnlDashboard.add(sppMain);
 
     // Use LHS as single panel
@@ -48,7 +50,10 @@ public class DashboardFrame extends JFrame {
     
     // Split RHS into graph and table panels
     JSplitPane sppView = new JSplitPane();
-    sppView.setResizeWeight(0.65);
+    sppView.setResizeWeight(1);
+    SwingUtilities.invokeLater(() -> {
+      sppView.setDividerLocation((int) (sppView.getSize().height * 0.75));
+    });
     sppView.setOrientation(JSplitPane.VERTICAL_SPLIT);
     sppView.setOneTouchExpandable(true);
     sppMain.setRightComponent(sppView);

@@ -4,6 +4,7 @@ import java.awt.Dialog.ModalExclusionType;
 import java.awt.EventQueue;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import javax.swing.ToolTipManager;
 import javax.swing.WindowConstants;
 import group33.seg.controller.DashboardController.DashboardMVC;
 import group33.seg.view.structure.DashboardFrame;
@@ -132,6 +133,8 @@ public class DisplayHandler {
     Accessibility.setAppearance(Appearance.PLATFORM);
     // Apply font scaling
     applyUIFontScaling();
+    // Apply any other global properties
+    ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
   }
 
   public void applyUIFontScaling() {
