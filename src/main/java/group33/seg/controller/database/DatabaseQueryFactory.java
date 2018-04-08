@@ -1,5 +1,7 @@
 package group33.seg.controller.database;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +20,7 @@ import group33.seg.model.types.Metric;
 public class DatabaseQueryFactory {
   private static final Map<Metric, String> graphQueries = new HashMap<>();
   private static final Map<Metric, String> statisticQueries = new HashMap<>();
+  private static final DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
   static {
     createGraphQueries();
@@ -243,15 +246,15 @@ public class DatabaseQueryFactory {
   public static String generateSQL(MetricQuery request) {
     String sql;
 
+    //If the user sets an interval create graph query and apply grouping
+    //Otherwise, create statistic query
     if (request.interval != null) {
-
-      // Create  graph query and apply grouping
       sql = graphQueries.get(request.metric);
       sql = applyGrouping(sql, request.interval);
     } else {
-      // Create statistic query
       sql = statisticQueries.get(request.metric);
     }
+
 
     // Adjust <bounce> placeholder according to bounce definition preference
     if (request.bounceDef != null) {
@@ -276,19 +279,19 @@ public class DatabaseQueryFactory {
       sql =
               sql.replace(
                       "<server_log>",
-                      "(SELECT DISTINCT sl.*, il.age, il.female, il.income, il.context FROM server_log AS sl INNER JOIN impression_log AS il ON il.user_id = sl.user_id WHERE il.<campaign> AND sl.<campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS view");
+                      "(SELECT DISTINCT sl.*, il.age, il.female, il.income, il.context FROM server_log AS sl INNER JOIN impression_log AS il ON il.user_id = sl.user_id WHERE il.<campaign> AND sl.<campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS serverview");
       sql =
               sql.replace(
                       "<click_log>",
-                      "(SELECT DISTINCT cl.*, il.age, il.female, il.income, il.context FROM click_log AS cl INNER JOIN impression_log AS il ON il.user_id = cl.user_id WHERE il.<campaign> AND cl.<campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS view");
-
+                      "(SELECT DISTINCT cl.*, il.age, il.female, il.income, il.context FROM click_log AS cl INNER JOIN impression_log AS il ON il.user_id = cl.user_id WHERE il.<campaign> AND cl.<campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS clickview");
+      
       // Apply date range query (if provided by user)
       if (request.filter.dates != null) {
         if (request.filter.dates.min != null) {
-          sql = sql.replace("<start>", "'" + request.filter.dates.min + "'");
+          sql = sql.replace("<start>", "'" + f.format(request.filter.dates.min) + "'::TIMESTAMP");
         }
         if (request.filter.dates.max != null) {
-          sql = sql.replace("<final>", "'" + request.filter.dates.max + "'");
+          sql = sql.replace("<final>", "'" + f.format(request.filter.dates.max) + "'::TIMESTAMP");
         }
       }
 
@@ -354,6 +357,7 @@ public class DatabaseQueryFactory {
            .replace("<campaign>", "1 = 1")
             .replace("<start>", "start")
             .replace("<final>", "final")
+            .replace("<bounce>", "1 = 1")
             .replace("<filterAge>", "1 = 1")
             .replace("<filterContext>", "1 = 1")
             .replace("<filterIncome>", "1 = 1")
