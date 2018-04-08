@@ -3,22 +3,25 @@ import static org.junit.Assert.fail;
 import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
+
 import group33.seg.controller.database.tables.CampaignTable;
 import group33.seg.controller.database.tables.ClickLogTable;
 import group33.seg.controller.database.tables.ImpressionLogTable;
 import group33.seg.controller.database.tables.ServerLogTable;
+import group33.seg.model.configs.*;
+import group33.seg.model.utilities.Range;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import group33.seg.controller.DashboardController;
 import group33.seg.controller.database.DatabaseConfig;
 import group33.seg.controller.handlers.DatabaseHandler;
-import group33.seg.model.configs.BounceConfig;
-import group33.seg.model.configs.CampaignConfig;
-import group33.seg.model.configs.CampaignImportConfig;
-import group33.seg.model.configs.MetricQuery;
 import group33.seg.model.types.Interval;
 import group33.seg.model.types.Metric;
 import group33.seg.model.types.Pair;
@@ -101,11 +104,8 @@ public class QueryCorrectnessTest {
    *
    * @return True if the actual value is within the margin of error
    */
-  public boolean withinMarginOfError(Number expected, Number actual){
-    if(expected.doubleValue() == 0.0 & actual.doubleValue() == 0.0){
-      return true;
-    }
-    return Math.abs(1.0 - (actual.doubleValue() / expected.doubleValue())) < MARGIN_OF_ERROR;
+  private boolean withinMarginOfError(Number expected, Number actual) {
+    return expected.doubleValue() == 0.0 & actual.doubleValue() == 0.0 || Math.abs(1.0 - (actual.doubleValue() / expected.doubleValue())) < MARGIN_OF_ERROR;
   }
 
   /**
@@ -133,7 +133,7 @@ public class QueryCorrectnessTest {
       }
 
       //only check if not technically equal
-      if (expected.value != actual.value) {
+      if (!Objects.equals(expected.value, actual.value)) {
 
         //catch null exceptions before they happen
         if (expected.value == null | actual.value == null) {
@@ -387,6 +387,34 @@ public class QueryCorrectnessTest {
     List<Pair<String, Number>> weekResponse = databaseHandler.getQueryResponse(graphQuery).getResult();
 
     assertTrue("Time interval test wrong for bounce rate metric", listsWithinMarginOfError(expectedWeekResponse, weekResponse));
+  }
+
+
+  //FIXME Just testing the date range, still not working correctly; doesn't work as expected when filtering
+  // because when there are filters applied sl and cl are joined with il on equal user_ids. In this case
+  // there are no common user ids and instead of fetching all data, the output is nothing.
+  // Working on fixing it atm
+  @Test
+  public void dateRangeTest() throws ParseException {
+    DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    FilterConfig filter = new FilterConfig();
+    filter.dates = new Range<>(f.parse("2014-12-29 00:00:00"), f.parse("2015-02-23 00:00:00"));
+    BounceConfig bounceConfig = new BounceConfig();
+    bounceConfig.type = BounceConfig.Type.PAGES;
+    bounceConfig.value = 2;
+
+    //List<Pair<String,Number>> expectedWeekResponse = weeklyResponse(true, null,100.0,200.0,71.42857142857143, 75.0, 0.0, 66.66666666666666,27.27272727272727, 25.0);
+    List<Pair<String,Number>> expectedWeekResponse = weeklyResponse(true, null,null,null,null, null, 100, null,null, null);
+
+
+    MetricQuery graphQuery = new MetricQuery(Metric.BOUNCE_RATE, Interval.WEEK, filter, bounceConfig, campaign);
+    List<Pair<String, Number>> weekResponse = databaseHandler.getQueryResponse(graphQuery).getResult();
+
+    for(Pair<String, Number> p: weekResponse) {
+      System.out.println(p.key + " " +p.value);
+    }
+
+    assertTrue(listsWithinMarginOfError(expectedWeekResponse, weekResponse));
   }
 
   /**
