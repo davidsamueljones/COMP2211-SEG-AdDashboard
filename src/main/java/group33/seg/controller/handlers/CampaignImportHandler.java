@@ -441,7 +441,7 @@ public class CampaignImportHandler {
   private void createViews(Connection conn) throws SQLException {
     try (Statement s = conn.createStatement()) {
       s.executeUpdate(
-              "CREATE MATERIALIZED VIEW click_view AS"
+              "CREATE MATERIALIZED VIEW IF NOT EXISTS click_view AS"
                       + " SELECT DISTINCT"
                       + " cl.*,"
                       + " il.age,"
@@ -451,7 +451,7 @@ public class CampaignImportHandler {
                       + " FROM click_log AS cl LEFT JOIN impression_log AS il ON il.user_id = cl.user_id AND il.campaign_id = cl.campaign_id;");
 
       s.executeUpdate(
-              "CREATE MATERIALIZED VIEW server_view AS"
+              "CREATE MATERIALIZED VIEW IF NOT EXISTS server_view AS"
                       + " SELECT DISTINCT"
                       + " sl.*,"
                       + " il.age,"
