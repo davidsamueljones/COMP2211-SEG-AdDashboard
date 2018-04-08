@@ -404,7 +404,8 @@ public class QueryCorrectnessTest {
     bounceConfig.value = 2;
 
     //List<Pair<String,Number>> expectedWeekResponse = weeklyResponse(true, null,100.0,200.0,71.42857142857143, 75.0, 0.0, 66.66666666666666,27.27272727272727, 25.0);
-    List<Pair<String,Number>> expectedWeekResponse = weeklyResponse(true, null,null,null,null, null, 100, null,null, null);
+    //List<Pair<String,Number>> expectedWeekResponse = weeklyResponse(true, null,null,null,null, null, 100, null,null, null);
+    List<Pair<String,Number>> expectedWeekResponse = weeklyResponse(true, null,null,null,null, null, null, null,null, null);
 
 
     MetricQuery graphQuery = new MetricQuery(Metric.BOUNCE_RATE, Interval.WEEK, filter, bounceConfig, campaign);
