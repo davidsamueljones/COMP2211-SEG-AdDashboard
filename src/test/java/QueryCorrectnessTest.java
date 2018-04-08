@@ -389,11 +389,7 @@ public class QueryCorrectnessTest {
     assertTrue("Time interval test wrong for bounce rate metric", listsWithinMarginOfError(expectedWeekResponse, weekResponse));
   }
 
-
-  //FIXME Just testing the date range, still not working correctly; doesn't work as expected when filtering
-  // because when there are filters applied sl and cl are joined with il on equal user_ids. In this case
-  // there are no common user ids and instead of fetching all data, the output is nothing.
-  // Working on fixing it atm
+  //This was just for date range testing, while I was fixing it; feel free to leave/remove
   @Test
   public void dateRangeTest() throws ParseException {
     DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -403,10 +399,7 @@ public class QueryCorrectnessTest {
     bounceConfig.type = BounceConfig.Type.PAGES;
     bounceConfig.value = 2;
 
-    //List<Pair<String,Number>> expectedWeekResponse = weeklyResponse(true, null,100.0,200.0,71.42857142857143, 75.0, 0.0, 66.66666666666666,27.27272727272727, 25.0);
-    //List<Pair<String,Number>> expectedWeekResponse = weeklyResponse(true, null,null,null,null, null, 100, null,null, null);
-    List<Pair<String,Number>> expectedWeekResponse = weeklyResponse(true, null,null,null,null, null, null, null,null, null);
-
+    List<Pair<String,Number>> expectedWeekResponse = weeklyResponse(true, null,100.0,200.0,71.42857142857143, 75.0, 0.0, 66.66666666666666,27.27272727272727, 25.0);
 
     MetricQuery graphQuery = new MetricQuery(Metric.BOUNCE_RATE, Interval.WEEK, filter, bounceConfig, campaign);
     List<Pair<String, Number>> weekResponse = databaseHandler.getQueryResponse(graphQuery).getResult();

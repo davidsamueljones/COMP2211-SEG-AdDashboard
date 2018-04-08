@@ -279,11 +279,11 @@ public class DatabaseQueryFactory {
       sql =
               sql.replace(
                       "<server_log>",
-                      "(SELECT DISTINCT sl.*, il.age, il.female, il.income, il.context FROM server_log AS sl INNER JOIN impression_log AS il ON il.user_id = sl.user_id WHERE il.<campaign> AND sl.<campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS serverview");
+                      "(SELECT DISTINCT sl.*, il.age, il.female, il.income, il.context FROM server_log AS sl LEFT JOIN impression_log AS il ON il.user_id = sl.user_id WHERE il.<campaign> AND sl.<campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS serverview");
       sql =
               sql.replace(
                       "<click_log>",
-                      "(SELECT DISTINCT cl.*, il.age, il.female, il.income, il.context FROM click_log AS cl INNER JOIN impression_log AS il ON il.user_id = cl.user_id WHERE il.<campaign> AND cl.<campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS clickview");
+                      "(SELECT DISTINCT cl.*, il.age, il.female, il.income, il.context FROM click_log AS cl LEFT JOIN impression_log AS il ON il.user_id = cl.user_id WHERE il.<campaign> AND cl.<campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS clickview");
       
       // Apply date range query (if provided by user)
       if (request.filter.dates != null) {
