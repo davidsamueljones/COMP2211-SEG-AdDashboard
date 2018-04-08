@@ -368,9 +368,45 @@ FROM
    WHERE campaign_id = 1) AS max,
       generate_series(start, final, '1 hour') AS xaxis;
 
+--CREATE VIEWS
+CREATE MATERIALIZED VIEW click_view AS
+  SELECT DISTINCT
+    cl.*,
+    il.age,
+    il.female,
+    il.income,
+    il.context
+  FROM click_log AS cl LEFT JOIN impression_log AS il ON il.user_id = cl.user_id AND il.campaign_id = cl.campaign_id;
+
+CREATE MATERIALIZED VIEW server_view AS
+  SELECT DISTINCT
+    sl.*,
+    il.age,
+    il.female,
+    il.income,
+    il.context
+  FROM server_log AS sl LEFT JOIN impression_log AS il ON il.user_id = sl.user_id AND il.campaign_id = sl.campaign_id;
+
+--CREATE VIEW INDEXES
+CREATE index ON click_view (user_id, campaign_id);
+CREATE index ON click_view (date_trunc('week' :: text, date));
+CREATE index ON click_view (date_trunc('year' :: text, date));
+CREATE index ON click_view (date_trunc('hour' :: text, date));
+CREATE index ON click_view (date_trunc('month' :: text, date));
+CREATE index ON click_view (date_trunc('day' :: text, date));
+
+
+CREATE index ON server_view (user_id, campaign_id);
+CREATE index ON server_view (date_trunc('week' :: text, entry_date));
+CREATE index ON server_view (date_trunc('year' :: text, entry_date));
+CREATE index ON server_view (date_trunc('hour' :: text, entry_date));
+CREATE index ON server_view (date_trunc('month' :: text, entry_date));
+CREATE index ON server_view (date_trunc('day' :: text, entry_date));
+
 --DELETE TABLES
 DROP TABLE campaign;
 DROP TABLE click_log;
 DROP TABLE impression_log;
 DROP TABLE server_log;
-
+DROP MATERIALIZED VIEW click_view;
+DROP MATERIALIZED VIEW server_view;
