@@ -115,8 +115,8 @@ public class CampaignImportHandler {
   }
 
   /**
-   * Import control method, should be called using {@link doImport}.
-   * 
+   * Import control method, should be called using {@link CampaignImportHandler#doImport}.
+   *
    * @param importConfig Campaign information required for import
    */
   private void importCampaign(CampaignImportConfig importConfig) {
@@ -153,6 +153,8 @@ public class CampaignImportHandler {
       // Import server log
       importTable(new ServerLogTable(), conn, importConfig.pathServerLog, sizeServerLog / totalSize,
           campaignID);
+
+      createViews(conn);
 
       // Create campaign configuration (storing as last import)
       CampaignConfig campaign = new CampaignConfig(campaignID);
@@ -436,4 +438,41 @@ public class CampaignImportHandler {
     private static final long serialVersionUID = -3767480036135704125L;
   }
 
+  private void createViews(Connection conn) throws SQLException {
+    try (Statement s = conn.createStatement()) {
+      s.executeUpdate(
+              "CREATE MATERIALIZED VIEW click_view AS"
+                      + " SELECT DISTINCT"
+                      + " cl.*,"
+                      + " il.age,"
+                      + " il.female,"
+                      + " il.income,"
+                      + " il.context"
+                      + " FROM click_log AS cl LEFT JOIN impression_log AS il ON il.user_id = cl.user_id AND il.campaign_id = cl.campaign_id;");
+
+      s.executeUpdate(
+              "CREATE MATERIALIZED VIEW server_view AS"
+                      + " SELECT DISTINCT"
+                      + " sl.*,"
+                      + " il.age,"
+                      + " il.female,"
+                      + " il.income,"
+                      + " il.context"
+                      + " FROM server_log AS sl LEFT JOIN impression_log AS il ON il.user_id = sl.user_id AND il.campaign_id = sl.campaign_id;");
+
+      s.executeUpdate("CREATE index CONCURRENTLY IF NOT EXISTS cv_user_camp ON click_view (user_id, campaign_id);");
+      s.executeUpdate("CREATE index CONCURRENTLY IF NOT EXISTS cv_week ON click_view (date_trunc('week' :: text, date));");
+      s.executeUpdate("CREATE index CONCURRENTLY IF NOT EXISTS cv_year ON click_view (date_trunc('year' :: text, date));");
+      s.executeUpdate("CREATE index CONCURRENTLY IF NOT EXISTS cv_hour ON click_view (date_trunc('hour' :: text, date));");
+      s.executeUpdate("CREATE index CONCURRENTLY IF NOT EXISTS cv_month ON click_view (date_trunc('month' :: text, date));");
+      s.executeUpdate("CREATE index CONCURRENTLY IF NOT EXISTS cv_day ON click_view (date_trunc('day' :: text, date));");
+
+      s.executeUpdate("CREATE index CONCURRENTLY IF NOT EXISTS sv_user_camp ON server_view (user_id, campaign_id);");
+      s.executeUpdate("CREATE index CONCURRENTLY IF NOT EXISTS sv_week ON server_view (date_trunc('week' :: text, entry_date));");
+      s.executeUpdate("CREATE index CONCURRENTLY IF NOT EXISTS sv_year ON server_view (date_trunc('year' :: text, entry_date));");
+      s.executeUpdate("CREATE index CONCURRENTLY IF NOT EXISTS sv_hour ON server_view (date_trunc('hour' :: text, entry_date));");
+      s.executeUpdate("CREATE index CONCURRENTLY IF NOT EXISTS sv_month ON server_view (date_trunc('month' :: text, entry_date));");
+      s.executeUpdate("CREATE index CONCURRENTLY IF NOT EXISTS sv_day ON server_view (date_trunc('day' :: text, entry_date));");
+    }
+  }
 }
