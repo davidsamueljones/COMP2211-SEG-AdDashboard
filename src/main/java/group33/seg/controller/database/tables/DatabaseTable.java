@@ -75,7 +75,7 @@ public abstract class DatabaseTable {
     Statement cs;
     try {
       cs = c.createStatement();
-      cs.execute(String.format("DROP TABLE %s", getTableName()));
+      cs.execute(String.format("DROP TABLE %s CASCADE", getTableName()));
     } catch (SQLException e) {
       e.printStackTrace();
     }

@@ -6,7 +6,6 @@ import java.util.concurrent.Future;
 import group33.seg.model.configs.MetricQuery;
 import group33.seg.model.types.Pair;
 
-//FIXME Cannot assume that the answer is going to be Integer
 public class MetricQueryResponse {
   private MetricQuery query;
   private Future<List<Pair<String, Number>>> result;

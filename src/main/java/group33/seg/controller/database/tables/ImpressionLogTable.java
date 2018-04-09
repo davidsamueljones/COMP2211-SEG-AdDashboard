@@ -33,6 +33,7 @@ public class ImpressionLogTable extends DatabaseTable {
     st.execute("CREATE INDEX CONCURRENTLY IF NOT EXISTS il_monthDateTrunc ON impression_log(date_trunc('month', date));");
     st.execute("CREATE INDEX CONCURRENTLY IF NOT EXISTS il_weekDateTrunc ON impression_log(date_trunc('week', date));");
     st.execute("CREATE INDEX CONCURRENTLY IF NOT EXISTS il_yearDateTrunc ON impression_log(date_trunc('year', date));");
+    st.execute("CREATE INDEX CONCURRENTLY IF NOT EXISTS il_cost ON impression_log(impression_cost);");
     st.close();
   }
 
