@@ -52,7 +52,7 @@ public class DatabaseQueryFactory {
             + " (SELECT date_trunc('<interval>', max(entry_date)) AS final FROM server_log WHERE <campaign>) AS max,"
             + " generate_series(<start>, <final>,'1 <interval>') AS xaxis"
             + " LEFT JOIN"
-            + " (SELECT date_trunc('<interval>', entry_date) AS dates, count(*) AS yaxis FROM <server_log> WHERE <campaign> AND conversion GROUP BY dates) AS s"
+            + " (SELECT date_trunc('<interval>', entry_date) AS dates, count(*) AS yaxis FROM <server_log> WHERE <campaign> AND conversion AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender> GROUP BY dates) AS s"
             + " ON xaxis = s.dates;");
 
     // Total number of clicks over time
@@ -63,7 +63,7 @@ public class DatabaseQueryFactory {
             + " (SELECT date_trunc('<interval>', max(date)) AS final FROM click_log WHERE <campaign>) AS max,"
             + " generate_series(<start>, <final>, '1 <interval>') AS xaxis"
             + " LEFT JOIN"
-            + " (SELECT date_trunc('<interval>', date) AS dates, count(*) AS yaxis FROM <click_log> WHERE <campaign> GROUP BY dates) AS s"
+            + " (SELECT date_trunc('<interval>', date) AS dates, count(*) AS yaxis FROM <click_log> WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender> GROUP BY dates) AS s"
             + " ON xaxis = s.dates;");
 
     // Total cost over time
@@ -76,7 +76,7 @@ public class DatabaseQueryFactory {
             + " (SELECT dates, SUM(cost) AS yaxis FROM"
             + " (SELECT date_trunc('<interval>', date) AS dates, impression_cost AS cost FROM impression_log WHERE <campaign> AND <filterAge> AND <filterIncome> AND <filterGender>"
             + " UNION ALL"
-            + " SELECT date_trunc('<interval>', date) AS dates, click_cost AS cost FROM <click_log> WHERE <campaign>) AS t"
+            + " SELECT date_trunc('<interval>', date) AS dates, click_cost AS cost FROM <click_log> WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS t"
             + " GROUP BY dates) AS al"
             + " ON xaxis = al.dates;");
 
@@ -87,7 +87,7 @@ public class DatabaseQueryFactory {
             + " (SELECT date_trunc('<interval>', min(date)) AS start FROM click_log WHERE <campaign>) AS min,"
             + " (SELECT date_trunc('<interval>', max(date)) AS final FROM click_log WHERE <campaign>) AS max,"
             + " generate_series(<start>, <final>, '1 <interval>') AS xaxis LEFT JOIN"
-            + " (SELECT date_trunc('<interval>', date) AS dates, count(DISTINCT user_id) AS yaxis FROM <click_log> WHERE <campaign> GROUP BY dates) AS s"
+            + " (SELECT date_trunc('<interval>', date) AS dates, count(DISTINCT user_id) AS yaxis FROM <click_log> WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender> GROUP BY dates) AS s"
             + " ON xaxis = s.dates;");
 
     // Number of bounces over time
@@ -97,7 +97,7 @@ public class DatabaseQueryFactory {
             + " (SELECT date_trunc('<interval>', min(entry_date)) AS start FROM server_log WHERE <campaign>) AS min,"
             + " (SELECT date_trunc('<interval>', max(entry_date)) AS final FROM server_log WHERE <campaign>) AS max,"
             + " generate_series(<start>, <final>, '1 <interval>') AS xaxis LEFT JOIN"
-            + " (SELECT date_trunc('<interval>', entry_date) AS dates, count(*) AS yaxis FROM <server_log> WHERE <bounce> AND <campaign> GROUP BY dates) AS s"
+            + " (SELECT date_trunc('<interval>', entry_date) AS dates, count(*) AS yaxis FROM <server_log> WHERE <bounce> AND <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender> GROUP BY dates) AS s"
             + " ON xaxis = s.dates;");
 
     // Bounces per click over time
@@ -105,8 +105,8 @@ public class DatabaseQueryFactory {
         Metric.BOUNCE_RATE,
         "SELECT xaxis, ("
             + " SELECT (sl.bounces::double precision) / NULLIF(cl.clicks, 0) * 100 FROM"
-            + " (SELECT count(*) as bounces FROM <server_log> WHERE <bounce> AND <campaign> AND date_trunc('<interval>', entry_date) = xaxis) as sl,"
-            + " (SELECT count(*) as clicks FROM <click_log> WHERE <campaign> AND date_trunc('<interval>', date) = xaxis) as cl) as yaxis"
+            + " (SELECT count(*) as bounces FROM <server_log> WHERE <bounce> AND <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender> AND date_trunc('<interval>', entry_date) = xaxis) as sl,"
+            + " (SELECT count(*) as clicks FROM <click_log> WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender> AND date_trunc('<interval>', date) = xaxis) as cl) as yaxis"
             + " FROM"
             + " (SELECT date_trunc('<interval>', min(entry_date)) AS start FROM server_log WHERE <campaign>) AS min,"
             + " (SELECT date_trunc('<interval>', max(entry_date)) AS final FROM server_log WHERE <campaign>) AS max,"
@@ -118,8 +118,8 @@ public class DatabaseQueryFactory {
         "SELECT xaxis,"
             + " (SELECT CASE conversions WHEN 0 THEN 0 ELSE (icost + ccost) / conversions END FROM"
             + " (SELECT SUM(impression_cost) as icost FROM impression_log WHERE <campaign> AND <filterAge> AND <filterIncome> AND <filterGender> AND date_trunc('<interval>', date) = xaxis) as il,"
-            + " (SELECT SUM(click_cost) as ccost FROM <click_log> WHERE <campaign> AND date_trunc('<interval>', date) = xaxis) as cl,"
-            + " (SELECT count(*) as conversions FROM <server_log> WHERE conversion AND <campaign> AND date_trunc('<interval>', entry_date) = xaxis) as iil) as yaxis"
+            + " (SELECT SUM(click_cost) as ccost FROM <click_log> WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender> AND date_trunc('<interval>', date) = xaxis) as cl,"
+            + " (SELECT count(*) as conversions FROM <server_log> WHERE conversion AND <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender> AND date_trunc('<interval>', entry_date) = xaxis) as iil) as yaxis"
             + " FROM"
             + " (SELECT date_trunc('<interval>', min(entry_date)) AS start FROM server_log WHERE <campaign>) AS min,"
             + " (SELECT date_trunc('<interval>', max(entry_date)) AS final FROM server_log WHERE <campaign>) AS max,"
@@ -131,8 +131,8 @@ public class DatabaseQueryFactory {
         "SELECT xaxis,"
             + " (SELECT CASE clicks WHEN 0 THEN 0 ELSE (icost + ccost) / clicks END FROM"
             + " (SELECT SUM(impression_cost) as icost FROM impression_log WHERE <campaign> AND <filterAge> AND <filterIncome> AND <filterGender> AND date_trunc('<interval>', date) = xaxis) as il,"
-            + " (SELECT SUM(click_cost) as ccost FROM <click_log> WHERE <campaign> AND date_trunc('<interval>', date) = xaxis) as cl,"
-            + " (SELECT count(*) as clicks FROM <click_log> WHERE <campaign> AND date_trunc('<interval>', date) = xaxis) as iil) as yaxis"
+            + " (SELECT SUM(click_cost) as ccost FROM <click_log> WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender> AND date_trunc('<interval>', date) = xaxis) as cl,"
+            + " (SELECT count(*) as clicks FROM <click_log> WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender> AND date_trunc('<interval>', date) = xaxis) as iil) as yaxis"
             + " FROM"
             + " (SELECT date_trunc('<interval>', min(date)) AS start FROM click_log WHERE <campaign>) AS min,"
             + " (SELECT date_trunc('<interval>', max(date)) AS final FROM click_log WHERE <campaign>) AS max,"
@@ -155,7 +155,7 @@ public class DatabaseQueryFactory {
         Metric.CTR,
         "SELECT xaxis, ("
             + " SELECT (cl.clicks::double precision) / il.impressions FROM"
-            + " (SELECT count(*) as clicks FROM <click_log> WHERE <campaign> AND date_trunc('<interval>', date) = xaxis) as cl,"
+            + " (SELECT count(*) as clicks FROM <click_log> WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender> AND date_trunc('<interval>', date) = xaxis) as cl,"
             + " (SELECT count(*) as impressions FROM impression_log WHERE <campaign> AND <filterAge> AND <filterIncome> AND <filterGender> AND date_trunc('<interval>', date) = xaxis) as il) as yaxis"
             + " FROM"
             + " (SELECT date_trunc('<interval>', min(date)) AS start FROM impression_log WHERE <campaign>) AS min,"
@@ -173,12 +173,12 @@ public class DatabaseQueryFactory {
 
     // Total number of clicks
     statisticQueries.put(
-        Metric.CLICKS, "SELECT 'all' AS xaxis, count(*) AS yaxis FROM <click_log> WHERE <campaign>;");
+        Metric.CLICKS, "SELECT 'all' AS xaxis, count(*) AS yaxis FROM <click_log> WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>;");
 
     // Total number of conversions
     statisticQueries.put(
         Metric.CONVERSIONS,
-        "SELECT 'all' AS xaxis, count(*) AS yaxis FROM <server_log> WHERE conversion AND <campaign>;");
+        "SELECT 'all' AS xaxis, count(*) AS yaxis FROM <server_log> WHERE conversion AND <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>;");
 
     // Total cost - includes both click and impression cost
     statisticQueries.put(
@@ -190,37 +190,37 @@ public class DatabaseQueryFactory {
     // Total number of uniques
     statisticQueries.put(
         Metric.UNIQUES,
-        "SELECT 'all' AS xaxis, count(DISTINCT user_id) AS yaxis FROM <click_log> WHERE <campaign>;");
+        "SELECT 'all' AS xaxis, count(DISTINCT user_id) AS yaxis FROM <click_log> WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>;");
 
     // Total number of bounces - the <bounce> placeholder handles the 2 type of bounce definition
     // and specific values for them
     statisticQueries.put(
         Metric.BOUNCES,
-        "SELECT 'all' AS xaxis, count(*) AS yaxis FROM <server_log> WHERE <bounce> AND <campaign>;");
+        "SELECT 'all' AS xaxis, count(*) AS yaxis FROM <server_log> WHERE <bounce> AND <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>;");
 
     // Bounce rate - the <bounce> placeholder handles the 2 type of bounce definition and specific
     // values for them
     statisticQueries.put(
         Metric.BOUNCE_RATE,
         "SELECT 'all' AS xaxis, bounces / NULLIF(clicks, 0) * 100 AS yaxis FROM"
-            + " (SELECT count(*) AS bounces FROM <server_log> WHERE <bounce> AND <campaign>) AS sl,"
-            + " (SELECT count(*)::double precision AS clicks FROM <click_log> WHERE <campaign>) AS cl;");
+            + " (SELECT count(*) AS bounces FROM <server_log> WHERE <bounce> AND <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS sl,"
+            + " (SELECT count(*)::double precision AS clicks FROM <click_log> WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS cl;");
 
     // Average amount of money spent on a campaign for each conversion (CPA)
     statisticQueries.put(
         Metric.CPA,
         "SELECT 'all' AS xaxis, (il.cost + cl.cost) / conversions AS yaxis FROM "
             + " (SELECT sum(impression_cost) AS cost FROM impression_log WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS il,"
-            + " (SELECT sum(click_cost) AS cost FROM <click_log> WHERE <campaign>) AS cl,"
-            + " (SELECT count(*) AS conversions FROM <server_log> WHERE conversion AND <campaign>) AS sl;");
+            + " (SELECT sum(click_cost) AS cost FROM <click_log> WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS cl,"
+            + " (SELECT count(*) AS conversions FROM <server_log> WHERE conversion AND <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS sl;");
 
     // The average amount of money spent for each click (CPC)
     statisticQueries.put(
         Metric.CPC,
         "SELECT 'all' AS xaxis, (il.cost + cl.cost) / clicks AS yaxis FROM "
             + " (SELECT sum(impression_cost) AS cost FROM impression_log WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS il,"
-            + " (SELECT  sum(click_cost) AS cost FROM <click_log> WHERE <campaign>) AS cl,"
-            + " (SELECT count(*) AS clicks FROM <click_log> WHERE <campaign>) AS ccl;");
+            + " (SELECT  sum(click_cost) AS cost FROM <click_log> WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS cl,"
+            + " (SELECT count(*) AS clicks FROM <click_log> WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS ccl;");
 
     // The average amount of money spent per 1000 impressions (CPM)
     statisticQueries.put(
@@ -233,7 +233,7 @@ public class DatabaseQueryFactory {
     statisticQueries.put(
         Metric.CTR,
         "SELECT 'all' AS xaxis, (clicks::double precision) / impressions AS yaxis FROM"
-            + " (SELECT count(*) AS clicks FROM <click_log> WHERE <campaign>) AS cl,"
+            + " (SELECT count(*) AS clicks FROM <click_log> WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS cl,"
             + " (SELECT count(*) AS impressions FROM impression_log WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS il;");
   }
 
@@ -279,11 +279,11 @@ public class DatabaseQueryFactory {
       sql =
               sql.replace(
                       "<server_log>",
-                      "(SELECT DISTINCT sl.*, il.age, il.female, il.income, il.context FROM server_log AS sl LEFT JOIN impression_log AS il ON il.user_id = sl.user_id WHERE il.<campaign> AND sl.<campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS serverview");
+                      "server_view");
       sql =
               sql.replace(
                       "<click_log>",
-                      "(SELECT DISTINCT cl.*, il.age, il.female, il.income, il.context FROM click_log AS cl LEFT JOIN impression_log AS il ON il.user_id = cl.user_id WHERE il.<campaign> AND cl.<campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS clickview");
+                      "click_view");
       
       // Apply date range query (if provided by user)
       if (request.filter.dates != null) {
