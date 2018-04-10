@@ -22,12 +22,12 @@ import group33.seg.model.configs.LineConfig;
 public class GraphLinesPanel extends JPanel {
   private static final long serialVersionUID = -1169530766129778297L;
   private final static int MAX_TAB_TITLE_LEN = 15;
-  
+
   private DashboardController controller;
-  
+
   /** Randomiser for line colours */
   private Random random = new Random();
-  
+
   protected JTabbedPane tabsLines;
   protected List<LinePanel> linePanels;
 
@@ -81,6 +81,7 @@ public class GraphLinesPanel extends JPanel {
     // add(btnImport, gbc_btnImport);
 
     JButton btnRemove = new JButton("Remove Line");
+    btnRemove.setEnabled(false);
     GridBagConstraints gbc_btnRemove = new GridBagConstraints();
     gbc_btnRemove.fill = GridBagConstraints.HORIZONTAL;
     gbc_btnRemove.insets = new Insets(0, 0, 0, 5);
@@ -115,6 +116,11 @@ public class GraphLinesPanel extends JPanel {
         tabsLines.remove(idx);
         linePanels.remove(idx);
       }
+    });
+
+    // Disable the remove button if no tab is selected
+    tabsLines.addChangeListener(e -> {
+      btnRemove.setEnabled(tabsLines.getSelectedComponent() != null);
     });
 
   }
@@ -216,7 +222,9 @@ public class GraphLinesPanel extends JPanel {
   private void addLinePanel(String identifier, LinePanel pnlLine, int idx) {
     // Enforce panel behaviour when part of hierarchy
     JTextField txtIdentifier = pnlLine.pnlLineProperties.txtIdentifier;
-    txtIdentifier.addActionListener(e -> setTabProperties(Math.min(linePanels.size(), idx), txtIdentifier.getText()));
+    txtIdentifier.addActionListener(e -> {
+      setTabProperties(Math.min(linePanels.size(), idx), txtIdentifier.getText());
+    });
     DashboardUtilities.focusRequest(txtIdentifier);
 
     // Insert panel into hierarchy
@@ -287,5 +295,5 @@ public class GraphLinesPanel extends JPanel {
     float luminance = 0.9f;
     return Color.getHSBColor(hue, saturation, luminance);
   }
-  
+
 }
