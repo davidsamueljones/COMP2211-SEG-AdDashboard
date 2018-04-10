@@ -327,9 +327,11 @@ public class LineGraphView extends JPanel {
     ts.clear();
     for (Pair<String, Number> d : data) {
       Second x = Second.parseSecond(d.key);
-      ts.add(x, d.value);
+      if (d.value != null) {
+        ts.add(x, d.value);
+      } else ts.add(x, 0);
+      refresh();
     }
-    refresh();
   }
 
   /**
@@ -369,9 +371,7 @@ public class LineGraphView extends JPanel {
    */
   private List<TimeSeries> getSeries() {
     List<TimeSeries> series = new ArrayList<>();
-    Iterator<?> itrDataset = dataset.getSeries().iterator();
-    while (itrDataset.hasNext()) {
-      Object obj = itrDataset.next();
+    for (Object obj : dataset.getSeries()) {
       if (obj instanceof TimeSeries) {
         TimeSeries ts = (TimeSeries) obj;
         series.add(ts);
