@@ -6,8 +6,10 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -16,7 +18,10 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
+import javax.swing.JSpinner.DateEditor;
 import javax.swing.JTree;
+import javax.swing.SpinnerDateModel;
 import javax.swing.border.BevelBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -43,6 +48,8 @@ public class FilterSettingsPanel extends JPanel {
   private Map<FilterConfig.Context, DefaultMutableTreeNode> contexts;
   private JButton btnStartDateClear;
   private JButton btnEndDateClear;
+  private JSpinner nudStartTime;
+  private JSpinner nudEndTime;
 
   public FilterSettingsPanel() {
     this(null);
@@ -51,24 +58,21 @@ public class FilterSettingsPanel extends JPanel {
   public FilterSettingsPanel(FilterConfig filter) {
     initGUI();
     initialiseTree(tree, filter);
-    if (filter != null && filter.dates != null) {
-      dtpStartDate.setDate(filter.dates.min);
-      dtpEndDate.setDate(filter.dates.max);
-    }
+    loadDates(filter);
   }
 
   private void initGUI() {
     GridBagLayout gridBagLayout = new GridBagLayout();
     gridBagLayout.rowWeights = new double[] {1.0, 0.0, 0.0};
-    gridBagLayout.columnWeights = new double[] {0.0, 1.0, 0.0};
+    gridBagLayout.columnWeights = new double[] {0.0, 1.0, 0.0, 0.0};
     setLayout(gridBagLayout);
 
     tree = new JTree();
     JScrollPane scrTree = new JScrollPane(tree);
     scrTree.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
     GridBagConstraints gbc_tree = new GridBagConstraints();
-    gbc_tree.gridwidth = 3;
-    gbc_tree.insets = new Insets(0, 0, 5, 5);
+    gbc_tree.gridwidth = 4;
+    gbc_tree.insets = new Insets(0, 0, 5, 0);
     gbc_tree.fill = GridBagConstraints.BOTH;
     gbc_tree.gridy = 0;
     gbc_tree.gridx = 0;
@@ -89,11 +93,17 @@ public class FilterSettingsPanel extends JPanel {
     gbc_dtpStartDate.gridy = 1;
     add(dtpStartDate, gbc_dtpStartDate);
 
+    nudStartTime = new JSpinner();
+    GridBagConstraints gbc_nudStartTime = new GridBagConstraints();
+    gbc_nudStartTime.insets = new Insets(0, 0, 5, 5);
+    gbc_nudStartTime.gridx = 2;
+    gbc_nudStartTime.gridy = 1;
+    add(nudStartTime, gbc_nudStartTime);
+
     btnStartDateClear = new JButton("Clear");
-    btnStartDateClear.addActionListener(e -> dtpStartDate.setDate(null));
     GridBagConstraints gbc_btnStartDateClear = new GridBagConstraints();
     gbc_btnStartDateClear.insets = new Insets(0, 0, 5, 0);
-    gbc_btnStartDateClear.gridx = 2;
+    gbc_btnStartDateClear.gridx = 3;
     gbc_btnStartDateClear.gridy = 1;
     add(btnStartDateClear, gbc_btnStartDateClear);
 
@@ -112,12 +122,59 @@ public class FilterSettingsPanel extends JPanel {
     gbc_dtpEndDate.gridy = 2;
     add(dtpEndDate, gbc_dtpEndDate);
 
+    nudEndTime = new JSpinner();
+    GridBagConstraints gbc_nudEndTime = new GridBagConstraints();
+    gbc_nudEndTime.insets = new Insets(0, 0, 0, 5);
+    gbc_nudEndTime.gridx = 2;
+    gbc_nudEndTime.gridy = 2;
+    add(nudEndTime, gbc_nudEndTime);
+
     btnEndDateClear = new JButton("Clear");
-    btnEndDateClear.addActionListener(e -> dtpEndDate.setDate(null));
     GridBagConstraints gbc_btnEndDateClear = new GridBagConstraints();
-    gbc_btnEndDateClear.gridx = 2;
+    gbc_btnEndDateClear.gridx = 3;
     gbc_btnEndDateClear.gridy = 2;
     add(btnEndDateClear, gbc_btnEndDateClear);
+
+    // Configure date time behaviour
+    initDateTime(dtpStartDate, nudStartTime);
+    btnStartDateClear.addActionListener(e -> dtpStartDate.setDate(null));
+    initDateTime(dtpEndDate, nudEndTime);
+    btnEndDateClear.addActionListener(e -> dtpEndDate.setDate(null));
+  }
+
+  /**
+   * Tightly couple a date picker with its time picker. Also configure the time picker's formatting
+   * appropriately.
+   * 
+   * @param dp Date picker object
+   * @param tp Time picker object
+   */
+  private void initDateTime(JXDatePicker dp, JSpinner tp) {
+    // Configure time model
+    SpinnerDateModel model = new SpinnerDateModel();
+    tp.setModel(model);
+    DateEditor editor = new DateEditor(tp, "HH:mm:ss");
+    tp.setEditor(editor);
+
+    Calendar defaultTime = new GregorianCalendar();
+    defaultTime.set(Calendar.HOUR_OF_DAY, 24);
+    defaultTime.set(Calendar.MINUTE, 0);
+    defaultTime.set(Calendar.SECOND, 0);
+
+    // Enable time selection if date selection is valid
+    dp.addPropertyChangeListener(e -> {
+      if ("date".equals(e.getPropertyName())) {
+        if (dp.getDate() == null) {
+          tp.setEnabled(false);
+          tp.setValue(defaultTime.getTime());
+        } else {
+          tp.setEnabled(true);
+        }
+      }
+    });
+    // Manually fire property change to enable default behaviour
+    dp.setDate(new Date());
+    dp.setDate(null);
   }
 
   /**
@@ -138,7 +195,7 @@ public class FilterSettingsPanel extends JPanel {
     ages = addTreeCheckboxes(tnAge, FilterConfig.Age.class,
         Arrays.asList(FilterConfig.Age.values()), filter.ages);
     root.add(tnAge);
-    
+
     DefaultMutableTreeNode tnGender = new DefaultMutableTreeNode("Gender");
     genders = addTreeCheckboxes(tnGender, FilterConfig.Gender.class,
         Arrays.asList(FilterConfig.Gender.values()), filter.genders);
@@ -195,6 +252,24 @@ public class FilterSettingsPanel extends JPanel {
   }
 
   /**
+   * Load filter dates into the date and time picker objects.
+   * 
+   * @param filter Filter to load
+   */
+  private void loadDates(FilterConfig filter) {
+    if (filter != null && filter.dates != null) {
+      dtpStartDate.setDate(filter.dates.min);
+      if (filter.dates.min != null) {    
+        nudStartTime.setValue(filter.dates.min);
+      }
+      dtpEndDate.setDate(filter.dates.max);
+      if (filter.dates.max != null) {    
+        nudEndTime.setValue(filter.dates.max);
+      }
+    }
+  }
+    
+  /**
    * Add many checkbox leafs to a parent node. If a checked collection is not provided all
    * checkboxes will be unchecked, otherwise a respective leaf will be checked if it exists in the
    * collection.
@@ -245,14 +320,38 @@ public class FilterSettingsPanel extends JPanel {
     filter.genders = processFilterCategory(FilterConfig.Gender.class, genders);
     filter.incomes = processFilterCategory(FilterConfig.Income.class, incomes);
     filter.contexts = processFilterCategory(FilterConfig.Context.class, contexts);
+
     // Process dates
-    Date start = dtpStartDate.getDate();
-    Date end = dtpEndDate.getDate();
+    Date start = getDateTime(dtpStartDate, nudStartTime);
+    Date end = getDateTime(dtpEndDate, nudEndTime);
     if (start != null || end != null) {
       filter.dates = new Range<>(start, end);
     }
-    
+
     return filter;
+  }
+
+  /**
+   * Combine values from a date picker object and time picker object to get a fully defined date
+   * time.
+   * 
+   * @param dp Date picker object
+   * @param tp Time picker object
+   * @return Fully defined date time, null if date is not set
+   */
+  private Date getDateTime(JXDatePicker dp, JSpinner tp) {
+    if (dp.getDate() == null) {
+      return null;
+    }
+
+    Calendar date = new GregorianCalendar();
+    date.setTime(dp.getDate());
+    Calendar datetime = new GregorianCalendar();
+    datetime.setTime((Date) tp.getValue());
+    datetime.set(Calendar.YEAR, date.get(Calendar.YEAR));
+    datetime.set(Calendar.MONTH, date.get(Calendar.MONTH));
+    datetime.set(Calendar.DAY_OF_MONTH, date.get(Calendar.DAY_OF_MONTH));
+    return datetime.getTime();
   }
 
   /**
@@ -262,7 +361,8 @@ public class FilterSettingsPanel extends JPanel {
    * @param mappings Values and their corresponding nodes
    * @return Values which have a node that is checked, null if all nodes are checked
    */
-  private <T> Collection<T> processFilterCategory(Class<T> type, Map<T, DefaultMutableTreeNode> mappings) {
+  private <T> Collection<T> processFilterCategory(Class<T> type,
+      Map<T, DefaultMutableTreeNode> mappings) {
     // Create a set of checked values in the filter
     Collection<T> inFilter = new ArrayList<>();
     for (Entry<T, DefaultMutableTreeNode> entry : mappings.entrySet()) {
