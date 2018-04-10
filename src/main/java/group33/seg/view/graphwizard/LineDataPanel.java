@@ -4,13 +4,11 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import javax.sound.midi.ControllerEventListener;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JToolTip;
 import group33.seg.controller.DashboardController;
 import group33.seg.model.configs.LineConfig;
 import group33.seg.model.configs.MetricQuery;
@@ -130,8 +128,7 @@ public class LineDataPanel extends JPanel {
     cboMetric.addActionListener(e -> {
       // Show bounce rate definition if metric requires it
       Metric item = (Metric) cboMetric.getSelectedItem();
-      boolean needsBounceDef = Metric.BOUNCES == item || Metric.BOUNCE_RATE == item;
-      pnlBounceRate.setVisible(needsBounceDef);
+      pnlBounceRate.setVisible(needsBounceDef());
       // Display appropriate help
       if (item == null) {
         btnMetricHelp.setToolTipText(null);
@@ -160,7 +157,7 @@ public class LineDataPanel extends JPanel {
     cboInterval.setSelectedItem(line.query.interval);
     pnlFilter.loadFilter(line.query.filter);
     pnlBounceRate.loadDef(line.query.bounceDef);
-    pnlBounceRate.setVisible(Metric.BOUNCE_RATE.equals(line.query.metric));
+    pnlBounceRate.setVisible(needsBounceDef());
   }
 
   /**
@@ -185,6 +182,14 @@ public class LineDataPanel extends JPanel {
     query.filter = pnlFilter.getFilter();
     query.bounceDef = pnlBounceRate.getBounceDef();
     config.query = query;
+  }
+  
+  /**
+   * @return Whether the currently selected metric requires the bounce rate definition panel
+   */
+  private boolean needsBounceDef() {
+    Metric item = (Metric) cboMetric.getSelectedItem();
+    return Metric.BOUNCES == item || Metric.BOUNCE_RATE == item;
   }
 
 }
