@@ -18,7 +18,6 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
-import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
@@ -27,6 +26,7 @@ import org.jfree.chart.LegendItem;
 import org.jfree.chart.LegendItemCollection;
 import org.jfree.chart.StandardChartTheme;
 import org.jfree.chart.axis.DateAxis;
+import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
@@ -45,19 +45,33 @@ public class LineGraphView extends JPanel {
 
   public static float MIN_THICKNESS = 1.0f;
   public static float MAX_THICKNESS = 5.0f;
-
-  private ChartPanel pnlChart;
+ 
+  private CustomChartPanel pnlChart;
 
   private JFreeChart chart;
-  private XYPlot plot;
-  private XYLineAndShapeRenderer renderer;
-  
-  private CustomDateAxis domainAxis;
 
+  private XYPlot plot;
+
+  /** Domain axis (main one that is displayed only) */
+  private CustomDateAxis timeAxis;
+
+  /** Range axis for all modes */
+  private NumberAxis valueAxis;
+
+  /** Dataset used for NORMAL mode (OVERLAY mode uses as reference) */
   private TimeSeriesCollection dataset;
+
+  /** Renderer used for NORMAL mode */
+  private XYLineAndShapeRenderer renderer;
+
+  /** Configurations for each line as reference */
   private List<LineConfig> configs;
 
+  /** Whether legend should be enabled */
   private boolean legendEnabled;
+
+  /** The current graphing mode */
+  private Mode mode;
 
   /**
    * Fully configure an empty chart and its controls.
@@ -81,8 +95,9 @@ public class LineGraphView extends JPanel {
     // * Do not use buffered image as this reduces quality on retina displays (TODO: Add toggle
     // for better performance option?)
     // * Disable property changing menu item, allow the rest
-    pnlChart = new ChartPanel(chart, 0, 0, 10, 10, Integer.MAX_VALUE, Integer.MAX_VALUE, false,
-        false, true, true, true, true, true);
+    pnlChart = new CustomChartPanel(chart, 0, 0, 10, 10, Integer.MAX_VALUE, Integer.MAX_VALUE,
+        false, false, true, true, true, true, true);
+
     this.add(pnlChart, BorderLayout.CENTER);
 
     // Chart controls
@@ -160,16 +175,21 @@ public class LineGraphView extends JPanel {
    * Initialise an empty chart.
    */
   private void initChart() {
+    // Initialise reference data structures
     this.configs = new ArrayList<>();
     this.dataset = new TimeSeriesCollection();
-    this.chart = ChartFactory.createTimeSeriesChart("", "", "", dataset, true, true, false);
-    this.plot = chart.getXYPlot();
-
-    this.renderer = new XYLineAndShapeRenderer();
-    renderer.setDefaultShapesVisible(false);
-    plot.setRenderer(renderer);
-    this.domainAxis = new CustomDateAxis();
-    plot.setDomainAxis(domainAxis);
+    // Create X Axis
+    timeAxis = new CustomDateAxis();
+    timeAxis.setLowerMargin(0.02);
+    timeAxis.setUpperMargin(0.02);
+    // Create Y Axis
+    valueAxis = new NumberAxis();
+    valueAxis.setAutoRangeIncludesZero(false);
+    // Create a new renderer
+    this.renderer = new XYLineAndShapeRenderer(true, false);
+    // Create plot and attach it to a chart
+    this.plot = new XYPlot(dataset, timeAxis, valueAxis, renderer);
+    this.chart = new JFreeChart(null, null, plot, true);
   }
 
   /**
@@ -181,14 +201,11 @@ public class LineGraphView extends JPanel {
     enablePanMode();
   }
 
-
   /**
-   * Set the graph's properties based off the given configuration.
-   * 
-   * @param graph Configuration to use for set
+   * Handle any behaviour that must occur after any graph content change or any property changes.
    */
-  public void setGraphProperties(LineGraphConfig graph) {
-    switch (graph.mode) {
+  private void refresh() {
+    switch (mode) {
       case NORMAL:
         enableNormalMode();
         break;
@@ -197,12 +214,22 @@ public class LineGraphView extends JPanel {
         break;
       default:
         throw new IllegalArgumentException("Invalid graph mode");
-    }  
+    }
+  }
+
+  /**
+   * Set the graph's properties based off the given configuration.
+   * 
+   * @param graph Configuration to use for set
+   */
+  public void setGraphProperties(LineGraphConfig graph) {
     pnlChart.setChart(chart);
     chart.setTitle(graph.title);
     plot.getDomainAxis().setLabel(graph.xAxisTitle);
     plot.getRangeAxis().setLabel(graph.yAxisTitle);
     setLegendEnabled(graph.showLegend);
+    this.mode = graph.mode;
+    refresh();
   }
 
   /**
@@ -302,7 +329,7 @@ public class LineGraphView extends JPanel {
       Second x = Second.parseSecond(d.key);
       ts.add(x, d.value);
     }
-    pnlChart.restoreAutoBounds();
+    refresh();
   }
 
   /**
@@ -316,6 +343,7 @@ public class LineGraphView extends JPanel {
     renderer.setSeriesPaint(idx, color);
     renderer.setSeriesStroke(idx, stroke);
     renderer.setSeriesVisible(idx, !hidden);
+    refresh();
   }
 
   /**
@@ -406,12 +434,18 @@ public class LineGraphView extends JPanel {
    * series axis. All other mode behaviour is first cleared.
    */
   private void enableNormalMode() {
-    for (int i = 0; i < dataset.getSeriesCount(); i++) {
+    int i = 0;
+    while (plot.getDataset(i) != null) {
       plot.setDataset(i, null);
+      plot.setDomainAxis(i, null);
+      plot.setRenderer(i, null);
+      i++;
     }
+    plot.setDomainAxis(timeAxis);
     plot.setDataset(dataset);
     plot.setRenderer(renderer);
-    domainAxis.setMode(Mode.NORMAL);
+    pnlChart.setFixedAutoRanges(null);
+    timeAxis.setMode(Mode.NORMAL);
   }
 
   /**
@@ -423,60 +457,85 @@ public class LineGraphView extends JPanel {
    * to its respective datasets lowest value, the displayed axis is indexed at 0d0h0m0s.
    */
   private void enableOverlayMode() {
-    // Change the plot to use a different dataset for each series
+    // Ensure normal mode is set to clear any odd state
+    enableNormalMode();
+
+    // Change the plot to use a different dataset for each series, keeping track of created axis
+    // (including the main axis)
     List<TimeSeries> series = getSeries();
-    // Keep track of created axis (including the main axis)
     List<ValueAxis> axis = new ArrayList<>();
-    axis.add(domainAxis);
+    axis.add(timeAxis);
+    int n = 0; // index for created axis
     for (int i = 0; i < series.size(); i++) {
-      TimeSeriesCollection d = new TimeSeriesCollection(series.get(i));
-      plot.setDataset(i, d);
-      if (i == 0) {
-        // Use the first series to determine and set the relative offset required for basing the
-        // main axis off zero
-        pnlChart.restoreAutoBounds();
-        domainAxis.setLowerMargin(0);
-        domainAxis.setBaseMillis((long) domainAxis.getLowerBound());
-      } else {
-        // Configure another hidden axis for each series
-        ValueAxis a = new DateAxis();
-        a.setLowerMargin(0);
-        a.setVisible(false);
-        plot.setDomainAxis(i, a);
-        axis.add(a);
+      TimeSeries s = series.get(i);
+      LineConfig l = configs.get(i);
+
+
+      // We must disregard any hidden datasets so they don't distort auto ranging
+      if (!l.hide) {
+        TimeSeriesCollection d = new TimeSeriesCollection(s);
+        plot.setDataset(n, d);
+        if (n > 0) {
+          // Configure another axis for the series (hidden)
+          ValueAxis a = new DateAxis();
+          a.setVisible(false);
+          plot.setDomainAxis(n, a);
+          axis.add(a);
+        }
         // Map the series to this axis
-        plot.mapDatasetToDomainAxis(i, i);
+        plot.mapDatasetToDomainAxis(n, n);
         // Configure and set a dataset specific renderer
         XYLineAndShapeRenderer r = new XYLineAndShapeRenderer(true, false);
         r.setSeriesPaint(0, renderer.getSeriesPaint(i));
-        r.setSeriesVisible(0, renderer.getSeriesVisible(i));
         r.setSeriesStroke(0, renderer.getSeriesStroke(i));
-        plot.setRenderer(i, r);
+        plot.setRenderer(n, r);
+        n++;
       }
+    }
+
+    // Track any data that gets cleared and needs to be reapplied
+    final double lowerMargin = timeAxis.getLowerMargin();
+    final double upperMargin = timeAxis.getUpperMargin();
+    // Ensure no margin is set as it makes calculations simpler
+    for (ValueAxis a : axis) {
+      a.setLowerMargin(0);
+      a.setUpperMargin(0);
     }
     // Set all axis bounds to fit their data
     pnlChart.restoreAutoBounds();
+
     // Find the largest dataset to determine the synchronised autorange limits
     double longest = 0;
     for (ValueAxis a : axis) {
       double len = a.getUpperBound() - a.getLowerBound();
-      System.out.println(len);
       if (len > longest) {
         longest = len;
       }
     }
-    // Synchronise autorange limits and ensure margins are suitable
+
+    // Synchronise autorange limits and ensure margins are reset to their originals
+    List<Pair<ValueAxis, Range>> ranges = new ArrayList<>();
     for (ValueAxis a : axis) {
-      a.setUpperBound(a.getLowerBound() + longest);
-      a.setLowerMargin(0.05);
+      double lower = a.getLowerBound();
+      double upper = lower + longest;
+      ranges.add(new Pair<>(a, new Range(lower, upper)));
     }
-    // Set all axis bounds to their newly calculated values
-    //pnlChart.restoreAutoBounds();
-    
+    pnlChart.setFixedAutoRanges(ranges);
+
+    // Determine and set the relative offset required for basing the main axis off zero
+    timeAxis.setBaseMillis((long) timeAxis.getLowerBound());
     // Enable overlay mode on the custom axis so relative formatting is used
-    domainAxis.setMode(Mode.OVERLAY);
+    timeAxis.setMode(Mode.OVERLAY);
+
+    // Enforce the old margins again
+    for (ValueAxis a : axis) {
+      a.setLowerMargin(lowerMargin);
+      a.setUpperMargin(upperMargin);
+    }
+    // Set all axis bounds to fit their data
+    pnlChart.restoreAutoBounds();
   }
-  
+
   /**
    * Enable mouse drag pan and scroll zoom behaviour for the current chart panel.
    */
