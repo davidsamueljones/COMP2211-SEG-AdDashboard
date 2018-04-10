@@ -329,9 +329,11 @@ public class LineGraphView extends JPanel {
       Second x = Second.parseSecond(d.key);
       if (d.value != null) {
         ts.add(x, d.value);
-      } else ts.add(x, 0);
-      refresh();
+      } else {
+        ts.add(x, 0);
+      }
     }
+    refresh();
   }
 
   /**
