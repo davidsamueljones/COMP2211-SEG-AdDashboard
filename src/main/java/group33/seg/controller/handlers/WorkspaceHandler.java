@@ -7,6 +7,7 @@ import group33.seg.controller.DashboardController.DashboardMVC;
 import group33.seg.controller.handlers.WorkspaceHandler.WorkspaceListener.Type;
 import group33.seg.model.configs.CampaignConfig;
 import group33.seg.model.configs.GraphConfig;
+import group33.seg.model.configs.StatisticConfig;
 import group33.seg.model.workspace.Workspace;
 
 public class WorkspaceHandler {
@@ -50,12 +51,12 @@ public class WorkspaceHandler {
     return;
   }
 
-  public boolean removeGraph(GraphConfig graphConfig) {
+  public boolean removeGraph(GraphConfig toRemove) {
     boolean removed = false;
     Iterator<GraphConfig> itrGraphs = getGraphs().iterator();
     while (itrGraphs.hasNext()) {
       GraphConfig graph = itrGraphs.next();
-      if (graph.equals(graphConfig)) {
+      if (graph.equals(toRemove)) {
         itrGraphs.remove();
         removed = true;
         notifyListeners(Type.GRAPHS);
@@ -90,6 +91,29 @@ public class WorkspaceHandler {
       WORKSPACE, CAMPAIGN, GRAPHS, STATISTICS;
     }
 
+  }
+
+  public List<StatisticConfig> getStatistics() {
+    Workspace workspace = mvc.model.getWorkspace();
+    if (workspace != null) {
+      return workspace.statistics;
+    } else {
+      return null;
+    }
+  }
+
+  public boolean removeStatistic(StatisticConfig toRemove) {
+    boolean removed = false;
+    Iterator<StatisticConfig> itrStatistics = getStatistics().iterator();
+    while (itrStatistics.hasNext()) {
+      StatisticConfig statistic = itrStatistics.next();
+      if (statistic.equals(toRemove)) {
+        itrStatistics.remove();
+        removed = true;
+        notifyListeners(Type.STATISTICS);
+      }
+    }
+    return removed;
   }
 
 }
