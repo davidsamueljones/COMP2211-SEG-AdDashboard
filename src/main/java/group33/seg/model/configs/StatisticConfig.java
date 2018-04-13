@@ -9,9 +9,9 @@ import java.util.UUID;
 public class StatisticConfig {
   
   /**
-   * Sequence that can uniquely identify a graph. Required as all properties of a graph may change
-   * yet behaviour may desire two graphs with different properties to represent different instances
-   * of the same graph.
+   * Sequence that can uniquely identify a statistic. Required as all properties of a statistic may change
+   * yet behaviour may desire two statistic with different properties to represent different instances
+   * of the same statistic.
    */
   public final String uuid;
 
