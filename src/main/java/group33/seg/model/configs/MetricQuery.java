@@ -79,20 +79,4 @@ public class MetricQuery {
     return equal;
   }
 
-  /**
-   * Do local validation of configuration.
-   * 
-   * @return Any issues with validation
-   */
-  public ErrorBuilder validate() {
-    ErrorBuilder eb = new ErrorBuilder();
-    if (metric == null) {
-      eb.addError("A metric must be selected");
-    }
-    if (interval == null) {
-      eb.addError("An interval must be selected");
-    }
-    return eb;
-  }
-
 }

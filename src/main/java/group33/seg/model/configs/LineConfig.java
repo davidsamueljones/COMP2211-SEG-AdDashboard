@@ -86,7 +86,12 @@ public class LineConfig {
     if (query == null) {
       eb.addError("A query must be provided");
     } else {
-      eb.append(query.validate());
+      if (query.metric == null) {
+        eb.addError("A metric must be selected");
+      }
+      if (query.interval == null) {
+        eb.addError("An interval must be selected");
+      }
     }
     return eb;
   }
