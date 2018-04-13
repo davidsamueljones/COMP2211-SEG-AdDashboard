@@ -117,9 +117,11 @@ public class BounceDefinitionPanel extends JPanel {
     }
     switch (bounceDef.type) {
       case PAGES:
+        radPageCount.setSelected(true);
         nudPageCount.setValue(bounceDef.value);
         break;
       case TIME:
+        radTime.setSelected(true);
         nudTime.setValue(bounceDef.value);
         break;
       default:
@@ -130,6 +132,7 @@ public class BounceDefinitionPanel extends JPanel {
   public void clear() {
     nudTime.setValue(0);
     nudPageCount.setValue(0);
+    radTime.setSelected(true);
   }
 
   public BounceConfig getBounceDef() {
