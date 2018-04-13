@@ -1,6 +1,7 @@
 package group33.seg.model.configs;
 
 import java.util.UUID;
+import group33.seg.controller.utilities.ErrorBuilder;
 
 /**
  * Structure-like class for constructing a statistic configuration. All variables are public to allow
@@ -59,6 +60,22 @@ public class StatisticConfig {
     } else if (!uuid.equals(other.uuid))
       return false;
     return true;
+  }
+  
+  /**
+   * Do local validation of configuration.
+   * 
+   * @return Any issues with validation
+   */
+  public ErrorBuilder validate() {
+    ErrorBuilder eb = new ErrorBuilder();
+    if (identifier == null || identifier.isEmpty()) {
+      eb.addError("Statistic must have an identifier");
+    }
+    if (query == null) {
+      eb.addError("A query must be provided");
+    }
+    return eb;
   }
   
 }
