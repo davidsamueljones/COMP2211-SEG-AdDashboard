@@ -102,6 +102,19 @@ public class WorkspaceHandler {
     }
   }
 
+  public void putStatistic(StatisticConfig statistic) {
+    List<StatisticConfig> statistics = getStatistics();
+
+    int cur = statistics.indexOf(statistic);
+    if (cur >= 0) {
+      statistics.set(cur, statistic);
+    } else {
+      statistics.add(statistic);
+    }
+    notifyListeners(Type.STATISTICS);
+    return;
+  }
+  
   public boolean removeStatistic(StatisticConfig toRemove) {
     boolean removed = false;
     Iterator<StatisticConfig> itrStatistics = getStatistics().iterator();
