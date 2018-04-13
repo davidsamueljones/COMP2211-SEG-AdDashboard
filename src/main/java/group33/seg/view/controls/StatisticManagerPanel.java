@@ -23,6 +23,7 @@ import javax.swing.border.TitledBorder;
 import group33.seg.controller.DashboardController;
 import group33.seg.controller.handlers.WorkspaceHandler.WorkspaceListener;
 import group33.seg.model.configs.StatisticConfig;
+import group33.seg.view.statisticwizard.StatisticWizardDialog;
 
 public class StatisticManagerPanel extends JPanel {
   private static final long serialVersionUID = 2590651419460169868L;
