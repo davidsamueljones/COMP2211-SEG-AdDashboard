@@ -32,7 +32,7 @@ public class FilterConfig {
   public Range<Date> dates = null;
 
   /**
-   * Create a human readable string representing the filter configuration.
+   * Create a human readable string (with html formatting) representing the filter configuration.
    * 
    * @return Filter as generated text
    */
@@ -55,7 +55,8 @@ public class FilterConfig {
   }
 
   /**
-   * Generate a human readable string representing a single fields filter configuration.
+   * Generate a human readable string (with html formatting) representing a single fields filter
+   * configuration.
    * 
    * @param field Field values correspond to
    * @param values Values to filter by, no filter if null
@@ -77,7 +78,7 @@ public class FilterConfig {
           filter.append(", ");
         }
       }
-      filter.append("]\n");
+      filter.append("]<br>");
     }
     return filter.toString();
   }
@@ -103,8 +104,8 @@ public class FilterConfig {
    * Enumeration of possible ages for filtering.
    */
   public enum Age {
-    LESS_25("<25"), BETWEEN_25_34("25-34"), BETWEEN_35_44("35-44"), BETWEEN_45_54(
-        "45-54"), MORE_54(">54");
+    LESS_25("<25"), BETWEEN_25_34("25-34"), BETWEEN_35_44("35-44"), BETWEEN_45_54("45-54"), MORE_54(
+        ">54");
 
     private String string;
 
