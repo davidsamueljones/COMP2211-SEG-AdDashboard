@@ -6,6 +6,8 @@ import java.util.Map;
 import com.rits.cloning.Cloner;
 import group33.seg.controller.DashboardController.DashboardMVC;
 import group33.seg.controller.handlers.WorkspaceHandler.WorkspaceListener;
+import group33.seg.controller.types.MetricQueryResponse;
+import group33.seg.model.configs.MetricQuery;
 import group33.seg.model.configs.StatisticConfig;
 import group33.seg.model.types.Metric;
 import group33.seg.view.structure.WorkspaceStatisticsPanel;
@@ -46,7 +48,7 @@ public class StatisticHandler {
    * @param reload Whether to do a full reload of the currently stored statistics
    */
   public void setView(WorkspaceStatisticsPanel view, boolean reload) {
-    this.view = view;  
+    this.view = view;
     if (reload) {
       List<StatisticConfig> statistics = this.statistics;
       this.statistics = null;
@@ -82,7 +84,7 @@ public class StatisticHandler {
     if (view == null) {
       return;
     }
-    
+
     // Create a copy of the input statistics, this allows any changes to the original passed object
     // to be handled by the handler's update structure appropriately on a load
     Cloner cloner = new Cloner();
@@ -157,13 +159,31 @@ public class StatisticHandler {
     }
     if (update == Update.FULL || update == Update.DATA) {
       System.out.println("UPDATING DATA: " + statistic.identifier);
-      // TODO: Do queries
-      Map<Metric, Object> results = new HashMap<>();
-      for (Metric metric : Metric.values()) {
-        results.put(metric, 0.0);
-      }
+      Map<Metric, Object> results = doStatisticQuery(statistic);
       view.setStatisticData(statistic, results);
     }
+  }
+
+  /**
+   * Do a metric query for every metric type using the statistic query configuration.
+   * 
+   * @param statistic Statistic configuration to use for query
+   * @return Mapping of metrics to returned values
+   */
+  private Map<Metric, Object> doStatisticQuery(StatisticConfig statistic) {
+    Map<Metric, Object> results = new HashMap<>();
+    MetricQuery query = statistic.query;
+
+    for (Metric metric : Metric.values()) {
+      query.metric = metric;
+      MetricQueryResponse res = mvc.controller.database.getQueryResponse(query);
+      // Only acknowledge results that are as expected
+      if (res.getResult() != null && res.getResult().size() == 1) {
+        results.put(metric, res.getResult().get(0).value);
+      }
+    }
+    query.metric = null;
+    return results;
   }
 
   /**
