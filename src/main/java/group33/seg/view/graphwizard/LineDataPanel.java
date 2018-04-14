@@ -19,9 +19,9 @@ import group33.seg.view.controls.FilterViewPanel;
 
 public class LineDataPanel extends JPanel {
   private static final long serialVersionUID = -7116368239383924369L;
-  
+
   private DashboardController controller;
-  
+
   protected JComboBox<Metric> cboMetric;
   protected JComboBox<Interval> cboInterval;
   protected FilterViewPanel pnlFilter;
@@ -128,16 +128,16 @@ public class LineDataPanel extends JPanel {
     cboMetric.addActionListener(e -> {
       // Show bounce rate definition if metric requires it
       Metric item = (Metric) cboMetric.getSelectedItem();
-      pnlBounceRate.setVisible(needsBounceDef());
+      pnlBounceRate.setVisible(MetricQuery.needBounceDef((Metric) cboMetric.getSelectedItem()));
       // Display appropriate help
       if (item == null) {
         btnMetricHelp.setToolTipText(null);
       } else {
-        btnMetricHelp.setToolTipText("<html><p width=\"250\">" + item.definition +"</p></html>");
+        btnMetricHelp.setToolTipText("<html><p width=\"250\">" + item.definition + "</p></html>");
       }
-     
+
     });
-    
+
     // Show definition panel if it is not already displayed
     btnMetricHelp.addActionListener(e -> {
       controller.display.showDefinitions();
@@ -157,7 +157,7 @@ public class LineDataPanel extends JPanel {
     cboInterval.setSelectedItem(line.query.interval);
     pnlFilter.loadFilter(line.query.filter);
     pnlBounceRate.loadDef(line.query.bounceDef);
-    pnlBounceRate.setVisible(needsBounceDef());
+    pnlBounceRate.setVisible(MetricQuery.needBounceDef((Metric) cboMetric.getSelectedItem()));
   }
 
   /**
@@ -182,14 +182,6 @@ public class LineDataPanel extends JPanel {
     query.filter = pnlFilter.getFilter();
     query.bounceDef = pnlBounceRate.getBounceDef();
     config.query = query;
-  }
-  
-  /**
-   * @return Whether the currently selected metric requires the bounce rate definition panel
-   */
-  private boolean needsBounceDef() {
-    Metric item = (Metric) cboMetric.getSelectedItem();
-    return Metric.BOUNCES == item || Metric.BOUNCE_RATE == item;
   }
 
 }

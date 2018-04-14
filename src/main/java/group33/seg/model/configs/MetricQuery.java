@@ -72,11 +72,18 @@ public class MetricQuery {
     equal &= (metric == null ? (other.metric == null) : metric.equals(other.metric));
     equal &= (interval == null ? (other.interval == null) : interval.equals(other.interval));
     equal &= (filter == null ? (other.filter == null) : filter.isEquals(other.filter));
-    if (Metric.BOUNCE_RATE.equals(metric)) {
+    if (MetricQuery.needBounceDef(metric)) {
       equal &=
           (bounceDef == null ? (other.bounceDef == null) : bounceDef.isEqual(other.bounceDef));
     }
     return equal;
+  }
+  
+  /**
+   * @return Whether the currently selected metric requires the bounce rate definition panel
+   */
+  public static boolean needBounceDef(Metric metric) {
+    return metric == null || Metric.BOUNCES == metric || Metric.BOUNCE_RATE == metric;
   }
 
 }
