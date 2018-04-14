@@ -37,8 +37,12 @@ public class GraphsHandler {
    * Create a new line handler making use of the given view output.
    */
   public void setLineGraphView(LineGraphView view) {
-    view.applyFontScale(scale);
-    lineGraph = new LineGraphHandler(mvc, view);
+    if (view == null) {
+      lineGraph = null;
+    } else {
+      view.applyFontScale(scale);
+      lineGraph = new LineGraphHandler(mvc, view);
+    }
   }
 
   /**
