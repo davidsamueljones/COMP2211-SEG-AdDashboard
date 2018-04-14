@@ -33,4 +33,20 @@ public class BounceConfig {
     TIME, PAGES,
   }
 
+  /**
+   * Create a human readable string representing the bounce definition.
+   * 
+   * @return Definition as generated text
+   */
+  public String inText() {
+    switch (type) {
+      case PAGES:
+        return String.format("%d pages", value);
+      case TIME:
+        return String.format("%d seconds", value);
+      default:
+        return "Undefined";
+    }
+  }
+
 }

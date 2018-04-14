@@ -22,7 +22,7 @@ public class MetricQuery {
   /** Bounce rate definition (ignored if not relevant to metric) */
   public BounceConfig bounceDef;
 
-  /** Campaign configuration for selecting a campaign through ID */
+  /** Campaign to target (should not be null but target all if is) */
   public CampaignConfig campaign;
 
   /** Instantiate an empty query. */
@@ -60,6 +60,25 @@ public class MetricQuery {
   }
 
   /**
+   * Create a human readable string (with html formatting) representing the query.
+   * 
+   * @return Query as generated text
+   */
+  public String inText() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("<b>Campaign:</b> " + (campaign == null ? "All" : campaign.name));
+    builder.append("<br><b>Metric:</b> " + (metric == null ? "All" : metric));
+    builder.append("<br><b>Interval:</b> " + (interval == null ? "All Time" : interval));
+    builder.append("<br><b>Filter:</b><br>"
+        + (filter == null ? FilterConfig.NO_FILTER_TEXT : filter.inText()));
+    if (needBounceDef(metric)) {
+      builder.append("<br><b>Bounce Definition:</b> ");
+      builder.append((bounceDef == null ? "None" : bounceDef.inText()));
+    }
+    return builder.toString();
+  }
+
+  /**
    * Equality check between this instance and another instance. This equality check compares all
    * fields including non-final.
    * 
@@ -73,12 +92,11 @@ public class MetricQuery {
     equal &= (interval == null ? (other.interval == null) : interval.equals(other.interval));
     equal &= (filter == null ? (other.filter == null) : filter.isEquals(other.filter));
     if (MetricQuery.needBounceDef(metric)) {
-      equal &=
-          (bounceDef == null ? (other.bounceDef == null) : bounceDef.isEqual(other.bounceDef));
+      equal &= (bounceDef == null ? (other.bounceDef == null) : bounceDef.isEqual(other.bounceDef));
     }
     return equal;
   }
-  
+
   /**
    * @return Whether the currently selected metric requires the bounce rate definition panel
    */

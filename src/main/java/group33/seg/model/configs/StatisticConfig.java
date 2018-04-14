@@ -4,15 +4,15 @@ import java.util.UUID;
 import group33.seg.controller.utilities.ErrorBuilder;
 
 /**
- * Structure-like class for constructing a statistic configuration. All variables are public to allow
- * for easy structure access.
+ * Structure-like class for constructing a statistic configuration. All variables are public to
+ * allow for easy structure access.
  */
 public class StatisticConfig {
-  
+
   /**
-   * Sequence that can uniquely identify a statistic. Required as all properties of a statistic may change
-   * yet behaviour may desire two statistic with different properties to represent different instances
-   * of the same statistic.
+   * Sequence that can uniquely identify a statistic. Required as all properties of a statistic may
+   * change yet behaviour may desire two statistic with different properties to represent different
+   * instances of the same statistic.
    */
   public final String uuid;
 
@@ -21,14 +21,14 @@ public class StatisticConfig {
 
   /** Whether to hide statistic from display */
   public boolean hide;
-  
+
   /** Query to fetch data with, should use no grouping and no specific metric */
   public MetricQuery query;
-  
+
   public StatisticConfig() {
     this(null);
   }
-  
+
   public StatisticConfig(String uuid) {
     if (uuid == null) {
       this.uuid = UUID.randomUUID().toString();
@@ -36,15 +36,18 @@ public class StatisticConfig {
       this.uuid = uuid;
     }
   }
-  
+
   /**
-   * Create a human readable string representing the statistic configuration.
+   * Create a human readable string (with html formatting) representing the statistic configuration.
    * 
-   * @return Filter as generated text
+   * @return Statistic as generated text
    */
   public String inText() {
-    // TODO Auto-generated method stub
-    return "TODO";
+    StringBuilder builder = new StringBuilder();
+    builder.append("<b>Identfier: </b>" + identifier);
+    builder.append("<br><b>Hidden:</b> " + (hide ? "True" : "False"));
+    builder.append("<br><br>" + query.inText());
+    return builder.toString();
   }
 
   @Override
@@ -71,7 +74,7 @@ public class StatisticConfig {
       return false;
     return true;
   }
-  
+
   /**
    * Do local validation of configuration.
    * 
@@ -87,5 +90,5 @@ public class StatisticConfig {
     }
     return eb;
   }
-  
+
 }
