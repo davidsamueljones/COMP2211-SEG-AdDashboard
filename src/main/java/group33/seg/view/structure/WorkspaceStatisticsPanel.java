@@ -109,7 +109,7 @@ public class WorkspaceStatisticsPanel extends JPanel {
    *        can be any type.
    * @return Whether the statistic existed in the view
    */
-  public boolean setStatisticData(StatisticConfig statistic, Map<Metric, Object> data) {
+  public boolean setStatisticData(StatisticConfig statistic, Map<Metric, Double> data) {
     int idx = model_tblStatistics.getStatisticIndex(statistic);
     if (idx == -1) {
       return false;
@@ -172,7 +172,7 @@ public class WorkspaceStatisticsPanel extends JPanel {
     private static final long serialVersionUID = -6483702839398100367L;
 
     /** List of statistics and their data displayed by model */
-    private List<Pair<StatisticConfig, Map<Metric, Object>>> statistics = null;
+    private List<Pair<StatisticConfig, Map<Metric, Double>>> statistics = null;
 
     @Override
     public int getRowCount() {
@@ -181,20 +181,20 @@ public class WorkspaceStatisticsPanel extends JPanel {
 
     @Override
     public int getColumnCount() {
-      List<Pair<StatisticConfig, Map<Metric, Object>>> visible = getVisibleStatistics();
+      List<Pair<StatisticConfig, Map<Metric, Double>>> visible = getVisibleStatistics();
       return visible.size();
     }
 
     @Override
     public String getColumnName(int column) {
-      List<Pair<StatisticConfig, Map<Metric, Object>>> visible = getVisibleStatistics();
+      List<Pair<StatisticConfig, Map<Metric, Double>>> visible = getVisibleStatistics();
       return visible.get(column).key.identifier;
     }
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
       Metric metric = Metric.values()[rowIndex];
-      Map<Metric, Object> values = getVisibleStatistics().get(columnIndex).value;
+      Map<Metric, Double> values = getVisibleStatistics().get(columnIndex).value;
       return (values == null ? null : values.get(metric));
     }
     
@@ -207,7 +207,7 @@ public class WorkspaceStatisticsPanel extends JPanel {
     public int getStatisticIndex(StatisticConfig statistic) {
       if (statistics != null) {
         int i = 0;
-        for (Pair<StatisticConfig, Map<Metric, Object>> pair : statistics) {
+        for (Pair<StatisticConfig, Map<Metric, Double>> pair : statistics) {
           if (pair.key.equals(statistic)) {
             return i;
           }
@@ -220,10 +220,10 @@ public class WorkspaceStatisticsPanel extends JPanel {
     /**
      * @return All stored statistics that are not hidden
      */
-    public List<Pair<StatisticConfig, Map<Metric, Object>>> getVisibleStatistics() {
-      List<Pair<StatisticConfig, Map<Metric, Object>>> visible = new ArrayList<>();
+    public List<Pair<StatisticConfig, Map<Metric, Double>>> getVisibleStatistics() {
+      List<Pair<StatisticConfig, Map<Metric, Double>>> visible = new ArrayList<>();
       if (statistics != null) {
-        for (Pair<StatisticConfig, Map<Metric, Object>> pair : statistics) {
+        for (Pair<StatisticConfig, Map<Metric, Double>> pair : statistics) {
           if (!pair.key.hide) {
             visible.add(pair);
           }

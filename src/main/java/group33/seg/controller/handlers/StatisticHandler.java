@@ -159,7 +159,7 @@ public class StatisticHandler {
     }
     if (update == Update.FULL || update == Update.DATA) {
       System.out.println("UPDATING DATA: " + statistic.identifier);
-      Map<Metric, Object> results = doStatisticQuery(statistic);
+      Map<Metric, Double> results = doStatisticQuery(statistic);
       view.setStatisticData(statistic, results);
     }
   }
@@ -170,8 +170,8 @@ public class StatisticHandler {
    * @param statistic Statistic configuration to use for query
    * @return Mapping of metrics to returned values
    */
-  private Map<Metric, Object> doStatisticQuery(StatisticConfig statistic) {
-    Map<Metric, Object> results = new HashMap<>();
+  private Map<Metric, Double> doStatisticQuery(StatisticConfig statistic) {
+    Map<Metric, Double> results = new HashMap<>();
     MetricQuery query = statistic.query;
 
     for (Metric metric : Metric.values()) {
@@ -179,7 +179,7 @@ public class StatisticHandler {
       MetricQueryResponse res = mvc.controller.database.getQueryResponse(query);
       // Only acknowledge results that are as expected
       if (res.getResult() != null && res.getResult().size() == 1) {
-        results.put(metric, res.getResult().get(0).value);
+        results.put(metric, res.getResult().get(0).value.doubleValue());
       }
     }
     query.metric = null;
