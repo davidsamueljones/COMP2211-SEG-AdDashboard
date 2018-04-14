@@ -1,9 +1,13 @@
 package group33.seg.controller.handlers;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import com.rits.cloning.Cloner;
 import group33.seg.controller.DashboardController.DashboardMVC;
+import group33.seg.controller.handlers.WorkspaceHandler.WorkspaceListener;
 import group33.seg.model.configs.StatisticConfig;
+import group33.seg.model.types.Metric;
 import group33.seg.view.structure.WorkspaceStatisticsPanel;
 
 public class StatisticHandler {
@@ -24,6 +28,30 @@ public class StatisticHandler {
    */
   public StatisticHandler(DashboardMVC mvc) {
     this.mvc = mvc;
+    // Update the view whenever there are changes in the workspace
+    mvc.controller.workspace.addListener(new WorkspaceListener() {
+      @Override
+      public void update(Type type) {
+        if (type == WorkspaceListener.Type.WORKSPACE || type == WorkspaceListener.Type.STATISTICS) {
+          loadStatistics(mvc.controller.workspace.getStatistics());
+        }
+      }
+    });
+  }
+
+  /**
+   * Allow external setting of which view is controlled.
+   * 
+   * @param view View to control
+   * @param reload Whether to do a full reload of the currently stored statistics
+   */
+  public void setView(WorkspaceStatisticsPanel view, boolean reload) {
+    this.view = view;  
+    if (reload) {
+      List<StatisticConfig> statistics = this.statistics;
+      this.statistics = null;
+      loadStatistics(statistics);
+    }
   }
 
   /**
@@ -32,14 +60,16 @@ public class StatisticHandler {
   public void reloadStatistics() {
     loadStatistics(this.statistics);
   }
-  
+
   /**
    * Remove any statistics from the handled view.
    */
   public void clearStatistics() {
     System.out.println("CLEARING STATISTICS");
     this.statistics = null;
-    // TODO: CLEAR VIEW
+    if (view != null) {
+      view.clearStatistics();
+    }
   }
 
   /**
@@ -49,26 +79,54 @@ public class StatisticHandler {
    * @param statistics Statistics to load
    */
   public void loadStatistics(List<StatisticConfig> statistics) {
-    // Create a copy of the input statistics, this allows any changes to the original passed object to
-    // be handled by the handler's update structure appropriately on a load
+    if (view == null) {
+      return;
+    }
+    
+    // Create a copy of the input statistics, this allows any changes to the original passed object
+    // to be handled by the handler's update structure appropriately on a load
     Cloner cloner = new Cloner();
     statistics = cloner.deepClone(statistics);
-    
+
     // Configure statistic view
     removeOutdatedStatistics(statistics);
-    loadStatistics(statistics);
+    if (statistics != null) {
+      // Get list of existing statistics
+      List<StatisticConfig> exStatistics = this.statistics;
+      for (StatisticConfig statistic : statistics) {
+        // Ensure campaign is current with workspace (FIXME: INCREMENT 2 FEATURE)
+        statistic.query.campaign = mvc.controller.workspace.getCampaign();
+        // Update statistic if it exists, otherwise add it
+        int idx = (exStatistics == null ? -1 : exStatistics.indexOf(statistic));
+        if (idx >= 0) {
+          updateStatistic(statistic, getStatisticUpdate(exStatistics.get(idx), statistic));
+        } else {
+          addStatistic(statistic);
+        }
+      }
+    }
     this.statistics = statistics;
   }
 
-
   /**
-   * Using the list of existing statistics, remove those from the view that should no longer be displayed
-   * based on provided updated statistic information.
+   * Using the list of existing statistics, remove those from the view that should no longer be
+   * displayed based on provided updated statistic information.
    * 
    * @param statistics Updated statistic information
    */
   private void removeOutdatedStatistics(List<StatisticConfig> statistics) {
-    // TODO: Handle removing old statistics
+    // Get list of existing statistics
+    List<StatisticConfig> exStatistics = this.statistics;
+    if (exStatistics == null) {
+      return;
+    }
+    // Remove existing statistics that no longer exist after update
+    for (StatisticConfig exStatistic : exStatistics) {
+      int idx = statistics.indexOf(exStatistic);
+      if (idx < 0) {
+        removeStatistic(exStatistic);
+      }
+    }
   }
 
   /**
@@ -89,7 +147,23 @@ public class StatisticHandler {
    * @param update Update options
    */
   private void updateStatistic(StatisticConfig statistic, Update update) {
-    // TODO: Handle update behaviour
+    // Add statistic record in view if it doesn't exist
+    view.addStatistic(statistic);
+
+    // Do required view updates
+    if (update == Update.FULL || update == Update.PROPERTIES) {
+      System.out.println("UPDATING PROPERTIES: " + statistic.identifier);
+      view.setStatisticProperties(statistic);
+    }
+    if (update == Update.FULL || update == Update.DATA) {
+      System.out.println("UPDATING DATA: " + statistic.identifier);
+      // TODO: Do queries
+      Map<Metric, Object> results = new HashMap<>();
+      for (Metric metric : Metric.values()) {
+        results.put(metric, 0.0);
+      }
+      view.setStatisticData(statistic, results);
+    }
   }
 
   /**
@@ -99,7 +173,42 @@ public class StatisticHandler {
    */
   private void removeStatistic(StatisticConfig statistic) {
     System.out.println("REMOVING: " + statistic.identifier);
-    // TODO: REMOVE STATISTIC
+    view.removeStatistic(statistic);
+  }
+
+  /**
+   * Given an original and an updated statistic configuration, determine what type of update is
+   * required to update the statistic in the least cost-manner. As in, if only statistic properties
+   * have changed it is best to not requery data due to computational cost.
+   * 
+   * @param original Statistic configuration to use as base
+   * @param updated Statistic configuration to compare with base
+   * @return Update type as represented by Update enumeration
+   */
+  private Update getStatisticUpdate(StatisticConfig original, StatisticConfig updated) {
+
+    // Check for any changes in querying that may change data
+    boolean data = true;
+    data &= (original.query == null ? (original.query == null)
+        : original.query.isEquals(updated.query));
+
+    // Check for any changes of properties
+    boolean properties = true;
+    properties &= (original.identifier == null ? (original.identifier == null)
+        : original.identifier.equals(updated.identifier));
+    properties &= original.hide == updated.hide;
+
+    // Determine update required
+    if (!(data || properties)) {
+      return Update.FULL;
+    }
+    if (!data) {
+      return Update.DATA;
+    }
+    if (!properties) {
+      return Update.PROPERTIES;
+    }
+    return Update.NOTHING;
   }
 
   /**
