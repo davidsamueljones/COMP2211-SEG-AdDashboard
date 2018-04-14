@@ -13,9 +13,6 @@ import group33.seg.model.utilities.Range;
 public class FilterConfig {
   public static String NO_FILTER_TEXT = "* No Filter *";
 
-  /** Campaign to target (should not be null but target all if is) */
-  public CampaignConfig campaign = null;
-
   /** Age Filter (filtered to those in set, ignored if null, acknowledge if empty) */
   public Collection<Age> ages = null;
 
@@ -94,7 +91,6 @@ public class FilterConfig {
    */
   public boolean isEquals(FilterConfig other) {
     boolean equal = true;
-    equal &= (campaign == null ? (other.campaign == null) : campaign.equals(other.campaign));
     equal &= (ages == null ? (other.ages == null) : ages.equals(other.ages));
     equal &= (genders == null ? (other.genders == null) : genders.equals(other.genders));
     equal &= (incomes == null ? (other.incomes == null) : incomes.equals(other.incomes));
