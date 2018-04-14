@@ -38,20 +38,42 @@ public class FilterConfig {
    */
   public String inText() {
     StringBuilder filter = new StringBuilder();
+    // Use a break monitor so only required breaks are written
+    boolean br = false;
     // Fields
-    filter.append(generateFieldText("Ages", ages));
-    filter.append(generateFieldText("Genders", genders));
-    filter.append(generateFieldText("Incomes", incomes));
-    filter.append(generateFieldText("Contexts", contexts));
+    br |= appendFilterSection(filter, generateFieldText("Ages", ages), br);
+    br |= appendFilterSection(filter, generateFieldText("Genders", genders), br);
+    br |= appendFilterSection(filter, generateFieldText("Incomes", incomes), br);
+    br |= appendFilterSection(filter, generateFieldText("Contexts", contexts), br);
+
     // Dates
     if (dates != null) {
-      filter.append(dates.toString());
+      br = appendFilterSection(filter, dates.toString(), br);
     }
     // Check if any filter rules have been found
     if (filter.length() == 0) {
       filter.append(NO_FILTER_TEXT);
     }
     return filter.toString();
+  }
+
+  /**
+   * Append text to the builder, adding a line break prior if indicated.
+   * 
+   * @param builder Builder to append to
+   * @param text Text to append
+   * @param br Whether a break should be placed
+   * @return Whether anything was appended
+   */
+  private boolean appendFilterSection(StringBuilder builder, String text, boolean br) {
+    if (text != null && !text.isEmpty()) {
+      if (br) {
+        builder.append("<br>");
+      }
+      builder.append(text);
+      return true;
+    }
+    return false;
   }
 
   /**
@@ -78,7 +100,7 @@ public class FilterConfig {
           filter.append(", ");
         }
       }
-      filter.append("]<br>");
+      filter.append("]");
     }
     return filter.toString();
   }
