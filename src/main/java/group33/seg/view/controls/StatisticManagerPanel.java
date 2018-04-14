@@ -91,6 +91,7 @@ public class StatisticManagerPanel extends JPanel {
         if (value instanceof StatisticConfig) {
           StatisticConfig config = (StatisticConfig) value;
           setText(config.identifier);
+          setToolTipText(String.format("<html>%s</html>", config.inText()));
         }
         return comp;
       }
