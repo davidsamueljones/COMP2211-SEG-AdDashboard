@@ -65,7 +65,10 @@ public class DisplayHandler {
         System.err.println("Dashboard not open");
         return;
       }
-
+      // Unattach views from controller
+      mvc.controller.graphs.setLineGraphView(null);
+      mvc.controller.statistics.setView(null, false);
+      
       dashboard.setVisible(false);
       dashboard.dispose();
       mvc.view.setDashboard(null);
