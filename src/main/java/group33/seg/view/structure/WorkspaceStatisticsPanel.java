@@ -8,13 +8,16 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.AbstractListModel;
 import javax.swing.BorderFactory;
+import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListModel;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import group33.seg.controller.DashboardController;
@@ -48,13 +51,13 @@ public class WorkspaceStatisticsPanel extends JPanel {
   private void initGUI() {
     setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     setLayout(new BorderLayout());
-   
+
     model_tblStatistics = new StatisticTableModel();
     tblStatistics = new JTable(model_tblStatistics);
     tblStatistics.setShowGrid(true);
     tblStatistics.setGridColor(Color.LIGHT_GRAY);
-    tblStatistics.getTableHeader().setDefaultRenderer(new ColumnHeaderRenderer());
-
+    tblStatistics.getTableHeader().setDefaultRenderer(new StatisticHeaderRenderer());
+    tblStatistics.setDefaultRenderer(Object.class, new ValueRenderer());
     // Initialise metrics as row headers for table
     ListModel<Metric> model_rowHeaders = new AbstractListModel<Metric>() {
       private static final long serialVersionUID = 6880290767512330693L;
@@ -70,7 +73,7 @@ public class WorkspaceStatisticsPanel extends JPanel {
       }
     };
     JList<Metric> rowHeaders = new JList<Metric>(model_rowHeaders);
-    rowHeaders.setCellRenderer(new RowHeaderRenderer());
+    rowHeaders.setCellRenderer(new MetricHeaderRenderer());
 
     // Ensure row sizing is the same between headers and table
     int fixedHeight = tblStatistics.getRowHeight() + tblStatistics.getRowMargin();
@@ -80,8 +83,8 @@ public class WorkspaceStatisticsPanel extends JPanel {
     // Create scroll pane that also has LHS row headers
     JScrollPane scrStatistics = new JScrollPane(tblStatistics);
     scrStatistics.setRowHeaderView(rowHeaders);
-    scrStatistics.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-    add(scrStatistics, BorderLayout.CENTER);    
+    scrStatistics.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+    add(scrStatistics, BorderLayout.CENTER);
   }
 
   /**
@@ -197,7 +200,7 @@ public class WorkspaceStatisticsPanel extends JPanel {
       Map<Metric, Double> values = getVisibleStatistics().get(columnIndex).value;
       return (values == null ? null : values.get(metric));
     }
-    
+
     /**
      * Get the storage index for the given statistic.
      * 
@@ -216,7 +219,7 @@ public class WorkspaceStatisticsPanel extends JPanel {
       }
       return -1;
     }
-    
+
     /**
      * @return All stored statistics that are not hidden
      */
@@ -231,32 +234,68 @@ public class WorkspaceStatisticsPanel extends JPanel {
       }
       return visible;
     }
-    
+
   }
 
   /**
-   * Helper class for rendering list cells as if they were table header cells.
+   * Helper class for rendering list cells as if they were table header cells. Also dispalys metric
+   * definitions as tooltips.
    */
-  class RowHeaderRenderer implements ListCellRenderer<Object> {
+  class MetricHeaderRenderer implements ListCellRenderer<Metric> {
     @Override
-    public Component getListCellRendererComponent(JList<?> list, Object value, int index,
-        boolean isSelected, boolean cellHasFocus) {
+    public Component getListCellRendererComponent(JList<? extends Metric> list, Metric metric,
+        int index, boolean isSelected, boolean cellHasFocus) {
       TableCellRenderer header = new JTableHeader().getDefaultRenderer();
-      return header.getTableCellRendererComponent(null, value, false, false, 0, 0);
+      Component c = header.getTableCellRendererComponent(null, metric, false, false, 0, 0);
+      if (c instanceof JComponent) {
+        JComponent c1 = (JComponent) c;
+        c1.setToolTipText(metric.definition);
+        return c1;
+      }
+      return c;
     }
   }
 
   /**
    * Helper class for rendering table header cells without acknowledging table draw behaviour
-   * (messes with LaF).
+   * (messes with LaF). Also displays statistic configurations in text form as tooltips.
    */
-  class ColumnHeaderRenderer implements TableCellRenderer {
+  class StatisticHeaderRenderer implements TableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
         boolean hasFocus, int row, int column) {
       TableCellRenderer header = new JTableHeader().getDefaultRenderer();
-      return header.getTableCellRendererComponent(null, value, isSelected, hasFocus, row, column);
+      Component c =
+          header.getTableCellRendererComponent(null, value, isSelected, hasFocus, row, column);
+      if (c instanceof JComponent) {
+        JComponent c1 = (JComponent) c;
+        StatisticConfig statistic = model_tblStatistics.getVisibleStatistics().get(column).key;
+        c1.setToolTipText(statistic.inText());
+        return c1;
+      }
+      return c;
     }
+  }
+
+  /**
+   * Renderer that displays the full value on mouseover, helpful for long values.
+   */
+  class ValueRenderer extends DefaultTableCellRenderer {
+    private static final long serialVersionUID = 7893477071189445275L;
+
+    @Override
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+        boolean hasFocus, int row, int column) {
+      Component c =
+          super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+      if (c instanceof JComponent) {
+        JComponent c1 = (JComponent) c;
+        c1.setToolTipText(value.toString());
+        return c1;
+      }
+      return c;
+    }
+
   }
 
 }

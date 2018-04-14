@@ -36,6 +36,16 @@ public class StatisticConfig {
       this.uuid = uuid;
     }
   }
+  
+  /**
+   * Create a human readable string representing the statistic configuration.
+   * 
+   * @return Filter as generated text
+   */
+  public String inText() {
+    // TODO Auto-generated method stub
+    return "TODO";
+  }
 
   @Override
   public int hashCode() {
