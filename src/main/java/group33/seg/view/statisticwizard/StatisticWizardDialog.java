@@ -162,7 +162,6 @@ public class StatisticWizardDialog extends JDialog {
       return false;
     } else {
       controller.workspace.putStatistic(config);
-      // TODO: LOAD STATISTIC IN CAMPAIGN STATS
       loadStatistic(config);
       return true;
     }
