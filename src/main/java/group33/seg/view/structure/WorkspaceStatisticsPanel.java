@@ -136,7 +136,6 @@ public class WorkspaceStatisticsPanel extends JPanel {
     // Update only statistic field (this may change column titles so redraw whole table)
     model_tblStatistics.statistics.set(idx,
         new Pair<>(statistic, model_tblStatistics.statistics.get(idx).value));
-    // TODO: ADD HIDE FUNCTIONALITY
     model_tblStatistics.fireTableStructureChanged();
     return true;
   }
@@ -182,21 +181,23 @@ public class WorkspaceStatisticsPanel extends JPanel {
 
     @Override
     public int getColumnCount() {
-      return (statistics == null ? 1 : statistics.size());
+      List<Pair<StatisticConfig, Map<Metric, Object>>> visible = getVisibleStatistics();
+      return visible.size();
     }
 
     @Override
     public String getColumnName(int column) {
-      return (statistics == null ? "" : statistics.get(column).key.identifier);
+      List<Pair<StatisticConfig, Map<Metric, Object>>> visible = getVisibleStatistics();
+      return visible.get(column).key.identifier;
     }
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
       Metric metric = Metric.values()[rowIndex];
-      Map<Metric, Object> values = (statistics == null ? null : statistics.get(columnIndex).value);
+      Map<Metric, Object> values = getVisibleStatistics().get(columnIndex).value;
       return (values == null ? null : values.get(metric));
     }
-
+    
     /**
      * Get the storage index for the given statistic.
      * 
@@ -215,6 +216,22 @@ public class WorkspaceStatisticsPanel extends JPanel {
       }
       return -1;
     }
+    
+    /**
+     * @return All stored statistics that are not hidden
+     */
+    public List<Pair<StatisticConfig, Map<Metric, Object>>> getVisibleStatistics() {
+      List<Pair<StatisticConfig, Map<Metric, Object>>> visible = new ArrayList<>();
+      if (statistics != null) {
+        for (Pair<StatisticConfig, Map<Metric, Object>> pair : statistics) {
+          if (!pair.key.hide) {
+            visible.add(pair);
+          }
+        }
+      }
+      return visible;
+    }
+    
   }
 
   /**
