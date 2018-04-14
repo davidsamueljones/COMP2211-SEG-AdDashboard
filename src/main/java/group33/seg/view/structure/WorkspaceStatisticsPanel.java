@@ -120,7 +120,7 @@ public class WorkspaceStatisticsPanel extends JPanel {
     // Update only data field (this may change data but will not change structure)
     model_tblStatistics.statistics.set(idx,
         new Pair<>(model_tblStatistics.statistics.get(idx).key, data));
-    model_tblStatistics.fireTableStructureChanged();
+    model_tblStatistics.fireTableDataChanged();
     return true;
   }
 
@@ -249,7 +249,7 @@ public class WorkspaceStatisticsPanel extends JPanel {
       Component c = header.getTableCellRendererComponent(null, metric, false, false, 0, 0);
       if (c instanceof JComponent) {
         JComponent c1 = (JComponent) c;
-        c1.setToolTipText(metric.definition);
+        c1.setToolTipText(String.format("<html><p width=\"250\">%s</p></html>", metric.definition));
         return c1;
       }
       return c;
@@ -270,7 +270,7 @@ public class WorkspaceStatisticsPanel extends JPanel {
       if (c instanceof JComponent) {
         JComponent c1 = (JComponent) c;
         StatisticConfig statistic = model_tblStatistics.getVisibleStatistics().get(column).key;
-        c1.setToolTipText(statistic.inText());
+        c1.setToolTipText(String.format("<html>%s</html>", statistic.inText()));
         return c1;
       }
       return c;
@@ -290,7 +290,7 @@ public class WorkspaceStatisticsPanel extends JPanel {
           super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
       if (c instanceof JComponent) {
         JComponent c1 = (JComponent) c;
-        c1.setToolTipText(value.toString());
+        c1.setToolTipText(value == null ? "" : value.toString());
         return c1;
       }
       return c;
