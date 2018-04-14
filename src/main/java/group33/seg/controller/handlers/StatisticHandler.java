@@ -153,7 +153,7 @@ public class StatisticHandler {
     view.addStatistic(statistic);
 
     // Do required view updates
-    if (update == Update.FULL || update == Update.PROPERTIES) {
+    if (update != Update.NOTHING) {
       System.out.println("UPDATING PROPERTIES: " + statistic.identifier);
       view.setStatisticProperties(statistic);
     }
@@ -178,9 +178,11 @@ public class StatisticHandler {
       query.metric = metric;
       MetricQueryResponse res = mvc.controller.database.getQueryResponse(query);
       // Only acknowledge results that are as expected
+      Double value = null;
       if (res.getResult() != null && res.getResult().size() == 1) {
-        results.put(metric, res.getResult().get(0).value.doubleValue());
+        value =  res.getResult().get(0).value.doubleValue();
       }
+      results.put(metric, value);
     }
     query.metric = null;
     return results;
