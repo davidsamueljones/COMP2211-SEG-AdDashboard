@@ -15,11 +15,17 @@ public class DashboardController {
   /** MVC that controller is residing over */
   private final DashboardMVC mvc;
 
-  /** Handler for general GUI updates */
-  public final DisplayHandler display;
-
+  /** Handler for settings */
+  public final SettingsHandler settings;
+  
+  /** Handler for workspace */
+  public final WorkspaceHandler workspace;
+  
   /** Handler for database access */
   public final DatabaseHandler database;
+  
+  /** Handler for general GUI updates */
+  public final DisplayHandler display;
 
   /** Handler for campaign importing */
   public final CampaignImportHandler imports;
@@ -30,11 +36,6 @@ public class DashboardController {
   /** Handler for statistic updates */
   public final StatisticHandler statistics;
   
-  /** Handler for settings */
-  public final SettingsHandler settings;
-  
-  /** Handler for workspace */
-  public final WorkspaceHandler workspace;
   
   /**
    * Instantiate a dashboard controller to control interactions between a given view and model. Uses
@@ -49,13 +50,13 @@ public class DashboardController {
     this.mvc = new DashboardMVC(model, view, this);
 
     // Create sub-controllers with access to MVC
-    display = new DisplayHandler(mvc);
+    settings = new SettingsHandler();
+    workspace = new WorkspaceHandler(mvc);
     database = new DatabaseHandler(mvc);
+    display = new DisplayHandler(mvc);
     imports = new CampaignImportHandler(mvc);
     graphs = new GraphsHandler(mvc);
     statistics = new StatisticHandler(mvc);
-    settings = new SettingsHandler();
-    workspace = new WorkspaceHandler(mvc);
   }
 
   /**
