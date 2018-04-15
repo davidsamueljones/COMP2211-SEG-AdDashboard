@@ -1,16 +1,24 @@
 package group33.seg.controller.handlers;
 
+import java.awt.Window;
+import java.awt.Dialog.ModalityType;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import javax.swing.SwingUtilities;
 import com.rits.cloning.Cloner;
 import group33.seg.controller.DashboardController.DashboardMVC;
 import group33.seg.controller.handlers.WorkspaceHandler.WorkspaceListener;
 import group33.seg.controller.types.MetricQueryResponse;
+import group33.seg.controller.utilities.ProgressListener;
 import group33.seg.model.configs.MetricQuery;
 import group33.seg.model.configs.StatisticConfig;
 import group33.seg.model.types.Metric;
+import group33.seg.view.controls.StatisticManagerPanel;
 import group33.seg.view.output.StatisticsView;
+import group33.seg.view.statisticwizard.StatisticWizardDialog;
 
 public class StatisticHandler {
 
@@ -23,6 +31,9 @@ public class StatisticHandler {
   /** Currently loaded statistics */
   protected List<StatisticConfig> statistics = null;
 
+  /** Listeners to alert about progress */
+  private final Set<ProgressListener> progressListeners = new HashSet<>();
+
   /**
    * Instantiate a statistic handler.
    * 
@@ -30,13 +41,11 @@ public class StatisticHandler {
    */
   public StatisticHandler(DashboardMVC mvc) {
     this.mvc = mvc;
-    // Update the view whenever there are changes in the workspace
-    mvc.controller.workspace.addListener(new WorkspaceListener() {
+    // Print messages to stdout for debug
+    addProgressListener(new ProgressListener() {
       @Override
-      public void update(Type type) {
-        if (type == WorkspaceListener.Type.WORKSPACE || type == WorkspaceListener.Type.STATISTICS) {
-          loadStatistics(mvc.controller.workspace.getStatistics());
-        }
+      public void progressUpdate(String update) {
+        System.out.println(update);
       }
     });
   }
@@ -80,34 +89,45 @@ public class StatisticHandler {
    * 
    * @param statistics Statistics to load
    */
-  public void loadStatistics(List<StatisticConfig> statistics) {
+  public void loadStatistics(List<StatisticConfig> inpStatistics) {
     if (view == null) {
       return;
     }
 
-    // Create a copy of the input statistics, this allows any changes to the original passed object
-    // to be handled by the handler's update structure appropriately on a load
-    Cloner cloner = new Cloner();
-    statistics = cloner.deepClone(statistics);
+    // Do load on worker thread, updating progress listeners appropriately
+    Thread workerThread = new Thread(() -> {
+      alertStart();
+      updateProgress("Loading statistics into view...");
 
-    // Configure statistic view
-    removeOutdatedStatistics(statistics);
-    if (statistics != null) {
-      // Get list of existing statistics
-      List<StatisticConfig> exStatistics = this.statistics;
-      for (StatisticConfig statistic : statistics) {
-        // Ensure campaign is current with workspace (FIXME: INCREMENT 2 FEATURE)
-        statistic.query.campaign = mvc.controller.workspace.getCampaign();
-        // Update statistic if it exists, otherwise add it
-        int idx = (exStatistics == null ? -1 : exStatistics.indexOf(statistic));
-        if (idx >= 0) {
-          updateStatistic(statistic, getStatisticUpdate(exStatistics.get(idx), statistic));
-        } else {
-          addStatistic(statistic);
+      // Create a copy of the input statistics, this allows any changes to the original passed
+      // object
+      // to be handled by the handler's update structure appropriately on a load
+      Cloner cloner = new Cloner();
+      List<StatisticConfig> statistics = cloner.deepClone(inpStatistics);
+
+      // Configure statistic view
+      removeOutdatedStatistics(statistics);
+      if (statistics != null) {
+        // Get list of existing statistics
+        List<StatisticConfig> exStatistics = this.statistics;
+        for (StatisticConfig statistic : statistics) {
+          // Ensure campaign is current with workspace (FIXME: INCREMENT 2 FEATURE)
+          statistic.query.campaign = mvc.controller.workspace.getCampaign();
+          // Update statistic if it exists, otherwise add it
+          int idx = (exStatistics == null ? -1 : exStatistics.indexOf(statistic));
+          if (idx >= 0) {
+            updateStatistic(statistic, getStatisticUpdate(exStatistics.get(idx), statistic));
+          } else {
+            addStatistic(statistic);
+          }
         }
       }
-    }
-    this.statistics = statistics;
+      StatisticHandler.this.statistics = statistics;
+      updateProgress("Finished loading statistics into view");
+      alertFinished();
+    });
+    
+    workerThread.start();
   }
 
   /**
@@ -154,11 +174,12 @@ public class StatisticHandler {
 
     // Do required view updates
     if (update != Update.NOTHING) {
-      System.out.println("UPDATING PROPERTIES: " + statistic.identifier);
+      updateProgress(
+          String.format("Updating properties of statistic '%s'...", statistic.identifier));
       view.setStatisticProperties(statistic);
     }
     if (update == Update.FULL || update == Update.DATA) {
-      System.out.println("UPDATING DATA: " + statistic.identifier);
+      updateProgress(String.format("Updating data of statistic '%s'...", statistic.identifier));
       Map<Metric, Double> results = doStatisticQuery(statistic);
       view.setStatisticData(statistic, results);
     }
@@ -179,19 +200,18 @@ public class StatisticHandler {
     Map<Metric, Double> results = new HashMap<>();
     MetricQuery query = statistic.query;
     for (Metric metric : Metric.values()) {
+      updateProgress(
+          String.format("Updating '%s' data of statistic '%s'...", metric, statistic.identifier));
       query.metric = metric;
       MetricQueryResponse res = mvc.controller.database.getQueryResponse(query);
       // Only acknowledge results that are as expected
-      Double value = null;
+      Number value = null;
       if (res.getResult() != null && res.getResult().size() == 1) {
-        if(res.getResult().get(0).value == null) {
-          value = 0d;
-        }
-        else {
-          value = res.getResult().get(0).value.doubleValue();
+        if ((value = res.getResult().get(0).value) == null) {
+          value = 0;
         }
       }
-      results.put(metric, value);
+      results.put(metric, value.doubleValue());
     }
     mvc.controller.workspace.putCache(statistic, results);
     query.metric = null;
@@ -241,6 +261,49 @@ public class StatisticHandler {
       return Update.PROPERTIES;
     }
     return Update.NOTHING;
+  }
+
+  /**
+   * @param progressListener Progress listener to start sending alerts to
+   */
+  public void addProgressListener(ProgressListener progressListener) {
+    progressListeners.add(progressListener);
+  }
+
+  /**
+   * @param progressListener Progress listener to no longer alert
+   */
+  public void removeProgressListener(ProgressListener progressListener) {
+    progressListeners.remove(progressListener);
+  }
+
+  /**
+   * Helper function to alert all listeners that a load has started.
+   */
+  private void alertStart() {
+    for (ProgressListener listener : progressListeners) {
+      listener.start();
+    }
+  }
+
+  /**
+   * Helper function to alert all listeners that a load finished.
+   */
+  private void alertFinished() {
+    for (ProgressListener listener : progressListeners) {
+      listener.finish(true);
+    }
+  }
+
+  /**
+   * Helper function to alert all listeners of a progress update.
+   *
+   * @param update Textual update on progress
+   */
+  private void updateProgress(String update) {
+    for (ProgressListener listener : progressListeners) {
+      listener.progressUpdate(update);
+    }
   }
 
   /**
