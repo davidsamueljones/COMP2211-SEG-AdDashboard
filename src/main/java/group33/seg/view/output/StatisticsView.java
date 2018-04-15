@@ -3,6 +3,8 @@ package group33.seg.view.output;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Window;
+import java.awt.Dialog.ModalityType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,14 +18,17 @@ import javax.swing.JTable;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListModel;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import group33.seg.controller.DashboardController;
+import group33.seg.controller.handlers.WorkspaceHandler.WorkspaceListener;
 import group33.seg.model.configs.StatisticConfig;
 import group33.seg.model.types.Metric;
 import group33.seg.model.types.Pair;
+import group33.seg.view.utilities.ProgressDialog;
 
 public class StatisticsView extends JPanel {
   private static final long serialVersionUID = 7755954237883396302L;
@@ -44,8 +49,27 @@ public class StatisticsView extends JPanel {
     initGUI();
     // Initialise the view
     clearStatistics();
+    
+    // Update the view whenever there are changes in the workspace
+    controller.workspace.addListener(new WorkspaceListener() {
+      @Override
+      public void update(Type type) {
+        if (type == WorkspaceListener.Type.WORKSPACE || type == WorkspaceListener.Type.STATISTICS) {
+          SwingUtilities.invokeLater(() -> {
+            Window frmCurrent = SwingUtilities.getWindowAncestor(StatisticsView.this);
+            ProgressDialog progressDialog = new ProgressDialog(frmCurrent);
+            progressDialog.setModalityType(ModalityType.APPLICATION_MODAL);
+            controller.statistics.addProgressListener(progressDialog.listener);
+            controller.statistics.loadStatistics(controller.workspace.getStatistics());   
+            progressDialog.setVisible(true);
+            controller.statistics.removeProgressListener(progressDialog.listener);   
+          });
+        }
+      }
+    });
+    
     // Configure so this is the view handled by the StatisticHandler
-    controller.statistics.setView(this, true);
+    controller.statistics.setView(this, true); 
   }
 
   private void initGUI() {
