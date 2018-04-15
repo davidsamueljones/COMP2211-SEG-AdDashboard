@@ -3,14 +3,15 @@ package group33.seg.view.output;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Window;
 import java.awt.Dialog.ModalityType;
+import java.awt.Window;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.swing.AbstractListModel;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -49,27 +50,24 @@ public class StatisticsView extends JPanel {
     initGUI();
     // Initialise the view
     clearStatistics();
-    
+
     // Update the view whenever there are changes in the workspace
-    controller.workspace.addListener(new WorkspaceListener() {
-      @Override
-      public void update(Type type) {
-        if (type == WorkspaceListener.Type.WORKSPACE || type == WorkspaceListener.Type.STATISTICS) {
-          SwingUtilities.invokeLater(() -> {
-            Window frmCurrent = SwingUtilities.getWindowAncestor(StatisticsView.this);
-            ProgressDialog progressDialog = new ProgressDialog(frmCurrent);
-            progressDialog.setModalityType(ModalityType.APPLICATION_MODAL);
-            controller.statistics.addProgressListener(progressDialog.listener);
-            controller.statistics.loadStatistics(controller.workspace.getStatistics());   
-            progressDialog.setVisible(true);
-            controller.statistics.removeProgressListener(progressDialog.listener);   
-          });
-        }
+    controller.workspace.addListener(type -> {
+      if (type == WorkspaceListener.Type.WORKSPACE || type == WorkspaceListener.Type.STATISTICS) {
+        SwingUtilities.invokeLater(() -> {
+          Window frmCurrent = SwingUtilities.getWindowAncestor(StatisticsView.this);
+          ProgressDialog progressDialog = new ProgressDialog(frmCurrent);
+          progressDialog.setModalityType(ModalityType.APPLICATION_MODAL);
+          controller.statistics.addProgressListener(progressDialog.listener);
+          controller.statistics.loadStatistics(controller.workspace.getStatistics());
+          progressDialog.setVisible(true);
+          controller.statistics.removeProgressListener(progressDialog.listener);
+        });
       }
     });
-    
+
     // Configure so this is the view handled by the StatisticHandler
-    controller.statistics.setView(this, true); 
+    controller.statistics.setView(this, true);
   }
 
   private void initGUI() {
@@ -100,7 +98,8 @@ public class StatisticsView extends JPanel {
     rowHeaders.setCellRenderer(new MetricHeaderRenderer());
 
     // Ensure row sizing is the same between headers and table
-    int fixedHeight = tblStatistics.getRowHeight() + tblStatistics.getRowMargin();
+    final JLabel lblSize = new JLabel();
+    int fixedHeight = (int) (lblSize.getFontMetrics(lblSize.getFont()).getHeight() * 1.1);
     rowHeaders.setFixedCellHeight(fixedHeight);
     tblStatistics.setRowHeight(fixedHeight);
 
@@ -312,6 +311,7 @@ public class StatisticsView extends JPanel {
         boolean hasFocus, int row, int column) {
       Component c =
           super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
       if (c instanceof JComponent) {
         JComponent c1 = (JComponent) c;
         c1.setToolTipText(value == null ? "" : value.toString());
