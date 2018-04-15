@@ -171,9 +171,13 @@ public class StatisticHandler {
    * @return Mapping of metrics to returned values
    */
   private Map<Metric, Double> doStatisticQuery(StatisticConfig statistic) {
+    Map<Metric, Double> cache = mvc.controller.workspace.getCache(statistic);
+    if (cache != null) {
+      return cache;
+    }
+    // Not cached so query it
     Map<Metric, Double> results = new HashMap<>();
     MetricQuery query = statistic.query;
-
     for (Metric metric : Metric.values()) {
       query.metric = metric;
       MetricQueryResponse res = mvc.controller.database.getQueryResponse(query);
@@ -184,6 +188,7 @@ public class StatisticHandler {
       }
       results.put(metric, value);
     }
+    mvc.controller.workspace.putCache(statistic, results);
     query.metric = null;
     return results;
   }
