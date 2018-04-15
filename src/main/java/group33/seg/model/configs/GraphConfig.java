@@ -28,11 +28,19 @@ public abstract class GraphConfig {
 
   /** Title of Y Axis */
   public String yAxisTitle = null;
-  
+
+  /**
+   * Instantiate a graph configuration with a random UUID.
+   */
   public GraphConfig() {
     this(null);
   }
 
+  /**
+   * Instantiate a graph with a given UUID.
+   * 
+   * @param uuid Unique identifier for line
+   */
   public GraphConfig(String uuid) {
     if (uuid == null) {
       this.uuid = UUID.randomUUID().toString();
@@ -40,8 +48,30 @@ public abstract class GraphConfig {
       this.uuid = uuid;
     }
   }
- 
+
+  /**
+   * Execute graph visitor behaviour with this instance. Use subclassing so the true type is the one
+   * calling the graph visitor.
+   * 
+   * @param visitor Visitor object for which to execute behaviour
+   */
   public abstract void accept(GraphVisitor visitor);
+
+  /**
+   * Create a human readable string (with html formatting) representing the graph configuration.
+   * 
+   * @return Graph configuration as generated text
+   */
+  public String inText() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("<b>Identfier: </b>" + identifier);
+    builder.append("<br><b>Title:</b> " + (title == null || title.isEmpty() ? "None" : title));
+    builder.append("<br><b>X-Axis:</b> ");
+    builder.append(xAxisTitle == null || xAxisTitle.isEmpty() ? "None" : xAxisTitle);
+    builder.append("<br><b>Y-Axis:</b> ");
+    builder.append(yAxisTitle == null || yAxisTitle.isEmpty() ? "None" : yAxisTitle);
+    return builder.toString();
+  }
 
   @Override
   public int hashCode() {

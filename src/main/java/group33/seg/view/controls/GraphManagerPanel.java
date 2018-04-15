@@ -93,6 +93,7 @@ public class GraphManagerPanel extends JPanel {
         if (value instanceof GraphConfig) {
           GraphConfig config = (GraphConfig) value;
           setText(config.identifier);
+          setToolTipText(String.format("<html>%s</html>", config.inText()));
         }
         return comp;
       }
@@ -142,7 +143,7 @@ public class GraphManagerPanel extends JPanel {
 
     // Allow a new graph to be created using a fresh wizard
     btnNew.addActionListener(e -> displayWizard(null));
-    
+
     // Listen for changes in workspace graphs, updating list if required
     controller.workspace.addListener(type -> {
       if (type == WorkspaceListener.Type.WORKSPACE || type == WorkspaceListener.Type.GRAPHS) {
@@ -190,13 +191,13 @@ public class GraphManagerPanel extends JPanel {
     } else {
       // Use graph visitor pattern to open appropriate wizard
       config.accept(new GraphVisitor() {
-        
+
         @Override
         public void visit(LineGraphConfig graph) {
-         displayLineWizard(graph);
+          displayLineWizard(graph);
         }
       });
-      
+
     }
   }
 
