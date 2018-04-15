@@ -1,5 +1,6 @@
 package group33.seg.view.preferences;
 
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -40,21 +41,18 @@ public class PreferencesDialog extends JDialog {
 
     this.controller = controller;
 
-    // Determine positioning
-    Point loc;
-    if (parent != null) {
-      loc = parent.getLocation();
-      loc.x += 80;
-      loc.y += 80;
-    } else {
-      loc = new Point(100, 100);
-    }
-
     // Initialise GUI
     initGUI();
-    setLocation(loc);
+
+    // Set sizing
     pack();
-    setResizable(false);
+    setResizable(false);    
+    // Set positioning
+    if (parent != null) {
+      setLocationRelativeTo(parent);
+    } else {
+      setLocation(100, 100);
+    }
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
   }
 
