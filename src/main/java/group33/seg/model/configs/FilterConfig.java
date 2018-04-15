@@ -3,6 +3,7 @@ package group33.seg.model.configs;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import group33.seg.controller.utilities.ErrorBuilder;
 import group33.seg.lib.Utilities;
 import group33.seg.model.utilities.Range;
 
@@ -13,16 +14,16 @@ import group33.seg.model.utilities.Range;
 public class FilterConfig {
   public static String NO_FILTER_TEXT = "* No Filter *";
 
-  /** Age Filter (filtered to those in set, ignored if null, acknowledge if empty) */
+  /** Age Filter (filtered to those in set, ignored if null) */
   public Collection<Age> ages = null;
 
-  /** Gender Filter (filtered to those in set, ignored if null, acknowledge if empty) */
+  /** Gender Filter (filtered to those in set, ignored if null) */
   public Collection<Gender> genders = null;
 
-  /** Income Filter (filtered to those in set, ignored if null, acknowledge if empty) */
+  /** Income Filter (filtered to those in set, ignored if null) */
   public Collection<Income> incomes = null;
 
-  /** Context Filter (filtered to those in set, ignored if null, acknowledge if empty) */
+  /** Context Filter (filtered to those in set, ignored if null) */
   public Collection<Context> contexts = null;
 
   /**
@@ -105,6 +106,33 @@ public class FilterConfig {
     return filter.toString();
   }
 
+  /**
+   * Do local validation of configuration.
+   * 
+   * @return Any issues with validation
+   */
+  public ErrorBuilder validate() {
+    ErrorBuilder eb = new ErrorBuilder();
+    if (ages != null && ages.isEmpty()) {
+      eb.addError("No age filter values set");
+    }
+    if (genders != null && genders.isEmpty()) {
+      eb.addError("No gender filter values set");
+    }
+    if (incomes != null && incomes.isEmpty()) {
+      eb.addError("No income filter values set");
+    }
+    if (contexts != null && contexts.isEmpty()) {
+      eb.addError("No context filter values set");
+    }
+    if (dates != null && dates.min != null && dates.max != null) {
+      if (dates.min.compareTo(dates.max) > 0) {
+        eb.addError("Start date cannot be after end date");
+      }
+    }
+    return eb;
+  }
+  
   /**
    * Equality check between this instance and another instance. This equality check compares all
    * fields including non-final.
