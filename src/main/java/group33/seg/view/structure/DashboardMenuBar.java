@@ -123,9 +123,6 @@ public class DashboardMenuBar extends JMenuBar {
       PreferencesDialog preferences = new PreferencesDialog(frmCurrent, controller);
       preferences.setModal(true);
       preferences.setVisible(true);
-      if (controller.display.isUIFontScalingOutdated()) {
-        controller.display.reloadDashboard();
-      }
     });
   }
 }

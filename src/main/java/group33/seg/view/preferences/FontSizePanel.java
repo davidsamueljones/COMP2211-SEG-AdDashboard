@@ -127,12 +127,21 @@ public class FontSizePanel extends JPanel {
     return (getSliderScale() != currentScaling);
   }
 
-  public void updateSettingsScale() {
-    controller.display.setUIFontScaling(getSliderScale());
+  public void updateSettings() {
+    setUIFontScaling(getSliderScale());
   }
 
   private double getSliderScale() {
     return sldFontSize.getValue() / (double) 100;
+  }
+  
+  private void setUIFontScaling(double newScaling) {
+    double currentScaling = controller.settings.prefs.getDouble(SettingsHandler.FONT_SCALING,
+        Accessibility.DEFAULT_SCALING);
+
+    if (currentScaling != newScaling) {
+      controller.settings.prefs.putDouble(SettingsHandler.FONT_SCALING, newScaling);
+    }
   }
 
 }

@@ -12,13 +12,11 @@ import group33.seg.view.utilities.Accessibility;
 import group33.seg.view.utilities.Accessibility.Appearance;
 import group33.seg.view.utilities.DefinitionFrame;
 
-// TODO: Not a fan of this name but functionality doesn't fall under View
 public class DisplayHandler {
 
   /** MVC model that sub-controller has knowledge of */
   private final DashboardMVC mvc;
 
-  private volatile boolean fontScalingOutdated = false;
   private volatile boolean definitionsVisible = false;
 
   /**
@@ -47,7 +45,6 @@ public class DisplayHandler {
         DashboardFrame newDashboard = new DashboardFrame(mvc.controller);
         mvc.view.setDashboard(newDashboard);
         newDashboard.setVisible(true);
-        fontScalingOutdated = false;
       } catch (Exception e) {
         e.printStackTrace();
       }
@@ -85,6 +82,13 @@ public class DisplayHandler {
   }
 
   /**
+   * @return Whether the controlled definition dialog is visible
+   */
+  public boolean isDefinitionWindowVisible() {
+    return definitionsVisible;
+  }
+
+  /**
    * Show the view's floating definitions window, if it does not exist, create it ensuring the
    * correct properties are set.
    */
@@ -114,11 +118,10 @@ public class DisplayHandler {
       definitions.setVisible(true);
     });
   }
-
-  public boolean isDefinitionWindowVisible() {
-    return definitionsVisible;
-  }
-
+  
+  /**
+   * Hide the controlled definition dialog.
+   */
   public void hideDefinitions() {
     EventQueue.invokeLater(() -> {
       DefinitionFrame definitions = mvc.view.getDefinitions();
@@ -140,31 +143,23 @@ public class DisplayHandler {
     ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
   }
 
+  /**
+   * Apply the scaling currently stored by the settings handler.
+   */
   public void applyUIFontScaling() {
     double scaling = mvc.controller.settings.prefs.getDouble(SettingsHandler.FONT_SCALING,
         Accessibility.DEFAULT_SCALING);
     applyUIFontScaling(scaling);
   }
 
+  /**
+   * Apply a given font scale to all GUI elements.
+   * 
+   * @param scaling Scaling to apply
+   */
   public void applyUIFontScaling(double scaling) {
     Accessibility.scaleDefaultUIFontSize(scaling);
     mvc.controller.graphs.setFontScale(scaling);
-    fontScalingOutdated = true;
-  }
-
-  public void setUIFontScaling(double newScaling) {
-    double currentScaling = mvc.controller.settings.prefs.getDouble(SettingsHandler.FONT_SCALING,
-        Accessibility.DEFAULT_SCALING);
-
-    if (currentScaling != newScaling) {
-      mvc.controller.settings.prefs.putDouble(SettingsHandler.FONT_SCALING, newScaling);
-      fontScalingOutdated = true;
-    }
-
-  }
-
-  public boolean isUIFontScalingOutdated() {
-    return fontScalingOutdated;
   }
 
 }
