@@ -205,7 +205,7 @@ public class StatisticHandler {
       query.metric = metric;
       MetricQueryResponse res = mvc.controller.database.getQueryResponse(query);
       // Only acknowledge results that are as expected
-      Number value = null;
+      Number value = 0;
       if (res.getResult() != null && res.getResult().size() == 1) {
         if ((value = res.getResult().get(0).value) == null) {
           value = 0;
