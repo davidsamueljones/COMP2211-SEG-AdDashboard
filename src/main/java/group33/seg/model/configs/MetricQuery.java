@@ -68,7 +68,7 @@ public class MetricQuery {
     StringBuilder builder = new StringBuilder();
     builder.append("<b>Campaign:</b> " + (campaign == null ? "All" : campaign.name));
     builder.append("<br><b>Metric:</b> " + (metric == null ? "All" : metric));
-    builder.append("<br><b>Interval:</b> " + (interval == null ? "All Time" : interval));
+    builder.append(interval == null ? "" : "<br><b>Interval:</b> " +  interval);
     builder.append("<br><b>Filter:</b><br>"
         + (filter == null ? FilterConfig.NO_FILTER_TEXT : filter.inText()));
     if (needBounceDef(metric)) {

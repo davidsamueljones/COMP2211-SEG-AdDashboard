@@ -48,6 +48,19 @@ public class LineConfig {
     this.uuid = uuid;
   }
 
+  /**
+   * Create a human readable string (with html formatting) representing the line configuration.
+   * 
+   * @return Line as generated text
+   */
+  public String inText() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("<b>Identfier: </b>" + identifier);
+    builder.append("<br><b>Hidden:</b> " + (hide ? "True" : "False"));
+    builder.append("<br><br>" + query.inText());
+    return builder.toString();
+  }
+  
   @Override
   public int hashCode() {
     final int prime = 31;

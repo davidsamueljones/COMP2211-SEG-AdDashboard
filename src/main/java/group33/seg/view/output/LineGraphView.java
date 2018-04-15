@@ -263,6 +263,8 @@ public class LineGraphView extends JPanel {
     if (ts == null) {
       return false;
     }
+    int idx = dataset.indexOf(ts);
+    configs.set(idx, line);
     setSeriesData(ts, data);
     return true;
   }
@@ -424,7 +426,7 @@ public class LineGraphView extends JPanel {
     for (LineConfig config : configs) {
       if (!config.hide) {
         LegendItem item = new LegendItem(config.identifier, config.color);
-        item.setToolTipText("[TEST TOOLTIP]");
+        item.setToolTipText(String.format("<html>%s</html>", config.inText()));
         legend.add(item);
       }
     }
