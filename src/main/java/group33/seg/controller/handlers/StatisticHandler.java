@@ -10,7 +10,7 @@ import group33.seg.controller.types.MetricQueryResponse;
 import group33.seg.model.configs.MetricQuery;
 import group33.seg.model.configs.StatisticConfig;
 import group33.seg.model.types.Metric;
-import group33.seg.view.structure.WorkspaceStatisticsPanel;
+import group33.seg.view.output.StatisticsView;
 
 public class StatisticHandler {
 
@@ -18,7 +18,7 @@ public class StatisticHandler {
   private final DashboardMVC mvc;
 
   /** Graph being controlled */
-  protected WorkspaceStatisticsPanel view;
+  protected StatisticsView view;
 
   /** Currently loaded statistics */
   protected List<StatisticConfig> statistics = null;
@@ -47,7 +47,7 @@ public class StatisticHandler {
    * @param view View to control
    * @param reload Whether to do a full reload of the currently stored statistics
    */
-  public void setView(WorkspaceStatisticsPanel view, boolean reload) {
+  public void setView(StatisticsView view, boolean reload) {
     this.view = view;
     if (reload) {
       List<StatisticConfig> statistics = this.statistics;

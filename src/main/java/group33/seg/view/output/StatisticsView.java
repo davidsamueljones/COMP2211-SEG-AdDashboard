@@ -1,4 +1,4 @@
-package group33.seg.view.structure;
+package group33.seg.view.output;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -25,7 +25,7 @@ import group33.seg.model.configs.StatisticConfig;
 import group33.seg.model.types.Metric;
 import group33.seg.model.types.Pair;
 
-public class WorkspaceStatisticsPanel extends JPanel {
+public class StatisticsView extends JPanel {
   private static final long serialVersionUID = 7755954237883396302L;
 
   private DashboardController controller;
@@ -38,7 +38,7 @@ public class WorkspaceStatisticsPanel extends JPanel {
    * 
    * @param controller Controller for this view object
    */
-  public WorkspaceStatisticsPanel(DashboardController controller) {
+  public StatisticsView(DashboardController controller) {
     this.controller = controller;
 
     initGUI();
