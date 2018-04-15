@@ -76,16 +76,16 @@ public class LineGraphView extends JPanel {
   /**
    * Fully configure an empty chart and its controls.
    */
-  public LineGraphView() {
+  public LineGraphView(boolean useBuffer) {
     initChart();
-    initGUI();
+    initGUI(useBuffer);
     initControlScheme();
   }
 
   /**
    * Initialise the GUI and any event listeners.
    */
-  private void initGUI() {
+  private void initGUI(boolean useBuffer) {
     setLayout(new BorderLayout(0, 0));
 
     // Chart panel
@@ -96,7 +96,7 @@ public class LineGraphView extends JPanel {
     // for better performance option?)
     // * Disable property changing menu item, allow the rest
     pnlChart = new CustomChartPanel(chart, 0, 0, 10, 10, Integer.MAX_VALUE, Integer.MAX_VALUE,
-        false, false, true, true, true, true, true);
+        useBuffer, false, true, true, true, true, true);
 
     this.add(pnlChart, BorderLayout.CENTER);
 
