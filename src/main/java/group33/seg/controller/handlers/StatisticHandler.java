@@ -184,7 +184,12 @@ public class StatisticHandler {
       // Only acknowledge results that are as expected
       Double value = null;
       if (res.getResult() != null && res.getResult().size() == 1) {
-        value =  res.getResult().get(0).value.doubleValue();
+        if(res.getResult().get(0).value == null) {
+          value = 0d;
+        }
+        else {
+          value = res.getResult().get(0).value.doubleValue();
+        }
       }
       results.put(metric, value);
     }
