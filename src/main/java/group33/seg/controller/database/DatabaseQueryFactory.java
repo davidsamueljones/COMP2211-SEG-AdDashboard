@@ -332,7 +332,7 @@ public class DatabaseQueryFactory {
 
       if (request.filter.genders != null) {
         // Apply gender filter (if provided by user)
-        if (!(request.filter.genders.contains(FilterConfig.Gender.FEMALE) & request.filter.genders.contains(FilterConfig.Gender.MALE))) {
+        if (!(request.filter.genders.contains(FilterConfig.Gender.FEMALE) && request.filter.genders.contains(FilterConfig.Gender.MALE))) {
           if (request.filter.genders.contains(FilterConfig.Gender.FEMALE))
             sql = sql.replace("<filterGender>", "female");
           if (request.filter.genders.contains(FilterConfig.Gender.MALE))

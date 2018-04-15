@@ -1,3 +1,4 @@
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.FileNotFoundException;
@@ -26,87 +27,42 @@ import group33.seg.model.configs.FilterConfig;
 import group33.seg.model.configs.MetricQuery;
 import group33.seg.model.types.Metric;
 import group33.seg.model.types.Pair;
+import utils.QueryTestUtil;
 
 public class FilterTest {
 
-  private static final String CAMPAIGN_NAME = "queryTest";
-  private static final String PATH_TO_DATASET = "src/test/resources/example-dataset/";
-  private static final String PATH_CLICK_LOG = PATH_TO_DATASET + "click_log.csv";
-  private static final String PATH_IMPRESSION_LOG = PATH_TO_DATASET + "impression_log.csv";
-  private static final String PATH_SERVER_LOG = PATH_TO_DATASET + "server_log.csv";
-
-  private static final double MARGIN_OF_ERROR = 0.01;
-
-  private static final String DATABASE_CREDENTIALS = "src/test/resources/test.properties";
-
   private static DatabaseHandler databaseHandler;
-  private static CampaignConfig campaign;
 
-  /** Initialise tables and data before running all the tests */
+  /**
+   * Initialise tables and populate before running the tests
+   */
   @BeforeClass
-  public static void init() throws FileNotFoundException {
-    try {
-      // Initialise a controller for these tests (no model or view needed)
-      DashboardController controller = new DashboardController(null, null);
-      try {
-        DatabaseConfig database = new DatabaseConfig(DATABASE_CREDENTIALS);
-        controller.database.refreshConnections(database, 10);
-      } catch (FileNotFoundException e) {
-        System.err.println("Unable to test database connection configuration file");
-      } catch (SQLException e) {
-        System.err.println("Unable to create database connections, check that hostname, "
-            + "port, username and password are all correct in the configuration file");
-      }
-
-      // Do import using custom test configuration
-      CampaignImportConfig importConfig = new CampaignImportConfig(CAMPAIGN_NAME, PATH_CLICK_LOG,
-          PATH_IMPRESSION_LOG, PATH_SERVER_LOG);
-      boolean importComplete = controller.imports.doImport(importConfig);
-
-      while (controller.imports.isOngoing()) {
-        Thread.sleep(100);
-      }
-      campaign = controller.imports.getImportedCampaign();
-
-      // setup database handler
-      if (importComplete) {
-        databaseHandler = controller.database;
-      } else {
-        databaseHandler = null;
-      }
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
+  public static void init() {
+    DashboardController controller = QueryTestUtil.setUp();
+    assertNotNull(controller);
+    CampaignConfig campaign = controller.imports.getImportedCampaign();
+    databaseHandler = controller.database;
   }
 
   /**
-   * Delete the tables after testing
+   * Delete tables after testing
    */
   @AfterClass
-  public static void cleanupDb() throws SQLException {
-    CampaignTable cmp = new CampaignTable();
-    ServerLogTable sl = new ServerLogTable();
-    ClickLogTable cl = new ClickLogTable();
-    ImpressionLogTable il = new ImpressionLogTable();
-    Connection c = databaseHandler.getConnection();
-    sl.dropTable(c);
-    cl.dropTable(c);
-    il.dropTable(c);
-    cmp.dropTable(c);
-    databaseHandler.returnConnection(c);
+  public static void cleanupDb() {
+    QueryTestUtil.tearDown(databaseHandler);
   }
 
-  public static <T> Set<Set<T>> powerSet(Set<T> originalSet) {
-    Set<Set<T>> sets = new HashSet<Set<T>>();
+  private static <T> Set<Set<T>> powerSet(Set<T> originalSet) {
+    Set<Set<T>> sets = new HashSet<>();
     if (originalSet.isEmpty()) {
-        sets.add(new HashSet<T>());
+        sets.add(new HashSet<>());
         return sets;
     }
-    List<T> list = new ArrayList<T>(originalSet);
+    List<T> list = new ArrayList<>(originalSet);
     T head = list.get(0);
-    Set<T> rest = new HashSet<T>(list.subList(1, list.size())); 
+    Set<T> rest = new HashSet<>(list.subList(1, list.size()));
     for (Set<T> set : powerSet(rest)) {
-        Set<T> newSet = new HashSet<T>();
+        Set<T> newSet = new HashSet<>();
         newSet.add(head);
         newSet.addAll(set);
         sets.add(newSet);
@@ -128,12 +84,12 @@ public class FilterTest {
     if (expected.equals(result)) {
       return true;
     } else {
-      System.out.println("expected " + expected + " was " + result);
+      System.out.println("Expected statistic is " + expected + " but the result was " + result);
       return false;
     }
   }
 
-  public boolean ageMatches(Set<FilterConfig.Age> ages, Long result) {
+  private boolean ageMatches(Set<FilterConfig.Age> ages, Long result) {
     HashMap<FilterConfig.Age, Long> values = new HashMap<>();
     values.put(FilterConfig.Age.LESS_25, 13L);
     values.put(FilterConfig.Age.BETWEEN_25_34, 27L);
@@ -174,7 +130,7 @@ public class FilterTest {
     }
   }
 
-  public boolean contextMatches(Set<FilterConfig.Context> contexts, Long result) {
+  private boolean contextMatches(Set<FilterConfig.Context> contexts, Long result) {
     HashMap<FilterConfig.Context, Long> values = new HashMap<>();
     values.put(FilterConfig.Context.BLOG, 25L);
     values.put(FilterConfig.Context.HOBBIES, 0L);
@@ -220,7 +176,7 @@ public class FilterTest {
     }
   }
 
-  public boolean genderMatches(Set<FilterConfig.Gender> ages, Long result) {
+  private boolean genderMatches(Set<FilterConfig.Gender> ages, Long result) {
     HashMap<FilterConfig.Gender, Long> values = new HashMap<>();
     values.put(FilterConfig.Gender.FEMALE, 61L);
     values.put(FilterConfig.Gender.MALE, 82L);
@@ -258,7 +214,7 @@ public class FilterTest {
     }
   }
 
-  public boolean incomeMatches(Set<FilterConfig.Income> incomes, Long result) {
+  private boolean incomeMatches(Set<FilterConfig.Income> incomes, Long result) {
     HashMap<FilterConfig.Income, Long> values = new HashMap<>();
     values.put(FilterConfig.Income.HIGH, 67L);
     values.put(FilterConfig.Income.MEDIUM, 61L);
