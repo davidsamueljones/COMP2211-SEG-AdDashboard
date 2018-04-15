@@ -224,7 +224,7 @@ public class StatisticHandler {
    * @param statistic Statistic to remove
    */
   private void removeStatistic(StatisticConfig statistic) {
-    System.out.println("REMOVING: " + statistic.identifier);
+    updateProgress(String.format("Removing statistic '%s'...", statistic.identifier));
     view.removeStatistic(statistic);
   }
 
