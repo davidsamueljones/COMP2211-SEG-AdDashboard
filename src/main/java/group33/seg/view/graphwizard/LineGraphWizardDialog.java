@@ -1,10 +1,12 @@
 package group33.seg.view.graphwizard;
 
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Window;
+import java.awt.Dialog.ModalityType;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -12,9 +14,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import group33.seg.controller.DashboardController;
+import group33.seg.controller.handlers.LineGraphHandler;
 import group33.seg.controller.utilities.ErrorBuilder;
 import group33.seg.model.configs.LineGraphConfig;
+import group33.seg.view.controls.GraphManagerPanel;
+import group33.seg.view.output.StatisticsView;
+import group33.seg.view.utilities.ProgressDialog;
 
 public class LineGraphWizardDialog extends JDialog {
   private static final long serialVersionUID = -2529642040023886708L;
@@ -123,8 +130,8 @@ public class LineGraphWizardDialog extends JDialog {
     // Close the wizard, do not do any updates
     btnClose.addActionListener(e -> {
       int res = JOptionPane.showConfirmDialog(LineGraphWizardDialog.this,
-          "Are you sure you want to close the wizard, any unapplied changes will be lost?",
-          "Close", JOptionPane.YES_NO_OPTION);
+          "Are you sure you want to close the wizard, any unapplied changes will be lost?", "Close",
+          JOptionPane.YES_NO_OPTION);
       if (res != JOptionPane.YES_OPTION) {
         return;
       }
@@ -172,9 +179,16 @@ public class LineGraphWizardDialog extends JDialog {
           "Configuration Error", JOptionPane.ERROR_MESSAGE);
       return false;
     } else {
+      // Update graph in the workspace
       controller.workspace.putGraph(config);
+      // Reload graph in the wizard
+      loadGraph(config);   
+      // Update the graph view
+      ProgressDialog progressDialog = new ProgressDialog(LineGraphWizardDialog.this);
+      controller.graphs.addProgressListener(progressDialog.listener);
       controller.graphs.displayGraph(config);
-      loadGraph(config);
+      progressDialog.setVisible(true);
+      controller.graphs.removeProgressListener(progressDialog.listener);
       return true;
     }
   }

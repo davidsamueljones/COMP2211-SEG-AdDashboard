@@ -14,6 +14,7 @@ import group33.seg.controller.handlers.SettingsHandler;
 import group33.seg.controller.handlers.WorkspaceHandler.WorkspaceListener;
 import group33.seg.model.configs.CampaignConfig;
 import group33.seg.view.campaignimport.CampaignSelectionDialog;
+import group33.seg.view.utilities.ProgressDialog;
 
 public class CampaignManagerPanel extends JPanel {
   private static final long serialVersionUID = 8138446932363054396L;
@@ -90,8 +91,14 @@ public class CampaignManagerPanel extends JPanel {
     // Watch for changes in workspace campaign
     controller.workspace.addListener(t -> {
       if (t == WorkspaceListener.Type.CAMPAIGN) {
-        setCurrentCampaign(controller.workspace.getCampaign());
+        setCurrentCampaign(controller.workspace.getCampaign());    
+        // FIXME: INCREMENT 2 FEATURE
+        Window frmCurrent = SwingUtilities.getWindowAncestor(CampaignManagerPanel.this);
+        ProgressDialog progressDialog = new ProgressDialog(frmCurrent);
+        controller.graphs.addProgressListener(progressDialog.listener);
         controller.graphs.reloadGraph();
+        progressDialog.setVisible(true);
+        controller.graphs.removeProgressListener(progressDialog.listener);
       }
     });
   }

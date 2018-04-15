@@ -21,11 +21,13 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import group33.seg.controller.DashboardController;
+import group33.seg.controller.handlers.LineGraphHandler;
 import group33.seg.controller.handlers.WorkspaceHandler.WorkspaceListener;
 import group33.seg.controller.types.GraphVisitor;
 import group33.seg.model.configs.GraphConfig;
 import group33.seg.model.configs.LineGraphConfig;
 import group33.seg.view.graphwizard.LineGraphWizardDialog;
+import group33.seg.view.utilities.ProgressDialog;
 
 public class GraphManagerPanel extends JPanel {
   private static final long serialVersionUID = 6541885932864334941L;
@@ -175,8 +177,14 @@ public class GraphManagerPanel extends JPanel {
     btnViewModify.addActionListener(e -> displayWizard(lstGraphs.getSelectedValue()));
 
     // Load the selected graph into the view
-    btnLoad.addActionListener(e -> controller.graphs.displayGraph(lstGraphs.getSelectedValue()));
-
+    btnLoad.addActionListener(e -> {
+      Window frmCurrent = SwingUtilities.getWindowAncestor(GraphManagerPanel.this);
+      ProgressDialog progressDialog = new ProgressDialog(frmCurrent);
+      controller.graphs.addProgressListener(progressDialog.listener);
+      controller.graphs.displayGraph(lstGraphs.getSelectedValue());
+      progressDialog.setVisible(true);
+      controller.graphs.removeProgressListener(progressDialog.listener);
+    });
   }
 
   /**

@@ -1,7 +1,10 @@
 package group33.seg.controller.handlers;
 
+import java.util.HashSet;
+import java.util.Set;
 import group33.seg.controller.DashboardController.DashboardMVC;
 import group33.seg.controller.types.GraphVisitor;
+import group33.seg.controller.utilities.ProgressListener;
 import group33.seg.model.configs.GraphConfig;
 import group33.seg.model.configs.LineGraphConfig;
 import group33.seg.view.output.LineGraphView;
@@ -16,11 +19,14 @@ public class GraphsHandler {
   private final DashboardMVC mvc;
 
   /** Line graph handler */
-  private LineGraphHandler lineGraph;
+  private LineGraphHandler lineGraphHandler;
 
   /** Handler currently in use */
   private GraphHandlerInterface<?> currentHandler = null;
 
+  /** Listeners to alert about progress */
+  private final Set<ProgressListener> progressListeners = new HashSet<>();
+  
   /** Font scaling to apply to textual elements in charts */
   private double scale = 1;
 
@@ -31,17 +37,24 @@ public class GraphsHandler {
    */
   public GraphsHandler(DashboardMVC mvc) {
     this.mvc = mvc;
+    // Print messages to stdout for debug
+    addProgressListener(new ProgressListener() {
+      @Override
+      public void progressUpdate(String update) {
+        System.out.println(update);
+      }
+    });
   }
 
   /**
-   * Create a new line handler making use of the given view output.
+   * Create a new line graph handler making use of the given view output.
    */
   public void setLineGraphView(LineGraphView view) {
     if (view == null) {
-      lineGraph = null;
+      lineGraphHandler = null;
     } else {
       view.applyFontScale(scale);
-      lineGraph = new LineGraphHandler(mvc, view);
+      lineGraphHandler = new LineGraphHandler(mvc, view);
     }
   }
 
@@ -75,31 +88,41 @@ public class GraphsHandler {
    * @param clear Whether full recreation should be enforced
    */
   public void displayGraph(GraphConfig graph, boolean clear) {
-    // Handle display behaviour depending on the type of graph
-    graph.accept(new GraphVisitor() {
+    // Do load on worker thread, updating progress listeners appropriately
+    Thread workerThread = new Thread(() -> {
+      updateProgress("Loading graph into view...");
+      alertStart();
+      
+      // Handle display behaviour depending on the type of graph
+      graph.accept(new GraphVisitor() {
 
-      @Override
-      public void visit(LineGraphConfig graph) {
-        handleUpdate(lineGraph, clear);
-        lineGraph.displayGraph(graph);
-      }
-
-      /**
-       * Handle graph clearing behaviour and update the graph handler.
-       * 
-       * @param next The graph handler about to be used
-       * @param clear Whether to clear the graph handler that is about to be used
-       */
-      private void handleUpdate(GraphHandlerInterface<?> next, boolean clear) {
-        if (currentHandler != null && currentHandler != next) {
-          currentHandler.clearGraph();
-        } else if (clear) {
-          next.clearGraph();
+        @Override
+        public void visit(LineGraphConfig graph) {
+          handleUpdate(lineGraphHandler, clear);
+          lineGraphHandler.displayGraph(graph);
         }
-        currentHandler = lineGraph;
-      }
+
+        /**
+         * Handle graph clearing behaviour and update the graph handler.
+         * 
+         * @param next The graph handler about to be used
+         * @param clear Whether to clear the graph handler that is about to be used
+         */
+        private void handleUpdate(GraphHandlerInterface<?> next, boolean clear) {
+          if (currentHandler != null && currentHandler != next) {
+            currentHandler.clearGraph();
+          } else if (clear) {
+            next.clearGraph();
+          }
+          currentHandler = lineGraphHandler;
+        }
+      });
+      
+      updateProgress("Finished loading graph into view");
+      alertFinished();
     });
 
+    workerThread.start();
   }
 
   /**
@@ -109,8 +132,8 @@ public class GraphsHandler {
    */
   public void setFontScale(double scale) {
     this.scale = scale;
-    if (lineGraph != null) {
-      lineGraph.view.applyFontScale(scale);
+    if (lineGraphHandler != null) {
+      lineGraphHandler.view.applyFontScale(scale);
     }
   }
 
@@ -124,4 +147,47 @@ public class GraphsHandler {
     NOTHING; /* No changes */
   }
 
+  /**
+   * @param progressListener Progress listener to start sending alerts to
+   */
+  public void addProgressListener(ProgressListener progressListener) {
+    progressListeners.add(progressListener);
+  }
+
+  /**
+   * @param progressListener Progress listener to no longer alert
+   */
+  public void removeProgressListener(ProgressListener progressListener) {
+    progressListeners.remove(progressListener);
+  }
+
+  /**
+   * Helper function to alert all listeners that a load has started.
+   */
+  protected void alertStart() {
+    for (ProgressListener listener : progressListeners) {
+      listener.start();
+    }
+  }
+
+  /**
+   * Helper function to alert all listeners that a load finished.
+   */
+  protected void alertFinished() {
+    for (ProgressListener listener : progressListeners) {
+      listener.finish(true);
+    }
+  }
+  
+  /**
+   * Helper function to alert all listeners of a progress update.
+   *
+   * @param update Textual update on progress
+   */
+  protected void updateProgress(String update) {
+    for (ProgressListener listener : progressListeners) {
+      listener.progressUpdate(update);
+    }
+  }
+  
 }
