@@ -96,12 +96,11 @@ public class StatisticHandler {
 
     // Do load on worker thread, updating progress listeners appropriately
     Thread workerThread = new Thread(() -> {
-      alertStart();
       updateProgress("Loading statistics into view...");
+      alertStart();
 
       // Create a copy of the input statistics, this allows any changes to the original passed
-      // object
-      // to be handled by the handler's update structure appropriately on a load
+      // object to be handled by the handler's update structure appropriately on a load
       Cloner cloner = new Cloner();
       List<StatisticConfig> statistics = cloner.deepClone(inpStatistics);
 
@@ -126,7 +125,7 @@ public class StatisticHandler {
       updateProgress("Finished loading statistics into view");
       alertFinished();
     });
-    
+
     workerThread.start();
   }
 
