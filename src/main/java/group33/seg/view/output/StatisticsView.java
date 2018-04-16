@@ -1,9 +1,7 @@
 package group33.seg.view.output;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dialog.ModalityType;
 import java.awt.Window;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,12 +28,18 @@ import group33.seg.model.configs.StatisticConfig;
 import group33.seg.model.types.Metric;
 import group33.seg.model.types.Pair;
 import group33.seg.view.utilities.ProgressDialog;
+import java.awt.CardLayout;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
 
 public class StatisticsView extends JPanel {
   private static final long serialVersionUID = 7755954237883396302L;
+  private static final String HAS_STATISTICS = "HAS_STATISTICS";
+  private static final String NO_STATISTICS = "NO_STATISTICS";
 
   private DashboardController controller;
 
+  private CardLayout cardLayout;
   private JTable tblStatistics;
   private StatisticTableModel model_tblStatistics;
 
@@ -46,10 +50,6 @@ public class StatisticsView extends JPanel {
    */
   public StatisticsView(DashboardController controller) {
     this.controller = controller;
-
-    initGUI();
-    // Initialise the view
-    clearStatistics();
 
     // Update the view whenever there are changes in the workspace
     controller.workspace.addListener(type -> {
@@ -67,11 +67,16 @@ public class StatisticsView extends JPanel {
 
     // Configure so this is the view handled by the StatisticHandler
     controller.statistics.setView(this, true);
+    initGUI();
+    // Initialise the view
+    clearStatistics();
+    refreshView();
   }
 
   private void initGUI() {
+    cardLayout = new CardLayout();
+    setLayout(cardLayout);
     setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-    setLayout(new BorderLayout());
 
     model_tblStatistics = new StatisticTableModel();
     tblStatistics = new JTable(model_tblStatistics);
@@ -106,9 +111,38 @@ public class StatisticsView extends JPanel {
     JScrollPane scrStatistics = new JScrollPane(tblStatistics);
     scrStatistics.setRowHeaderView(rowHeaders);
     scrStatistics.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-    add(scrStatistics, BorderLayout.CENTER);
+    add(scrStatistics, HAS_STATISTICS);
+
+    JPanel pnlNoStatistics = new JPanel();
+    add(pnlNoStatistics, NO_STATISTICS);
+    GridBagLayout gbl_pnlNoStatistics = new GridBagLayout();
+    gbl_pnlNoStatistics.columnWidths = new int[] {10, 0, 10};
+    gbl_pnlNoStatistics.rowHeights = new int[] {0, 0, 0};
+    gbl_pnlNoStatistics.columnWeights = new double[] {0.0, 1.0, 0.0};
+    gbl_pnlNoStatistics.rowWeights = new double[] {0.5, 0.0, 0.5};
+    pnlNoStatistics.setLayout(gbl_pnlNoStatistics);
+
+    String strNoStatistics = "<html>There is no statistics to display.<br>"
+        + "Create or show statistics using the 'Statistic Manager'.</html>";
+    JLabel lblNoStatistics = new JLabel(strNoStatistics);
+    lblNoStatistics.setEnabled(false);
+    GridBagConstraints gbc_lblNoStatistics = new GridBagConstraints();
+    gbc_lblNoStatistics.gridx = 1;
+    gbc_lblNoStatistics.gridy = 1;
+    pnlNoStatistics.add(lblNoStatistics, gbc_lblNoStatistics);
   }
 
+  /**
+   * Display the appropriate view depending on if there is statistics.
+   */
+  public void refreshView() {
+    if (model_tblStatistics.getVisibleStatistics().isEmpty()) {
+      cardLayout.show(this, NO_STATISTICS);
+    } else {
+      cardLayout.show(this, HAS_STATISTICS);
+    }
+  }
+  
   /**
    * Add a new statistic to the view, if it already exists it will not be added again.
    * 
@@ -123,6 +157,7 @@ public class StatisticsView extends JPanel {
     // Add record (this will change the structure so redraw whole table)
     model_tblStatistics.statistics.add(new Pair<>(statistic, null));
     model_tblStatistics.fireTableStructureChanged();
+    refreshView();
     return true;
   }
 
@@ -162,6 +197,7 @@ public class StatisticsView extends JPanel {
     model_tblStatistics.statistics.set(idx,
         new Pair<>(statistic, model_tblStatistics.statistics.get(idx).value));
     model_tblStatistics.fireTableStructureChanged();
+    refreshView();
     return true;
   }
 
@@ -179,6 +215,7 @@ public class StatisticsView extends JPanel {
     // Remove record (this will change the structure so redraw whole table)
     model_tblStatistics.statistics.remove(idx);
     model_tblStatistics.fireTableStructureChanged();
+    refreshView();
     return false;
   }
 
@@ -188,6 +225,7 @@ public class StatisticsView extends JPanel {
   public void clearStatistics() {
     model_tblStatistics.statistics = new ArrayList<>();
     model_tblStatistics.fireTableStructureChanged();
+    refreshView();
   }
 
   /**
