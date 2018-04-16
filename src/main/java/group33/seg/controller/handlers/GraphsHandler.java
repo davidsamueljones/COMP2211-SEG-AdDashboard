@@ -62,9 +62,18 @@ public class GraphsHandler {
    * Reloads the graph using the current handler.
    */
   public void reloadGraph() {
-    if (currentHandler != null) {
-      currentHandler.reloadGraph();
-    }
+    // Do load on worker thread, updating progress listeners appropriately
+    Thread workerThread = new Thread(() -> {
+      updateProgress("Reloading view's current graph...");
+      alertStart();
+      if (currentHandler != null) {
+        currentHandler.reloadGraph();
+      }
+      updateProgress("Finished graph reload");
+      alertFinished();
+    });
+
+    workerThread.start();
   }
 
   /**
