@@ -1,15 +1,11 @@
 package group33.seg.view.structure;
 
-import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
-import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import group33.seg.controller.DashboardController;
 import group33.seg.view.output.StatisticsView;
@@ -40,7 +36,7 @@ public class DashboardFrame extends JFrame {
 
   private void initGUI() {
     // Initialise menu bar and its respective items
-    JMenuBar menuBar = new DashboardMenuBar(controller);
+    JMenuBar menuBar = new DashboardMenuBar(this, controller);
     setJMenuBar(menuBar);
 
     // Use custom content pane
