@@ -3,15 +3,22 @@ package group33.seg.view.utilities;
 import javax.swing.BorderFactory;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
-import group33.seg.controller.DashboardController;
+import javax.swing.JScrollPane;
 import java.awt.GridBagLayout;
 import javax.swing.JLabel;
+import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.Window;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import javax.swing.JTextPane;
 
 public class AboutDialog extends JDialog {
-  
+  private static final long serialVersionUID = 6431317165687978167L;
+
   /**
    * Create the dialog with a given parent window.
    *
@@ -24,7 +31,7 @@ public class AboutDialog extends JDialog {
     initGUI();
 
     // Set sizing
-    pack();  
+    pack();
     // Set positioning
     if (parent != null) {
       setLocationRelativeTo(parent);
@@ -41,8 +48,8 @@ public class AboutDialog extends JDialog {
     GridBagLayout gbl_pnlContent = new GridBagLayout();
     gbl_pnlContent.columnWidths = new int[]{0, 0, 0};
     gbl_pnlContent.rowHeights = new int[]{0, 0, 0, 0};
-    gbl_pnlContent.columnWeights = new double[]{0.0, 0.0, 0.0};
-    gbl_pnlContent.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0};
+    gbl_pnlContent.columnWeights = new double[]{0.0, 1.0, 0.0};
+    gbl_pnlContent.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0};
     pnlContent.setLayout(gbl_pnlContent);
     
     JPanel pnlIcon = new JPanel();
@@ -72,6 +79,38 @@ public class AboutDialog extends JDialog {
     gbc_lblGroup.gridx = 1;
     gbc_lblGroup.gridy = 2;
     pnlContent.add(lblGroup, gbc_lblGroup);
+    
+    JTextPane txtLicenses = new JTextPane();
+    txtLicenses.putClientProperty(JTextPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
+    txtLicenses.setContentType("text/html");
+    txtLicenses.setEditable(false);
+    txtLicenses.setText(getLicensesText());
+    JScrollPane scrLicenses = new JScrollPane(txtLicenses);
+    scrLicenses.setPreferredSize(new Dimension(scrLicenses.getPreferredSize().width, 200));
+    EventQueue.invokeLater(() -> scrLicenses.getVerticalScrollBar().setValue(0));
+    GridBagConstraints gbc_txtLicenses = new GridBagConstraints();
+    gbc_txtLicenses.insets = new Insets(0, 0, 0, 5);
+    gbc_txtLicenses.fill = GridBagConstraints.BOTH;
+    gbc_txtLicenses.gridx = 1;
+    gbc_txtLicenses.gridy = 3;
+    pnlContent.add(scrLicenses, gbc_txtLicenses);
+  }
+
+  /**
+   * @return License text from class file in formatted html.
+   */
+  private String getLicensesText() {
+    try {
+      Path file = new File(getClass().getResource("/licenses.txt").toURI()).toPath();
+      StringBuilder builder = new StringBuilder("<html>");
+      builder.append("<h1>Licenses</h1>");
+      Files.lines(file).forEachOrdered(l -> builder.append(l).append("\r\n"));
+      builder.append("</html>");
+      return builder.toString();
+    } catch (Exception e) {
+      e.printStackTrace();
+      return "Unable to get license information";
+    }   
   }
 
 }
