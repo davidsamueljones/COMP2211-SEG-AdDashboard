@@ -14,6 +14,7 @@ import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import group33.seg.controller.DashboardController;
 import group33.seg.view.preferences.PreferencesDialog;
+import group33.seg.view.utilities.AboutDialog;
 
 public class DashboardMenuBar extends JMenuBar {
   private static final long serialVersionUID = 7553179515259733852L;
@@ -115,13 +116,19 @@ public class DashboardMenuBar extends JMenuBar {
     // Create menu bar item children
     JMenuItem mntmAbout = new JMenuItem("About");
     mnHelp.add(mntmAbout);
-
+    mntmAbout.addActionListener(e -> {
+      // Use current panel's form as parent
+      Window frmCurrent = SwingUtilities.getWindowAncestor(DashboardMenuBar.this);
+      AboutDialog about = new AboutDialog(frmCurrent);
+      about.setModalityType(ModalityType.APPLICATION_MODAL);
+      about.setVisible(true);
+    });
+    
     mnHelp.addSeparator();
 
     JMenuItem mntmPreferences = new JMenuItem("Preferences");
     mntmPreferences.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, CMD_MODIFIER));
     mnHelp.add(mntmPreferences);
-
     mntmPreferences.addActionListener(e -> {
       // Use current panel's form as parent
       Window frmCurrent = SwingUtilities.getWindowAncestor(DashboardMenuBar.this);
