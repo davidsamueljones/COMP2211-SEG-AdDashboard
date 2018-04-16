@@ -1,24 +1,19 @@
 package group33.seg.controller.handlers;
 
-import java.awt.Window;
-import java.awt.Dialog.ModalityType;
+import java.awt.EventQueue;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.swing.SwingUtilities;
 import com.rits.cloning.Cloner;
 import group33.seg.controller.DashboardController.DashboardMVC;
-import group33.seg.controller.handlers.WorkspaceHandler.WorkspaceListener;
 import group33.seg.controller.types.MetricQueryResponse;
 import group33.seg.controller.utilities.ProgressListener;
 import group33.seg.model.configs.MetricQuery;
 import group33.seg.model.configs.StatisticConfig;
 import group33.seg.model.types.Metric;
-import group33.seg.view.controls.StatisticManagerPanel;
 import group33.seg.view.output.StatisticsView;
-import group33.seg.view.statisticwizard.StatisticWizardDialog;
 
 public class StatisticHandler {
 
@@ -79,7 +74,7 @@ public class StatisticHandler {
     System.out.println("CLEARING STATISTICS");
     this.statistics = null;
     if (view != null) {
-      view.clearStatistics();
+      EventQueue.invokeLater(() -> view.clearStatistics());
     }
   }
 
@@ -169,18 +164,18 @@ public class StatisticHandler {
    */
   private void updateStatistic(StatisticConfig statistic, Update update) {
     // Add statistic record in view if it doesn't exist
-    view.addStatistic(statistic);
+    EventQueue.invokeLater(() -> view.addStatistic(statistic));
 
     // Do required view updates
     if (update != Update.NOTHING) {
       updateProgress(
           String.format("Updating properties of statistic '%s'...", statistic.identifier));
-      view.setStatisticProperties(statistic);
+      EventQueue.invokeLater(() -> view.setStatisticProperties(statistic));
     }
     if (update == Update.FULL || update == Update.DATA) {
       updateProgress(String.format("Updating data of statistic '%s'...", statistic.identifier));
       Map<Metric, Double> results = doStatisticQuery(statistic);
-      view.setStatisticData(statistic, results);
+      EventQueue.invokeLater(() -> view.setStatisticData(statistic, results));
     }
   }
 
@@ -224,7 +219,7 @@ public class StatisticHandler {
    */
   private void removeStatistic(StatisticConfig statistic) {
     updateProgress(String.format("Removing statistic '%s'...", statistic.identifier));
-    view.removeStatistic(statistic);
+    EventQueue.invokeLater(() -> view.removeStatistic(statistic));
   }
 
   /**
