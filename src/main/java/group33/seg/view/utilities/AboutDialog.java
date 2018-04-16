@@ -1,20 +1,21 @@
 package group33.seg.view.utilities;
 
-import javax.swing.BorderFactory;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import java.awt.GridBagLayout;
-import javax.swing.JLabel;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Window;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import javax.swing.BorderFactory;
+import javax.swing.JDialog;
+import javax.swing.JEditorPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
+import javax.swing.ScrollPaneConstants;
 
 public class AboutDialog extends JDialog {
   private static final long serialVersionUID = 6431317165687978167L;
@@ -43,57 +44,38 @@ public class AboutDialog extends JDialog {
 
   private void initGUI() {
     JPanel pnlContent = new JPanel();
-    pnlContent.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    pnlContent.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     setContentPane(pnlContent);
     GridBagLayout gbl_pnlContent = new GridBagLayout();
-    gbl_pnlContent.columnWidths = new int[]{0, 0, 0};
-    gbl_pnlContent.rowHeights = new int[]{0, 0, 0, 0};
-    gbl_pnlContent.columnWeights = new double[]{0.0, 1.0, 0.0};
-    gbl_pnlContent.rowWeights = new double[]{0.0, 0.0, 0.0, 1.0};
+    gbl_pnlContent.columnWidths = new int[] {0};
+    gbl_pnlContent.rowHeights = new int[] {0, 0};
+    gbl_pnlContent.columnWeights = new double[] {1.0};
+    gbl_pnlContent.rowWeights = new double[] {0.0, 1.0};
     pnlContent.setLayout(gbl_pnlContent);
-    
-    JPanel pnlIcon = new JPanel();
-    GridBagConstraints gbc_pnlIcon = new GridBagConstraints();
-    gbc_pnlIcon.insets = new Insets(0, 0, 5, 5);
-    gbc_pnlIcon.fill = GridBagConstraints.BOTH;
-    gbc_pnlIcon.gridx = 1;
-    gbc_pnlIcon.gridy = 0;
-    pnlContent.add(pnlIcon, gbc_pnlIcon);
-    GridBagLayout gbl_pnlIcon = new GridBagLayout();
-    gbl_pnlIcon.columnWidths = new int[]{0};
-    gbl_pnlIcon.rowHeights = new int[]{0};
-    gbl_pnlIcon.columnWeights = new double[]{Double.MIN_VALUE};
-    gbl_pnlIcon.rowWeights = new double[]{Double.MIN_VALUE};
-    pnlIcon.setLayout(gbl_pnlIcon);
-    
-    JLabel lblAdDashboard = new JLabel("<html><b>Ad-Dashboard</b></html>");
-    GridBagConstraints gbc_lblAdDashboard = new GridBagConstraints();
-    gbc_lblAdDashboard.insets = new Insets(0, 0, 5, 5);
-    gbc_lblAdDashboard.gridx = 1;
-    gbc_lblAdDashboard.gridy = 1;
-    pnlContent.add(lblAdDashboard, gbc_lblAdDashboard);
-    
-    JLabel lblGroup = new JLabel("Group 33");
-    GridBagConstraints gbc_lblGroup = new GridBagConstraints();
-    gbc_lblGroup.insets = new Insets(0, 0, 5, 5);
-    gbc_lblGroup.gridx = 1;
-    gbc_lblGroup.gridy = 2;
-    pnlContent.add(lblGroup, gbc_lblGroup);
-    
+
+    JPanel pnlAbout = new AboutPanel();
+    GridBagConstraints gbc_pnlAbout = new GridBagConstraints();
+    gbc_pnlAbout.insets = new Insets(0, 0, 5, 0);
+    gbc_pnlAbout.fill = GridBagConstraints.BOTH;
+    gbc_pnlAbout.gridx = 0;
+    gbc_pnlAbout.gridy = 0;
+    pnlContent.add(pnlAbout, gbc_pnlAbout);
+
     JTextPane txtLicenses = new JTextPane();
-    txtLicenses.putClientProperty(JTextPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
+    txtLicenses.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
     txtLicenses.setContentType("text/html");
     txtLicenses.setEditable(false);
     txtLicenses.setText(getLicensesText());
     JScrollPane scrLicenses = new JScrollPane(txtLicenses);
+    scrLicenses.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
     scrLicenses.setPreferredSize(new Dimension(scrLicenses.getPreferredSize().width, 200));
-    EventQueue.invokeLater(() -> scrLicenses.getVerticalScrollBar().setValue(0));
     GridBagConstraints gbc_txtLicenses = new GridBagConstraints();
-    gbc_txtLicenses.insets = new Insets(0, 0, 0, 5);
+    gbc_txtLicenses.insets = new Insets(0, 0, 5, 0);
     gbc_txtLicenses.fill = GridBagConstraints.BOTH;
-    gbc_txtLicenses.gridx = 1;
-    gbc_txtLicenses.gridy = 3;
+    gbc_txtLicenses.gridx = 0;
+    gbc_txtLicenses.gridy = 1;
     pnlContent.add(scrLicenses, gbc_txtLicenses);
+    EventQueue.invokeLater(() -> scrLicenses.getVerticalScrollBar().setValue(0));
   }
 
   /**
@@ -110,7 +92,7 @@ public class AboutDialog extends JDialog {
     } catch (Exception e) {
       e.printStackTrace();
       return "Unable to get license information";
-    }   
+    }
   }
 
 }
