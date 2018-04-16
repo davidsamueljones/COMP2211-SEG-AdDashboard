@@ -56,7 +56,7 @@ public class StatisticsView extends JPanel {
       if (type == WorkspaceListener.Type.WORKSPACE || type == WorkspaceListener.Type.STATISTICS) {
         SwingUtilities.invokeLater(() -> {
           Window frmCurrent = SwingUtilities.getWindowAncestor(StatisticsView.this);
-          ProgressDialog progressDialog = new ProgressDialog(frmCurrent);
+          ProgressDialog progressDialog = new ProgressDialog(frmCurrent, false, true);
           controller.statistics.addProgressListener(progressDialog.listener);
           controller.statistics.loadStatistics(controller.workspace.getStatistics());
           progressDialog.setVisible(true);

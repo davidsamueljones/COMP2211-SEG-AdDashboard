@@ -179,7 +179,7 @@ public class GraphManagerPanel extends JPanel {
     // Load the selected graph into the view
     btnLoad.addActionListener(e -> {
       Window frmCurrent = SwingUtilities.getWindowAncestor(GraphManagerPanel.this);
-      ProgressDialog progressDialog = new ProgressDialog(frmCurrent);
+      ProgressDialog progressDialog = new ProgressDialog(frmCurrent, false, true);
       controller.graphs.addProgressListener(progressDialog.listener);
       controller.graphs.displayGraph(lstGraphs.getSelectedValue());
       progressDialog.setVisible(true);

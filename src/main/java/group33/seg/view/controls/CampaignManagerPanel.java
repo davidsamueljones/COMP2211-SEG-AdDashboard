@@ -94,7 +94,7 @@ public class CampaignManagerPanel extends JPanel {
         setCurrentCampaign(controller.workspace.getCampaign());    
         // FIXME: INCREMENT 2 FEATURE
         Window frmCurrent = SwingUtilities.getWindowAncestor(CampaignManagerPanel.this);
-        ProgressDialog progressDialog = new ProgressDialog(frmCurrent);
+        ProgressDialog progressDialog = new ProgressDialog(frmCurrent, false, true);
         controller.graphs.addProgressListener(progressDialog.listener);
         controller.graphs.reloadGraph();
         progressDialog.setVisible(true);

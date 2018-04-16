@@ -184,7 +184,7 @@ public class LineGraphWizardDialog extends JDialog {
       // Reload graph in the wizard
       loadGraph(config);   
       // Update the graph view
-      ProgressDialog progressDialog = new ProgressDialog(LineGraphWizardDialog.this);
+      ProgressDialog progressDialog = new ProgressDialog(LineGraphWizardDialog.this, false, true);
       controller.graphs.addProgressListener(progressDialog.listener);
       controller.graphs.displayGraph(config);
       progressDialog.setVisible(true);

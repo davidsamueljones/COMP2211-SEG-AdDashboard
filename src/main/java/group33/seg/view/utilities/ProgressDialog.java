@@ -20,13 +20,14 @@ public class ProgressDialog extends JDialog {
 
   private JLabel lblUpdates;
 
+  /** Listener implementation updating message */
   public final ProgressListener listener = new ProgressListener() {
 
     @Override
     public void start() {
-      SwingUtilities.invokeLater(() -> {
-        setVisible(true);
-      });
+      if (autoShow) {
+        SwingUtilities.invokeLater(() -> setVisible(true));
+      }
     };
 
     @Override
@@ -38,21 +39,31 @@ public class ProgressDialog extends JDialog {
 
     @Override
     public void finish(boolean success) {
-      SwingUtilities.invokeLater(() -> {
-        setVisible(false);
-      });
+      if (autoHide) {
+        SwingUtilities.invokeLater(() -> setVisible(false));
+      }
     };
-
   };
+
+  /** Flag stating whether progress dialog should show on start update */
+  private final boolean autoShow;
+
+  /** Flag stating whether progress dialog should show on start update */
+  private final boolean autoHide;
 
   /**
    * Create the dialog.
    *
    * @param parent Window to treat as a parent
+   * @param autoShow Whether the dialog should appear automatically on progress listener start
+   *        alerts. If displaying from a different thread, set to false.
+   * @param autoHide Whether the dialog should hide automatically on progress listener finish
+   *        alert.
    */
-  public ProgressDialog(Window parent) {
-    super(parent, "Progress...");
-
+  public ProgressDialog(Window parent, boolean autoShow, boolean autoHide) {
+    super(parent, "Progress Indicator");
+    this.autoShow = autoShow;
+    this.autoHide = autoHide;
 
     // Initialise GUI
     initGUI();
@@ -78,8 +89,8 @@ public class ProgressDialog extends JDialog {
     pnlContent.setLayout(gbl_pnlContent);
     pnlContent.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     this.setContentPane(pnlContent);
-    
-    lblUpdates = new JLabel("...");
+
+    lblUpdates = new JLabel("Loading, please wait...");
     int height = lblUpdates.getFontMetrics(lblUpdates.getFont()).getHeight();
     lblUpdates.setHorizontalAlignment(SwingConstants.CENTER);
     gbl_pnlContent.rowHeights = new int[] {0, height * 3, 0, 15};
