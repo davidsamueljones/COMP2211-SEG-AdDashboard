@@ -92,8 +92,7 @@ public class LineGraphView extends JPanel {
     // Configure chart with:
     // * No preferred size, let view control
     // * Apply low minimum and high maximum draw sizing to avoid distortion
-    // * Do not use buffered image as this reduces quality on retina displays (TODO: Add toggle
-    // for better performance option?)
+    // * Buffer used if indicated (otherwise not)
     // * Disable property changing menu item, allow the rest
     pnlChart = new CustomChartPanel(chart, 0, 0, 10, 10, Integer.MAX_VALUE, Integer.MAX_VALUE,
         useBuffer, false, true, true, true, true, true);
