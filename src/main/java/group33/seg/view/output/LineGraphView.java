@@ -125,13 +125,13 @@ public class LineGraphView extends JPanel {
 
     tlbControls.addSeparator();
 
-    JButton btnSave = new JButton("Export");
-    btnSave.setToolTipText("Export the currently displayed graph as an image");
+    JButton btnSave = new JButton();
+    btnSave.setToolTipText("Export the currently displayed graph as an image.");
     btnSave.setIcon(new ImageIcon(getClass().getResource("/icons/save.png")));
     tlbControls.add(btnSave);
 
-    JButton btnPrint = new JButton("Print");
-    btnPrint.setToolTipText("Print the currently displayed graph");
+    JButton btnPrint = new JButton();
+    btnPrint.setToolTipText("Print the currently displayed graph.");
     btnPrint.setIcon(new ImageIcon(getClass().getResource("/icons/print.png")));
     tlbControls.add(btnPrint);
 
