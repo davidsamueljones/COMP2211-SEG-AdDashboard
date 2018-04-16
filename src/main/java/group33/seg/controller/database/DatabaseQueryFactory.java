@@ -41,7 +41,7 @@ public class DatabaseQueryFactory {
             + " (SELECT date_trunc('<interval>', max(date)) AS final FROM impression_log WHERE <campaign>) AS max,"
             + " generate_series(<start>, <final>, '1 <interval>') AS xaxis"
             + " LEFT JOIN"
-            + " (SELECT date_trunc('<interval>', date) AS dates, count(*) AS yaxis FROM impression_log WHERE <campaign> AND <filterAge> AND <filterIncome> AND <filterGender> GROUP BY dates) AS s"
+            + " (SELECT date_trunc('<interval>', date) AS dates, count(*) AS yaxis FROM impression_log WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender> GROUP BY dates) AS s"
             + " ON xaxis = s.dates;");
 
     // Total number of conversions over time - conversions are calculated per entry_date
@@ -169,7 +169,7 @@ public class DatabaseQueryFactory {
     // Total number of impressions
     statisticQueries.put(
         Metric.IMPRESSIONS,
-        "SELECT 'all' AS xaxis, count(*) AS yaxis FROM impression_log WHERE date BETWEEN <range> AND <campaign> AND <filterAge> AND <filterIncome> AND <filterGender>;");
+        "SELECT 'all' AS xaxis, count(*) AS yaxis FROM impression_log WHERE date BETWEEN <range> AND <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>;");
 
     // Total number of clicks
     statisticQueries.put(
@@ -333,10 +333,12 @@ public class DatabaseQueryFactory {
 
       if (request.filter.genders != null) {
         // Apply gender filter (if provided by user)
-        if (request.filter.genders.contains(FilterConfig.Gender.FEMALE))
-          sql = sql.replace("<filterGender>", "female");
-        if (request.filter.genders.contains(FilterConfig.Gender.MALE))
-          sql = sql.replace("<filterGender>", "female = 'false'");
+        if (!(request.filter.genders.contains(FilterConfig.Gender.FEMALE) && request.filter.genders.contains(FilterConfig.Gender.MALE))) {
+          if (request.filter.genders.contains(FilterConfig.Gender.FEMALE))
+            sql = sql.replace("<filterGender>", "female");
+          if (request.filter.genders.contains(FilterConfig.Gender.MALE))
+            sql = sql.replace("<filterGender>", "female = 'false'");
+        }
       }
     }
     // Apply default settings, if filters are null
