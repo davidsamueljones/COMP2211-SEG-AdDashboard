@@ -1,4 +1,4 @@
-package group33.seg.view.output;
+package group33.seg.view.utilities;
 
 import java.util.List;
 import org.jfree.chart.ChartPanel;
