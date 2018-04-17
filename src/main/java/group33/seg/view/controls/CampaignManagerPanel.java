@@ -1,14 +1,17 @@
 package group33.seg.view.controls;
 
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Window;
+import java.awt.Dialog.ModalityType;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import org.mockito.cglib.core.GeneratorStrategy;
 import group33.seg.controller.DashboardController;
 import group33.seg.controller.handlers.SettingsHandler;
 import group33.seg.controller.handlers.WorkspaceHandler.WorkspaceListener;
@@ -84,21 +87,14 @@ public class CampaignManagerPanel extends JPanel {
       Window frmCurrent = SwingUtilities.getWindowAncestor(CampaignManagerPanel.this);
       // Show dialog
       CampaignSelectionDialog cid = new CampaignSelectionDialog(frmCurrent, controller);
-      cid.setModal(true);
+      cid.setModalityType(ModalityType.APPLICATION_MODAL);
       cid.setVisible(true);
     });
     
-    // Watch for changes in workspace campaign
+    // Watch for changes in workspace campaign to update current campaign display
     controller.workspace.addListener(t -> {
       if (t == WorkspaceListener.Type.CAMPAIGN) {
         setCurrentCampaign(controller.workspace.getCampaign());    
-        // FIXME: INCREMENT 2 FEATURE
-        Window frmCurrent = SwingUtilities.getWindowAncestor(CampaignManagerPanel.this);
-        ProgressDialog progressDialog = new ProgressDialog(frmCurrent, false, true);
-        controller.graphs.addProgressListener(progressDialog.listener);
-        controller.graphs.reloadGraph();
-        progressDialog.setVisible(true);
-        controller.graphs.removeProgressListener(progressDialog.listener);
       }
     });
   }

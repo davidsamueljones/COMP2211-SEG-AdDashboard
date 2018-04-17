@@ -179,16 +179,11 @@ public class LineGraphWizardDialog extends JDialog {
           "Configuration Error", JOptionPane.ERROR_MESSAGE);
       return false;
     } else {
+      // Reload graph in the wizard
+      loadGraph(config);
       // Update graph in the workspace
       controller.workspace.putGraph(config);
-      // Reload graph in the wizard
-      loadGraph(config);   
-      // Update the graph view
-      ProgressDialog progressDialog = new ProgressDialog(LineGraphWizardDialog.this, false, true);
-      controller.graphs.addProgressListener(progressDialog.listener);
-      controller.graphs.displayGraph(config);
-      progressDialog.setVisible(true);
-      controller.graphs.removeProgressListener(progressDialog.listener);
+      controller.workspace.setCurrentGraph(config);
       return true;
     }
   }
