@@ -54,14 +54,15 @@ public class ProgressDialog extends JDialog {
   /**
    * Create the dialog.
    *
+   * @param title Title for dialog
    * @param parent Window to treat as a parent
    * @param autoShow Whether the dialog should appear automatically on progress listener start
    *        alerts. If displaying from a different thread, set to false.
    * @param autoHide Whether the dialog should hide automatically on progress listener finish
    *        alert.
    */
-  public ProgressDialog(Window parent, boolean autoShow, boolean autoHide) {
-    super(parent, "Progress Indicator");
+  public ProgressDialog(String title, Window parent, boolean autoShow, boolean autoHide) {
+    super(parent, (title == null ? "Progress Indicator" : title));
     this.autoShow = autoShow;
     this.autoHide = autoHide;
 
