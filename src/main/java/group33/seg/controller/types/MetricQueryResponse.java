@@ -23,6 +23,7 @@ public class MetricQueryResponse {
     try {
       return result.get();
     } catch (InterruptedException | ExecutionException e) {
+      e.printStackTrace();
       return null;
     }
   }
