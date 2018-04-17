@@ -1,4 +1,4 @@
-package group33.seg.view.campaignimport;
+package group33.seg.view.campaignselection;
 
 import java.awt.CardLayout;
 import java.awt.Dimension;

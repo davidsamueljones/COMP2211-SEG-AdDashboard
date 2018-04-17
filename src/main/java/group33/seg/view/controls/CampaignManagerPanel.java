@@ -13,7 +13,7 @@ import javax.swing.SwingUtilities;
 import group33.seg.controller.DashboardController;
 import group33.seg.controller.handlers.WorkspaceHandler.WorkspaceListener;
 import group33.seg.model.configs.CampaignConfig;
-import group33.seg.view.campaignimport.CampaignSelectionDialog;
+import group33.seg.view.campaignselection.CampaignSelectionDialog;
 
 public class CampaignManagerPanel extends JPanel {
   private static final long serialVersionUID = 8138446932363054396L;
