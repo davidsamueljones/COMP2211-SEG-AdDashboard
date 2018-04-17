@@ -339,7 +339,6 @@ public class QueryCorrectnessTest {
     assertTrue("Time interval test wrong for bounce rate metric", listsWithinMarginOfError(expectedWeekResponse, weekResponse));
   }
 
-  //This was just for date range testing, while I was fixing it; feel free to leave/remove
   @Test
   public void dateRangeTest() throws ParseException {
     DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -349,7 +348,7 @@ public class QueryCorrectnessTest {
     bounceConfig.type = BounceConfig.Type.PAGES;
     bounceConfig.value = 2;
 
-    List<Pair<String,Number>> expectedWeekResponse = weeklyResponse( 66.66666666666666, 100.0, 50.0, 40.0, 50.0, 50.0, 42.857142857142854, 35.714285714285715, 50.0);
+    List<Pair<String,Number>> expectedWeekResponse = weeklyResponse( 66.66666666666666, 100.0, 50.0, 40.0, 50.0, 50.0, 42.857142857142854, 35.714285714285715, null);
     MetricQuery graphQuery = new MetricQuery(Metric.BOUNCE_RATE, Interval.WEEK, filter, bounceConfig, campaign);
     List<Pair<String, Number>> weekResponse = databaseHandler.getQueryResponse(graphQuery).getResult();
 
