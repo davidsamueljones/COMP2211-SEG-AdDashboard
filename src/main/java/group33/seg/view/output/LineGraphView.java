@@ -39,6 +39,8 @@ import group33.seg.model.configs.LineGraphConfig;
 import group33.seg.model.configs.LineGraphConfig.Mode;
 import group33.seg.model.types.Pair;
 import group33.seg.view.utilities.Accessibility;
+import group33.seg.view.utilities.CustomChartPanel;
+import group33.seg.view.utilities.CustomDateAxis;
 
 public class LineGraphView extends JPanel {
   private static final long serialVersionUID = -7920465975957290150L;
