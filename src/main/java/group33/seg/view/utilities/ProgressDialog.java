@@ -43,7 +43,10 @@ public class ProgressDialog extends JDialog {
     public void finish(boolean success) {
       finished = true;
       if (autoHide) {
-        SwingUtilities.invokeLater(() -> setVisible(false));
+        SwingUtilities.invokeLater(() -> {
+          setVisible(false);
+          dispose();
+        });
       }
     };
   };
@@ -61,8 +64,7 @@ public class ProgressDialog extends JDialog {
    * @param parent Window to treat as a parent
    * @param autoShow Whether the dialog should appear automatically on progress listener start
    *        alerts. If displaying from a different thread, set to false.
-   * @param autoHide Whether the dialog should hide automatically on progress listener finish
-   *        alert.
+   * @param autoHide Whether the dialog should hide automatically on progress listener finish alert.
    */
   public ProgressDialog(String title, Window parent, boolean autoShow, boolean autoHide) {
     super(parent, (title == null ? "Progress Indicator" : title));
@@ -81,7 +83,7 @@ public class ProgressDialog extends JDialog {
     pack();
     // Apply dialog properties
     setModalityType(ModalityType.APPLICATION_MODAL);
-    setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+    setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
   }
 
   private void initGUI() {
@@ -119,5 +121,5 @@ public class ProgressDialog extends JDialog {
   public void setVisible(boolean b) {
     super.setVisible(b && !finished);
   }
-  
+
 }
