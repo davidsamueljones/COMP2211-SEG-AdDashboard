@@ -19,10 +19,9 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import group33.seg.controller.DashboardController;
-import group33.seg.controller.utilities.DashboardUtilities;
+import group33.seg.lib.Utilities;
 import group33.seg.model.configs.LineConfig;
 import group33.seg.model.configs.StatisticConfig;
-import group33.seg.view.controls.FilterViewPanel;
 
 public class GraphLinesPanel extends JPanel {
   private static final long serialVersionUID = -1169530766129778297L;
@@ -258,7 +257,7 @@ public class GraphLinesPanel extends JPanel {
     txtIdentifier.addActionListener(e -> {
       setTabProperties(Math.min(linePanels.size(), idx), txtIdentifier.getText());
     });
-    DashboardUtilities.focusRequest(txtIdentifier);
+    Utilities.focusRequest(txtIdentifier);
 
     // Insert panel into hierarchy
     if (linePanels == null) {

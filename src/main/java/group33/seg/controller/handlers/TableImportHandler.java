@@ -11,7 +11,7 @@ import org.postgresql.copy.CopyManager;
 import org.postgresql.core.BaseConnection;
 import org.postgresql.core.Encoding;
 import group33.seg.controller.database.tables.DatabaseTable;
-import group33.seg.controller.utilities.DashboardUtilities;
+import group33.seg.lib.Utilities;
 
 public class TableImportHandler {
   /** Buffer size used for imports */
@@ -147,7 +147,7 @@ public class TableImportHandler {
     try {
       // Initialise copy, routing input file through buffered reader
       in = new BufferedReader(new FileReader(new File(path)));
-      int toImport = DashboardUtilities.countFileLines(path) - 1;
+      int toImport = Utilities.countFileLines(path) - 1;
       CopyManager copyManager = new CopyManager(conn);
       cp = copyManager.copyIn(table.getCopyTemplate("STDIN"));
 

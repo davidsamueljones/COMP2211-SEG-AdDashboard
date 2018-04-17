@@ -18,9 +18,9 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import group33.seg.controller.DashboardController;
-import group33.seg.controller.utilities.DashboardUtilities;
 import group33.seg.controller.utilities.ErrorBuilder;
 import group33.seg.controller.utilities.ProgressListener;
+import group33.seg.lib.Utilities;
 import group33.seg.model.configs.CampaignConfig;
 import group33.seg.model.configs.CampaignImportConfig;
 import group33.seg.view.utilities.FileActionListener;
@@ -405,10 +405,10 @@ public class CampaignImportPanel extends JPanel {
     cl_Panel.show(CampaignImportPanel.this, view.toString());
     switch (view) {
       case CONTROLS:
-        DashboardUtilities.focusRequest(txtCampaignName);
+        Utilities.focusRequest(txtCampaignName);
         break;
       case IMPORTING:
-        DashboardUtilities.focusRequest(btnCancelImport);
+        Utilities.focusRequest(btnCancelImport);
         break;
       default:
         break;
