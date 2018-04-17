@@ -150,10 +150,10 @@ public class LinePropertiesPanel extends JPanel {
     // Allow selection of a new colour
     btnSetColor.addActionListener(e -> {
       // Use JColorChooser, null returned on cancel
-      Color colour =
+      Color color =
           JColorChooser.showDialog(null, "Line Colour Chooser", LinePropertiesPanel.this.color);
-      if (colour != null) {
-        LinePropertiesPanel.this.color = colour;
+      if (color != null) {
+        LinePropertiesPanel.this.color = color;
         updatePreview();
       }
     });
