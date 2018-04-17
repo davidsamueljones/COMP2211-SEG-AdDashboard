@@ -226,6 +226,10 @@ public class LineGraphView extends JPanel {
   public void setGraphProperties(LineGraphConfig graph) {
     pnlChart.setChart(chart);
     chart.setTitle(graph.title);
+    plot.setBackgroundPaint(graph.background);
+    Color colGridlines = getGridlineColor(graph.background);
+    plot.setDomainGridlinePaint(colGridlines);
+    plot.setRangeGridlinePaint(colGridlines);
     plot.getDomainAxis().setLabel(graph.xAxisTitle);
     plot.getRangeAxis().setLabel(graph.yAxisTitle);
     setLegendEnabled(graph.showLegend);
@@ -676,6 +680,28 @@ public class LineGraphView extends JPanel {
     float dif = MAX_THICKNESS - MIN_THICKNESS;
     float thickness = MIN_THICKNESS + dif * scale / 100.0f;
     return new BasicStroke(thickness, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+  }
+  
+  /**
+   * Get the gridline colour that a view instance would use for the given background colour.
+   * 
+   * @param bg Background colour
+   * @return Gridline colour corresponding to background colour
+   */
+  public static Color getGridlineColor(Color bg) {
+    float bgBrightness = Color.RGBtoHSB(bg.getRed(), bg.getGreen(), bg.getBlue(), null)[2];
+    final float crossOver = (float) 0.5;
+    final float fgMinBrightness = (float) 0.2;
+    final float fgMaxBrightness = (float) 1.0;
+    float fgBrightness;
+    if (bgBrightness > crossOver) {
+      fgBrightness = Math.min(fgMaxBrightness,
+          fgMinBrightness + (float) Math.pow(crossOver - bgBrightness, 2));
+    } else {
+      fgBrightness = Math.max(fgMinBrightness,
+          fgMaxBrightness - (float) Math.pow(crossOver + bgBrightness, 2));
+    }
+    return Color.getHSBColor(0, 0, fgBrightness);
   }
 
 }
