@@ -155,6 +155,7 @@ public class CampaignImportHandler {
           campaignID);
 
       createViews(conn);
+      refreshViews(conn);
 
       // Create campaign configuration (storing as last import)
       CampaignConfig campaign = new CampaignConfig(campaignID);
@@ -473,6 +474,13 @@ public class CampaignImportHandler {
       s.executeUpdate("CREATE index CONCURRENTLY IF NOT EXISTS sv_hour ON server_view (date_trunc('hour' :: text, entry_date));");
       s.executeUpdate("CREATE index CONCURRENTLY IF NOT EXISTS sv_month ON server_view (date_trunc('month' :: text, entry_date));");
       s.executeUpdate("CREATE index CONCURRENTLY IF NOT EXISTS sv_day ON server_view (date_trunc('day' :: text, entry_date));");
+    }
+  }
+
+  private void refreshViews(Connection conn) throws SQLException {
+    try (Statement s = conn.createStatement()) {
+      s.executeUpdate("REFRESH MATERIALIZED VIEW click_view;");
+      s.executeUpdate("REFRESH MATERIALIZED VIEW server_view;");
     }
   }
 }
