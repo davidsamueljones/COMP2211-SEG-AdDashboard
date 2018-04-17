@@ -89,7 +89,7 @@ public class StatisticHandler {
       updateProgress("Loading statistics into view...");
       alertStart();
 
-      if (view == null) {
+      if (view != null) {
         // Create a copy of the input statistics, this allows any changes to the original passed
         // object to be handled by the handler's update structure appropriately on a load
         Cloner cloner = new Cloner();
