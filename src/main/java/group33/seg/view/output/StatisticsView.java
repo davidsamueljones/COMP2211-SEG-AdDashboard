@@ -50,21 +50,6 @@ public class StatisticsView extends JPanel {
    */
   public StatisticsView(DashboardController controller) {
     this.controller = controller;
-
-    // Update the view whenever there are changes in the workspace
-    controller.workspace.addListener(type -> {
-      if (type == WorkspaceListener.Type.WORKSPACE || type == WorkspaceListener.Type.STATISTICS) {
-        SwingUtilities.invokeLater(() -> {
-          Window frmCurrent = SwingUtilities.getWindowAncestor(StatisticsView.this);
-          ProgressDialog progressDialog = new ProgressDialog(frmCurrent, false, true);
-          controller.statistics.addProgressListener(progressDialog.listener);
-          controller.statistics.loadStatistics(controller.workspace.getStatistics());
-          progressDialog.setVisible(true);
-          controller.statistics.removeProgressListener(progressDialog.listener);
-        });
-      }
-    });
-
     // Configure so this is the view handled by the StatisticHandler
     controller.statistics.setView(this, true);
     initGUI();
@@ -142,7 +127,7 @@ public class StatisticsView extends JPanel {
       cardLayout.show(this, HAS_STATISTICS);
     }
   }
-  
+
   /**
    * Add a new statistic to the view, if it already exists it will not be added again.
    * 
