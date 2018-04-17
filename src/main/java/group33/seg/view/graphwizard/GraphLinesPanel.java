@@ -1,9 +1,11 @@
 package group33.seg.view.graphwizard;
 
 import java.awt.Color;
+import java.awt.Dialog.ModalityType;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Window;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -15,9 +17,12 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import group33.seg.controller.DashboardController;
 import group33.seg.controller.utilities.DashboardUtilities;
 import group33.seg.model.configs.LineConfig;
+import group33.seg.model.configs.StatisticConfig;
+import group33.seg.view.controls.FilterViewPanel;
 
 public class GraphLinesPanel extends JPanel {
   private static final long serialVersionUID = -1169530766129778297L;
@@ -56,6 +61,7 @@ public class GraphLinesPanel extends JPanel {
     setLayout(gbl_pnlMain);
 
     JButton btnNew = new JButton("New Line");
+    btnNew.setToolTipText("Add a new line to the graph.");
     GridBagConstraints gbc_btnNew = new GridBagConstraints();
     gbc_btnNew.fill = GridBagConstraints.HORIZONTAL;
     gbc_btnNew.insets = new Insets(0, 0, 5, 5);
@@ -72,15 +78,18 @@ public class GraphLinesPanel extends JPanel {
     gbc_tabsLines.gridy = 0;
     add(tabsLines, gbc_tabsLines);
 
-    // JButton btnImport = new JButton("Import");
-    // GridBagConstraints gbc_btnImport = new GridBagConstraints();
-    // gbc_btnImport.fill = GridBagConstraints.HORIZONTAL;
-    // gbc_btnImport.insets = new Insets(0, 0, 5, 5);
-    // gbc_btnImport.gridx = 0;
-    // gbc_btnImport.gridy = 1;
-    // add(btnImport, gbc_btnImport);
+    JButton btnImport = new JButton("Import Line");
+    btnImport.setToolTipText("Add a new line to the graph using a statistic.\r\n"
+        + "Only statistic properties will be set automatically.");
+    GridBagConstraints gbc_btnImport = new GridBagConstraints();
+    gbc_btnImport.fill = GridBagConstraints.HORIZONTAL;
+    gbc_btnImport.insets = new Insets(0, 0, 5, 5);
+    gbc_btnImport.gridx = 0;
+    gbc_btnImport.gridy = 1;
+    add(btnImport, gbc_btnImport);
 
     JButton btnRemove = new JButton("Remove Line");
+    btnRemove.setToolTipText("Remove the currently displayed line from the graph.");
     btnRemove.setEnabled(false);
     GridBagConstraints gbc_btnRemove = new GridBagConstraints();
     gbc_btnRemove.fill = GridBagConstraints.HORIZONTAL;
@@ -95,12 +104,23 @@ public class GraphLinesPanel extends JPanel {
 
     // Create a new line in the graph
     btnNew.addActionListener(e -> {
-      LinePanel pnlLine = new LinePanel(controller);
-      pnlLine.pnlLineProperties.txtIdentifier
-          .setText(String.format("Line %d", tabsLines.getTabCount() + 1));
-      pnlLine.pnlLineProperties.setColor(randomLineColor());
-      addLinePanel(pnlLine.pnlLineProperties.txtIdentifier.getText(), pnlLine);
-      tabsLines.setSelectedComponent(pnlLine);
+      newLinePanel();
+    });
+
+    // Import a statistic to act as a new line in the graph
+    btnImport.addActionListener(e -> {
+      Window frmCurrent = SwingUtilities.getWindowAncestor(GraphLinesPanel.this);
+      StatisticImportDialog dialog = new StatisticImportDialog(frmCurrent, controller);
+      dialog.setModalityType(ModalityType.APPLICATION_MODAL);
+      dialog.setVisible(true);
+      StatisticConfig statistic;
+      if ((statistic = dialog.getStatistic()) != null) {
+        LinePanel pnlLine = newLinePanel();
+        LineConfig newLine = pnlLine.getLine();
+        newLine.identifier = statistic.identifier;
+        newLine.query = statistic.query;
+        pnlLine.loadLine(newLine);
+      }
     });
 
     // Remove currently selected line from graph
@@ -123,6 +143,19 @@ public class GraphLinesPanel extends JPanel {
       btnRemove.setEnabled(tabsLines.getSelectedComponent() != null);
     });
 
+  }
+
+  /**
+   * Create a new line panel.
+   */
+  private LinePanel newLinePanel() {
+    LinePanel pnlLine = new LinePanel(controller);
+    pnlLine.pnlLineProperties.txtIdentifier
+        .setText(String.format("Line %d", tabsLines.getTabCount() + 1));
+    pnlLine.pnlLineProperties.setColor(randomLineColor());
+    addLinePanel(pnlLine.pnlLineProperties.txtIdentifier.getText(), pnlLine);
+    tabsLines.setSelectedComponent(pnlLine);
+    return pnlLine;
   }
 
   /**
