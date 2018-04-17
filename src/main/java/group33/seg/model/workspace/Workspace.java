@@ -20,6 +20,9 @@ public class Workspace {
   /** Currently loaded campaign */
   public CampaignConfig campaign;
 
+  /** Currently loaded graph */
+  public GraphConfig graph = null;
+  
   /** Graph configurations currently stored in workspace */
   public List<GraphConfig> graphs = new ArrayList<>();
 
