@@ -73,7 +73,7 @@ public class LineGraphHandler implements GraphHandlerInterface<LineGraphConfig> 
    */
   @Override
   public void clearGraph() {
-    System.out.println("CLEARING GRAPH");
+    mvc.controller.graphs.updateProgress("Clearing graph...");
     this.graph = null;
     EventQueue.invokeLater(() -> view.clearGraph());
   }

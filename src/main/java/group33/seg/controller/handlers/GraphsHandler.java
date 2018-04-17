@@ -26,7 +26,7 @@ public class GraphsHandler {
 
   /** Listeners to alert about progress */
   private final Set<ProgressListener> progressListeners = new HashSet<>();
-  
+
   /** Font scaling to apply to textual elements in charts */
   private double scale = 1;
 
@@ -59,24 +59,6 @@ public class GraphsHandler {
   }
 
   /**
-   * Reloads the graph using the current handler.
-   */
-  public void reloadGraph() {
-    // Do load on worker thread, updating progress listeners appropriately
-    Thread workerThread = new Thread(() -> {
-      updateProgress("Reloading view's current graph...");
-      alertStart();
-      if (currentHandler != null) {
-        currentHandler.reloadGraph();
-      }
-      updateProgress("Finished graph reload");
-      alertFinished();
-    });
-
-    workerThread.start();
-  }
-
-  /**
    * Display the given graph configuration with the appropriate graph handler. Default behaviour of
    * updating without forcing recreation is applied.
    * 
@@ -99,36 +81,40 @@ public class GraphsHandler {
   public void displayGraph(GraphConfig graph, boolean clear) {
     // Do load on worker thread, updating progress listeners appropriately
     Thread workerThread = new Thread(() -> {
-      updateProgress("Loading graph into view...");
-      alertStart();
-      
-      // Handle display behaviour depending on the type of graph
-      graph.accept(new GraphVisitor() {
+      try {
+        updateProgress("Loading graph into view...");
+        alertStart();
+        
+        if (graph != null) {
+          // Handle display behaviour depending on the type of graph
+          graph.accept(new GraphVisitor() {
 
-        @Override
-        public void visit(LineGraphConfig graph) {
-          handleUpdate(lineGraphHandler, clear);
-          lineGraphHandler.displayGraph(graph);
-        }
+            @Override
+            public void visit(LineGraphConfig graph) {
+              handleUpdate(lineGraphHandler, clear);
+              lineGraphHandler.displayGraph(graph);
+            }
 
-        /**
-         * Handle graph clearing behaviour and update the graph handler.
-         * 
-         * @param next The graph handler about to be used
-         * @param clear Whether to clear the graph handler that is about to be used
-         */
-        private void handleUpdate(GraphHandlerInterface<?> next, boolean clear) {
-          if (currentHandler != null && currentHandler != next) {
-            currentHandler.clearGraph();
-          } else if (clear) {
-            next.clearGraph();
-          }
-          currentHandler = lineGraphHandler;
-        }
-      });
-      
-      updateProgress("Finished loading graph into view");
-      alertFinished();
+            /**
+             * Handle graph clearing behaviour and update the graph handler.
+             * 
+             * @param next The graph handler about to be used
+             * @param clear Whether to clear the graph handler that is about to be used
+             */
+            private void handleUpdate(GraphHandlerInterface<?> next, boolean clear) {
+              if (currentHandler != null && currentHandler != next) {
+                currentHandler.clearGraph();
+              } else if (clear) {
+                next.clearGraph();
+              }
+              currentHandler = lineGraphHandler;
+            }
+          });
+        }      
+        updateProgress("Finished loading graph into view");
+      } finally {       
+        alertFinished();
+      }
     });
 
     workerThread.start();
@@ -187,7 +173,7 @@ public class GraphsHandler {
       listener.finish(true);
     }
   }
-  
+
   /**
    * Helper function to alert all listeners of a progress update.
    *
@@ -198,5 +184,5 @@ public class GraphsHandler {
       listener.progressUpdate(update);
     }
   }
-  
+
 }
