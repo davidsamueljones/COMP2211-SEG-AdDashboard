@@ -1,5 +1,6 @@
 package group33.seg.model.configs;
 
+import java.awt.Color;
 import java.util.UUID;
 import group33.seg.controller.utilities.ErrorBuilder;
 import group33.seg.controller.utilities.GraphVisitor;
@@ -29,6 +30,9 @@ public abstract class GraphConfig {
   /** Title of Y Axis */
   public String yAxisTitle = null;
 
+  /** Colour for graph background */
+  public Color background = null;
+  
   /**
    * Instantiate a graph configuration with a random UUID.
    */
