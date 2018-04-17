@@ -14,7 +14,6 @@ import group33.seg.controller.DashboardController.DashboardMVC;
 import group33.seg.controller.database.tables.CampaignTable;
 import group33.seg.controller.database.tables.ClickLogTable;
 import group33.seg.controller.database.tables.DatabaseTable;
-import group33.seg.controller.database.tables.DatabaseTableImporter;
 import group33.seg.controller.database.tables.ImpressionLogTable;
 import group33.seg.controller.database.tables.ServerLogTable;
 import group33.seg.controller.utilities.ErrorBuilder;
@@ -277,7 +276,7 @@ public class CampaignImportHandler {
    */
   private void importTable(DatabaseTable table, Connection conn, String path, double weight,
       int campaignID) throws InterruptedException {
-    DatabaseTableImporter importer = new DatabaseTableImporter(mvc.controller.database);
+    TableImportHandler importer = new TableImportHandler(mvc.controller.database);
     final int curProgress = progress;
 
     // Ensure table is created

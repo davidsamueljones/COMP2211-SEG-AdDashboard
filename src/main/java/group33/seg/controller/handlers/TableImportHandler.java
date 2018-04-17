@@ -1,4 +1,4 @@
-package group33.seg.controller.database.tables;
+package group33.seg.controller.handlers;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -10,10 +10,10 @@ import org.postgresql.copy.CopyIn;
 import org.postgresql.copy.CopyManager;
 import org.postgresql.core.BaseConnection;
 import org.postgresql.core.Encoding;
-import group33.seg.controller.handlers.DatabaseHandler;
+import group33.seg.controller.database.tables.DatabaseTable;
 import group33.seg.controller.utilities.DashboardUtilities;
 
-public class DatabaseTableImporter {
+public class TableImportHandler {
   /** Buffer size used for imports */
   private static final int BUFFER_SIZE = 1048576;
 
@@ -42,7 +42,7 @@ public class DatabaseTableImporter {
    * 
    * @param databaseHandler
    */
-  public DatabaseTableImporter(DatabaseHandler databaseHandler) {
+  public TableImportHandler(DatabaseHandler databaseHandler) {
     this.databaseHandler = databaseHandler;
   }
 
