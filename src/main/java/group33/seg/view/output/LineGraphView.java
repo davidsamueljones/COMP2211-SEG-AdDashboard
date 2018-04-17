@@ -689,7 +689,8 @@ public class LineGraphView extends JPanel {
    * @return Gridline colour corresponding to background colour
    */
   public static Color getGridlineColor(Color bg) {
-    float bgBrightness = Color.RGBtoHSB(bg.getRed(), bg.getGreen(), bg.getBlue(), null)[2];
+    float[] bgHSB = Color.RGBtoHSB(bg.getRed(), bg.getGreen(), bg.getBlue(), null);
+    float bgBrightness = bgHSB[2];
     final float crossOver = (float) 0.5;
     final float fgMinBrightness = (float) 0.2;
     final float fgMaxBrightness = (float) 1.0;
@@ -701,7 +702,7 @@ public class LineGraphView extends JPanel {
       fgBrightness = Math.max(fgMinBrightness,
           fgMaxBrightness - (float) Math.pow(crossOver + bgBrightness, 2));
     }
-    return Color.getHSBColor(0, 0, fgBrightness);
+    return Color.getHSBColor(bgHSB[0], bgHSB[1], fgBrightness);
   }
 
 }
