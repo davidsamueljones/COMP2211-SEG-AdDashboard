@@ -71,7 +71,6 @@ public class StatisticHandler {
    * Remove any statistics from the handled view.
    */
   public void clearStatistics() {
-    System.out.println("CLEARING STATISTICS");
     this.statistics = null;
     if (view != null) {
       EventQueue.invokeLater(() -> view.clearStatistics());
@@ -85,38 +84,37 @@ public class StatisticHandler {
    * @param statistics Statistics to load
    */
   public void loadStatistics(List<StatisticConfig> inpStatistics) {
-    if (view == null) {
-      return;
-    }
-
     // Do load on worker thread, updating progress listeners appropriately
     Thread workerThread = new Thread(() -> {
       updateProgress("Loading statistics into view...");
       alertStart();
 
-      // Create a copy of the input statistics, this allows any changes to the original passed
-      // object to be handled by the handler's update structure appropriately on a load
-      Cloner cloner = new Cloner();
-      List<StatisticConfig> statistics = cloner.deepClone(inpStatistics);
+      if (view == null) {
+        // Create a copy of the input statistics, this allows any changes to the original passed
+        // object to be handled by the handler's update structure appropriately on a load
+        Cloner cloner = new Cloner();
+        List<StatisticConfig> statistics = cloner.deepClone(inpStatistics);
 
-      // Configure statistic view
-      removeOutdatedStatistics(statistics);
-      if (statistics != null) {
-        // Get list of existing statistics
-        List<StatisticConfig> exStatistics = this.statistics;
-        for (StatisticConfig statistic : statistics) {
-          // Ensure campaign is current with workspace (FIXME: INCREMENT 2 FEATURE)
-          statistic.query.campaign = mvc.controller.workspace.getCampaign();
-          // Update statistic if it exists, otherwise add it
-          int idx = (exStatistics == null ? -1 : exStatistics.indexOf(statistic));
-          if (idx >= 0) {
-            updateStatistic(statistic, getStatisticUpdate(exStatistics.get(idx), statistic));
-          } else {
-            addStatistic(statistic);
+        // Configure statistic view
+        removeOutdatedStatistics(statistics);
+        if (statistics != null) {
+          // Get list of existing statistics
+          List<StatisticConfig> exStatistics = this.statistics;
+          for (StatisticConfig statistic : statistics) {
+            // Ensure campaign is current with workspace (FIXME: INCREMENT 2 FEATURE)
+            statistic.query.campaign = mvc.controller.workspace.getCampaign();
+            // Update statistic if it exists, otherwise add it
+            int idx = (exStatistics == null ? -1 : exStatistics.indexOf(statistic));
+            if (idx >= 0) {
+              updateStatistic(statistic, getStatisticUpdate(exStatistics.get(idx), statistic));
+            } else {
+              addStatistic(statistic);
+            }
           }
         }
+        StatisticHandler.this.statistics = statistics;
       }
-      StatisticHandler.this.statistics = statistics;
+      
       updateProgress("Finished loading statistics into view");
       alertFinished();
     });
