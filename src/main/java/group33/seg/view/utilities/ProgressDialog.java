@@ -117,7 +117,7 @@ public class ProgressDialog extends JDialog {
 
   @Override
   public void setVisible(boolean b) {
-    super.setVisible(b & !finished);
+    super.setVisible(b && !finished);
   }
   
 }
