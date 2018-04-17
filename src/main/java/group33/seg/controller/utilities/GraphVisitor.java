@@ -1,4 +1,4 @@
-package group33.seg.controller.types;
+package group33.seg.controller.utilities;
 
 import group33.seg.model.configs.LineGraphConfig;
 

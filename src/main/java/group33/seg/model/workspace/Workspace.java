@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import group33.seg.controller.database.DatabaseConfig;
+import group33.seg.lib.Pair;
 import group33.seg.model.configs.CampaignConfig;
 import group33.seg.model.configs.GraphConfig;
 import group33.seg.model.configs.StatisticConfig;
 import group33.seg.model.types.Metric;
-import group33.seg.model.types.Pair;
 
 public class Workspace {
   public final String name;

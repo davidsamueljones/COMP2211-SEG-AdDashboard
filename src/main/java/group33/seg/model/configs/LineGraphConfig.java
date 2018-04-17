@@ -2,8 +2,8 @@ package group33.seg.model.configs;
 
 import java.util.Iterator;
 import java.util.List;
-import group33.seg.controller.types.GraphVisitor;
 import group33.seg.controller.utilities.ErrorBuilder;
+import group33.seg.controller.utilities.GraphVisitor;
 import group33.seg.lib.Utilities;
 
 /**

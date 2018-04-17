@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Map;
 import group33.seg.controller.DashboardController.DashboardMVC;
 import group33.seg.controller.handlers.WorkspaceHandler.WorkspaceListener.Type;
+import group33.seg.lib.Pair;
 import group33.seg.model.configs.CampaignConfig;
 import group33.seg.model.configs.GraphConfig;
 import group33.seg.model.configs.StatisticConfig;
 import group33.seg.model.types.Metric;
-import group33.seg.model.types.Pair;
 import group33.seg.model.workspace.Workspace;
 
 public class WorkspaceHandler {

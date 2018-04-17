@@ -21,12 +21,12 @@ import group33.seg.controller.database.tables.ClickLogTable;
 import group33.seg.controller.database.tables.ImpressionLogTable;
 import group33.seg.controller.database.tables.ServerLogTable;
 import group33.seg.controller.handlers.DatabaseHandler;
+import group33.seg.lib.Pair;
 import group33.seg.model.configs.CampaignConfig;
 import group33.seg.model.configs.CampaignImportConfig;
 import group33.seg.model.configs.FilterConfig;
 import group33.seg.model.configs.MetricQuery;
 import group33.seg.model.types.Metric;
-import group33.seg.model.types.Pair;
 import utils.QueryTestUtil;
 
 public class FilterTest {

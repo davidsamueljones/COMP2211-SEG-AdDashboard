@@ -1,8 +1,8 @@
 package group33.seg.model.configs;
 
 import java.util.UUID;
-import group33.seg.controller.types.GraphVisitor;
 import group33.seg.controller.utilities.ErrorBuilder;
+import group33.seg.controller.utilities.GraphVisitor;
 
 /**
  * Structure-like class for constructing a generic graph. All variables are public to allow for easy

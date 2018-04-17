@@ -3,7 +3,7 @@ package group33.seg.controller.handlers;
 import java.util.HashSet;
 import java.util.Set;
 import group33.seg.controller.DashboardController.DashboardMVC;
-import group33.seg.controller.types.GraphVisitor;
+import group33.seg.controller.utilities.GraphVisitor;
 import group33.seg.controller.utilities.ProgressListener;
 import group33.seg.model.configs.GraphConfig;
 import group33.seg.model.configs.LineGraphConfig;

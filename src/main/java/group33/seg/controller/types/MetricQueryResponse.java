@@ -3,8 +3,8 @@ package group33.seg.controller.types;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import group33.seg.lib.Pair;
 import group33.seg.model.configs.MetricQuery;
-import group33.seg.model.types.Pair;
 
 public class MetricQueryResponse {
   private MetricQuery query;

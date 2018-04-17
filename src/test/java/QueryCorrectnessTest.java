@@ -16,16 +16,16 @@ import group33.seg.controller.database.tables.ClickLogTable;
 import group33.seg.controller.database.tables.ImpressionLogTable;
 import group33.seg.controller.database.tables.ServerLogTable;
 import group33.seg.model.configs.*;
-import group33.seg.model.utilities.Range;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import group33.seg.controller.DashboardController;
 import group33.seg.controller.database.DatabaseConfig;
 import group33.seg.controller.handlers.DatabaseHandler;
+import group33.seg.lib.Pair;
+import group33.seg.lib.Range;
 import group33.seg.model.types.Interval;
 import group33.seg.model.types.Metric;
-import group33.seg.model.types.Pair;
 import utils.QueryTestUtil;
 
 /** Tests for correctness of queries on a small set of example data */

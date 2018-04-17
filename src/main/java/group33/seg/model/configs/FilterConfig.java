@@ -4,8 +4,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import group33.seg.controller.utilities.ErrorBuilder;
+import group33.seg.lib.Range;
 import group33.seg.lib.Utilities;
-import group33.seg.model.utilities.Range;
 
 /**
  * Structure-like class for constructing a filter configuration. All variables are public to allow

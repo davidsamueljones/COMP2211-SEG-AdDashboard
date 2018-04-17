@@ -5,7 +5,7 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.data.Range;
-import group33.seg.model.types.Pair;
+import group33.seg.lib.Pair;
 
 /**
  * Custom implementation of JFreeChart's chartpanel that can autorange to fixed values when

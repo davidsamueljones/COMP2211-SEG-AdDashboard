@@ -1,4 +1,4 @@
-package group33.seg.model.utilities;
+package group33.seg.lib;
 
 /** 
  * Helper class for storing data ranges. 

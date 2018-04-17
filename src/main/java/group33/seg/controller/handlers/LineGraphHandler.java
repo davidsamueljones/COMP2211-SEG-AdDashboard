@@ -9,9 +9,9 @@ import group33.seg.controller.DashboardController.DashboardMVC;
 import group33.seg.controller.handlers.GraphsHandler.Update;
 import group33.seg.controller.types.MetricQueryResponse;
 import group33.seg.controller.utilities.ProgressListener;
+import group33.seg.lib.Pair;
 import group33.seg.model.configs.LineConfig;
 import group33.seg.model.configs.LineGraphConfig;
-import group33.seg.model.types.Pair;
 import group33.seg.view.output.LineGraphView;
 import group33.seg.view.utilities.ProgressDialog;
 

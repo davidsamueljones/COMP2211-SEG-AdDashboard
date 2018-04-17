@@ -1,4 +1,4 @@
-package group33.seg.model.types;
+package group33.seg.lib;
 
 public class Pair<K, V> {
   public final K key;

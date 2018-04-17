@@ -31,8 +31,8 @@ import org.jdesktop.swingx.JXDatePicker;
 import org.scijava.swing.checkboxtree.CheckBoxNodeData;
 import org.scijava.swing.checkboxtree.CheckBoxNodeEditor;
 import org.scijava.swing.checkboxtree.CheckBoxNodeRenderer;
+import group33.seg.lib.Range;
 import group33.seg.model.configs.FilterConfig;
-import group33.seg.model.utilities.Range;
 
 public class FilterSettingsPanel extends JPanel {
   private static final long serialVersionUID = -6373337720735697409L;
