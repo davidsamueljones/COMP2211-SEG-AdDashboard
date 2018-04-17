@@ -66,9 +66,9 @@ public class AboutPanel extends JPanel {
         }
       }
     };
-    pnlIcon.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     GridBagConstraints gbc_pnlIcon = new GridBagConstraints();
     gbc_pnlIcon.fill = GridBagConstraints.BOTH;
+    gbc_pnlIcon.insets = new Insets(5, 5, 5, 5);
     gbc_pnlIcon.gridheight = 4;
     gbc_pnlIcon.gridx = 0;
     gbc_pnlIcon.gridy = 0;
