@@ -21,6 +21,7 @@ import group33.seg.controller.DashboardController;
 import group33.seg.controller.utilities.DashboardUtilities;
 import group33.seg.controller.utilities.ErrorBuilder;
 import group33.seg.controller.utilities.ProgressListener;
+import group33.seg.model.configs.CampaignConfig;
 import group33.seg.model.configs.CampaignImportConfig;
 import group33.seg.view.utilities.FileActionListener;
 import group33.seg.view.utilities.JDynamicScrollPane;
@@ -322,6 +323,14 @@ public class CampaignImportPanel extends JPanel {
     btnImportCampaign.addActionListener(e -> {
       // Create configuration based off user input
       CampaignImportConfig config;
+      for (CampaignConfig c: controller.imports.getAvailableCampaigns()) {
+        if (txtCampaignName.getText().equals(c.name)) {
+          ErrorBuilder eb = controller.imports.getErrors();
+          JOptionPane.showMessageDialog(null, eb.listComments("Campaign with this name already exists"),
+                  "Invalid Campaign Name", JOptionPane.ERROR_MESSAGE);
+          return;
+        }
+      }
       if (tabsPathModes.getSelectedIndex() == 0) {
         String folder = txtCSVFolder.getText();
         config = new CampaignImportConfig(txtCampaignName.getText(), folder + "/click_log.csv",

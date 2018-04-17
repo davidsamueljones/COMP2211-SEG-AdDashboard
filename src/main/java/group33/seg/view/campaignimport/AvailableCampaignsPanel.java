@@ -104,7 +104,7 @@ public class AvailableCampaignsPanel extends JPanel {
     gbc_btnLoadCampaign.gridy = 2;
     add(btnLoadCampaign, gbc_btnLoadCampaign);
 
-    SwingUtilities.invokeLater(() -> refreshCampaigns());
+    SwingUtilities.invokeLater(this::refreshCampaigns);
     
     // ************************************************************************************
     // * EVENT HANDLING
