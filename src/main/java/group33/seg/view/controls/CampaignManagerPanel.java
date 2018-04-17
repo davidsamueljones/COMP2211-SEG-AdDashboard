@@ -1,23 +1,19 @@
 package group33.seg.view.controls;
 
-import java.awt.Color;
+import java.awt.Dialog.ModalityType;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Window;
-import java.awt.Dialog.ModalityType;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-import org.mockito.cglib.core.GeneratorStrategy;
 import group33.seg.controller.DashboardController;
-import group33.seg.controller.handlers.SettingsHandler;
 import group33.seg.controller.handlers.WorkspaceHandler.WorkspaceListener;
 import group33.seg.model.configs.CampaignConfig;
 import group33.seg.view.campaignimport.CampaignSelectionDialog;
-import group33.seg.view.utilities.ProgressDialog;
 
 public class CampaignManagerPanel extends JPanel {
   private static final long serialVersionUID = 8138446932363054396L;
