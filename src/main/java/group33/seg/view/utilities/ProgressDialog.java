@@ -19,12 +19,14 @@ public class ProgressDialog extends JDialog {
   private static final long serialVersionUID = -861297834109653112L;
 
   private JLabel lblUpdates;
+  private volatile boolean finished = false;
 
   /** Listener implementation updating message */
   public final ProgressListener listener = new ProgressListener() {
 
     @Override
     public void start() {
+      finished = false;
       if (autoShow) {
         SwingUtilities.invokeLater(() -> setVisible(true));
       }
@@ -39,6 +41,7 @@ public class ProgressDialog extends JDialog {
 
     @Override
     public void finish(boolean success) {
+      finished = true;
       if (autoHide) {
         SwingUtilities.invokeLater(() -> setVisible(false));
       }
@@ -112,4 +115,9 @@ public class ProgressDialog extends JDialog {
     pnlContent.add(progressBar, gbc_progressBar);
   }
 
+  @Override
+  public void setVisible(boolean b) {
+    super.setVisible(b & !finished);
+  }
+  
 }
