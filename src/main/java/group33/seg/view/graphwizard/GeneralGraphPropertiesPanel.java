@@ -1,14 +1,18 @@
 package group33.seg.view.graphwizard;
 
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JColorChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import group33.seg.model.configs.LineGraphConfig;
+import group33.seg.view.output.LineGraphView;
 
 public class GeneralGraphPropertiesPanel extends JPanel {
   private static final long serialVersionUID = -1585475807433849072L;
@@ -17,6 +21,7 @@ public class GeneralGraphPropertiesPanel extends JPanel {
   protected JTextField txtTitle;
   protected JTextField txtXAxisTitle;
   protected JTextField txtYAxisTitle;
+  protected JLabel lblSelectedBackgroundColour;
   protected JCheckBox chckbxShowLegend;
 
   /**
@@ -34,8 +39,9 @@ public class GeneralGraphPropertiesPanel extends JPanel {
         BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "General Properties"),
         BorderFactory.createEmptyBorder(5, 5, 5, 5)));
     GridBagLayout gridBagLayout = new GridBagLayout();
+    gridBagLayout.rowHeights = new int[] {0, 0, 0, 0, 0, 0, 0};
     gridBagLayout.columnWeights = new double[] {0.0, 1.0};
-    gridBagLayout.rowWeights = new double[] {0.0, 0.0, 0.0, 0.0, 0.0};
+    gridBagLayout.rowWeights = new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0};
     setLayout(gridBagLayout);
 
     JLabel lblIdentifier = new JLabel("Identifier:");
@@ -106,12 +112,81 @@ public class GeneralGraphPropertiesPanel extends JPanel {
     add(txtYAxisTitle, gbc_txtYAxisTitle);
     txtYAxisTitle.setColumns(10);
 
+    JLabel lblBackgroundColour = new JLabel("Background Colour:");
+    GridBagConstraints gbc_lblBackgroundColour = new GridBagConstraints();
+    gbc_lblBackgroundColour.anchor = GridBagConstraints.EAST;
+    gbc_lblBackgroundColour.insets = new Insets(0, 0, 5, 5);
+    gbc_lblBackgroundColour.gridx = 0;
+    gbc_lblBackgroundColour.gridy = 4;
+    add(lblBackgroundColour, gbc_lblBackgroundColour);
+
+    JPanel pnlColour = new JPanel();
+    GridBagConstraints gbc_pnlColour = new GridBagConstraints();
+    gbc_pnlColour.insets = new Insets(0, 0, 5, 0);
+    gbc_pnlColour.fill = GridBagConstraints.BOTH;
+    gbc_pnlColour.gridx = 1;
+    gbc_pnlColour.gridy = 4;
+    add(pnlColour, gbc_pnlColour);
+    GridBagLayout gbl_pnlColour = new GridBagLayout();
+    gbl_pnlColour.columnWidths = new int[] {0, 0, 0};
+    gbl_pnlColour.rowHeights = new int[] {0, 0};
+    gbl_pnlColour.columnWeights = new double[] {0.0, 0.0, Double.MIN_VALUE};
+    gbl_pnlColour.rowWeights = new double[] {0.0, Double.MIN_VALUE};
+    pnlColour.setLayout(gbl_pnlColour);
+
+    lblSelectedBackgroundColour = new JLabel("Preview");
+    lblSelectedBackgroundColour.setBorder(
+        BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK, 1, true),
+            BorderFactory.createEmptyBorder(2, 10, 2, 10)));
+    lblSelectedBackgroundColour.setToolTipText(
+        "<html>The background colour is the main background colour of the graph.<br>"
+            + "The text colour is the guideline colour.</html>");
+    lblSelectedBackgroundColour.setOpaque(true);
+    GridBagConstraints gbc_lblSelectedBackgroundColour = new GridBagConstraints();
+    gbc_lblSelectedBackgroundColour.insets = new Insets(0, 0, 0, 5);
+    gbc_lblSelectedBackgroundColour.gridx = 0;
+    gbc_lblSelectedBackgroundColour.gridy = 0;
+    pnlColour.add(lblSelectedBackgroundColour, gbc_lblSelectedBackgroundColour);
+
+    JButton btnSetColor = new JButton("Set");
+    GridBagConstraints gbc_btnSetColor = new GridBagConstraints();
+    gbc_btnSetColor.gridx = 1;
+    gbc_btnSetColor.gridy = 0;
+    pnlColour.add(btnSetColor, gbc_btnSetColor);
+
     chckbxShowLegend = new JCheckBox("Show Legend");
     GridBagConstraints gbc_chckbxShowLegend = new GridBagConstraints();
+    gbc_chckbxShowLegend.insets = new Insets(0, 0, 5, 0);
     gbc_chckbxShowLegend.anchor = GridBagConstraints.WEST;
     gbc_chckbxShowLegend.gridx = 1;
-    gbc_chckbxShowLegend.gridy = 4;
+    gbc_chckbxShowLegend.gridy = 5;
     add(chckbxShowLegend, gbc_chckbxShowLegend);
+
+    // Allow selection of a new colour
+    btnSetColor.addActionListener(e -> {
+      // Use JColorChooser, null returned on cancel
+      Color color = JColorChooser.showDialog(null, "Line Colour Chooser",
+          lblSelectedBackgroundColour.getBackground());
+      if (color != null) {
+        loadBackgroundColor(color);
+      }
+    });
+
+  }
+
+  /**
+   * Load the given background colour into the colour handling object. This should generate an
+   * appropriate preview.
+   * 
+   * @param color Colour to use, if null use default
+   */
+  private void loadBackgroundColor(Color bg) {
+    if (bg == null) {
+      bg = Color.getHSBColor(0, 0, (float) 0.9);
+    }
+    Color fg = LineGraphView.getGridlineColor(bg);
+    lblSelectedBackgroundColour.setBackground(bg);
+    lblSelectedBackgroundColour.setForeground(fg);
   }
 
   /**
@@ -125,6 +200,7 @@ public class GeneralGraphPropertiesPanel extends JPanel {
       txtTitle.setText(config.title);
       txtXAxisTitle.setText(config.xAxisTitle);
       txtYAxisTitle.setText(config.yAxisTitle);
+      loadBackgroundColor(config.background);
       chckbxShowLegend.setSelected(config.showLegend);
     }
   }
@@ -137,6 +213,7 @@ public class GeneralGraphPropertiesPanel extends JPanel {
     txtTitle.setText("");
     txtXAxisTitle.setText("");
     txtYAxisTitle.setText("");
+    loadBackgroundColor(null);
     chckbxShowLegend.setSelected(true);
   }
 
@@ -150,6 +227,7 @@ public class GeneralGraphPropertiesPanel extends JPanel {
     config.title = txtTitle.getText();
     config.xAxisTitle = txtXAxisTitle.getText();
     config.yAxisTitle = txtYAxisTitle.getText();
+    config.background = lblSelectedBackgroundColour.getBackground();
     config.showLegend = chckbxShowLegend.isSelected();
   }
 
