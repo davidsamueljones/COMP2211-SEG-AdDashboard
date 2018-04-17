@@ -7,10 +7,10 @@ import java.awt.event.ComponentEvent;
 import javax.swing.ToolTipManager;
 import javax.swing.WindowConstants;
 import group33.seg.controller.DashboardController.DashboardMVC;
+import group33.seg.view.definitions.DefinitionFrame;
 import group33.seg.view.structure.DashboardFrame;
 import group33.seg.view.utilities.Accessibility;
 import group33.seg.view.utilities.Accessibility.Appearance;
-import group33.seg.view.utilities.DefinitionFrame;
 
 public class DisplayHandler {
 

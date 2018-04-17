@@ -1,7 +1,7 @@
 package group33.seg.view;
 
+import group33.seg.view.definitions.DefinitionFrame;
 import group33.seg.view.structure.DashboardFrame;
-import group33.seg.view.utilities.DefinitionFrame;
 
 public class DashboardView {
   private DashboardFrame dashboard = null;

@@ -1,4 +1,4 @@
-package group33.seg.view.utilities;
+package group33.seg.view.definitions;
 
 import javax.swing.BorderFactory;
 import javax.swing.JDialog;

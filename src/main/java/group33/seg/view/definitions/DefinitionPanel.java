@@ -1,4 +1,4 @@
-package group33.seg.view.utilities;
+package group33.seg.view.definitions;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -6,6 +6,7 @@ import java.awt.Insets;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import group33.seg.model.types.Metric;
+import group33.seg.view.utilities.JDynamicScrollPane;
 
 public class DefinitionPanel extends JDynamicScrollPane {
   private static final long serialVersionUID = -7792003666831327347L;
