@@ -1,4 +1,4 @@
-package group33.seg.view.utilities;
+package group33.seg.view.about;
 
 import java.awt.Dimension;
 import java.awt.EventQueue;

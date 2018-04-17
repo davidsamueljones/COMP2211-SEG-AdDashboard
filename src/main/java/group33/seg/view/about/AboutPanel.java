@@ -1,4 +1,4 @@
-package group33.seg.view.utilities;
+package group33.seg.view.about;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -15,6 +15,7 @@ import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import group33.seg.view.utilities.Accessibility;
 
 public class AboutPanel extends JPanel {
   private static final long serialVersionUID = 1012812580706515903L;
