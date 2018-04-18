@@ -68,7 +68,7 @@ public class DatabaseQueryFactory {
         Metric.TOTAL_COST,
         "SELECT xaxis, al.yaxis FROM"
             + " generate_series(<start>, <final>, '1 <interval>') AS xaxis LEFT JOIN"
-            + " (SELECT dates, SUM(cost) AS yaxis FROM"
+            + " (SELECT dates, SUM(cost) / 100 AS yaxis FROM"
             + " (SELECT date_trunc('<interval>', date) + (<start> - date_trunc('<interval>', <start>)) AS dates, impression_cost AS cost FROM impression_log WHERE date < <final> AND <campaign> AND <filterAge> AND <filterIncome> AND <filterGender>"
             + " UNION ALL"
             + " SELECT date_trunc('<interval>', date) + (<start> - date_trunc('<interval>', <start>)) AS dates, click_cost AS cost FROM <click_log> WHERE date < <final> AND <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS t"
@@ -234,7 +234,7 @@ public class DatabaseQueryFactory {
     graphQueries.put(
             Metric.CPA,
             "SELECT xaxis,"
-                    + " (SELECT CASE conversions WHEN 0 THEN 0 ELSE (icost + ccost) / conversions END FROM"
+                    + " (SELECT CASE conversions WHEN 0 THEN 0 ELSE (icost + ccost) / 100 / conversions END FROM"
                     + " (SELECT SUM(impression_cost) as icost FROM impression_log WHERE <campaign> AND <filterAge> AND <filterIncome> AND <filterGender> AND date_trunc('<interval>', date) = xaxis) as il,"
                     + " (SELECT SUM(click_cost) as ccost FROM <click_log> WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender> AND date_trunc('<interval>', date) = xaxis) as cl,"
                     + " (SELECT count(*) as conversions FROM <server_log> WHERE conversion AND <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender> AND date_trunc('<interval>', entry_date) = xaxis) as iil) as yaxis"
@@ -247,7 +247,7 @@ public class DatabaseQueryFactory {
     graphQueries.put(
             Metric.CPC,
             "SELECT xaxis,"
-                    + " (SELECT CASE clicks WHEN 0 THEN 0 ELSE (icost + ccost) / clicks END FROM"
+                    + " (SELECT CASE clicks WHEN 0 THEN 0 ELSE (icost + ccost) / 100 / clicks END FROM"
                     + " (SELECT SUM(impression_cost) as icost FROM impression_log WHERE <campaign> AND <filterAge> AND <filterIncome> AND <filterGender> AND date_trunc('<interval>', date) = xaxis) as il,"
                     + " (SELECT SUM(click_cost) as ccost FROM <click_log> WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender> AND date_trunc('<interval>', date) = xaxis) as cl,"
                     + " (SELECT count(*) as clicks FROM <click_log> WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender> AND date_trunc('<interval>', date) = xaxis) as iil) as yaxis"
@@ -260,7 +260,7 @@ public class DatabaseQueryFactory {
     graphQueries.put(
             Metric.CPM,
             "SELECT xaxis,"
-                    + " (SELECT (cost / impressions) * 1000 FROM"
+                    + " (SELECT (cost / 100 / impressions) * 1000 FROM"
                     + " (SELECT SUM(impression_cost) as cost FROM impression_log WHERE <campaign> AND <filterAge> AND <filterIncome> AND <filterGender> AND date_trunc('<interval>', date) = xaxis) as il,"
                     + " (SELECT count(*) as impressions FROM impression_log WHERE <campaign> AND <filterAge> AND <filterIncome> AND <filterGender> AND date_trunc('<interval>', date) = xaxis) as iil) as yaxis"
                     + " FROM"
