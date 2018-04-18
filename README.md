@@ -3,7 +3,7 @@
 The Ad Auction Dashboard is an application that will be used for easier evaluation of custom made campaigns.
 The project is developed using Agile methodologies and it is separated into 3 Increments. 
 
-![Main Application](documents/application/Main-ubuntu-light.png "Application")
+![Main Application](documents/application/MacOS.png "Application")
 
 
 ## Functionality
@@ -11,7 +11,7 @@ The project is currently under development and it has the functionality that we 
 Currently a user of the system is able to see all key metrics as total statistics and as a graph. Other functionality the application supports includes:
 * Upload a new campaign 
 * Select from a list of already uploaded campaigns
-* Create custom graph, x and y axis name 
+* Create custom graph, configure background colour, title, x and y axis name 
 * Customise line name, colour, thickness
 * Add multiple lines on a single graph 
 * Filter data by age, income, context, gender, date range
@@ -25,7 +25,7 @@ The features we are intending to include are:
 * Comparing data from different campaigns
 * Time of day statistics
 * Specific day statistics
-* Colour change option
+* Workspace change option
 
 ## Getting Started
 The instructions below will guide you through the steps for running the code.
@@ -77,7 +77,11 @@ CREATE DATABASE <DB_NAME>;
 
    * Make sure that the ``config.properties`` file is in the same folder as the .jar file.
    * Execute the *.jar* file by running: ``java -jar SEG.jar``
-
+   
+###Running the tests
+   
+   * To run the tests run ``mvn test``
+   
 ## Built With
 * [TravisCI](http://www.dropwizard.io/1.0.2/docs/) - Distributed Continuous Integration Service
 * [Maven](https://maven.apache.org/) - Dependency Management
