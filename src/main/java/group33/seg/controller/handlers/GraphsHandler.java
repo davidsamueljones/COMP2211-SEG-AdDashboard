@@ -6,6 +6,7 @@ import group33.seg.controller.DashboardController.DashboardMVC;
 import group33.seg.controller.utilities.GraphVisitor;
 import group33.seg.controller.utilities.ProgressListener;
 import group33.seg.model.configs.GraphConfig;
+import group33.seg.model.configs.HistogramConfig;
 import group33.seg.model.configs.LineGraphConfig;
 import group33.seg.view.output.LineGraphView;
 
@@ -20,7 +21,10 @@ public class GraphsHandler {
 
   /** Line graph handler */
   private LineGraphHandler lineGraphHandler;
-
+  
+  /** Histogram handler */
+  private HistogramHandler histogramHandler;
+  
   /** Handler currently in use */
   private GraphHandlerInterface<?> currentHandler = null;
 
@@ -83,31 +87,21 @@ public class GraphsHandler {
     Thread workerThread = new Thread(() -> {
       try {
         updateProgress("Loading graph into view...");
-        alertStart();
-        
-        if (graph != null) {
+        alertStart();     
+        if (graph != null) {      
           // Handle display behaviour depending on the type of graph
           graph.accept(new GraphVisitor() {
 
             @Override
             public void visit(LineGraphConfig graph) {
-              handleUpdate(lineGraphHandler, clear);
+              loadHandler(lineGraphHandler, clear);
               lineGraphHandler.displayGraph(graph);
             }
 
-            /**
-             * Handle graph clearing behaviour and update the graph handler.
-             * 
-             * @param next The graph handler about to be used
-             * @param clear Whether to clear the graph handler that is about to be used
-             */
-            private void handleUpdate(GraphHandlerInterface<?> next, boolean clear) {
-              if (currentHandler != null && currentHandler != next) {
-                currentHandler.clearGraph();
-              } else if (clear) {
-                next.clearGraph();
-              }
-              currentHandler = lineGraphHandler;
+            @Override
+            public void visit(HistogramConfig graph) {
+              loadHandler(histogramHandler, clear);
+              histogramHandler.displayGraph(graph);
             }
           });
         }      
@@ -120,6 +114,21 @@ public class GraphsHandler {
     workerThread.start();
   }
 
+  /**
+   * Handle graph clearing behaviour and update the graph handler.
+   * 
+   * @param next The graph handler about to be used
+   * @param clear Whether to clear the graph handler that is about to be used
+   */
+  private void loadHandler(GraphHandlerInterface<?> next, boolean clear) {
+    if (currentHandler != null && currentHandler != next) {
+      currentHandler.clearGraph();
+    } else if (clear) {
+      next.clearGraph();
+    }
+    currentHandler = lineGraphHandler;
+  }
+  
   /**
    * Set font scale to apply to all current and future charts.
    * 
