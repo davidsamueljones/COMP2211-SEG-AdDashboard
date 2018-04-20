@@ -11,6 +11,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import group33.seg.controller.DashboardController;
 import group33.seg.controller.handlers.WorkspaceHandler.WorkspaceListener;
+import group33.seg.view.output.GraphsView;
 import group33.seg.view.output.StatisticsView;
 import group33.seg.view.utilities.ProgressDialog;
 
@@ -23,7 +24,7 @@ public class DashboardFrame extends JFrame {
   private JSplitPane sppView;
 
   private ControlsPanel pnlControls;
-  private GraphPanel pnlGraph;
+  private GraphsView pnlGraph;
   private StatisticsView pnlStatistics;
 
   /** Create the Dashboard frame. */
@@ -66,7 +67,7 @@ public class DashboardFrame extends JFrame {
     sppView.setOrientation(JSplitPane.VERTICAL_SPLIT);
     sppMain.setRightComponent(sppView);
 
-    pnlGraph = new GraphPanel(controller);
+    pnlGraph = new GraphsView(controller);
     sppView.setLeftComponent(pnlGraph);
 
     pnlStatistics = new StatisticsView(controller);

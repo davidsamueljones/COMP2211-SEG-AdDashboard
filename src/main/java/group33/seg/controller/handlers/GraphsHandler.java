@@ -1,5 +1,6 @@
 package group33.seg.controller.handlers;
 
+import java.awt.EventQueue;
 import java.util.HashSet;
 import java.util.Set;
 import group33.seg.controller.DashboardController.DashboardMVC;
@@ -8,6 +9,8 @@ import group33.seg.controller.utilities.ProgressListener;
 import group33.seg.model.configs.GraphConfig;
 import group33.seg.model.configs.HistogramConfig;
 import group33.seg.model.configs.LineGraphConfig;
+import group33.seg.view.output.GraphsView;
+import group33.seg.view.output.HistogramView;
 import group33.seg.view.output.LineGraphView;
 
 /**
@@ -19,11 +22,14 @@ public class GraphsHandler {
   /** MVC model that sub-controller has knowledge of */
   private final DashboardMVC mvc;
 
+  /** Graphs view */
+  private GraphsView graphsView = null;
+  
   /** Line graph handler */
-  private LineGraphHandler lineGraphHandler;
+  private LineGraphHandler lineGraphHandler = null;
   
   /** Histogram handler */
-  private HistogramHandler histogramHandler;
+  private HistogramHandler histogramHandler = null;
   
   /** Handler currently in use */
   private GraphHandlerInterface<?> currentHandler = null;
@@ -51,6 +57,13 @@ public class GraphsHandler {
   }
 
   /**
+   * Set the graphs view being controlled.
+   */
+  public void setGraphsView(GraphsView view) {
+    graphsView = view;
+  }
+  
+  /**
    * Create a new line graph handler making use of the given view output.
    */
   public void setLineGraphView(LineGraphView view) {
@@ -62,6 +75,18 @@ public class GraphsHandler {
     }
   }
 
+  /**
+   * Create a new histogram handler making use of the given view output.
+   */
+  public void setHistogramView(HistogramView view) {
+    if (view == null) {
+      histogramHandler = null;
+    } else {
+      view.applyFontScale(scale);
+      histogramHandler = new HistogramHandler(mvc, view);
+    }
+  }
+  
   /**
    * Display the given graph configuration with the appropriate graph handler. Default behaviour of
    * updating without forcing recreation is applied.
@@ -87,7 +112,10 @@ public class GraphsHandler {
     Thread workerThread = new Thread(() -> {
       try {
         updateProgress("Loading graph into view...");
-        alertStart();     
+        alertStart();
+        if (graphsView != null) {
+          EventQueue.invokeLater(() -> graphsView.loadView(graph));
+        }
         if (graph != null) {      
           // Handle display behaviour depending on the type of graph
           graph.accept(new GraphVisitor() {
