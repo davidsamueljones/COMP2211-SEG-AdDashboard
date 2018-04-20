@@ -178,7 +178,7 @@ public class HistogramWizardDialog extends JDialog
       config = new HistogramConfig();
     }
     // Get updated configuration from wizard
-    // TODO
+    config.identifier = "TEST_HISTOGRAM";
     return config;
   }
 
