@@ -1,4 +1,4 @@
-package group33.seg.view.graphwizard;
+package group33.seg.view.graphwizard.linegraph;
 
 import java.awt.Color;
 import java.awt.Graphics;

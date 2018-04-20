@@ -1,4 +1,4 @@
-package group33.seg.view.graphwizard;
+package group33.seg.view.graphwizards;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;

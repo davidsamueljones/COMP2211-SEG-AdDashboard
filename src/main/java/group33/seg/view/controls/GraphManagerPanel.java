@@ -27,8 +27,8 @@ import group33.seg.controller.utilities.GraphVisitor;
 import group33.seg.model.configs.GraphConfig;
 import group33.seg.model.configs.HistogramConfig;
 import group33.seg.model.configs.LineGraphConfig;
-import group33.seg.view.graphwizard.LineGraphWizardDialog;
-import group33.seg.view.graphwizard.WizardSelectorDialog;
+import group33.seg.view.graphwizard.linegraph.LineGraphWizardDialog;
+import group33.seg.view.graphwizards.WizardSelectorDialog;
 import group33.seg.view.utilities.ProgressDialog;
 
 public class GraphManagerPanel extends JPanel {

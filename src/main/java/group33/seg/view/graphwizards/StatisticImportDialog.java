@@ -1,4 +1,4 @@
-package group33.seg.view.graphwizard;
+package group33.seg.view.graphwizards;
 
 import java.awt.Component;
 import java.awt.Dimension;

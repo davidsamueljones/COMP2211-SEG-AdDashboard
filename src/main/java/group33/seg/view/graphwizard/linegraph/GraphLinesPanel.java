@@ -1,4 +1,4 @@
-package group33.seg.view.graphwizard;
+package group33.seg.view.graphwizard.linegraph;
 
 import java.awt.Color;
 import java.awt.Dialog.ModalityType;
@@ -22,6 +22,7 @@ import group33.seg.controller.DashboardController;
 import group33.seg.lib.Utilities;
 import group33.seg.model.configs.LineConfig;
 import group33.seg.model.configs.StatisticConfig;
+import group33.seg.view.graphwizards.StatisticImportDialog;
 
 public class GraphLinesPanel extends JPanel {
   private static final long serialVersionUID = -1169530766129778297L;
