@@ -28,7 +28,9 @@ import group33.seg.model.configs.GraphConfig;
 import group33.seg.model.configs.HistogramConfig;
 import group33.seg.model.configs.LineGraphConfig;
 import group33.seg.view.graphwizard.linegraph.LineGraphWizardDialog;
+import group33.seg.view.graphwizards.GraphWizardInterface;
 import group33.seg.view.graphwizards.WizardSelectorDialog;
+import group33.seg.view.graphwizards.histogram.HistogramWizardDialog;
 import group33.seg.view.utilities.ProgressDialog;
 
 public class GraphManagerPanel extends JPanel {
@@ -235,12 +237,10 @@ public class GraphManagerPanel extends JPanel {
     LineGraphWizardDialog wizard = new LineGraphWizardDialog(frmCurrent, controller, config);
     wizard.setModalityType(ModalityType.APPLICATION_MODAL);
     wizard.setVisible(true);
-    // Select new graph on wizard close
-    GraphConfig newConfig = wizard.getGraph();
-    if (newConfig != null) {
-      SwingUtilities.invokeLater(() -> lstGraphs.setSelectedValue(newConfig, true));
-    }
+    handleWizardOutput(wizard);
   }
+
+
 
   /**
    * Display a histogram wizard, loading the given configuration.
@@ -248,7 +248,24 @@ public class GraphManagerPanel extends JPanel {
    * @param config Configuration to load
    */
   private void displayHistogramWizard(HistogramConfig config) {
-    System.err.println("No histogram wizard...");
+    Window frmCurrent = SwingUtilities.getWindowAncestor(GraphManagerPanel.this);
+    HistogramWizardDialog wizard = new HistogramWizardDialog(frmCurrent, controller, config);
+    wizard.setModalityType(ModalityType.APPLICATION_MODAL);
+    wizard.setVisible(true);
+    handleWizardOutput(wizard);
+  }
+
+  /**
+   * Get the created graph from the given wizard and handle behaviour appropriately.
+   * 
+   * @param wizard Wizard interface to use
+   */
+  public void handleWizardOutput(GraphWizardInterface<?> wizard) {
+    GraphConfig newConfig = wizard.getGraph();
+    // Select new graph in list
+    if (newConfig != null) {
+      SwingUtilities.invokeLater(() -> lstGraphs.setSelectedValue(newConfig, true));
+    }
   }
 
   /**
