@@ -45,6 +45,8 @@ import group33.seg.view.utilities.CustomDateAxis;
 public class LineGraphView extends JPanel {
   private static final long serialVersionUID = -7920465975957290150L;
 
+  public static Color DEFAULT_BACKGROUND = Color.getHSBColor(0, 0, (float) 0.9);
+  
   public static float MIN_THICKNESS = 1.0f;
   public static float MAX_THICKNESS = 5.0f;
  
@@ -314,6 +316,7 @@ public class LineGraphView extends JPanel {
     chart.setTitle("");
     plot.getDomainAxis().setLabel("");
     plot.getRangeAxis().setLabel("");
+    plot.setBackgroundPaint(DEFAULT_BACKGROUND);
   }
 
   /**

@@ -182,7 +182,7 @@ public class GeneralGraphPropertiesPanel extends JPanel {
    */
   private void loadBackgroundColor(Color bg) {
     if (bg == null) {
-      bg = Color.getHSBColor(0, 0, (float) 0.9);
+      bg = LineGraphView.DEFAULT_BACKGROUND;
     }
     Color fg = LineGraphView.getGridlineColor(bg);
     lblSelectedBackgroundColour.setBackground(bg);
