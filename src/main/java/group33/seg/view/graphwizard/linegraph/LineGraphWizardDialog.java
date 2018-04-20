@@ -20,10 +20,13 @@ import group33.seg.controller.handlers.LineGraphHandler;
 import group33.seg.controller.utilities.ErrorBuilder;
 import group33.seg.model.configs.LineGraphConfig;
 import group33.seg.view.controls.GraphManagerPanel;
+import group33.seg.view.graphwizards.GraphWizardInterface;
 import group33.seg.view.output.StatisticsView;
 import group33.seg.view.utilities.ProgressDialog;
 
-public class LineGraphWizardDialog extends JDialog {
+public class LineGraphWizardDialog extends JDialog
+    implements GraphWizardInterface<LineGraphConfig> {
+  
   private static final long serialVersionUID = -2529642040023886708L;
 
   private DashboardController controller;
