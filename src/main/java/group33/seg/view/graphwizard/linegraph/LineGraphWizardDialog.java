@@ -156,12 +156,7 @@ public class LineGraphWizardDialog extends JDialog
 
   }
 
-  /**
-   * Load the given graph configuration into the dialog. After a load it shall be treated as the
-   * base graph so any future changes will be treated as updates/increments of a previous load.
-   * 
-   * @param graph Configuration to load
-   */
+  @Override
   public void loadGraph(LineGraphConfig graph) {
     pnlGraphProperties.loadGraph(graph);
     pnlLines.updateLines((graph == null ? null : graph.lines));
@@ -211,9 +206,7 @@ public class LineGraphWizardDialog extends JDialog
     return config;
   }
 
-  /**
-   * @return The currently loaded graph without any non-applied changes
-   */
+  @Override
   public LineGraphConfig getGraph() {
     return base;
   }
