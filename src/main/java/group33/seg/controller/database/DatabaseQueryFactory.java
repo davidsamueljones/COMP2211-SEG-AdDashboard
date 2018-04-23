@@ -301,7 +301,7 @@ public class DatabaseQueryFactory {
     // Total cost - includes both click and impression cost
     statisticQueries.put(
         Metric.TOTAL_COST,
-        "SELECT 'all' AS xaxis, (il.cost + cl.cost) / 100 AS yaxis FROM"
+        "SELECT 'all' AS xaxis, round(((il.cost + cl.cost) / 100)::NUMERIC, 2) AS yaxis FROM"
             + " (SELECT sum(impression_cost) AS cost FROM impression_log WHERE date BETWEEN <range> AND <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS il,"
             + " (SELECT sum(click_cost) AS cost FROM <click_log> WHERE date BETWEEN <range> AND <campaign>) AS cl;");
 
@@ -320,14 +320,14 @@ public class DatabaseQueryFactory {
     // values for them
     statisticQueries.put(
         Metric.BOUNCE_RATE,
-        "SELECT 'all' AS xaxis, bounces / NULLIF(clicks, 0) * 100 AS yaxis FROM"
+        "SELECT 'all' AS xaxis, round((bounces / NULLIF(clicks, 0) * 100)::NUMERIC, 2) AS yaxis FROM"
             + " (SELECT count(*) AS bounces FROM <server_log> WHERE entry_date BETWEEN <range> AND <bounce> AND <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS sl,"
             + " (SELECT count(*)::double precision AS clicks FROM <click_log> WHERE date BETWEEN <range> AND <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS cl;");
 
     // Average amount of money spent on a campaign for each conversion (CPA)
     statisticQueries.put(
         Metric.CPA,
-        "SELECT 'all' AS xaxis, (il.cost + cl.cost) / 100 / NULLIF(conversions, 0) AS yaxis FROM "
+        "SELECT 'all' AS xaxis, round(((il.cost + cl.cost) / 100 / NULLIF(conversions, 0))::NUMERIC, 2) AS yaxis FROM "
             + " (SELECT sum(impression_cost) AS cost FROM impression_log WHERE date BETWEEN <range> AND <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS il,"
             + " (SELECT sum(click_cost) AS cost FROM <click_log> WHERE date BETWEEN <range> AND <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS cl,"
             + " (SELECT count(*) AS conversions FROM <server_log> WHERE entry_date BETWEEN <range> AND conversion AND <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS sl;");
@@ -335,7 +335,7 @@ public class DatabaseQueryFactory {
     // The average amount of money spent for each click (CPC)
     statisticQueries.put(
         Metric.CPC,
-        "SELECT 'all' AS xaxis, (il.cost + cl.cost) / 100 / NULLIF(clicks, 0) AS yaxis FROM "
+        "SELECT 'all' AS xaxis, round(((il.cost + cl.cost) / 100 / NULLIF(clicks, 0))::NUMERIC, 2) AS yaxis FROM "
             + " (SELECT sum(impression_cost) AS cost FROM impression_log WHERE date BETWEEN <range> AND <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS il,"
             + " (SELECT  sum(click_cost) AS cost FROM <click_log> WHERE date BETWEEN <range> AND <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS cl,"
             + " (SELECT count(*) AS clicks FROM <click_log> WHERE date BETWEEN <range> AND <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS ccl;");
@@ -343,14 +343,14 @@ public class DatabaseQueryFactory {
     // The average amount of money spent per 1000 impressions (CPM)
     statisticQueries.put(
         Metric.CPM,
-        "SELECT 'all' AS xaxis, (il.cost / 100 / impressions) * 1000 AS yaxis FROM"
+        "SELECT 'all' AS xaxis, round(((il.cost / 100 / impressions) * 1000)::NUMERIC, 2) AS yaxis FROM"
             + " (SELECT sum(impression_cost) AS cost FROM impression_log WHERE date BETWEEN <range> AND <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS il,"
             + " (SELECT count(*) AS impressions FROM impression_log WHERE date BETWEEN <range> AND <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS iil;");
 
     // The average amount of clicks per impression (CTR)
     statisticQueries.put(
         Metric.CTR,
-        "SELECT 'all' AS xaxis, ((clicks::double precision) / NULLIF(impressions, 0)) * 100 AS yaxis FROM"
+        "SELECT 'all' AS xaxis, round(((clicks::double precision) / NULLIF(impressions, 0) * 100)::NUMERIC, 2) AS yaxis FROM"
             + " (SELECT count(*) AS clicks FROM <click_log> WHERE date BETWEEN <range> AND <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS cl,"
             + " (SELECT count(*) AS impressions FROM impression_log WHERE date BETWEEN <range> AND <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS il;");
   }
