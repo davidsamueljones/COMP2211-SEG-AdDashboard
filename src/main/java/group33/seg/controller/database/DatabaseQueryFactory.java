@@ -137,7 +137,7 @@ public class DatabaseQueryFactory {
     graphRangeQueries.put(
         Metric.CTR,
         "SELECT xaxis, ("
-            + " SELECT CASE il.impressions WHEN 0 THEN 0 ELSE (cl.clicks::double precision) / il.impressions END FROM"
+            + " SELECT CASE il.impressions WHEN 0 THEN 0 ELSE ((cl.clicks::double precision) / il.impressions) * 100 END FROM"
             + " (SELECT count(*) as clicks FROM <click_log> WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender> AND (date_trunc('<interval>', date) + (<start> - date_trunc('<interval>', <start>))) = xaxis AND date < <final>) as cl,"
             + " (SELECT count(*) as impressions FROM impression_log WHERE <campaign> AND <filterAge> AND <filterIncome> AND <filterGender> AND (date_trunc('<interval>', date) + (<start> - date_trunc('<interval>', <start>))) = xaxis AND date < <final>) as il) as yaxis"
             + " FROM"
@@ -272,7 +272,7 @@ public class DatabaseQueryFactory {
     graphQueries.put(
             Metric.CTR,
             "SELECT xaxis, ("
-                    + " SELECT (cl.clicks::double precision) / il.impressions FROM"
+                    + " SELECT ((cl.clicks::double precision) / il.impressions) * 100 FROM"
                     + " (SELECT count(*) as clicks FROM <click_log> WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender> AND date_trunc('<interval>', date) = xaxis) as cl,"
                     + " (SELECT count(*) as impressions FROM impression_log WHERE <campaign> AND <filterAge> AND <filterIncome> AND <filterGender> AND date_trunc('<interval>', date) = xaxis) as il) as yaxis"
                     + " FROM"
@@ -350,7 +350,7 @@ public class DatabaseQueryFactory {
     // The average amount of clicks per impression (CTR)
     statisticQueries.put(
         Metric.CTR,
-        "SELECT 'all' AS xaxis, (clicks::double precision) / NULLIF(impressions, 0) AS yaxis FROM"
+        "SELECT 'all' AS xaxis, ((clicks::double precision) / NULLIF(impressions, 0)) * 100 AS yaxis FROM"
             + " (SELECT count(*) AS clicks FROM <click_log> WHERE date BETWEEN <range> AND <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS cl,"
             + " (SELECT count(*) AS impressions FROM impression_log WHERE date BETWEEN <range> AND <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS il;");
   }
@@ -464,6 +464,7 @@ public class DatabaseQueryFactory {
     }
     // Apply default settings, if filters are null
     sql = applyDefaultReplacements(sql);
+    System.out.println(sql);
     return sql;
   }
 
