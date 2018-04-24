@@ -4,20 +4,19 @@ import java.awt.Dialog.ModalExclusionType;
 import java.awt.EventQueue;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import javax.swing.ToolTipManager;
 import javax.swing.WindowConstants;
 import group33.seg.controller.DashboardController.DashboardMVC;
+import group33.seg.view.definitions.DefinitionFrame;
 import group33.seg.view.structure.DashboardFrame;
 import group33.seg.view.utilities.Accessibility;
 import group33.seg.view.utilities.Accessibility.Appearance;
-import group33.seg.view.utilities.DefinitionFrame;
 
-// TODO: Not a fan of this name but functionality doesn't fall under View
 public class DisplayHandler {
 
   /** MVC model that sub-controller has knowledge of */
   private final DashboardMVC mvc;
 
-  private volatile boolean fontScalingOutdated = false;
   private volatile boolean definitionsVisible = false;
 
   /**
@@ -46,7 +45,6 @@ public class DisplayHandler {
         DashboardFrame newDashboard = new DashboardFrame(mvc.controller);
         mvc.view.setDashboard(newDashboard);
         newDashboard.setVisible(true);
-        fontScalingOutdated = false;
       } catch (Exception e) {
         e.printStackTrace();
       }
@@ -64,7 +62,10 @@ public class DisplayHandler {
         System.err.println("Dashboard not open");
         return;
       }
-
+      // Unattach views from controller
+      mvc.controller.graphs.setLineGraphView(null);
+      mvc.controller.statistics.setView(null, false);
+      
       dashboard.setVisible(false);
       dashboard.dispose();
       mvc.view.setDashboard(null);
@@ -78,6 +79,13 @@ public class DisplayHandler {
   public void reloadDashboard() {
     closeDashboard();
     openDashboard();
+  }
+
+  /**
+   * @return Whether the controlled definition dialog is visible
+   */
+  public boolean isDefinitionWindowVisible() {
+    return definitionsVisible;
   }
 
   /**
@@ -110,11 +118,10 @@ public class DisplayHandler {
       definitions.setVisible(true);
     });
   }
-
-  public boolean isDefinitionWindowVisible() {
-    return definitionsVisible;
-  }
-
+  
+  /**
+   * Hide the controlled definition dialog.
+   */
   public void hideDefinitions() {
     EventQueue.invokeLater(() -> {
       DefinitionFrame definitions = mvc.view.getDefinitions();
@@ -132,33 +139,27 @@ public class DisplayHandler {
     Accessibility.setAppearance(Appearance.PLATFORM);
     // Apply font scaling
     applyUIFontScaling();
+    // Apply any other global properties
+    ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
   }
 
+  /**
+   * Apply the scaling currently stored by the settings handler.
+   */
   public void applyUIFontScaling() {
     double scaling = mvc.controller.settings.prefs.getDouble(SettingsHandler.FONT_SCALING,
         Accessibility.DEFAULT_SCALING);
     applyUIFontScaling(scaling);
   }
 
+  /**
+   * Apply a given font scale to all GUI elements.
+   * 
+   * @param scaling Scaling to apply
+   */
   public void applyUIFontScaling(double scaling) {
     Accessibility.scaleDefaultUIFontSize(scaling);
     mvc.controller.graphs.setFontScale(scaling);
-    fontScalingOutdated = true;
-  }
-
-  public void setUIFontScaling(double newScaling) {
-    double currentScaling = mvc.controller.settings.prefs.getDouble(SettingsHandler.FONT_SCALING,
-        Accessibility.DEFAULT_SCALING);
-
-    if (currentScaling != newScaling) {
-      mvc.controller.settings.prefs.putDouble(SettingsHandler.FONT_SCALING, newScaling);
-      fontScalingOutdated = true;
-    }
-
-  }
-
-  public boolean isUIFontScalingOutdated() {
-    return fontScalingOutdated;
   }
 
 }

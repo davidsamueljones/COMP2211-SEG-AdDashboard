@@ -5,69 +5,101 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Stroke;
+import java.awt.Toolkit;
 import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
-import org.jfree.chart.ChartFactory;
+import javax.swing.SwingUtilities;
+import org.jfree.chart.ChartMouseEvent;
+import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.LegendItem;
 import org.jfree.chart.LegendItemCollection;
 import org.jfree.chart.StandardChartTheme;
+import org.jfree.chart.axis.DateAxis;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.data.Range;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
+import group33.seg.lib.Pair;
 import group33.seg.model.configs.LineConfig;
 import group33.seg.model.configs.LineGraphConfig;
-import group33.seg.model.types.Pair;
+import group33.seg.model.configs.LineGraphConfig.Mode;
 import group33.seg.view.utilities.Accessibility;
+import group33.seg.view.utilities.CustomChartPanel;
+import group33.seg.view.utilities.CustomDateAxis;
 
 public class LineGraphView extends JPanel {
   private static final long serialVersionUID = -7920465975957290150L;
 
+  public static Color DEFAULT_BACKGROUND = Color.getHSBColor(0, 0, (float) 0.9);
+  
   public static float MIN_THICKNESS = 1.0f;
   public static float MAX_THICKNESS = 5.0f;
-
-  private ChartPanel pnlChart;
+ 
+  private CustomChartPanel pnlChart;
 
   private JFreeChart chart;
+
   private XYPlot plot;
+
+  /** Domain axis (main one that is displayed only) */
+  private CustomDateAxis timeAxis;
+
+  /** Range axis for all modes */
+  private NumberAxis valueAxis;
+
+  /** Dataset used for NORMAL mode (OVERLAY mode uses as reference) */
+  private TimeSeriesCollection dataset;
+
+  /** Renderer used for NORMAL mode */
   private XYLineAndShapeRenderer renderer;
 
-  private TimeSeriesCollection dataset;
+  /** Configurations for each line as reference */
   private List<LineConfig> configs;
 
+  /** Whether legend should be enabled */
   private boolean legendEnabled;
+
+  /** The current graphing mode */
+  private Mode mode;
 
   /**
    * Fully configure an empty chart and its controls.
    */
-  public LineGraphView() {
+  public LineGraphView(boolean useBuffer) {
     initChart();
-    initGUI();
+    initGUI(useBuffer);
     initControlScheme();
   }
 
   /**
    * Initialise the GUI and any event listeners.
    */
-  private void initGUI() {
+  private void initGUI(boolean useBuffer) {
     setLayout(new BorderLayout(0, 0));
 
     // Chart panel
-    pnlChart = new ChartPanel(chart, false);
-    // Apply minimum and maximum draw sizing to avoid distortion
-    pnlChart.setMaximumDrawHeight(Integer.MAX_VALUE);
-    pnlChart.setMaximumDrawWidth(Integer.MAX_VALUE);
-    pnlChart.setMinimumDrawWidth(10);
-    pnlChart.setMinimumDrawHeight(10);
+    // Configure chart with:
+    // * No preferred size, let view control
+    // * Apply low minimum and high maximum draw sizing to avoid distortion
+    // * Buffer used if indicated (otherwise not)
+    // * Disable property changing menu item, allow the rest
+    pnlChart = new CustomChartPanel(chart, 0, 0, 10, 10, Integer.MAX_VALUE, Integer.MAX_VALUE,
+        useBuffer, false, true, true, true, true, true);
 
     this.add(pnlChart, BorderLayout.CENTER);
 
@@ -76,12 +108,36 @@ public class LineGraphView extends JPanel {
     tlbControls.setRollover(true);
     add(tlbControls, BorderLayout.SOUTH);
 
-    JButton btnPan = new JButton("Pan");
+    JButton btnPan = new JButton();
+    btnPan.setToolTipText("<html>Enable panning controls for the current chart."
+        + "<br><br><b>Scheme controls:</b><p>- Mouse Drag: Pan the view</p>"
+        + "<p>- Scroll Wheel: Zoom in/out the range and domain</p>"
+        + "<p>- Ctrl/Cmd + Scroll Wheel: Zoom in/out the the range</p>"
+        + "<p>- Alt + Scroll Wheel: Zoom in/out the the domain</p>"
+        + "<p>- Double Mouse Click: Reset axis");
+    btnPan.setIcon(new ImageIcon(getClass().getResource("/icons/hand-empty.png")));
     btnPan.setSelected(true);
     tlbControls.add(btnPan);
 
-    JButton btnZoom = new JButton("Zoom");
+    JButton btnZoom = new JButton();
+    btnZoom.setToolTipText(
+        "<html>Enable zooming controls for the current chart.<br><br><b>Scheme controls:</b>"
+            + "<p>- Mouse Drag: Zoom axis to match created box</p>"
+            + "<p>- Alt + Mouse Drag: Pan the view</p><p>- Double Mouse Click: Reset axis");
+    btnZoom.setIcon(new ImageIcon(getClass().getResource("/icons/magnifying-glass.png")));
     tlbControls.add(btnZoom);
+
+    tlbControls.addSeparator();
+
+    JButton btnSave = new JButton();
+    btnSave.setToolTipText("Export the currently displayed graph as an image.");
+    btnSave.setIcon(new ImageIcon(getClass().getResource("/icons/save.png")));
+    tlbControls.add(btnSave);
+
+    JButton btnPrint = new JButton();
+    btnPrint.setToolTipText("Print the currently displayed graph.");
+    btnPrint.setIcon(new ImageIcon(getClass().getResource("/icons/print.png")));
+    tlbControls.add(btnPrint);
 
     tlbControls.addSeparator();
 
@@ -102,19 +158,41 @@ public class LineGraphView extends JPanel {
         enableBoxZoom();
       }
     });
+
+    // Display user save option
+    btnSave.addActionListener(e -> {
+      try {
+        pnlChart.doSaveAs();
+      } catch (IOException e1) {
+        System.err.println("Unable to save image");
+      }
+    });
+
+    // Display user print option
+    btnPrint.addActionListener(e -> {
+      pnlChart.createChartPrintJob();
+    });
   }
 
   /**
    * Initialise an empty chart.
    */
   private void initChart() {
+    // Initialise reference data structures
     this.configs = new ArrayList<>();
     this.dataset = new TimeSeriesCollection();
-    this.chart = ChartFactory.createTimeSeriesChart("", "", "", dataset, true, true, false);
-    this.plot = chart.getXYPlot();
-    this.renderer = new XYLineAndShapeRenderer();
-    renderer.setDefaultShapesVisible(false);
-    plot.setRenderer(renderer);
+    // Create X Axis
+    timeAxis = new CustomDateAxis();
+    timeAxis.setLowerMargin(0.02);
+    timeAxis.setUpperMargin(0.02);
+    // Create Y Axis
+    valueAxis = new NumberAxis();
+    valueAxis.setAutoRangeIncludesZero(false);
+    // Create a new renderer
+    this.renderer = new XYLineAndShapeRenderer(true, false);
+    // Create plot and attach it to a chart
+    this.plot = new XYPlot(dataset, timeAxis, valueAxis, renderer);
+    this.chart = new JFreeChart(null, null, plot, true);
   }
 
   /**
@@ -127,6 +205,22 @@ public class LineGraphView extends JPanel {
   }
 
   /**
+   * Handle any behaviour that must occur after any graph content change or any property changes.
+   */
+  private void refresh() {
+    switch (mode) {
+      case NORMAL:
+        enableNormalMode();
+        break;
+      case OVERLAY:
+        enableOverlayMode();
+        break;
+      default:
+        throw new IllegalArgumentException("Invalid graph mode");
+    }
+  }
+
+  /**
    * Set the graph's properties based off the given configuration.
    * 
    * @param graph Configuration to use for set
@@ -134,9 +228,15 @@ public class LineGraphView extends JPanel {
   public void setGraphProperties(LineGraphConfig graph) {
     pnlChart.setChart(chart);
     chart.setTitle(graph.title);
+    plot.setBackgroundPaint(graph.background);
+    Color colGridlines = getGridlineColor(graph.background);
+    plot.setDomainGridlinePaint(colGridlines);
+    plot.setRangeGridlinePaint(colGridlines);
     plot.getDomainAxis().setLabel(graph.xAxisTitle);
     plot.getRangeAxis().setLabel(graph.yAxisTitle);
     setLegendEnabled(graph.showLegend);
+    this.mode = graph.mode;
+    refresh();
   }
 
   /**
@@ -170,6 +270,8 @@ public class LineGraphView extends JPanel {
     if (ts == null) {
       return false;
     }
+    int idx = dataset.indexOf(ts);
+    configs.set(idx, line);
     setSeriesData(ts, data);
     return true;
   }
@@ -214,6 +316,7 @@ public class LineGraphView extends JPanel {
     chart.setTitle("");
     plot.getDomainAxis().setLabel("");
     plot.getRangeAxis().setLabel("");
+    plot.setBackgroundPaint(DEFAULT_BACKGROUND);
   }
 
   /**
@@ -233,8 +336,14 @@ public class LineGraphView extends JPanel {
   private void setSeriesData(TimeSeries ts, List<Pair<String, Number>> data) {
     ts.clear();
     for (Pair<String, Number> d : data) {
-      ts.add(Second.parseSecond(d.key), d.value);
+      Second x = Second.parseSecond(d.key);
+      if (d.value != null) {
+        ts.add(x, d.value);
+      } else {
+        ts.add(x, 0);
+      }
     }
+    refresh();
   }
 
   /**
@@ -248,6 +357,7 @@ public class LineGraphView extends JPanel {
     renderer.setSeriesPaint(idx, color);
     renderer.setSeriesStroke(idx, stroke);
     renderer.setSeriesVisible(idx, !hidden);
+    refresh();
   }
 
   /**
@@ -273,9 +383,7 @@ public class LineGraphView extends JPanel {
    */
   private List<TimeSeries> getSeries() {
     List<TimeSeries> series = new ArrayList<>();
-    Iterator<?> itrDataset = dataset.getSeries().iterator();
-    while (itrDataset.hasNext()) {
-      Object obj = itrDataset.next();
+    for (Object obj : dataset.getSeries()) {
       if (obj instanceof TimeSeries) {
         TimeSeries ts = (TimeSeries) obj;
         series.add(ts);
@@ -326,7 +434,7 @@ public class LineGraphView extends JPanel {
     for (LineConfig config : configs) {
       if (!config.hide) {
         LegendItem item = new LegendItem(config.identifier, config.color);
-        item.setToolTipText("[TEST TOOLTIP]");
+        item.setToolTipText(String.format("<html>%s</html>", config.inText()));
         legend.add(item);
       }
     }
@@ -334,18 +442,125 @@ public class LineGraphView extends JPanel {
   }
 
   /**
+   * Handle behaviour for normal mode, this uses a single dataset, renderer and a single normal time
+   * series axis. All other mode behaviour is first cleared.
+   */
+  private void enableNormalMode() {
+    int i = 0;
+    while (plot.getDataset(i) != null) {
+      plot.setDataset(i, null);
+      plot.setDomainAxis(i, null);
+      plot.setRenderer(i, null);
+      i++;
+    }
+    plot.setDomainAxis(timeAxis);
+    plot.setDataset(dataset);
+    plot.setRenderer(renderer);
+    pnlChart.setFixedAutoRanges(null);
+    timeAxis.setMode(Mode.NORMAL);
+  }
+
+  /**
+   * Handle behaviour for overlay mode. This plots all dataset series with their first data value
+   * displayed at the origin and the succeeding values successive to this. This is handled by
+   * splitting the main dataset into many smaller datasets (one series per dataset). Each dataset
+   * has an invisible axis synchronised with the main axis to allow for this behaviour. The main
+   * axis is put into overlay mode so that it can use relative date formatting. By setting its base
+   * to its respective datasets lowest value, the displayed axis is indexed at 0d0h0m0s.
+   */
+  private void enableOverlayMode() {
+    // Ensure normal mode is set to clear any odd state
+    enableNormalMode();
+
+    // Change the plot to use a different dataset for each series, keeping track of created axis
+    // (including the main axis)
+    List<TimeSeries> series = getSeries();
+    List<ValueAxis> axis = new ArrayList<>();
+    axis.add(timeAxis);
+    int n = 0; // index for created axis
+    for (int i = 0; i < series.size(); i++) {
+      TimeSeries s = series.get(i);
+      LineConfig l = configs.get(i);
+
+
+      // We must disregard any hidden datasets so they don't distort auto ranging
+      if (!l.hide) {
+        TimeSeriesCollection d = new TimeSeriesCollection(s);
+        plot.setDataset(n, d);
+        if (n > 0) {
+          // Configure another axis for the series (hidden)
+          ValueAxis a = new DateAxis();
+          a.setVisible(false);
+          plot.setDomainAxis(n, a);
+          axis.add(a);
+        }
+        // Map the series to this axis
+        plot.mapDatasetToDomainAxis(n, n);
+        // Configure and set a dataset specific renderer
+        XYLineAndShapeRenderer r = new XYLineAndShapeRenderer(true, false);
+        r.setSeriesPaint(0, renderer.getSeriesPaint(i));
+        r.setSeriesStroke(0, renderer.getSeriesStroke(i));
+        plot.setRenderer(n, r);
+        n++;
+      }
+    }
+
+    // Track any data that gets cleared and needs to be reapplied
+    final double lowerMargin = timeAxis.getLowerMargin();
+    final double upperMargin = timeAxis.getUpperMargin();
+    // Ensure no margin is set as it makes calculations simpler
+    for (ValueAxis a : axis) {
+      a.setLowerMargin(0);
+      a.setUpperMargin(0);
+    }
+    // Set all axis bounds to fit their data
+    pnlChart.restoreAutoBounds();
+
+    // Find the largest dataset to determine the synchronised autorange limits
+    double longest = 0;
+    for (ValueAxis a : axis) {
+      double len = a.getUpperBound() - a.getLowerBound();
+      if (len > longest) {
+        longest = len;
+      }
+    }
+
+    // Synchronise autorange limits and ensure margins are reset to their originals
+    List<Pair<ValueAxis, Range>> ranges = new ArrayList<>();
+    for (ValueAxis a : axis) {
+      double lower = a.getLowerBound();
+      double upper = lower + longest;
+      ranges.add(new Pair<>(a, new Range(lower, upper)));
+    }
+    pnlChart.setFixedAutoRanges(ranges);
+
+    // Determine and set the relative offset required for basing the main axis off zero
+    timeAxis.setBaseMillis((long) timeAxis.getLowerBound());
+    // Enable overlay mode on the custom axis so relative formatting is used
+    timeAxis.setMode(Mode.OVERLAY);
+
+    // Enforce the old margins again
+    for (ValueAxis a : axis) {
+      a.setLowerMargin(lowerMargin);
+      a.setUpperMargin(upperMargin);
+    }
+    // Set all axis bounds to fit their data
+    pnlChart.restoreAutoBounds();
+  }
+
+  /**
    * Enable mouse drag pan and scroll zoom behaviour for the current chart panel.
    */
   public void enablePanMode() {
     setPanModifier(pnlChart, InputEvent.BUTTON1_MASK);
-    useScrollZoom(pnlChart, true, true);
+    useScrollZoom(pnlChart);
   }
 
   /**
    * Enable box zoom behaviour for the current chart panel.
    */
   public void enableBoxZoom() {
-    setPanModifier(pnlChart, InputEvent.ALT_MASK);
+    setPanModifier(pnlChart, InputEvent.ALT_MASK | InputEvent.BUTTON1_MASK);
     useBoxZoom(pnlChart);
   }
 
@@ -358,15 +573,42 @@ public class LineGraphView extends JPanel {
     // Enable panning
     plot.setRangePannable(true);
     plot.setDomainPannable(true);
-    // Enable plot reset
-    pnlChart.addMouseWheelListener(arg0 -> pnlChart.restoreAutoRangeBounds());
+    // Modify zoom scroll behaviour depending on held modifiers
+    pnlChart.addMouseWheelListener(e -> {
+      boolean range = (e.getModifiers() & InputEvent.ALT_MASK) == 0;
+      pnlChart.setRangeZoomable(range);
+      boolean domain =
+          (e.getModifiers() & Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) == 0;
+      pnlChart.setDomainZoomable(domain);
+
+      // Re-enable all once this event has been consumed
+      SwingUtilities.invokeLater(() -> {
+        pnlChart.setDomainZoomable(true);
+        pnlChart.setRangeZoomable(true);
+      });
+    });
+    // Enable plot reset on double mouse click
+    pnlChart.addChartMouseListener(new ChartMouseListener() {
+
+      @Override
+      public void chartMouseMoved(ChartMouseEvent e) {}
+
+      @Override
+      public void chartMouseClicked(ChartMouseEvent e) {
+        MouseEvent e1 = e.getTrigger();
+        if ((e1.getModifiers() & InputEvent.BUTTON1_MASK) != 0 && e1.getClickCount() == 2) {
+          pnlChart.restoreAutoBounds();
+        }
+      }
+    });
+    // Redraw legends manually for any events that could affect them
     dataset.addChangeListener(arg0 -> redrawLegend());
     renderer.addChangeListener(arg0 -> redrawLegend());
   }
 
   /**
    * For the given chart panel, set it up to use the pointer for zooming using a drag-box. This will
-   * everse effects of using scroll zoom due to incompatabilities between using both at the same
+   * reverse effects of using scroll zoom due to incompatibilities between using both at the same
    * time.
    * 
    * @param chartPanel Chart panel to modify zoom behaviour for
@@ -375,8 +617,6 @@ public class LineGraphView extends JPanel {
     chartPanel.setZoomTriggerDistance(10);
     chartPanel.setMouseZoomable(true);
     chartPanel.setMouseWheelEnabled(false);
-    chartPanel.setDomainZoomable(true);
-    chartPanel.setRangeZoomable(true);
     chartPanel.setZoomAroundAnchor(false);
   }
 
@@ -385,15 +625,11 @@ public class LineGraphView extends JPanel {
    * effects of using box zoom due to incompatibilities between using both at the same time.
    * 
    * @param chartPanel Chart panel to modify zoom behaviour for
-   * @param domain Whether scrolling should occur in the domain
-   * @param range Whether scrolling should occur in the range
    */
-  private static void useScrollZoom(ChartPanel chartPanel, boolean domain, boolean range) {
+  private static void useScrollZoom(ChartPanel chartPanel) {
     chartPanel.setZoomTriggerDistance(Integer.MAX_VALUE);
     chartPanel.setMouseZoomable(false);
     chartPanel.setMouseWheelEnabled(true);
-    chartPanel.setDomainZoomable(domain);
-    chartPanel.setRangeZoomable(range);
     chartPanel.setZoomAroundAnchor(true);
   }
 
@@ -447,6 +683,29 @@ public class LineGraphView extends JPanel {
     float dif = MAX_THICKNESS - MIN_THICKNESS;
     float thickness = MIN_THICKNESS + dif * scale / 100.0f;
     return new BasicStroke(thickness, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+  }
+  
+  /**
+   * Get the gridline colour that a view instance would use for the given background colour.
+   * 
+   * @param bg Background colour
+   * @return Gridline colour corresponding to background colour
+   */
+  public static Color getGridlineColor(Color bg) {
+    float[] bgHSB = Color.RGBtoHSB(bg.getRed(), bg.getGreen(), bg.getBlue(), null);
+    float bgBrightness = bgHSB[2];
+    final float crossOver = (float) 0.5;
+    final float fgMinBrightness = (float) 0.2;
+    final float fgMaxBrightness = (float) 1.0;
+    float fgBrightness;
+    if (bgBrightness > crossOver) {
+      fgBrightness = Math.min(fgMaxBrightness,
+          fgMinBrightness + (float) Math.pow(crossOver - bgBrightness, 2));
+    } else {
+      fgBrightness = Math.max(fgMinBrightness,
+          fgMaxBrightness - (float) Math.pow(crossOver + bgBrightness, 2));
+    }
+    return Color.getHSBColor(bgHSB[0], bgHSB[1], fgBrightness);
   }
 
 }

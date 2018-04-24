@@ -1,5 +1,6 @@
 package group33.seg.view.structure;
 
+import java.awt.Dialog.ModalityType;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.KeyEvent;
@@ -12,12 +13,14 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import group33.seg.controller.DashboardController;
+import group33.seg.view.about.AboutDialog;
 import group33.seg.view.preferences.PreferencesDialog;
 
 public class DashboardMenuBar extends JMenuBar {
   private static final long serialVersionUID = 7553179515259733852L;
   public int CMD_MODIFIER = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
+  private final DashboardFrame dashboard;
   private final DashboardController controller;
 
   /**
@@ -25,7 +28,8 @@ public class DashboardMenuBar extends JMenuBar {
    * 
    * @param controller Controller for this view object
    */
-  public DashboardMenuBar(DashboardController controller) {
+  public DashboardMenuBar(DashboardFrame dashboard, DashboardController controller) {
+    this.dashboard = dashboard;
     this.controller = controller;
 
     initMenuBar();
@@ -44,13 +48,8 @@ public class DashboardMenuBar extends JMenuBar {
     this.add(mnFile);
 
     // Create menu bar item children
-    JMenuItem mntmImportCampaign = new JMenuItem("Import Campaign");
-    mntmImportCampaign.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, CMD_MODIFIER));
-    mnFile.add(mntmImportCampaign);
-
-    mnFile.addSeparator();
-
     JMenuItem mntmExit = new JMenuItem("Exit");
+    mntmExit.addActionListener(e -> controller.display.closeDashboard());
     mntmExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, CMD_MODIFIER));
     mnFile.add(mntmExit);
   }
@@ -63,11 +62,18 @@ public class DashboardMenuBar extends JMenuBar {
     // Create menu bar item children
     JCheckBoxMenuItem mntmControls = new JCheckBoxMenuItem("Controls");
     mntmControls.setSelected(true);
+    mntmControls.addActionListener(e -> dashboard.showControls(mntmControls.isSelected()));
     mnView.add(mntmControls);
 
     JCheckBoxMenuItem mntmGraph = new JCheckBoxMenuItem("Graph");
     mntmGraph.setSelected(true);
+    mntmGraph.addActionListener(e -> dashboard.showGraph(mntmGraph.isSelected()));
     mnView.add(mntmGraph);
+
+    JCheckBoxMenuItem mntmStatistics = new JCheckBoxMenuItem("Statistics");
+    mntmStatistics.setSelected(true);
+    mntmStatistics.addActionListener(e -> dashboard.showStatistics(mntmStatistics.isSelected()));
+    mnView.add(mntmStatistics);
 
     mnView.addSeparator();
 
@@ -110,22 +116,25 @@ public class DashboardMenuBar extends JMenuBar {
     // Create menu bar item children
     JMenuItem mntmAbout = new JMenuItem("About");
     mnHelp.add(mntmAbout);
-
+    mntmAbout.addActionListener(e -> {
+      // Use current panel's form as parent
+      Window frmCurrent = SwingUtilities.getWindowAncestor(DashboardMenuBar.this);
+      AboutDialog about = new AboutDialog(frmCurrent);
+      about.setModalityType(ModalityType.APPLICATION_MODAL);
+      about.setVisible(true);
+    });
+    
     mnHelp.addSeparator();
 
     JMenuItem mntmPreferences = new JMenuItem("Preferences");
     mntmPreferences.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, CMD_MODIFIER));
     mnHelp.add(mntmPreferences);
-
     mntmPreferences.addActionListener(e -> {
       // Use current panel's form as parent
       Window frmCurrent = SwingUtilities.getWindowAncestor(DashboardMenuBar.this);
       PreferencesDialog preferences = new PreferencesDialog(frmCurrent, controller);
-      preferences.setModal(true);
+      preferences.setModalityType(ModalityType.APPLICATION_MODAL);
       preferences.setVisible(true);
-      if (controller.display.isUIFontScalingOutdated()) {
-        controller.display.reloadDashboard();
-      }
     });
   }
 }

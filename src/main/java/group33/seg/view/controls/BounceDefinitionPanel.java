@@ -11,6 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 import group33.seg.model.configs.BounceConfig;
 import group33.seg.model.configs.BounceConfig.Type;
 
@@ -58,6 +59,7 @@ public class BounceDefinitionPanel extends JPanel {
     add(lblTime, gbc_lblTime);
 
     nudTime = new JSpinner();
+    nudTime.setModel(new SpinnerNumberModel(0, 0, 99999, 1));
     GridBagConstraints gbc_nudTime = new GridBagConstraints();
     gbc_nudTime.fill = GridBagConstraints.HORIZONTAL;
     gbc_nudTime.insets = new Insets(5, 0, 5, 5);
@@ -82,13 +84,13 @@ public class BounceDefinitionPanel extends JPanel {
     add(lblPageCount, gbc_lblPageCount);
 
     nudPageCount = new JSpinner();
+    nudPageCount.setModel(new SpinnerNumberModel(0, 0, 99999, 1));
     GridBagConstraints gbc_nudPageCount = new GridBagConstraints();
     gbc_nudPageCount.fill = GridBagConstraints.HORIZONTAL;
     gbc_nudPageCount.insets = new Insets(0, 0, 5, 5);
     gbc_nudPageCount.gridx = 2;
     gbc_nudPageCount.gridy = 1;
     add(nudPageCount, gbc_nudPageCount);
-
 
     lblPageCount.addMouseListener(new MouseAdapter() {
       @Override
@@ -115,9 +117,11 @@ public class BounceDefinitionPanel extends JPanel {
     }
     switch (bounceDef.type) {
       case PAGES:
+        radPageCount.setSelected(true);
         nudPageCount.setValue(bounceDef.value);
         break;
       case TIME:
+        radTime.setSelected(true);
         nudTime.setValue(bounceDef.value);
         break;
       default:
@@ -128,6 +132,7 @@ public class BounceDefinitionPanel extends JPanel {
   public void clear() {
     nudTime.setValue(0);
     nudPageCount.setValue(0);
+    radTime.setSelected(true);
   }
 
   public BounceConfig getBounceDef() {

@@ -1,9 +1,16 @@
 package group33.seg.controller.handlers;
 
+import java.awt.EventQueue;
+import java.util.HashSet;
+import java.util.Set;
 import group33.seg.controller.DashboardController.DashboardMVC;
-import group33.seg.controller.types.GraphVisitor;
+import group33.seg.controller.utilities.GraphVisitor;
+import group33.seg.controller.utilities.ProgressListener;
 import group33.seg.model.configs.GraphConfig;
+import group33.seg.model.configs.HistogramConfig;
 import group33.seg.model.configs.LineGraphConfig;
+import group33.seg.view.output.GraphsView;
+import group33.seg.view.output.HistogramView;
 import group33.seg.view.output.LineGraphView;
 
 /**
@@ -15,11 +22,20 @@ public class GraphsHandler {
   /** MVC model that sub-controller has knowledge of */
   private final DashboardMVC mvc;
 
+  /** Graphs view */
+  private GraphsView graphsView = null;
+  
   /** Line graph handler */
-  private LineGraphHandler lineGraph;
-
+  private LineGraphHandler lineGraphHandler = null;
+  
+  /** Histogram handler */
+  private HistogramHandler histogramHandler = null;
+  
   /** Handler currently in use */
   private GraphHandlerInterface<?> currentHandler = null;
+
+  /** Listeners to alert about progress */
+  private final Set<ProgressListener> progressListeners = new HashSet<>();
 
   /** Font scaling to apply to textual elements in charts */
   private double scale = 1;
@@ -31,25 +47,46 @@ public class GraphsHandler {
    */
   public GraphsHandler(DashboardMVC mvc) {
     this.mvc = mvc;
+    // Print messages to stdout for debug
+    addProgressListener(new ProgressListener() {
+      @Override
+      public void progressUpdate(String update) {
+        System.out.println(update);
+      }
+    });
   }
 
   /**
-   * Create a new line handler making use of the given view output.
+   * Set the graphs view being controlled.
+   */
+  public void setGraphsView(GraphsView view) {
+    graphsView = view;
+  }
+  
+  /**
+   * Create a new line graph handler making use of the given view output.
    */
   public void setLineGraphView(LineGraphView view) {
-    view.applyFontScale(scale);
-    lineGraph = new LineGraphHandler(mvc, view);
-  }
-
-  /**
-   * Reloads the graph using the current handler.
-   */
-  public void reloadGraph() {
-    if (currentHandler != null) {
-      currentHandler.reloadGraph();
+    if (view == null) {
+      lineGraphHandler = null;
+    } else {
+      view.applyFontScale(scale);
+      lineGraphHandler = new LineGraphHandler(mvc, view);
     }
   }
 
+  /**
+   * Create a new histogram handler making use of the given view output.
+   */
+  public void setHistogramView(HistogramView view) {
+    if (view == null) {
+      histogramHandler = null;
+    } else {
+      view.applyFontScale(scale);
+      histogramHandler = new HistogramHandler(mvc, view);
+    }
+  }
+  
   /**
    * Display the given graph configuration with the appropriate graph handler. Default behaviour of
    * updating without forcing recreation is applied.
@@ -71,33 +108,55 @@ public class GraphsHandler {
    * @param clear Whether full recreation should be enforced
    */
   public void displayGraph(GraphConfig graph, boolean clear) {
-    // Handle display behaviour depending on the type of graph
-    graph.accept(new GraphVisitor() {
-
-      @Override
-      public void visit(LineGraphConfig graph) {
-        handleUpdate(lineGraph, clear);
-        lineGraph.displayGraph(graph);
-      }
-
-      /**
-       * Handle graph clearing behaviour and update the graph handler.
-       * 
-       * @param next The graph handler about to be used
-       * @param clear Whether to clear the graph handler that is about to be used
-       */
-      private void handleUpdate(GraphHandlerInterface<?> next, boolean clear) {
-        if (currentHandler != null && currentHandler != next) {
-          currentHandler.clearGraph();
-        } else if (clear) {
-          next.clearGraph();
+    // Do load on worker thread, updating progress listeners appropriately
+    Thread workerThread = new Thread(() -> {
+      try {
+        updateProgress("Loading graph into view...");
+        alertStart();
+        if (graphsView != null) {
+          EventQueue.invokeLater(() -> graphsView.loadView(graph));
         }
-        currentHandler = lineGraph;
+        if (graph != null) {      
+          // Handle display behaviour depending on the type of graph
+          graph.accept(new GraphVisitor() {
+
+            @Override
+            public void visit(LineGraphConfig graph) {
+              loadHandler(lineGraphHandler, clear);
+              lineGraphHandler.displayGraph(graph);
+            }
+
+            @Override
+            public void visit(HistogramConfig graph) {
+              loadHandler(histogramHandler, clear);
+              histogramHandler.displayGraph(graph);
+            }
+          });
+        }      
+        updateProgress("Finished loading graph into view");
+      } finally {       
+        alertFinished();
       }
     });
 
+    workerThread.start();
   }
 
+  /**
+   * Handle graph clearing behaviour and update the graph handler.
+   * 
+   * @param next The graph handler about to be used
+   * @param clear Whether to clear the graph handler that is about to be used
+   */
+  private void loadHandler(GraphHandlerInterface<?> next, boolean clear) {
+    if (currentHandler != null && currentHandler != next) {
+      currentHandler.clearGraph();
+    } else if (clear) {
+      next.clearGraph();
+    }
+    currentHandler = lineGraphHandler;
+  }
+  
   /**
    * Set font scale to apply to all current and future charts.
    * 
@@ -105,8 +164,8 @@ public class GraphsHandler {
    */
   public void setFontScale(double scale) {
     this.scale = scale;
-    if (lineGraph != null) {
-      lineGraph.view.applyFontScale(scale);
+    if (lineGraphHandler != null) {
+      lineGraphHandler.view.applyFontScale(scale);
     }
   }
 
@@ -118,6 +177,49 @@ public class GraphsHandler {
     PROPERTIES, /* Just properties have changed */
     DATA, /* Just data has changed */
     NOTHING; /* No changes */
+  }
+
+  /**
+   * @param progressListener Progress listener to start sending alerts to
+   */
+  public void addProgressListener(ProgressListener progressListener) {
+    progressListeners.add(progressListener);
+  }
+
+  /**
+   * @param progressListener Progress listener to no longer alert
+   */
+  public void removeProgressListener(ProgressListener progressListener) {
+    progressListeners.remove(progressListener);
+  }
+
+  /**
+   * Helper function to alert all listeners that a load has started.
+   */
+  protected void alertStart() {
+    for (ProgressListener listener : progressListeners) {
+      listener.start();
+    }
+  }
+
+  /**
+   * Helper function to alert all listeners that a load finished.
+   */
+  protected void alertFinished() {
+    for (ProgressListener listener : progressListeners) {
+      listener.finish(true);
+    }
+  }
+
+  /**
+   * Helper function to alert all listeners of a progress update.
+   *
+   * @param update Textual update on progress
+   */
+  protected void updateProgress(String update) {
+    for (ProgressListener listener : progressListeners) {
+      listener.progressUpdate(update);
+    }
   }
 
 }

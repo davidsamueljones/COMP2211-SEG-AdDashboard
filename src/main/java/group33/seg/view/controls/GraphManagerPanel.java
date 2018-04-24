@@ -21,11 +21,17 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import group33.seg.controller.DashboardController;
+import group33.seg.controller.handlers.LineGraphHandler;
 import group33.seg.controller.handlers.WorkspaceHandler.WorkspaceListener;
-import group33.seg.controller.types.GraphVisitor;
+import group33.seg.controller.utilities.GraphVisitor;
 import group33.seg.model.configs.GraphConfig;
+import group33.seg.model.configs.HistogramConfig;
 import group33.seg.model.configs.LineGraphConfig;
-import group33.seg.view.graphwizard.LineGraphWizardDialog;
+import group33.seg.view.graphwizard.linegraph.LineGraphWizardDialog;
+import group33.seg.view.graphwizards.GraphWizardInterface;
+import group33.seg.view.graphwizards.WizardSelectorDialog;
+import group33.seg.view.graphwizards.histogram.HistogramWizardDialog;
+import group33.seg.view.utilities.ProgressDialog;
 
 public class GraphManagerPanel extends JPanel {
   private static final long serialVersionUID = 6541885932864334941L;
@@ -93,6 +99,7 @@ public class GraphManagerPanel extends JPanel {
         if (value instanceof GraphConfig) {
           GraphConfig config = (GraphConfig) value;
           setText(config.identifier);
+          setToolTipText(String.format("<html>%s</html>", config.inText()));
         }
         return comp;
       }
@@ -141,8 +148,8 @@ public class GraphManagerPanel extends JPanel {
     // ************************************************************************************
 
     // Allow a new graph to be created using a fresh wizard
-    btnNew.addActionListener(e -> displayWizard(null));
-    
+    btnNew.addActionListener(e -> displayNewWizard());
+
     // Listen for changes in workspace graphs, updating list if required
     controller.workspace.addListener(type -> {
       if (type == WorkspaceListener.Type.WORKSPACE || type == WorkspaceListener.Type.GRAPHS) {
@@ -171,41 +178,53 @@ public class GraphManagerPanel extends JPanel {
     });
 
     // Open wizard for selected graph
-    btnViewModify.addActionListener(e -> displayWizard(lstGraphs.getSelectedValue()));
+    btnViewModify.addActionListener(e -> displayWizard(lstGraphs.getSelectedValue(), true));
 
     // Load the selected graph into the view
-    btnLoad.addActionListener(e -> controller.graphs.displayGraph(lstGraphs.getSelectedValue()));
-
-  }
-
-  /**
-   * Using the graph visitor pattern display an appropriate wizard for the given graph. On a null
-   * graph a graph type selector is first shown.
-   * 
-   * @param config Configuration to display in wizard
-   */
-  public void displayWizard(GraphConfig config) {
-    if (config == null) {
-      displayNewWizard();
-    } else {
-      // Use graph visitor pattern to open appropriate wizard
-      config.accept(new GraphVisitor() {
-        
-        @Override
-        public void visit(LineGraphConfig graph) {
-         displayLineWizard(graph);
-        }
-      });
-      
-    }
+    btnLoad.addActionListener(e -> {
+      controller.workspace.setCurrentGraph(lstGraphs.getSelectedValue());
+    });
   }
 
   /**
    * Display graph type selector, on selection load appropriate wizard.
    */
   public void displayNewWizard() {
-    // TODO: Add actual implementation when multiple graph types
-    displayLineWizard(null);
+    Window frmCurrent = SwingUtilities.getWindowAncestor(GraphManagerPanel.this);
+    WizardSelectorDialog selector = new WizardSelectorDialog(frmCurrent);
+    selector.setModalityType(ModalityType.APPLICATION_MODAL);
+    selector.setVisible(true);
+    GraphConfig config = selector.getSelectedType();
+    if (config != null) {
+      displayWizard(config, false);
+    }
+  }
+
+  /**
+   * Using the graph visitor pattern display an appropriate wizard for the given graph type. A null
+   * graph type will be ignored.
+   * 
+   * @param config Configuration to load in wizard if indicated
+   * @param load Whether to load the configuration
+   */
+  public void displayWizard(GraphConfig config, boolean load) {
+    if (config != null) {
+      // Use graph visitor pattern to open appropriate wizard
+      config.accept(new GraphVisitor() {
+
+        @Override
+        public void visit(LineGraphConfig graph) {
+          displayLineWizard(load ? graph : null);
+        }
+
+        @Override
+        public void visit(HistogramConfig graph) {
+          displayHistogramWizard(load ? graph : null);
+        }
+
+      });
+
+    }
   }
 
   /**
@@ -218,8 +237,32 @@ public class GraphManagerPanel extends JPanel {
     LineGraphWizardDialog wizard = new LineGraphWizardDialog(frmCurrent, controller, config);
     wizard.setModalityType(ModalityType.APPLICATION_MODAL);
     wizard.setVisible(true);
-    // Select new graph on wizard close
+    handleWizardOutput(wizard);
+  }
+
+
+
+  /**
+   * Display a histogram wizard, loading the given configuration.
+   * 
+   * @param config Configuration to load
+   */
+  private void displayHistogramWizard(HistogramConfig config) {
+    Window frmCurrent = SwingUtilities.getWindowAncestor(GraphManagerPanel.this);
+    HistogramWizardDialog wizard = new HistogramWizardDialog(frmCurrent, controller, config);
+    wizard.setModalityType(ModalityType.APPLICATION_MODAL);
+    wizard.setVisible(true);
+    handleWizardOutput(wizard);
+  }
+
+  /**
+   * Get the created graph from the given wizard and handle behaviour appropriately.
+   * 
+   * @param wizard Wizard interface to use
+   */
+  public void handleWizardOutput(GraphWizardInterface<?> wizard) {
     GraphConfig newConfig = wizard.getGraph();
+    // Select new graph in list
     if (newConfig != null) {
       SwingUtilities.invokeLater(() -> lstGraphs.setSelectedValue(newConfig, true));
     }

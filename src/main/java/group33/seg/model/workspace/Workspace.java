@@ -2,10 +2,13 @@ package group33.seg.model.workspace;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import group33.seg.controller.database.DatabaseConfig;
+import group33.seg.lib.Pair;
 import group33.seg.model.configs.CampaignConfig;
 import group33.seg.model.configs.GraphConfig;
 import group33.seg.model.configs.StatisticConfig;
+import group33.seg.model.types.Metric;
 
 public class Workspace {
   public final String name;
@@ -17,11 +20,14 @@ public class Workspace {
   /** Currently loaded campaign */
   public CampaignConfig campaign;
 
+  /** Currently loaded graph */
+  public GraphConfig graph = null;
+  
   /** Graph configurations currently stored in workspace */
   public List<GraphConfig> graphs = new ArrayList<>();
 
-  /** Statistics currently stored in workspace */
-  public List<StatisticConfig> statistics = new ArrayList<>();
+  /** Statistics currently stored in workspace (with a set of cached values) */
+  public List<Pair<StatisticConfig, Map<Metric, Double>>> statistics = new ArrayList<>();
 
   /**
    * Initialise a workspace.

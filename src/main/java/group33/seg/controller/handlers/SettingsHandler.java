@@ -6,9 +6,14 @@ import group33.seg.view.utilities.Accessibility;
 
 public class SettingsHandler {
   public static final String FONT_SCALING = "font_scaling";
+  public static final String BUFFERED_GRAPH = "buffered_graph";
 
+  /** Handled preference node */
   public final Preferences prefs;
 
+  /**
+   * Create a new settings handler, fetching or creating the relevent preference node.
+   */
   public SettingsHandler() {
     boolean newPrefs = false;
 
@@ -28,17 +33,28 @@ public class SettingsHandler {
     }
   }
 
+  /**
+   * Delete current preferences node if it exists
+   */
   public void clear() {
     try {
-      prefs.removeNode();
+      if (prefs != null) {
+        prefs.removeNode();
+      }
     } catch (BackingStoreException e) {
       System.err.println("Unable to clear preferences");
     }
   }
 
+  /**
+   * Apply default settings to current node.
+   */
   public void setDefaults() {
-    // Assign default preferences
-    prefs.putDouble(FONT_SCALING, Accessibility.DEFAULT_SCALING);
+    if (prefs != null) {
+      // Assign default preferences
+      prefs.putDouble(FONT_SCALING, Accessibility.DEFAULT_SCALING);
+      prefs.putBoolean(BUFFERED_GRAPH, true);
+    }
   }
 
 }

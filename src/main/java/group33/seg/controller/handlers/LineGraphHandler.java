@@ -1,16 +1,22 @@
 package group33.seg.controller.handlers;
 
+import java.awt.EventQueue;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import com.rits.cloning.Cloner;
 import group33.seg.controller.DashboardController.DashboardMVC;
 import group33.seg.controller.handlers.GraphsHandler.Update;
 import group33.seg.controller.types.MetricQueryResponse;
-import group33.seg.model.configs.GraphConfig;
+import group33.seg.controller.utilities.ProgressListener;
+import group33.seg.lib.Pair;
 import group33.seg.model.configs.LineConfig;
 import group33.seg.model.configs.LineGraphConfig;
 import group33.seg.view.output.LineGraphView;
+import group33.seg.view.utilities.ProgressDialog;
 
 public class LineGraphHandler implements GraphHandlerInterface<LineGraphConfig> {
+
   /** MVC model that sub-controller has knowledge of */
   private final DashboardMVC mvc;
 
@@ -67,9 +73,9 @@ public class LineGraphHandler implements GraphHandlerInterface<LineGraphConfig> 
    */
   @Override
   public void clearGraph() {
-    System.out.println("CLEARING GRAPH");
+    mvc.controller.graphs.updateProgress("Clearing graph...");
     this.graph = null;
-    view.clearGraph();
+    EventQueue.invokeLater(() -> view.clearGraph());
   }
 
   /**
@@ -79,7 +85,7 @@ public class LineGraphHandler implements GraphHandlerInterface<LineGraphConfig> 
    * @param graph Graph properties to load
    */
   private void setGraphProperties(LineGraphConfig graph) {
-    view.setGraphProperties(graph);
+    EventQueue.invokeLater(() -> view.setGraphProperties(graph));
   }
 
   /**
@@ -154,18 +160,20 @@ public class LineGraphHandler implements GraphHandlerInterface<LineGraphConfig> 
    */
   private void updateLine(LineConfig line, Update update) {
     // Add line record in view if it doesn't exist
-    view.addLine(line);
+    EventQueue.invokeLater(() -> view.addLine(line));
 
     // Do required view updates
     if (update == Update.FULL || update == Update.PROPERTIES) {
-      System.out.println("UPDATING PROPERTIES: " + line.identifier);
-      view.setLineProperties(line);
+      mvc.controller.graphs
+          .updateProgress(String.format("Updating properties of line '%s'...", line.identifier));
+      EventQueue.invokeLater(() -> view.setLineProperties(line));
     }
     if (update == Update.FULL || update == Update.DATA) {
-      System.out.println("UPDATING DATA: " + line.identifier);
-      // TODO: Improve performance with threading?
+      mvc.controller.graphs.updateProgress(String.format("Updating data of line '%s'...", line.identifier));
       MetricQueryResponse mqr = mvc.controller.database.getQueryResponse(line.query);
-      view.setLineData(line, mqr.getResult());
+      // Wait for result outside of EDT
+      List<Pair<String, Number>> result = mqr.getResult();
+      EventQueue.invokeLater(() -> view.setLineData(line, result));
     }
 
   }
@@ -176,8 +184,8 @@ public class LineGraphHandler implements GraphHandlerInterface<LineGraphConfig> 
    * @param line Line to remove
    */
   private void removeLine(LineConfig line) {
-    System.out.println("REMOVING: " + line.identifier);
-    view.removeLine(line);
+    mvc.controller.graphs.updateProgress(String.format("Removing line '%s'...", line.identifier));
+    EventQueue.invokeLater(() -> view.removeLine(line));
   }
 
   /**

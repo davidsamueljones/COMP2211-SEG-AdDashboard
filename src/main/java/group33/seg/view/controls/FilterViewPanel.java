@@ -7,9 +7,11 @@ import java.awt.Insets;
 import java.awt.Window;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
@@ -18,7 +20,7 @@ import group33.seg.model.configs.FilterConfig;
 public class FilterViewPanel extends JPanel {
   private static final long serialVersionUID = 8739821651130799927L;
   
-  private JTextArea txtFilter;
+  private JTextPane txtFilter;
   private JButton btnModifyFilter;
 
   private FilterConfig filter = null;
@@ -44,6 +46,8 @@ public class FilterViewPanel extends JPanel {
           BorderFactory.createEmptyBorder(5, 5, 5, 5));
       this.setBorder(border);
     }
+    
+    loadFilter(null);
   }
 
   private void initGUI() {
@@ -68,7 +72,9 @@ public class FilterViewPanel extends JPanel {
     // gbc_cboCampaign.gridy = 0;
     // add(cboCampaign, gbc_cboCampaign);
 
-    txtFilter = new JTextArea(FilterConfig.NO_FILTER_TEXT);
+    txtFilter = new JTextPane();
+    txtFilter.setContentType("text/html");
+    txtFilter.putClientProperty(JTextPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
     txtFilter.setEditable(false);
     JScrollPane scrFilter = new JScrollPane(txtFilter);
     scrFilter.setPreferredSize(new Dimension(0, scrFilter.getPreferredSize().height));
@@ -101,7 +107,9 @@ public class FilterViewPanel extends JPanel {
   public void loadFilter(FilterConfig filter) {
     this.filter = filter;
     if (filter != null) {
-      txtFilter.setText(filter.inText());
+      txtFilter.setText(String.format("<html>%s</html>", filter.inText()));
+    } else {
+      txtFilter.setText(FilterConfig.NO_FILTER_TEXT);
     }
   }
 

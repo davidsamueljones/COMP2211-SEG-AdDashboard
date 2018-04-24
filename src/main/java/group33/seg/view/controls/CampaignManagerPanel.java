@@ -1,5 +1,6 @@
 package group33.seg.view.controls;
 
+import java.awt.Dialog.ModalityType;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -10,10 +11,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import group33.seg.controller.DashboardController;
-import group33.seg.controller.handlers.SettingsHandler;
 import group33.seg.controller.handlers.WorkspaceHandler.WorkspaceListener;
 import group33.seg.model.configs.CampaignConfig;
-import group33.seg.view.campaignimport.CampaignSelectionDialog;
+import group33.seg.view.campaignselection.CampaignSelectionDialog;
 
 public class CampaignManagerPanel extends JPanel {
   private static final long serialVersionUID = 8138446932363054396L;
@@ -83,15 +83,14 @@ public class CampaignManagerPanel extends JPanel {
       Window frmCurrent = SwingUtilities.getWindowAncestor(CampaignManagerPanel.this);
       // Show dialog
       CampaignSelectionDialog cid = new CampaignSelectionDialog(frmCurrent, controller);
-      cid.setModal(true);
+      cid.setModalityType(ModalityType.APPLICATION_MODAL);
       cid.setVisible(true);
     });
     
-    // Watch for changes in workspace campaign
+    // Watch for changes in workspace campaign to update current campaign display
     controller.workspace.addListener(t -> {
       if (t == WorkspaceListener.Type.CAMPAIGN) {
-        setCurrentCampaign(controller.workspace.getCampaign());
-        controller.graphs.reloadGraph();
+        setCurrentCampaign(controller.workspace.getCampaign());    
       }
     });
   }

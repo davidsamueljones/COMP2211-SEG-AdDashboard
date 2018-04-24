@@ -48,6 +48,19 @@ public class LineConfig {
     this.uuid = uuid;
   }
 
+  /**
+   * Create a human readable string (with html formatting) representing the line configuration.
+   * 
+   * @return Line as generated text
+   */
+  public String inText() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("<b>Identfier: </b>" + identifier);
+    builder.append("<br><b>Hidden:</b> " + (hide ? "True" : "False"));
+    builder.append("<br><br>" + query.inText());
+    return builder.toString();
+  }
+  
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -86,7 +99,12 @@ public class LineConfig {
     if (query == null) {
       eb.addError("A query must be provided");
     } else {
-      eb.append(query.validate());
+      if (query.metric == null) {
+        eb.addError("A metric must be selected");
+      }
+      if (query.interval == null) {
+        eb.addError("An interval must be selected");
+      }
     }
     return eb;
   }

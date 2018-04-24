@@ -11,7 +11,7 @@ import javax.swing.border.BevelBorder;
 import group33.seg.controller.DashboardController;
 import group33.seg.view.controls.CampaignManagerPanel;
 import group33.seg.view.controls.GraphManagerPanel;
-import group33.seg.view.controls.StatisticManager;
+import group33.seg.view.controls.StatisticManagerPanel;
 import group33.seg.view.utilities.Accessibility;
 import group33.seg.view.utilities.CollapsiblePanel;
 
@@ -22,7 +22,7 @@ public class ControlsPanel extends JScrollPane {
   
   private CampaignManagerPanel pnlCampaignManager;
   private GraphManagerPanel pnlGraphManager;
-  private StatisticManager pnlStatisticManager;
+  private StatisticManagerPanel pnlStatisticManager;
 
   /**
    * Create the panel.
@@ -46,7 +46,6 @@ public class ControlsPanel extends JScrollPane {
     pnlControls.setLayout(gbl_pnlControls);
 
     {
- 
       // Campaign manager
       CollapsiblePanel colpnlCampaignManager = new CollapsiblePanel("Campaign Manager");
       applyCollapsiblePanelStyle(colpnlCampaignManager);
@@ -60,19 +59,6 @@ public class ControlsPanel extends JScrollPane {
       gbc_colpnlCampaignManager.gridy = 0;
       pnlControls.add(colpnlCampaignManager, gbc_colpnlCampaignManager);
 
-      // Graph controls
-//      CollapsiblePanel colpnlGraphControls = new CollapsiblePanel("Graph Controls");
-//      applyCollapsiblePanelStyle(colpnlGraphControls);
-//      GraphControlsPanel pnlGraphControls = new GraphControlsPanel();
-//      colpnlGraphControls.setContentPane(pnlGraphControls);
-//      colpnlGraphControls.getCollapsiblePane().setCollapsed(true);
-//      GridBagConstraints gbc_colpnlGraphControls = new GridBagConstraints();
-//      gbc_colpnlGraphControls.fill = GridBagConstraints.BOTH;
-//      gbc_colpnlGraphControls.insets = new Insets(0, 5, 5, 5);
-//      gbc_colpnlGraphControls.gridx = 0;
-//      gbc_colpnlGraphControls.gridy = 1;
-//      pnlControls.add(colpnlGraphControls, gbc_colpnlGraphControls);
-      
       // Graph Manager
       CollapsiblePanel colpnlGraphManager = new CollapsiblePanel("Graph Manager");
       applyCollapsiblePanelStyle(colpnlGraphManager);
@@ -89,7 +75,7 @@ public class ControlsPanel extends JScrollPane {
       // Statistic Viewer
       CollapsiblePanel colpnlStatisticManager = new CollapsiblePanel("Statistic Manager");
       applyCollapsiblePanelStyle(colpnlStatisticManager);
-      pnlStatisticManager = new StatisticManager(controller);
+      pnlStatisticManager = new StatisticManagerPanel(controller);
       colpnlStatisticManager.setContentPane(pnlStatisticManager);
       colpnlStatisticManager.getCollapsiblePane().setCollapsed(true);
       GridBagConstraints gbc_colpnlStatisticManager = new GridBagConstraints();
