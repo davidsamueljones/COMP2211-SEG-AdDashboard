@@ -464,7 +464,6 @@ public class DatabaseQueryFactory {
     }
     // Apply default settings, if filters are null
     sql = applyDefaultReplacements(sql);
-    System.out.println(sql);
     return sql;
   }
 
