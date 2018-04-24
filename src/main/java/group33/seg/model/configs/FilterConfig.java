@@ -1,5 +1,6 @@
 package group33.seg.model.configs;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -11,7 +12,9 @@ import group33.seg.lib.Utilities;
  * Structure-like class for constructing a filter configuration. All variables are public to allow
  * for easy structure access.
  */
-public class FilterConfig {
+public class FilterConfig implements Serializable {
+  private static final long serialVersionUID = -6199412926155535712L;
+
   public static String NO_FILTER_TEXT = "* No Filter *";
 
   /** Age Filter (filtered to those in set, ignored if null) */

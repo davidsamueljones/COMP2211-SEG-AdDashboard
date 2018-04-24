@@ -1,10 +1,13 @@
 package group33.seg.model.configs;
 
+import java.io.Serializable;
+
 /**
  * Structure-like class for constructing a campaign configuration. All variables are public to
  * allow for easy structure access.
  */
-public class CampaignConfig {
+public class CampaignConfig implements Serializable {
+  private static final long serialVersionUID = -8457304669992747494L;
 
   /** Unique identifier of campaign from database */
   public final int uid;

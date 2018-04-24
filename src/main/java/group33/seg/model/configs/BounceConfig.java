@@ -1,10 +1,13 @@
 package group33.seg.model.configs;
 
+import java.io.Serializable;
+
 /**
  * Structure-like class for constructing a bounce rate configuration. All variables are public to
  * allow for easy structure access.
  */
-public class BounceConfig {
+public class BounceConfig implements Serializable {
+  private static final long serialVersionUID = -8886075030934785739L;
 
   /** Type of bounce rate */
   public Type type;

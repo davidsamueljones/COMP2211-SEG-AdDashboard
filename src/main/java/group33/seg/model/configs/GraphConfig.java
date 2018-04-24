@@ -1,6 +1,7 @@
 package group33.seg.model.configs;
 
 import java.awt.Color;
+import java.io.Serializable;
 import java.util.UUID;
 import group33.seg.controller.utilities.ErrorBuilder;
 import group33.seg.controller.utilities.GraphVisitor;
@@ -9,7 +10,8 @@ import group33.seg.controller.utilities.GraphVisitor;
  * Structure-like class for constructing a generic graph. All variables are public to allow for easy
  * structure access.
  */
-public abstract class GraphConfig {
+public abstract class GraphConfig implements Serializable {
+  private static final long serialVersionUID = -5797687291992849934L;
 
   /**
    * Sequence that can uniquely identify a graph. Required as all properties of a graph may change

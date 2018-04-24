@@ -1,5 +1,6 @@
 package group33.seg.model.configs;
 
+import java.io.Serializable;
 import group33.seg.controller.utilities.ErrorBuilder;
 import group33.seg.model.types.Interval;
 import group33.seg.model.types.Metric;
@@ -8,7 +9,8 @@ import group33.seg.model.types.Metric;
  * Structure-like class for constructing a MetricQuery. All variables are public to allow for easy
  * structure access.
  */
-public class MetricQuery {
+public class MetricQuery implements Serializable {
+  private static final long serialVersionUID = 2102818875953508484L;
 
   /** Metric to fetch */
   public Metric metric;

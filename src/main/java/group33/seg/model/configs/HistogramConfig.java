@@ -4,6 +4,7 @@ import java.awt.Color;
 import group33.seg.controller.utilities.GraphVisitor;
 
 public class HistogramConfig extends GraphConfig {
+  private static final long serialVersionUID = -3528347690642461216L;
 
   /** Colour of bars plotted */
   public Color barColor;

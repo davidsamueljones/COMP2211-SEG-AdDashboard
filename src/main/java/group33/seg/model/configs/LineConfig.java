@@ -1,6 +1,7 @@
 package group33.seg.model.configs;
 
 import java.awt.Color;
+import java.io.Serializable;
 import java.util.UUID;
 import group33.seg.controller.utilities.ErrorBuilder;
 
@@ -8,7 +9,8 @@ import group33.seg.controller.utilities.ErrorBuilder;
  * Structure-like class for constructing a single line. All variables are public to allow for easy
  * structure access. A line can be uniquely identified with its UUID.
  */
-public class LineConfig {
+public class LineConfig implements Serializable {
+  private static final long serialVersionUID = -7651491166496607729L;
 
   /**
    * Sequence that can uniquely identify a line. Required as all visible properties of a line may

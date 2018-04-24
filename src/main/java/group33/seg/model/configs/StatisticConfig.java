@@ -1,5 +1,6 @@
 package group33.seg.model.configs;
 
+import java.io.Serializable;
 import java.util.UUID;
 import group33.seg.controller.utilities.ErrorBuilder;
 
@@ -7,7 +8,8 @@ import group33.seg.controller.utilities.ErrorBuilder;
  * Structure-like class for constructing a statistic configuration. All variables are public to
  * allow for easy structure access.
  */
-public class StatisticConfig {
+public class StatisticConfig implements Serializable {
+  private static final long serialVersionUID = 6272012825897221682L;
 
   /**
    * Sequence that can uniquely identify a statistic. Required as all properties of a statistic may

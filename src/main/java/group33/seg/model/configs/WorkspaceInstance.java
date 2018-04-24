@@ -1,6 +1,11 @@
 package group33.seg.model.configs;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import group33.seg.controller.utilities.ErrorBuilder;
 
 public class WorkspaceInstance {
   public static final String WORKSPACE_EXT = "adw";
@@ -12,10 +17,20 @@ public class WorkspaceInstance {
   public final String directory;
 
   /** Workspace this instance relates to */
-  public final WorkspaceConfig workspace;
+  public WorkspaceConfig workspace;
 
   /**
-   * Initialise a workspace.
+   * Initialise a workspace without storing an actual workspace configuration.
+   * 
+   * @param name Name (identifier) of workspace
+   * @param directory Path to storage location for workspace
+   */
+  public WorkspaceInstance(String name, String directory) {
+    this(name, directory, null);
+  }
+  
+  /**
+   * Initialise a fully defined workspace instance.
    * 
    * @param name Name (identifier) of workspace
    * @param directory Path to storage location for workspace
@@ -27,6 +42,24 @@ public class WorkspaceInstance {
     this.workspace = workspace;
   }
 
+  /**
+   * Instance implementation of {@link #getWorkspaceFilename()}.
+   * 
+   * @return Generated filename
+   */
+  public String getWorkspaceFilename() {
+    return getWorkspaceFilename(name);
+  }
+  
+  /**
+   * Instance implementation of {@link #getWorkspaceFile()}
+   * 
+   * @return Generated file object
+   */
+  public File getWorkspaceFile() {
+    return getWorkspaceFile(directory, name);
+  }
+  
   /**
    * A workspace configuration is normally stored as its identifier with no spaces and the workspace
    * extension. Passing this method an identifier will generate the corresponding filename.
@@ -50,5 +83,5 @@ public class WorkspaceInstance {
     File file = new File(directory, filename);
     return file;  
   }
-
+  
 }

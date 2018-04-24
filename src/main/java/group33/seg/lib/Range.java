@@ -1,9 +1,13 @@
 package group33.seg.lib;
 
+import java.io.Serializable;
+
 /** 
  * Helper class for storing data ranges. 
  */
-public class Range<T> {
+public class Range<T> implements Serializable {
+  private static final long serialVersionUID = 2602820261310555424L;
+  
   public final T min;
   public final T max;
 

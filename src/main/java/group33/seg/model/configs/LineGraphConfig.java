@@ -11,6 +11,7 @@ import group33.seg.lib.Utilities;
  * allow for easy structure access.
  */
 public class LineGraphConfig extends GraphConfig {
+  private static final long serialVersionUID = -667574394854738587L;
 
   /** Mode for how lines behave in respect to each other */
   public Mode mode = null;

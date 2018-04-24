@@ -3,17 +3,20 @@ package group33.seg.controller.database;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.Serializable;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
 
-public class DatabaseConfig {
-
+public class DatabaseConfig implements Serializable {
+  private static final long serialVersionUID = -1279471354579637690L;
+  
   private String host;
   private String user;
   private String password;
 
-  
+
   /**
    * Create an instance using local configuration information.
    * 
@@ -26,23 +29,37 @@ public class DatabaseConfig {
     this.user = user;
     this.password = password;
   }
-  
-  /** 
+
+  /**
    * Create an instance using information from a configuration to connect to a database.
    *
    * @param file File containing authorisation information for db connection
    */
   public DatabaseConfig(String file) throws FileNotFoundException {
-    if (file == null || !Files.exists(Paths.get(file))) {
+    Path path = Paths.get(file);
+    if (path.toString().isEmpty() || !Files.exists(path)) {
       throw new FileNotFoundException("Configuration file does not exist");
     }
 
     Properties prop = new Properties();
     try {
-      prop.load(new FileInputStream(file));
+      FileInputStream fis = null;
+      try {
+        fis = new FileInputStream(path.toString());
+        prop.load(fis);
+      } finally {
+        try {
+          if (fis != null) {
+            fis.close();
+          }
+        } catch (IOException e) {
+          // close failed, ignore
+        }
+      }
     } catch (IOException e) {
       e.printStackTrace();
     }
+
     this.host = prop.getProperty("DB_HOST");
     this.user = prop.getProperty("DB_USER");
     this.password = prop.getProperty("DB_PASSWORD");
@@ -68,5 +85,5 @@ public class DatabaseConfig {
   public String getPassword() {
     return password;
   }
-  
+
 }
