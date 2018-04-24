@@ -4,8 +4,9 @@ import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import group33.seg.controller.DashboardController;
 import group33.seg.controller.database.DatabaseConfig;
+import group33.seg.controller.types.WorkspaceInstance;
 import group33.seg.model.DashboardModel;
-import group33.seg.model.workspace.Workspace;
+import group33.seg.model.configs.WorkspaceConfig;
 import group33.seg.view.DashboardView;
 import group33.seg.view.utilities.Accessibility;
 
@@ -15,7 +16,9 @@ public class Main {
 
   public static void main(String[] args) {
     // Initialise a test workspace
-    Workspace workspace = new Workspace("Test", "");
+    WorkspaceConfig workspace = new WorkspaceConfig();
+    WorkspaceInstance wsi = new WorkspaceInstance("Test", "", workspace);
+    
     // Create MMC components and link interactions
     DashboardModel model = new DashboardModel();
     model.setWorkspace(workspace);

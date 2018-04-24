@@ -1,16 +1,16 @@
 package group33.seg.model;
 
-import group33.seg.model.workspace.Workspace;
+import group33.seg.model.configs.WorkspaceConfig;
 
 public class DashboardModel {
 
-  private Workspace workspace;
+  private WorkspaceConfig workspace;
 
-  public Workspace getWorkspace() {
+  public WorkspaceConfig getWorkspace() {
     return workspace;
   }
 
-  public void setWorkspace(Workspace workspace) {
+  public void setWorkspace(WorkspaceConfig workspace) {
     this.workspace = workspace;
   }
  

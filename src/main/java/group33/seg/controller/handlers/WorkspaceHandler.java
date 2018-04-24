@@ -10,8 +10,8 @@ import group33.seg.lib.Pair;
 import group33.seg.model.configs.CampaignConfig;
 import group33.seg.model.configs.GraphConfig;
 import group33.seg.model.configs.StatisticConfig;
+import group33.seg.model.configs.WorkspaceConfig;
 import group33.seg.model.types.Metric;
-import group33.seg.model.workspace.Workspace;
 
 public class WorkspaceHandler {
 
@@ -29,14 +29,14 @@ public class WorkspaceHandler {
   public WorkspaceHandler(DashboardMVC mvc) {
     this.mvc = mvc;
   }
-
+  
   /**
    * Set the campaign used by the workspace, alerting listeners that a campaign update has occurred.
    * 
    * @param campaign Campaign for workspace to use
    */
   public void setCampaign(CampaignConfig campaign) {
-    Workspace workspace = mvc.model.getWorkspace();
+    WorkspaceConfig workspace = mvc.model.getWorkspace();
     workspace.campaign = campaign;
     notifyListeners(Type.CAMPAIGN);
   }
@@ -45,7 +45,7 @@ public class WorkspaceHandler {
    * @return The current campaign used by the workspace
    */
   public CampaignConfig getCampaign() {
-    Workspace workspace = mvc.model.getWorkspace();
+    WorkspaceConfig workspace = mvc.model.getWorkspace();
     return workspace.campaign;
   }
 
@@ -53,7 +53,7 @@ public class WorkspaceHandler {
    * @return The list of graphs stored in the workspace
    */
   public List<GraphConfig> getGraphs() {
-    Workspace workspace = mvc.model.getWorkspace();
+    WorkspaceConfig workspace = mvc.model.getWorkspace();
     if (workspace != null) {
       return workspace.graphs;
     } else {
@@ -122,7 +122,7 @@ public class WorkspaceHandler {
    * @return The list of statistics stored in the workspace (without caches)
    */
   public List<StatisticConfig> getStatistics() {
-    Workspace workspace = mvc.model.getWorkspace();
+    WorkspaceConfig workspace = mvc.model.getWorkspace();
     if (workspace != null) {
       List<StatisticConfig> statistics = new ArrayList<>();
       for (Pair<StatisticConfig, Map<Metric, Double>> pair : workspace.statistics) {
@@ -142,7 +142,7 @@ public class WorkspaceHandler {
    * @param statistic Statistic to place in workspace
    */
   public void putStatistic(StatisticConfig statistic) {
-    Workspace workspace = mvc.model.getWorkspace();
+    WorkspaceConfig workspace = mvc.model.getWorkspace();
     int cur = getStatistics().indexOf(statistic);
     Map<Metric, Double> cache = null;
     if (cur >= 0) {
@@ -167,7 +167,7 @@ public class WorkspaceHandler {
    * @return Whether Statistic was removed (if it existed)
    */
   public boolean removeStatistic(StatisticConfig toRemove) {
-    Workspace workspace = mvc.model.getWorkspace();
+    WorkspaceConfig workspace = mvc.model.getWorkspace();
     int cur = getStatistics().indexOf(toRemove);
     if (cur >= 0) {
       workspace.statistics.remove(cur);
@@ -187,7 +187,7 @@ public class WorkspaceHandler {
    * @return Whether the cache was updated (whether the statistic exists)
    */
   public boolean putCache(StatisticConfig statistic, Map<Metric, Double> cache) {
-    Workspace workspace = mvc.model.getWorkspace();
+    WorkspaceConfig workspace = mvc.model.getWorkspace();
     int cur = getStatistics().indexOf(statistic);
     if (cur >= 0) {
       StatisticConfig exStatistic = workspace.statistics.get(cur).key;
@@ -204,7 +204,7 @@ public class WorkspaceHandler {
    * @return Cache for given statistic, null if statistic not found (or if no cache)
    */
   public Map<Metric, Double> getCache(StatisticConfig statistic) {
-    Workspace workspace = mvc.model.getWorkspace();
+    WorkspaceConfig workspace = mvc.model.getWorkspace();
     int cur = getStatistics().indexOf(statistic);
     if (cur >= 0) {
       return workspace.statistics.get(cur).value;
