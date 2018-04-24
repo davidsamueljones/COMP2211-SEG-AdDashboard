@@ -1,11 +1,19 @@
 package group33.seg.controller.handlers;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import group33.seg.controller.DashboardController.DashboardMVC;
 import group33.seg.controller.handlers.WorkspaceHandler.WorkspaceListener.Type;
+import group33.seg.controller.utilities.ErrorBuilder;
+import group33.seg.controller.utilities.SerializationUtils;
 import group33.seg.lib.Pair;
 import group33.seg.model.configs.CampaignConfig;
 import group33.seg.model.configs.GraphConfig;
@@ -31,7 +39,95 @@ public class WorkspaceHandler {
   public WorkspaceHandler(DashboardMVC mvc) {
     this.mvc = mvc;
   }
+
+  /**
+   * Load a workspace from file using an instance's store location fields. If the load is
+   * successful, the model is updated.
+   * 
+   * @param wsi Workspace instance to load workspace configuration for
+   * @return Error builder indicating if store was successful
+   */
+  public ErrorBuilder loadWorkspace(WorkspaceInstance wsi) {
+    ErrorBuilder eb = new ErrorBuilder();
+    Path path = Paths.get(wsi.getWorkspaceFile().toURI());
+    if (!Files.exists(path)) {
+      eb.addError("Workspace file does not exist");
+    } else {
+      FileInputStream fis = null;
+      try {
+        // Open file input stream using identifiers respective file
+        fis = new FileInputStream(path.toString());
+        // Get object from file input stream
+        Object object = SerializationUtils.deserialize(fis);
+        if (object instanceof WorkspaceConfig) {
+          wsi.workspace = (WorkspaceConfig) object;
+          mvc.model.setWorkspace(wsi);
+        } else {
+          eb.addError("Loaded file is not a workspace configuration");
+        }
+      } catch (IOException e) {
+        eb.addError("Unable to load workspace file");
+      } finally {
+        try {
+          if (fis != null) {
+            fis.close();
+          }
+        } catch (IOException e) {
+          // close failed, ignore
+        }
+      }
+    }
+    return eb;
+  }
+
+  /**
+   * Store the currently handled workspace to its instance's defined location.
+   * 
+   * @param overwrite Whether to overwrite an existing file if it exists
+   * @return Error builder indicating if store was successful
+   */
+  public ErrorBuilder storeCurrentWorkspace(boolean overwrite) {
+    WorkspaceInstance wsi = mvc.model.getWorkspaceInstance();
+    return storeWorkspace(wsi, overwrite);
+  }
   
+  /**
+   * Store a workspace to its instance's defined location.
+   * 
+   * @param wsi Workspace to save
+   * @param overwrite Whether to overwrite an existing file if it exists
+   * @return Error builder indicating if store was successful
+   */
+  public static ErrorBuilder storeWorkspace(WorkspaceInstance wsi, boolean overwrite) {
+    ErrorBuilder eb = new ErrorBuilder();
+    if (wsi == null || wsi.workspace == null) {
+      eb.addError("There is no workspace to store");
+    } else {
+      Path path = Paths.get(wsi.getWorkspaceFile().toURI());
+      if (Files.exists(path) && !overwrite) {
+        eb.addError("Workspace already exists in this location");
+      } else {
+        FileOutputStream fos = null;
+        try {
+          Files.createDirectories(path.getParent());
+          fos = new FileOutputStream(path.toString());
+          SerializationUtils.serialize(wsi.workspace, fos);
+        } catch (IOException e) {
+          eb.addError("Unable to store file to location");
+        } finally {
+          try {
+            if (fos != null) {
+              fos.close();
+            }
+          } catch (IOException e) {
+            // close failed, ignore
+          }
+        }
+      }
+    }
+    return eb;
+  }  
+
   /**
    * Set the campaign used by the workspace, alerting listeners that a campaign update has occurred.
    * 
