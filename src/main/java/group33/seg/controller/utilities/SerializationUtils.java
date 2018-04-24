@@ -1,4 +1,4 @@
-package group33.seg.controller.persistence;
+package group33.seg.controller.utilities;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
