@@ -1,7 +1,6 @@
-package group33.seg.controller.types;
+package group33.seg.model.configs;
 
 import java.io.File;
-import group33.seg.model.configs.WorkspaceConfig;
 
 public class WorkspaceInstance {
   public static final String WORKSPACE_EXT = "adw";

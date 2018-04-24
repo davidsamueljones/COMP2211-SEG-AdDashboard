@@ -11,12 +11,14 @@ import group33.seg.model.configs.CampaignConfig;
 import group33.seg.model.configs.GraphConfig;
 import group33.seg.model.configs.StatisticConfig;
 import group33.seg.model.configs.WorkspaceConfig;
+import group33.seg.model.configs.WorkspaceInstance;
 import group33.seg.model.types.Metric;
 
 public class WorkspaceHandler {
 
   /** MVC model that sub-controller has knowledge of */
   private final DashboardMVC mvc;
+
 
   /** Listeners for workspace changes */
   private List<WorkspaceListener> listeners = new ArrayList<>();
