@@ -16,6 +16,13 @@ public class DashboardModel {
   }
 
   /**
+   * @return The model's workspace instance's 
+   */
+  public WorkspaceInstance getWorkspaceInstance() {
+    return workspace;
+  }
+  
+  /**
    * Set the model's workspace configuration using default fields for identifying the workspace
    * instance.
    * 
