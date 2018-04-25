@@ -1,6 +1,10 @@
 package group33.seg.lib;
 
-public class Pair<K, V> {
+import java.io.Serializable;
+
+public class Pair<K, V> implements Serializable {
+  private static final long serialVersionUID = 6429490390263674160L;
+  
   public final K key;
   public final V value;
 
