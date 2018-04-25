@@ -20,6 +20,16 @@ public class WorkspaceInstance {
   public WorkspaceConfig workspace;
 
   /**
+   * Initialise a workspace without storing an actual workspace configuration using a raw path.
+   * 
+   * @param path Path pointing to workspace instance
+   */
+  public WorkspaceInstance(Path path) {
+    this(path.getFileName().toString().replace(".adw", "").replace('_', ' '),
+        path.getParent().toString());
+  }
+
+  /**
    * Initialise a workspace without storing an actual workspace configuration.
    * 
    * @param name Name (identifier) of workspace
@@ -28,7 +38,7 @@ public class WorkspaceInstance {
   public WorkspaceInstance(String name, String directory) {
     this(name, directory, null);
   }
-  
+
   /**
    * Initialise a fully defined workspace instance.
    * 
@@ -50,7 +60,7 @@ public class WorkspaceInstance {
   public String getWorkspaceFilename() {
     return getWorkspaceFilename(name);
   }
-  
+
   /**
    * Instance implementation of {@link #getWorkspaceFile()}
    * 
@@ -59,7 +69,7 @@ public class WorkspaceInstance {
   public File getWorkspaceFile() {
     return getWorkspaceFile(directory, name);
   }
-  
+
   /**
    * A workspace configuration is normally stored as its identifier with no spaces and the workspace
    * extension. Passing this method an identifier will generate the corresponding filename.
@@ -70,7 +80,7 @@ public class WorkspaceInstance {
   public static String getWorkspaceFilename(String identifier) {
     return String.format("%s.%s", identifier.replace(' ', '_'), WORKSPACE_EXT);
   }
-   
+
   /**
    * Get a file object that maps to the given workspace storage properties.
    * 
@@ -81,7 +91,7 @@ public class WorkspaceInstance {
   public static File getWorkspaceFile(String directory, String identifier) {
     String filename = getWorkspaceFilename(identifier);
     File file = new File(directory, filename);
-    return file;  
+    return file;
   }
-  
+
 }
