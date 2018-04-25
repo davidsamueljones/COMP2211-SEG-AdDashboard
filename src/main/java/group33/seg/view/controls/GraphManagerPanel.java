@@ -105,7 +105,7 @@ public class GraphManagerPanel extends JPanel {
       }
     });
     JScrollPane scrGraphs = new JScrollPane(lstGraphs);
-    scrGraphs.setPreferredSize(new Dimension(0, scrGraphs.getPreferredSize().height));
+    scrGraphs.setPreferredSize(new Dimension(0, 75));
     scrGraphs.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
     GridBagConstraints gbc_lstGraphs = new GridBagConstraints();
     gbc_lstGraphs.gridwidth = 2;

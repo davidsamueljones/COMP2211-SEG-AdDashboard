@@ -64,7 +64,7 @@ public class ControlsPanel extends JScrollPane {
       applyCollapsiblePanelStyle(colpnlGraphManager);
       pnlGraphManager = new GraphManagerPanel(controller);
       colpnlGraphManager.setContentPane(pnlGraphManager);
-      colpnlGraphManager.getCollapsiblePane().setCollapsed(true);
+      colpnlGraphManager.getCollapsiblePane().setCollapsed(false);
       GridBagConstraints gbc_colpnlGraphManager = new GridBagConstraints();
       gbc_colpnlGraphManager.fill = GridBagConstraints.BOTH;
       gbc_colpnlGraphManager.insets = new Insets(0, 5, 5, 5);
@@ -77,7 +77,7 @@ public class ControlsPanel extends JScrollPane {
       applyCollapsiblePanelStyle(colpnlStatisticManager);
       pnlStatisticManager = new StatisticManagerPanel(controller);
       colpnlStatisticManager.setContentPane(pnlStatisticManager);
-      colpnlStatisticManager.getCollapsiblePane().setCollapsed(true);
+      colpnlStatisticManager.getCollapsiblePane().setCollapsed(false);
       GridBagConstraints gbc_colpnlStatisticManager = new GridBagConstraints();
       gbc_colpnlStatisticManager.fill = GridBagConstraints.BOTH;
       gbc_colpnlStatisticManager.insets = new Insets(0, 5, 5, 5);
