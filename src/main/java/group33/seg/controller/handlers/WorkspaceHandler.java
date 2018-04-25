@@ -43,6 +43,15 @@ public class WorkspaceHandler {
     this.mvc = mvc;
   }
 
+
+  /**
+   * @return The current workspace
+   */
+  public WorkspaceInstance getWorkspaceInstance() {
+    return mvc.model.getWorkspaceInstance();
+  }
+
+
   /**
    * @return The current workspace name
    */
@@ -158,8 +167,8 @@ public class WorkspaceHandler {
   }
 
   /**
-   * Using the currently loaded workspace, update the database handlers connections.
-   * Will close connections if no valid database configuration exists.
+   * Using the currently loaded workspace, update the database handlers connections. Will close
+   * connections if no valid database configuration exists.
    * 
    * @return Whether the update was successful
    */
