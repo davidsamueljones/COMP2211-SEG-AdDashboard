@@ -44,6 +44,22 @@ public class WorkspaceHandler {
   }
 
   /**
+   * @return The current workspace name
+   */
+  public String getWorkspaceName() {
+    WorkspaceInstance wsi = mvc.model.getWorkspaceInstance();
+    return (wsi == null ? null : wsi.name);
+  }
+  
+  /**
+   * @return The current workspace directory
+   */
+  public String getWorkspaceDirectory() {
+    WorkspaceInstance wsi = mvc.model.getWorkspaceInstance();
+    return (wsi == null ? null : wsi.directory);
+  }
+  
+  /**
    * Load a workspace from a given file. If the load is successful, the model is updated.
    * 
    * @param strPath Path to file to load
@@ -163,8 +179,10 @@ public class WorkspaceHandler {
    */
   public void setCampaign(CampaignConfig campaign) {
     WorkspaceConfig workspace = mvc.model.getWorkspace();
-    workspace.campaign = campaign;
-    notifyListeners(Type.CAMPAIGN);
+    if (workspace != null) {
+      workspace.campaign = campaign;
+      notifyListeners(Type.CAMPAIGN);
+    }
   }
 
   /**
@@ -172,7 +190,7 @@ public class WorkspaceHandler {
    */
   public CampaignConfig getCampaign() {
     WorkspaceConfig workspace = mvc.model.getWorkspace();
-    return workspace.campaign;
+    return workspace == null ? null : workspace.campaign;
   }
 
   /**
@@ -180,11 +198,7 @@ public class WorkspaceHandler {
    */
   public List<GraphConfig> getGraphs() {
     WorkspaceConfig workspace = mvc.model.getWorkspace();
-    if (workspace != null) {
-      return workspace.graphs;
-    } else {
-      return null;
-    }
+    return workspace == null ? null : workspace.graphs;
   }
 
   /**
@@ -194,15 +208,19 @@ public class WorkspaceHandler {
    * @param config Configuration to use as current graph
    */
   public void setCurrentGraph(GraphConfig config) {
-    mvc.model.getWorkspace().graph = config;
-    notifyListeners(Type.CURRENT_GRAPH);
+    WorkspaceConfig workspace = mvc.model.getWorkspace();
+    if (workspace != null) {
+      workspace.graph = config;
+      notifyListeners(Type.CURRENT_GRAPH);
+    }
   }
 
   /**
    * @return The workspace's current graph
    */
   public GraphConfig getCurrentGraph() {
-    return mvc.model.getWorkspace().graph;
+    WorkspaceConfig workspace = mvc.model.getWorkspace();
+    return workspace == null ? null : workspace.graph;
   }
 
   /**
@@ -213,14 +231,15 @@ public class WorkspaceHandler {
    */
   public void putGraph(GraphConfig graph) {
     List<GraphConfig> graphs = getGraphs();
-
-    int cur = graphs.indexOf(graph);
-    if (cur >= 0) {
-      graphs.set(cur, graph);
-    } else {
-      graphs.add(graph);
+    if (graphs != null) {
+      int cur = graphs.indexOf(graph);
+      if (cur >= 0) {
+        graphs.set(cur, graph);
+      } else {
+        graphs.add(graph);
+      }
+      notifyListeners(Type.GRAPHS);
     }
-    notifyListeners(Type.GRAPHS);
   }
 
   /**
@@ -232,13 +251,16 @@ public class WorkspaceHandler {
    */
   public boolean removeGraph(GraphConfig toRemove) {
     boolean removed = false;
-    Iterator<GraphConfig> itrGraphs = getGraphs().iterator();
-    while (itrGraphs.hasNext()) {
-      GraphConfig graph = itrGraphs.next();
-      if (graph.equals(toRemove)) {
-        itrGraphs.remove();
-        removed = true;
-        notifyListeners(Type.GRAPHS);
+    List<GraphConfig> graphs = getGraphs();
+    if (graphs != null) {
+      Iterator<GraphConfig> itrGraphs = graphs.iterator();
+      while (itrGraphs.hasNext()) {
+        GraphConfig graph = itrGraphs.next();
+        if (graph.equals(toRemove)) {
+          itrGraphs.remove();
+          removed = true;
+          notifyListeners(Type.GRAPHS);
+        }
       }
     }
     return removed;
