@@ -36,8 +36,15 @@ public class DatabaseConfig implements Serializable {
    * @param file File containing authorisation information for db connection
    */
   public DatabaseConfig(String file) throws FileNotFoundException {
-    Path path = Paths.get(file);
-    if (path.toString().isEmpty() || !Files.exists(path)) {
+    // Verify that the input file exists and is not a directory
+    boolean isValid = file != null;
+    Path path = null;
+    if (isValid) {
+      path = Paths.get(file);
+      isValid &= !Files.isDirectory(path);
+      isValid &= Files.exists(path);
+    }
+    if (!isValid) {
       throw new FileNotFoundException("Configuration file does not exist");
     }
 
