@@ -3,12 +3,12 @@ Icon made by <a href="https://www.flaticon.com/authors/vectors-market">Vectors M
 </p>
 
 <p>
-<b>Button Icons (Font Awesome Free)</b>
-CC BY 4.0 License
+<b>Button Icons (Font Awesome Free)</b><br>
+CC BY 4.0 License<br>
 See full license terms here: <a href="https://fontawesome.com/license">LICENSE</a><br>
-Modifications include:<br>
+<i>Modifications include:<br>
 - Conversion from SVG -> PNG<br>
-- Removal of internal '+' element in 'magnifying-glass.png'
+- Removal of internal '+' element in 'magnifying-glass.png'</i>
 </p>
 
 <p>
