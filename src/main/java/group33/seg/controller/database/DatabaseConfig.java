@@ -15,8 +15,9 @@ public class DatabaseConfig implements Serializable {
   private String host;
   private String user;
   private String password;
-
-
+  
+  private String reference;
+  
   /**
    * Create an instance using local configuration information.
    * 
@@ -28,6 +29,7 @@ public class DatabaseConfig implements Serializable {
     this.host = host;
     this.user = user;
     this.password = password;
+    this.reference = null;
   }
 
   /**
@@ -35,12 +37,12 @@ public class DatabaseConfig implements Serializable {
    *
    * @param file File containing authorisation information for db connection
    */
-  public DatabaseConfig(String file) throws FileNotFoundException {
+  public DatabaseConfig(String strPath) throws FileNotFoundException {
     // Verify that the input file exists and is not a directory
-    boolean isValid = file != null;
+    boolean isValid = strPath != null;
     Path path = null;
     if (isValid) {
-      path = Paths.get(file);
+      path = Paths.get(strPath);
       isValid &= !Files.isDirectory(path);
       isValid &= Files.exists(path);
     }
@@ -70,6 +72,7 @@ public class DatabaseConfig implements Serializable {
     this.host = prop.getProperty("DB_HOST");
     this.user = prop.getProperty("DB_USER");
     this.password = prop.getProperty("DB_PASSWORD");
+    this.reference = strPath;
   }
 
   /**
@@ -91,6 +94,13 @@ public class DatabaseConfig implements Serializable {
    */
   public String getPassword() {
     return password;
+  }
+  
+  /**
+   * @return Configurations reference (likely a configuration file)
+   */
+  public String getReference() {
+    return reference;
   }
 
 }
