@@ -107,7 +107,7 @@ public class StatisticsView extends JPanel {
     gbl_pnlNoStatistics.rowWeights = new double[] {0.5, 0.0, 0.5};
     pnlNoStatistics.setLayout(gbl_pnlNoStatistics);
 
-    String strNoStatistics = "<html>There is no statistics to display.<br>"
+    String strNoStatistics = "<html>There are no statistics to display.<br>"
         + "Create or show statistics using the 'Statistic Manager'.</html>";
     JLabel lblNoStatistics = new JLabel(strNoStatistics);
     lblNoStatistics.setEnabled(false);
