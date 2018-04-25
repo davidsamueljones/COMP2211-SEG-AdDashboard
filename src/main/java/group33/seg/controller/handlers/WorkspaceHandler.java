@@ -1,16 +1,19 @@
 package group33.seg.controller.handlers;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import group33.seg.controller.DashboardController.DashboardMVC;
+import group33.seg.controller.database.DatabaseConfig;
 import group33.seg.controller.handlers.WorkspaceHandler.WorkspaceListener.Type;
 import group33.seg.controller.utilities.ErrorBuilder;
 import group33.seg.controller.utilities.SerializationUtils;
@@ -41,15 +44,14 @@ public class WorkspaceHandler {
   }
 
   /**
-   * Load a workspace from file using an instance's store location fields. If the load is
-   * successful, the model is updated.
+   * Load a workspace from a given file. If the load is successful, the model is updated.
    * 
-   * @param wsi Workspace instance to load workspace configuration for
+   * @param strPath Path to file to load
    * @return Error builder indicating if store was successful
    */
-  public ErrorBuilder loadWorkspace(WorkspaceInstance wsi) {
+  public ErrorBuilder loadWorkspace(String strPath) {
     ErrorBuilder eb = new ErrorBuilder();
-    Path path = Paths.get(wsi.getWorkspaceFile().toURI());
+    Path path = Paths.get(strPath);
     if (!Files.exists(path)) {
       eb.addError("Workspace file does not exist");
     } else {
@@ -60,8 +62,9 @@ public class WorkspaceHandler {
         // Get object from file input stream
         Object object = SerializationUtils.deserialize(fis);
         if (object instanceof WorkspaceConfig) {
+          WorkspaceInstance wsi = new WorkspaceInstance(path);
           wsi.workspace = (WorkspaceConfig) object;
-          mvc.model.setWorkspace(wsi);
+          setWorkspace(wsi);
         } else {
           eb.addError("Loaded file is not a workspace configuration");
         }
@@ -81,6 +84,16 @@ public class WorkspaceHandler {
   }
 
   /**
+   * Update the model's workspace. Alerting listeners that the workspace has changed.
+   * 
+   * @param wsi New workspace to use
+   */
+  public void setWorkspace(WorkspaceInstance wsi) {
+    mvc.model.setWorkspace(wsi);
+    notifyListeners(Type.WORKSPACE);
+  }
+
+  /**
    * Store the currently handled workspace to its instance's defined location.
    * 
    * @param overwrite Whether to overwrite an existing file if it exists
@@ -90,7 +103,7 @@ public class WorkspaceHandler {
     WorkspaceInstance wsi = mvc.model.getWorkspaceInstance();
     return storeWorkspace(wsi, overwrite);
   }
-  
+
   /**
    * Store a workspace to its instance's defined location.
    * 
@@ -126,7 +139,22 @@ public class WorkspaceHandler {
       }
     }
     return eb;
-  }  
+  }
+
+  /**
+   * Using the currently loaded workspace, update the database handlers connections.
+   * 
+   * @return Whether the update was successful
+   */
+  public boolean updateDatabaseConnections() {
+    DatabaseConfig config = mvc.model.getWorkspaceInstance().workspace.database;
+    try {
+      mvc.controller.database.refreshConnections(config, 10);
+    } catch (SQLException e) {
+      return false;
+    }
+    return true;
+  }
 
   /**
    * Set the campaign used by the workspace, alerting listeners that a campaign update has occurred.
