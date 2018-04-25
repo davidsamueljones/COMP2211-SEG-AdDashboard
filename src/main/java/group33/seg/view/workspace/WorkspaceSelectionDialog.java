@@ -160,7 +160,7 @@ public class WorkspaceSelectionDialog extends JDialog {
     OpenWorkspacePanel pnlOpen = new OpenWorkspacePanel(controller);
     pnlControls.add(pnlOpen, View.OPEN.toString());
 
-    NewWorkspacePanel pnlNew = new NewWorkspacePanel(controller);
+    CreateWorkspacePanel pnlNew = new CreateWorkspacePanel(controller);
     pnlControls.add(pnlNew, View.NEW.toString());
 
     // ************************************************************************************

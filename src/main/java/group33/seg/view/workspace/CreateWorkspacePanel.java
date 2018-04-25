@@ -6,6 +6,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Window;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -29,26 +30,48 @@ import group33.seg.model.configs.WorkspaceInstance;
 import group33.seg.view.utilities.FileActionListener;
 import group33.seg.view.utilities.JDynamicScrollPane;
 
-public class NewWorkspacePanel extends JPanel {
+public class CreateWorkspacePanel extends JPanel {
   private static final long serialVersionUID = 4736478828855312395L;
 
   private DashboardController controller;
 
+  protected JLabel lblHelp;
   protected JTextField txtWorkspaceName;
   protected JTextField txtWorkspacePath;
+
+  protected JTabbedPane tabsServerDetails;
+  protected JPanel pnlSimple;
+  protected JPanel pnlAdvanced;
+
   protected JTextField txtServerConfig;
   protected JTextField txtServer;
   protected JTextField txtUsername;
   protected JPasswordField txtPassword;
+
+  protected JButton btnApply;
+
+  private WorkspaceInstance base;
 
   /**
    * Create the panel.
    *
    * @param controller Controller for this view object
    */
-  public NewWorkspacePanel(DashboardController controller) {
+  public CreateWorkspacePanel(DashboardController controller) {
+    this(controller, null);
+  }
+
+  /**
+   * Create the panel.
+   *
+   * @param controller Controller for this view object
+   * @param base Workspace instance to use as base
+   */
+  public CreateWorkspacePanel(DashboardController controller, WorkspaceInstance base) {
     this.controller = controller;
+
     initGUI();
+    loadWorkspaceInstance(base);
   }
 
   /**
@@ -74,9 +97,7 @@ public class NewWorkspacePanel extends JPanel {
     scrContent.setViewportView(pnlContent);
     add(scrContent, BorderLayout.CENTER);
 
-    String strHelp =
-        "Create a new workspace for viewing campaigns. A created workspace can be opened again in the future.";
-    JLabel lblHelp = new JLabel(String.format("<html>%s</html>", strHelp));
+    lblHelp = new JLabel();
     GridBagConstraints gbc_lblHelp = new GridBagConstraints();
     gbc_lblHelp.fill = GridBagConstraints.HORIZONTAL;
     gbc_lblHelp.gridwidth = 3;
@@ -130,7 +151,7 @@ public class NewWorkspacePanel extends JPanel {
     gbc_btnWorkspaceBrowse.gridy = 3;
     pnlContent.add(btnWorkspaceBrowse, gbc_btnWorkspaceBrowse);
 
-    JTabbedPane tabsServerDetails = new JTabbedPane(SwingConstants.TOP);
+    tabsServerDetails = new JTabbedPane(SwingConstants.TOP);
     GridBagConstraints gbc_tabsServerDetails = new GridBagConstraints();
     gbc_tabsServerDetails.gridwidth = 3;
     gbc_tabsServerDetails.insets = new Insets(0, 0, 5, 0);
@@ -139,7 +160,7 @@ public class NewWorkspacePanel extends JPanel {
     gbc_tabsServerDetails.gridy = 4;
     pnlContent.add(tabsServerDetails, gbc_tabsServerDetails);
 
-    JPanel pnlSimple = new JPanel();
+    pnlSimple = new JPanel();
     pnlSimple.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     tabsServerDetails.addTab("Simple", null, pnlSimple, null);
     GridBagLayout gbl_pnlSimple = new GridBagLayout();
@@ -173,7 +194,7 @@ public class NewWorkspacePanel extends JPanel {
     gbc_btnConfigBrowse.gridy = 1;
     pnlSimple.add(btnConfigBrowse, gbc_btnConfigBrowse);
 
-    JPanel pnlAdvanced = new JPanel();
+    pnlAdvanced = new JPanel();
     pnlAdvanced.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     tabsServerDetails.addTab("Advanced", null, pnlAdvanced, null);
     GridBagLayout gbl_pnlAdvanced = new GridBagLayout();
@@ -230,12 +251,12 @@ public class NewWorkspacePanel extends JPanel {
     gbc_txtPassword.gridy = 2;
     pnlAdvanced.add(txtPassword, gbc_txtPassword);
 
-    JButton btnCreateNew = new JButton("Create New");
-    GridBagConstraints gbc_btnCreateNew = new GridBagConstraints();
-    gbc_btnCreateNew.insets = new Insets(0, 0, 0, 0);
-    gbc_btnCreateNew.gridx = 2;
-    gbc_btnCreateNew.gridy = 5;
-    pnlContent.add(btnCreateNew, gbc_btnCreateNew);
+    btnApply = new JButton();
+    GridBagConstraints gbc_btnApply = new GridBagConstraints();
+    gbc_btnApply.insets = new Insets(0, 0, 0, 0);
+    gbc_btnApply.gridx = 2;
+    gbc_btnApply.gridy = 5;
+    pnlContent.add(btnApply, gbc_btnApply);
 
     // Attach dynamic components
     scrContent.addDynamicComponent(lblHelp);
@@ -255,49 +276,111 @@ public class NewWorkspacePanel extends JPanel {
     actFileBrowse.addMapping(btnConfigBrowse, txtServerConfig);
     btnConfigBrowse.addActionListener(actFileBrowse);
 
-    btnCreateNew.addActionListener(e -> {
-      createNew(tabsServerDetails.getSelectedComponent().equals(pnlSimple));
+    btnApply.addActionListener(e -> {
+      storeWorkspace();
     });
   }
 
   /**
-   * Create a workspace instance using the user filled elements. If there are no errors the
-   * workspace will be saved to the file system.
+   * Load a workspace into the workspace panel.
    * 
-   * @param simple Whether to use simple mode, if false will use advanced mode
-   * @return Error builder verifying creation of workspace
+   * @param wsi Workspace instance to load
    */
-  private ErrorBuilder createNew(boolean simple) {
-    ErrorBuilder eb = new ErrorBuilder();
+  private void loadWorkspaceInstance(WorkspaceInstance wsi) {
+    // Load workspace date into fields
+    if (wsi != null) {
+      txtWorkspaceName.setText(wsi.name);
+      txtWorkspacePath.setText(wsi.directory);
+      if (wsi.workspace != null && wsi.workspace.database != null) {
+        if (wsi.workspace.database.getReference() != null) {
+          tabsServerDetails.setSelectedComponent(pnlSimple);
+          txtServerConfig.setText(wsi.workspace.database.getReference());
+        } else {
+          tabsServerDetails.setSelectedComponent(pnlAdvanced);
+          txtServer.setText(wsi.workspace.database.getHost());
+          txtUsername.setText(wsi.workspace.database.getUser());
+          txtPassword.setText(wsi.workspace.database.getPassword());
+        }
+      }
+      String strHelp = "Modify the currently loaded workspace. Any changes to workspace name"
+          + " or location will be reflected on the file system.";
+      lblHelp.setText(String.format("<html>%s</html>", strHelp));
+      btnApply.setText("Apply Changes");
+    } else {
+      txtWorkspaceName.setText(null);
+      txtWorkspacePath.setText(null);
+      tabsServerDetails.setSelectedComponent(pnlSimple);
+      txtServerConfig.setText(null);
+      txtServer.setText(null);
+      txtUsername.setText(null);
+      txtPassword.setText(null);
 
+      String strHelp = "Create a new workspace for viewing campaigns. A created "
+          + "workspace can be opened again in the future.";
+      lblHelp.setText(String.format("<html>%s</html>", strHelp));
+      btnApply.setText("Create New");
+    }
+    // Track workspace as base
+    this.base = wsi;
+  }
+
+
+  /**
+   * Generate a workspace instance from the current fields and the base if it exists.
+   * 
+   * @param eb Error builder to update with instance formation errors
+   * @return Generated workspace instance
+   */
+  private WorkspaceInstance getWorkspaceInstance(ErrorBuilder eb) {
     // Create workspace instance
     WorkspaceInstance wsi =
         new WorkspaceInstance(txtWorkspaceName.getText(), txtWorkspacePath.getText());
-    if (txtWorkspaceName.getText().isEmpty()) {
+    // Keep track of existing workspace if it exists (as base) or create a new one
+    wsi.workspace = base == null ? new WorkspaceConfig() : base.workspace;
+
+    // Validate workspace instance
+    if (wsi.name.isEmpty()) {
       eb.addError("The workspace name must not be empty");
     }
-    if (txtWorkspacePath.getText().isEmpty()) {
+    if (wsi.directory.isEmpty()) {
       eb.addError("The workspace path must not be empty");
     }
-    // Create workspace configuration
-    WorkspaceConfig workspace = new WorkspaceConfig();
-    if (simple) {
+
+    // Update workspace database connection
+    if (tabsServerDetails.getSelectedComponent().equals(pnlSimple)) {
       try {
-        workspace.database = new DatabaseConfig(txtServerConfig.getText());
+        wsi.workspace.database = new DatabaseConfig(txtServerConfig.getText());
       } catch (FileNotFoundException e) {
         eb.addError("Could not find database configuration file");
       }
     } else {
-      workspace.database = new DatabaseConfig(txtServer.getText(), txtUsername.getText(),
+      wsi.workspace.database = new DatabaseConfig(txtServer.getText(), txtUsername.getText(),
           String.valueOf(txtPassword.getPassword()));
     }
-    wsi.workspace = workspace;
+    return wsi;
+  }
+
+  /**
+   * Create a workspace instance using the user filled elements. If there are no errors the
+   * workspace will be saved to the file system. If the base is set this will be treated as an
+   * update, therefore overwrite checks for the current path are disabled and any changes in file
+   * system path will remove the old workspace file.
+   * 
+   * @return Error builder verifying creation of workspace
+   */
+  private ErrorBuilder storeWorkspace() {
+    // Create workspace instance
+    ErrorBuilder eb = new ErrorBuilder();
+    WorkspaceInstance wsi = getWorkspaceInstance(eb);
 
     // Attempt to store workspace, if successful, load it into the model
     if (!eb.isError()) {
       boolean write = true;
-      Path path = Paths.get(wsi.getWorkspaceFile().toURI());
-      if (Files.exists(path)) {
+      // If this is an update, just overwrite the existing file, otherwise check
+      Path newPath = Paths.get(wsi.getWorkspaceFile().toURI());
+      Path curPath = base == null ? null : Paths.get(base.getWorkspaceFile().toURI());
+      boolean overwriteCheck = !newPath.equals(curPath);
+      if (overwriteCheck && Files.exists(newPath)) {
         int res = JOptionPane.showConfirmDialog(null, String.format(
             "The workspace '%s' already exists in this location, would you like to overwrite it?",
             wsi.name), "Overwrite", JOptionPane.YES_NO_OPTION);
@@ -307,9 +390,18 @@ public class NewWorkspacePanel extends JPanel {
       }
       // Write the created workspace to the file system
       if (write) {
+        // Store the workspace
         eb.append(WorkspaceHandler.storeWorkspace(wsi, true));
+        // Delete the existing workspace if it was moved
+        if (base != null && !newPath.equals(curPath)) {
+          try {
+            Files.delete(curPath);
+          } catch (IOException e) {
+            System.err.println("Unable to delete old workspace");
+          }
+        }
         if (!eb.isError()) {
-          Window frmCurrent = SwingUtilities.getWindowAncestor(NewWorkspacePanel.this);
+          Window frmCurrent = SwingUtilities.getWindowAncestor(CreateWorkspacePanel.this);
           frmCurrent.setVisible(false);
           frmCurrent.dispose();
           // Load the workspace
@@ -319,8 +411,8 @@ public class NewWorkspacePanel extends JPanel {
     }
 
     if (eb.isError()) {
-      JOptionPane.showMessageDialog(null, eb.listComments("New Workspace"), "New Workspace",
-          JOptionPane.ERROR_MESSAGE);
+      JOptionPane.showMessageDialog(null, eb.listComments("Creating Workspace"),
+          "Creating Workspace", JOptionPane.ERROR_MESSAGE);
     }
     return eb;
   }
