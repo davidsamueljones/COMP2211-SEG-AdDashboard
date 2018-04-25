@@ -51,15 +51,17 @@ public class DashboardMenuBar extends JMenuBar {
     // Create menu bar item children
     JMenuItem mntmChangeWorkspace = new JMenuItem("Change Workspace");
     mntmChangeWorkspace.addActionListener(e -> {
-      // Use current panel's form as parent
-      Window frmCurrent = SwingUtilities.getWindowAncestor(DashboardMenuBar.this);
-      WorkspaceSelectionDialog changeWorkspace =
-          new WorkspaceSelectionDialog(frmCurrent, controller);
-      changeWorkspace.setModalityType(ModalityType.APPLICATION_MODAL);
-      changeWorkspace.setVisible(true);
+      dashboard.showWorkspaceSelector();
     });
     mntmChangeWorkspace.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, CMD_MODIFIER));
     mnFile.add(mntmChangeWorkspace);
+
+    JMenuItem mntmModifyWorkspace = new JMenuItem("Modify Workspace");
+    mntmModifyWorkspace.addActionListener(e -> {
+      dashboard.showWorkspaceModifier();
+    });
+    mntmModifyWorkspace.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, CMD_MODIFIER));
+    mnFile.add(mntmModifyWorkspace);
 
     JMenuItem mtnmSaveWorkspace = new JMenuItem("Save Workspace");
     mtnmSaveWorkspace.addActionListener(e -> {
@@ -67,13 +69,31 @@ public class DashboardMenuBar extends JMenuBar {
     });
     mtnmSaveWorkspace.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, CMD_MODIFIER));
     mnFile.add(mtnmSaveWorkspace);
-
+    
     mnFile.addSeparator();
 
     JMenuItem mntmExit = new JMenuItem("Exit");
     mntmExit.addActionListener(e -> controller.display.closeDashboard());
     mntmExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, CMD_MODIFIER));
     mnFile.add(mntmExit);
+    
+    // Menu bar click behaviour
+    mnFile.addMenuListener(new MenuListener() {
+
+      @Override
+      public void menuSelected(MenuEvent e) {
+        boolean workspaceLoaded = controller.workspace.getWorkspaceName() != null;
+        mntmModifyWorkspace.setEnabled(workspaceLoaded);
+        mtnmSaveWorkspace.setEnabled(workspaceLoaded);
+      }
+
+      @Override
+      public void menuDeselected(MenuEvent e) {}
+
+      @Override
+      public void menuCanceled(MenuEvent e) {}
+
+    });
   }
 
   private void initMenuBarItemView() {
