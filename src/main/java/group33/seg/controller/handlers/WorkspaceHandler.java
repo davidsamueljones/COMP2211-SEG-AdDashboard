@@ -50,7 +50,7 @@ public class WorkspaceHandler {
     WorkspaceInstance wsi = mvc.model.getWorkspaceInstance();
     return (wsi == null ? null : wsi.name);
   }
-  
+
   /**
    * @return The current workspace directory
    */
@@ -58,7 +58,7 @@ public class WorkspaceHandler {
     WorkspaceInstance wsi = mvc.model.getWorkspaceInstance();
     return (wsi == null ? null : wsi.directory);
   }
-  
+
   /**
    * Load a workspace from a given file. If the load is successful, the model is updated.
    * 
@@ -159,17 +159,23 @@ public class WorkspaceHandler {
 
   /**
    * Using the currently loaded workspace, update the database handlers connections.
+   * Will close connections if no valid database configuration exists.
    * 
    * @return Whether the update was successful
    */
   public boolean updateDatabaseConnections() {
-    DatabaseConfig config = mvc.model.getWorkspaceInstance().workspace.database;
-    try {
-      mvc.controller.database.refreshConnections(config, 10);
-    } catch (SQLException e) {
-      return false;
+    WorkspaceConfig workspace = mvc.model.getWorkspace();
+    if (workspace != null && workspace.database != null) {
+      DatabaseConfig config = workspace.database;
+      try {
+        mvc.controller.database.refreshConnections(config, 10);
+        return true;
+      } catch (SQLException e) {
+        // falls through to return false
+      }
     }
-    return true;
+    mvc.controller.database.closeConnections();
+    return false;
   }
 
   /**
