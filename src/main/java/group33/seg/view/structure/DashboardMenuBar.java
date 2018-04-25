@@ -15,6 +15,7 @@ import javax.swing.event.MenuListener;
 import group33.seg.controller.DashboardController;
 import group33.seg.view.about.AboutDialog;
 import group33.seg.view.preferences.PreferencesDialog;
+import group33.seg.view.workspace.WorkspaceSelectionDialog;
 
 public class DashboardMenuBar extends JMenuBar {
   private static final long serialVersionUID = 7553179515259733852L;
@@ -48,6 +49,27 @@ public class DashboardMenuBar extends JMenuBar {
     this.add(mnFile);
 
     // Create menu bar item children
+    JMenuItem mntmChangeWorkspace = new JMenuItem("Change Workspace");
+    mntmChangeWorkspace.addActionListener(e -> {
+      // Use current panel's form as parent
+      Window frmCurrent = SwingUtilities.getWindowAncestor(DashboardMenuBar.this);
+      WorkspaceSelectionDialog changeWorkspace =
+          new WorkspaceSelectionDialog(frmCurrent, controller);
+      changeWorkspace.setModalityType(ModalityType.APPLICATION_MODAL);
+      changeWorkspace.setVisible(true);
+    });
+    mntmChangeWorkspace.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, CMD_MODIFIER));
+    mnFile.add(mntmChangeWorkspace);
+
+    JMenuItem mtnmSaveWorkspace = new JMenuItem("Save Workspace");
+    mtnmSaveWorkspace.addActionListener(e -> {
+      controller.workspace.storeCurrentWorkspace(true);
+    });
+    mtnmSaveWorkspace.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, CMD_MODIFIER));
+    mnFile.add(mtnmSaveWorkspace);
+
+    mnFile.addSeparator();
+
     JMenuItem mntmExit = new JMenuItem("Exit");
     mntmExit.addActionListener(e -> controller.display.closeDashboard());
     mntmExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, CMD_MODIFIER));
@@ -123,7 +145,7 @@ public class DashboardMenuBar extends JMenuBar {
       about.setModalityType(ModalityType.APPLICATION_MODAL);
       about.setVisible(true);
     });
-    
+
     mnHelp.addSeparator();
 
     JMenuItem mntmPreferences = new JMenuItem("Preferences");
