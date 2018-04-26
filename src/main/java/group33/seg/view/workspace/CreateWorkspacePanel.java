@@ -117,13 +117,13 @@ public class CreateWorkspacePanel extends JPanel {
     txtWorkspaceName = new JTextField();
     GridBagConstraints gbc_txtWorkspaceName = new GridBagConstraints();
     gbc_txtWorkspaceName.gridwidth = 2;
-    gbc_txtWorkspaceName.insets = new Insets(0, 0, 5, 5);
+    gbc_txtWorkspaceName.insets = new Insets(0, 0, 5, 0);
     gbc_txtWorkspaceName.fill = GridBagConstraints.HORIZONTAL;
     gbc_txtWorkspaceName.gridx = 1;
     gbc_txtWorkspaceName.gridy = 1;
     pnlContent.add(txtWorkspaceName, gbc_txtWorkspaceName);
 
-    JLabel lblWorkspaceFolderPath = new JLabel("Workspace Folder Path:");
+    JLabel lblWorkspaceFolderPath = new JLabel("Workspace Storage Directory:");
     GridBagConstraints gbc_lblWorkspaceFolderPath = new GridBagConstraints();
     gbc_lblWorkspaceFolderPath.gridwidth = 3;
     gbc_lblWorkspaceFolderPath.anchor = GridBagConstraints.WEST;
