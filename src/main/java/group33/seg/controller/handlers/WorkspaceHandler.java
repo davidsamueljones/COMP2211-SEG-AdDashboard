@@ -172,8 +172,9 @@ public class WorkspaceHandler {
 
   /**
    * Save encrypted database config and clear password
+   *
    * @param saveLocation file to save to
-   * @param password to use for encryption
+   * @param password     to use for encryption
    */
   public ErrorBuilder saveDatabaseConfig(String saveLocation, char[] password) {
     ErrorBuilder eb = new ErrorBuilder();
@@ -186,7 +187,7 @@ public class WorkspaceHandler {
         try {
           fos = new FileOutputStream(new File(saveLocation));
           SerializationUtils.serializeEncrypted(workspace, fos, password);
-        } catch(IOException e) {
+        } catch (IOException e) {
           eb.addError("File not available");
         } finally {
           try {

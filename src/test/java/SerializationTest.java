@@ -25,7 +25,7 @@ public class SerializationTest {
             os.close();
 
             //deserialise object
-            InputStream is = new FileInputStream(testFile); 
+            InputStream is = new FileInputStream(testFile);
             Object readObject = SerializationUtils.deserialize(is);
             is.close();
 
@@ -41,7 +41,7 @@ public class SerializationTest {
         } catch (IOException e) {
             testFile.delete();
             fail(e.getMessage());
-        }        
+        }
     }
 
     @Test
@@ -57,7 +57,7 @@ public class SerializationTest {
             os.close();
 
             //deserialise object
-            InputStream is = new FileInputStream(testFile); 
+            InputStream is = new FileInputStream(testFile);
             Object readObject = SerializationUtils.deserializeEncrypted(is, examplePassword);
             is.close();
 
@@ -73,6 +73,6 @@ public class SerializationTest {
         } catch (IOException e) {
             testFile.delete();
             fail(e.getMessage());
-        }        
+        }
     }
 }
