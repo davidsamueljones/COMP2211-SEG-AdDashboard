@@ -11,6 +11,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.io.StreamCorruptedException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
@@ -120,7 +121,8 @@ public class SerializationUtils {
    * @throws NoSuchPaddingException
    * @throws InvalidKeyException
    */
-  private static Cipher makeCipher(char[] password, int opmode) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException {
+  private static Cipher makeCipher(char[] password, int opmode)
+      throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException {
     SecretKey key64 = new SecretKeySpec(new String(password).getBytes(), "Blowfish");
     Cipher cipher = Cipher.getInstance("Blowfish");
     cipher.init(opmode, key64);
@@ -135,7 +137,8 @@ public class SerializationUtils {
    * @throws NoSuchPaddingException
    * @throws InvalidKeyException
    */
-  private static Cipher makeEncryptCipher(char[] password) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException {
+  private static Cipher makeEncryptCipher(char[] password)
+      throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException {
     return makeCipher(password, Cipher.ENCRYPT_MODE);
   }
 
@@ -147,7 +150,8 @@ public class SerializationUtils {
    * @throws NoSuchPaddingException
    * @throws InvalidKeyException
    */
-  private static Cipher makeDecryptCipher(char[] password) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException {
+  private static Cipher makeDecryptCipher(char[] password)
+      throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException {
     return makeCipher(password, Cipher.DECRYPT_MODE);
   }
 
@@ -157,7 +161,7 @@ public class SerializationUtils {
    * @param os OutputStream to save obj to
    * @param password for encryption
    */
-  public static void serializeEncrypted(Serializable obj, OutputStream os, char[] password){
+  public static void serializeEncrypted(Serializable obj, OutputStream os, char[] password) {
     serializeEncrypted(obj, os, password, true);
   }
 
@@ -168,7 +172,8 @@ public class SerializationUtils {
    * @param password for encryption
    * @param clearPasswordAfter if true then password is cleared
    */
-  public static void serializeEncrypted(Serializable obj, OutputStream os, char[] password, boolean clearPasswordAfter) {
+  public static void serializeEncrypted(Serializable obj, OutputStream os, char[] password,
+      boolean clearPasswordAfter) {
     // Verify arguments
     if (os == null) {
       throw new IllegalArgumentException("The OutputStream cannot be null");
@@ -179,8 +184,8 @@ public class SerializationUtils {
       Cipher cipher = makeEncryptCipher(password);
 
       //clear password
-      if(clearPasswordAfter){
-        for(int i=0; i<password.length; i++){
+      if (clearPasswordAfter) {
+        for (int i = 0; i < password.length; i++) {
           password[i] = '0';
         }
       }
@@ -190,7 +195,8 @@ public class SerializationUtils {
 
       oos = new ObjectOutputStream(cipherOutputStream);
       oos.writeObject(sealedObject);
-    } catch (InvalidKeyException | IllegalBlockSizeException | NoSuchAlgorithmException | NoSuchPaddingException | IOException e) {
+    } catch (InvalidKeyException | IllegalBlockSizeException | NoSuchAlgorithmException | NoSuchPaddingException
+        | IOException e) {
       System.err.println("Serialization failed");
     } finally {
       try {
@@ -212,7 +218,7 @@ public class SerializationUtils {
    * @return object if decryption succeeded
    *         null if something went wrong
    */
-  public static Object deserializeEncrypted(InputStream is, char[] password){
+  public static Object deserializeEncrypted(InputStream is, char[] password) {
     return deserializeEncrypted(is, password, true);
   }
 
@@ -224,29 +230,31 @@ public class SerializationUtils {
    * @return object if decryption succeeded
    *         null if something went wrong
    */
-  public static Object deserializeEncrypted(InputStream is, char[] password,  boolean clearPasswordAfter){
+  public static Object deserializeEncrypted(InputStream is, char[] password, boolean clearPasswordAfter) {
     try {
       Cipher cipher = makeDecryptCipher(password);
 
       //clear password
-      if(clearPasswordAfter){
-        for(int i=0; i<password.length; i++){
+      if (clearPasswordAfter) {
+        for (int i = 0; i < password.length; i++) {
           password[i] = '0';
         }
       }
-      
-      CipherInputStream cipherInputStream = new CipherInputStream( new BufferedInputStream(is), cipher );
-      ObjectInputStream inputStream = new ObjectInputStream( cipherInputStream );
-      
+
+      CipherInputStream cipherInputStream = new CipherInputStream(new BufferedInputStream(is), cipher);
+      ObjectInputStream inputStream = new ObjectInputStream(cipherInputStream);
+
       SealedObject sealedObject = (SealedObject) inputStream.readObject();
-      Object obj = sealedObject.getObject( cipher );
+      Object obj = sealedObject.getObject(cipher);
 
       inputStream.close();
       return obj;
 
-    } catch(NoSuchPaddingException | BadPaddingException |
-            NoSuchAlgorithmException | InvalidKeyException |
-            IOException | ClassNotFoundException | IllegalBlockSizeException e) {
+    } catch (StreamCorruptedException e) {
+      //this is what happens when you use the wrong password
+      return null;
+    } catch (NoSuchPaddingException | BadPaddingException | NoSuchAlgorithmException | InvalidKeyException | IOException
+        | ClassNotFoundException | IllegalBlockSizeException e) {
       e.printStackTrace();
       return null;
     }

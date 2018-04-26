@@ -46,19 +46,33 @@ public class SerializationTest {
 
     @Test
     public void encryptedSerialisationTest() {
-        String testString = "testString";
-        File testFile = new File("test.file");
+        char[] encryptPassword = "testPassword".toCharArray();
+        char[] decryptPassword = "testPassword".toCharArray();
 
-        char[] examplePassword = "example".toCharArray();
+        assertTrue("Encryption not working", readWriteTestEncrypted("correct.test", encryptPassword, decryptPassword));
+    }
+
+    @Test
+    public void wrongPasswordTest() {
+        char[] encryptPassword = "testPassword".toCharArray();
+        char[] decryptPassword = "passwordTest".toCharArray();
+
+        assertTrue("Wrong password accepted", !readWriteTestEncrypted("wrong.test", encryptPassword, decryptPassword));
+    }
+
+    private boolean readWriteTestEncrypted(String testLocation, char[] encryptPassword, char[] decryptPassword) {
+        String testString = "testString";
+        File testFile = new File(testLocation);
+
         try {
             //serialise object
             OutputStream os = new FileOutputStream(testFile);
-            SerializationUtils.serializeEncrypted(testString, os, examplePassword, false);
+            SerializationUtils.serializeEncrypted(testString, os, encryptPassword, false);
             os.close();
 
             //deserialise object
             InputStream is = new FileInputStream(testFile);
-            Object readObject = SerializationUtils.deserializeEncrypted(is, examplePassword);
+            Object readObject = SerializationUtils.deserializeEncrypted(is, decryptPassword);
             is.close();
 
             testFile.delete();
@@ -66,13 +80,13 @@ public class SerializationTest {
             //check if objects are equal
             if (readObject instanceof String) {
                 String readString = (String) readObject;
-                assertTrue("Read object was not the same as the written object", readString.equals(testString));
+                return readString.equals(testString);
             } else {
-                fail("Read object was not the correct type");
+                return false;
             }
         } catch (IOException e) {
             testFile.delete();
-            fail(e.getMessage());
+            return false;
         }
     }
 }
