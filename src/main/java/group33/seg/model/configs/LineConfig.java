@@ -101,6 +101,9 @@ public class LineConfig implements Serializable {
     if (query == null) {
       eb.addError("A query must be provided");
     } else {
+      if (query.campaign == null) {
+        eb.addError("A campaign must be selected");
+      }
       if (query.metric == null) {
         eb.addError("A metric must be selected");
       }
