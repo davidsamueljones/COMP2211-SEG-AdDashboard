@@ -231,11 +231,11 @@ public class WorkspaceHandler {
     if (campaigns != null) {
       int cur = campaigns.indexOf(toReplace);
       if (cur >= 0) {
-        if (!campaigns.contains(campaign)) {
+        if (toReplace.equals(campaign) || !campaigns.contains(campaign)) {
           campaigns.set(cur, campaign);
         } else {
           campaigns.remove(cur);
-        }    
+        }
         notifyListeners(Type.CAMPAIGNS);
         replaceQueryCampaigns(toReplace, campaign);
         return true;
@@ -251,15 +251,9 @@ public class WorkspaceHandler {
    * @param campaign Campaign to put as replacement
    */
   private void replaceQueryCampaigns(CampaignConfig toReplace, CampaignConfig campaign) {
-    // Replace campaign in statistics
-    for (StatisticConfig statistic : getStatistics()) {
-      if (statistic.query.campaign.equals(toReplace)) {
-        statistic.query.campaign = campaign;
-      }
-    }
-    notifyListeners(Type.STATISTICS);
     // Replace campaign in graphs
-    for (GraphConfig graph : getGraphs()) {
+    List<GraphConfig> graphs = getGraphs();
+    for (GraphConfig graph : graphs) {
       graph.accept(new GraphVisitor() {
 
         @Override
@@ -270,15 +264,27 @@ public class WorkspaceHandler {
         @Override
         public void visit(LineGraphConfig graph) {
           for (LineConfig line : graph.lines) {
-            if (line.query.campaign.equals(line.query.campaign)) {
+            if (line.query != null && line.query.campaign != null
+                && line.query.campaign.equals(toReplace)) {
               line.query.campaign = campaign;
+              if (graph.equals(getCurrentGraph())) {
+                notifyListeners(Type.CURRENT_GRAPH);
+              }
             }
           }
         }
       });
     }
     notifyListeners(Type.GRAPHS);
-    notifyListeners(Type.CURRENT_GRAPH);
+
+    // Replace campaign in statistics
+    for (StatisticConfig statistic : getStatistics()) {
+      if (statistic.query != null && statistic.query.campaign != null
+          && statistic.query.campaign.equals(toReplace)) {
+        statistic.query.campaign = campaign;
+      }
+    }
+    notifyListeners(Type.STATISTICS);
   }
 
   /**
