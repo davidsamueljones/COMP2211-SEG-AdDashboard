@@ -13,6 +13,7 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -252,6 +253,7 @@ public class DashboardFrame extends JFrame {
       error = "<html>There is no workspace loaded.<br>"
           + "Open a prior workspace or create a new workspace to start using the Ad-Dashboard.</html>";
     } else {
+      // Track load as recent workspace
       controller.settings.addRecentWorkspace(wsi.getWorkspaceFile().toString());
       connections = controller.workspace.updateDatabaseConnections();
       if (!connections) {
@@ -292,29 +294,26 @@ public class DashboardFrame extends JFrame {
    */
   private void refreshGraph() {
     SwingUtilities.invokeLater(() -> {
-      
       // Validate
       ErrorBuilder eb = new ErrorBuilder();
       GraphConfig graph = controller.workspace.getCurrentGraph();
       if (graph != null) {
-        eb.append(graph.validate());;
-        if (eb.isError()) {
-          controller.workspace.setCurrentGraph(null);
-          JOptionPane.showMessageDialog(null,
-              "Unable to load graph due to validation errors.\r\n"
-                  + "Modify the graph before attempting load again.",
-              "Graph Load Error", JOptionPane.ERROR_MESSAGE);
-        } else {
-          // Do updates
-          ProgressDialog progressDialog = new ProgressDialog("Loading Graph...", this, false, true);
-          controller.graphs.addProgressListener(progressDialog.listener);
-          controller.graphs.displayGraph(graph);
-          progressDialog.setVisible(true);
-          controller.graphs.removeProgressListener(progressDialog.listener);
-        }
+        eb.append(graph.validate());
       }
-
-
+      if (eb.isError()) {
+        controller.workspace.setCurrentGraph(null);
+        JOptionPane.showMessageDialog(null,
+            "Unable to load graph due to validation errors.\r\n"
+                + "Modify the graph before attempting load again.",
+            "Graph Load Error", JOptionPane.ERROR_MESSAGE);
+      } else {
+        // Do updates
+        ProgressDialog progressDialog = new ProgressDialog("Loading Graph...", this, false, true);
+        controller.graphs.addProgressListener(progressDialog.listener);
+        controller.graphs.displayGraph(graph);
+        progressDialog.setVisible(true);
+        controller.graphs.removeProgressListener(progressDialog.listener);
+      }
     });
   }
 
@@ -327,16 +326,16 @@ public class DashboardFrame extends JFrame {
       ErrorBuilder eb = new ErrorBuilder();
       List<StatisticConfig> statistics = controller.workspace.getStatistics();
       for (StatisticConfig statistic : statistics) {
-        eb.append(statistic.validate()); 
+        eb.append(statistic.validate());
       }
-      
+
       ProgressDialog progressDialog =
           new ProgressDialog("Loading Statistics...", this, false, true);
       controller.statistics.addProgressListener(progressDialog.listener);
       controller.statistics.loadStatistics(statistics);
       progressDialog.setVisible(true);
-      controller.statistics.removeProgressListener(progressDialog.listener);    
-      
+      controller.statistics.removeProgressListener(progressDialog.listener);
+
       // Alert of errors
       if (eb.isError()) {
         JOptionPane.showMessageDialog(null,
@@ -344,7 +343,7 @@ public class DashboardFrame extends JFrame {
                 + "Modify the offending statistics for them to be displayed.",
             "Statistic Load Error", JOptionPane.ERROR_MESSAGE);
       }
-      
+
     });
   }
 
