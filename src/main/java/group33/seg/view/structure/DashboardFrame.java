@@ -215,8 +215,7 @@ public class DashboardFrame extends JFrame {
 
     // Update the graph view whenever there are changes in the workspace
     controller.workspace.addListener(type -> {
-      boolean reload =
-          type == WorkspaceListener.Type.CAMPAIGN || type == WorkspaceListener.Type.CURRENT_GRAPH;
+      boolean reload = type == WorkspaceListener.Type.CURRENT_GRAPH;
       if (reload) {
         refreshGraph();
       }
@@ -224,11 +223,7 @@ public class DashboardFrame extends JFrame {
 
     // Update the statistic view whenever there are changes in the workspace
     controller.workspace.addListener(type -> {
-      boolean invalidate = type == WorkspaceListener.Type.CAMPAIGN;
-      boolean reload = invalidate || type == WorkspaceListener.Type.STATISTICS;
-      if (invalidate) {
-        controller.workspace.clearStatisticCaches();
-      }
+      boolean reload = type == WorkspaceListener.Type.STATISTICS;
       if (reload) {
         refreshStatistics();
       }
