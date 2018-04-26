@@ -172,7 +172,7 @@ public class StatisticHandler {
     }
     if (update == Update.FULL || update == Update.DATA) {
       updateProgress(String.format("Updating data of statistic '%s'...", statistic.identifier));
-      Map<Metric, Double> results = doStatisticQuery(statistic);
+      Map<Metric, Double> results = getStatisticMetricValues(statistic);
       EventQueue.invokeLater(() -> view.setStatisticData(statistic, results));
     }
   }
@@ -183,34 +183,21 @@ public class StatisticHandler {
    * @param statistic Statistic configuration to use for query
    * @return Mapping of metrics to returned values
    */
-  private Map<Metric, Double> doStatisticQuery(StatisticConfig statistic) {
+  private Map<Metric, Double> getStatisticMetricValues(StatisticConfig statistic) {
+    // If statistic is not valid, do not attempt to query
     if (statistic.validate().isError()) {
       return null;
     }
-    
-    Map<Metric, Double> cache = mvc.controller.workspace.getCache(statistic);
-    if (cache != null) {
-      return cache;
-    }
-    // Not cached so query it
+    // Query data (let handler manage caching)
     Map<Metric, Double> results = new HashMap<>();
-    MetricQuery query = statistic.query;
     for (Metric metric : Metric.getTypes()) {
       updateProgress(
           String.format("Updating '%s' data of statistic '%s'...", metric, statistic.identifier));
-      query.metric = metric;
-      MetricQueryResponse res = mvc.controller.database.getQueryResponse(query);
-      // Only acknowledge results that are as expected
-      Number value = 0;
-      if (res.getResult() != null && res.getResult().size() == 1) {
-        if ((value = res.getResult().get(0).value) == null) {
-          value = 0;
-        }
-      }
-      results.put(metric, value.doubleValue());
+      statistic.query.metric = metric;
+      Double res = mvc.controller.database.doStatisticQuery(statistic, true);
+      results.put(metric, res);
     }
-    mvc.controller.workspace.putCache(statistic, results);
-    query.metric = null;
+    statistic.query.metric = null;
     return results;
   }
 

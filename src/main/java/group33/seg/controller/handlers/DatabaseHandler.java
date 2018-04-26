@@ -6,9 +6,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import group33.seg.controller.DashboardController.DashboardMVC;
@@ -16,8 +19,16 @@ import group33.seg.controller.database.DatabaseConfig;
 import group33.seg.controller.database.DatabaseConnection;
 import group33.seg.controller.database.DatabaseQueryFactory;
 import group33.seg.controller.types.MetricQueryResponse;
+import group33.seg.controller.utilities.GraphVisitor;
 import group33.seg.lib.Pair;
+import group33.seg.model.configs.GraphConfig;
+import group33.seg.model.configs.HistogramConfig;
+import group33.seg.model.configs.LineConfig;
+import group33.seg.model.configs.LineGraphConfig;
 import group33.seg.model.configs.MetricQuery;
+import group33.seg.model.configs.StatisticConfig;
+import group33.seg.model.configs.WorkspaceConfig;
+import group33.seg.model.types.Metric;
 
 public class DatabaseHandler {
 
@@ -125,6 +136,8 @@ public class DatabaseHandler {
     }
   }
 
+
+
   public MetricQueryResponse getQueryResponse(MetricQuery request) {
     return new MetricQueryResponse(request, pool.submit(() -> getGraphData(request)));
   }
@@ -154,6 +167,47 @@ public class DatabaseHandler {
     returnConnection(conn);
 
     return result;
+  }
+
+  /**
+   * Fetch data for a given statistic (pre-configured with a metric). Attempt to use the cache if
+   * indicated otherwise query new data.
+   * 
+   * @param statistic Statistic to query with
+   * @param cache Whether to use cache
+   * @return Single statistic value, null if error
+   */
+  public Double doStatisticQuery(StatisticConfig statistic, boolean cache) {
+    // If statistic is not valid, do not attempt to query
+    if (statistic == null || statistic.validate().isError()) {
+      return null;
+    }
+    // Generate query string
+    String sql = DatabaseQueryFactory.generateSQL(statistic.query);
+    // Check for caches
+    WorkspaceConfig workspace = mvc.model.getWorkspace();
+    List<Pair<String, Number>> result = null;
+    if (workspace != null && workspace.caches.containsKey(sql)) {
+      result = workspace.caches.get(sql);
+      cache = false;
+    }
+    if (result == null) {
+      // No cache exists so query
+      MetricQueryResponse response = mvc.controller.database.getQueryResponse(statistic.query);
+      result = response.getResult();
+    }
+    // Acknowledge results that are as expected
+    Number value = 0;
+    if (result.size() == 1) {
+      if ((value = result.get(0).value) == null) {
+        value = 0;
+      }
+    }
+    if (cache) {
+      // Cache result in workspace
+      workspace.caches.put(sql, result);
+    }
+    return value.doubleValue();
   }
 
   /**
