@@ -39,6 +39,7 @@ public class DashboardMenuBar extends JMenuBar {
   private void initMenuBar() {
     // Initialise menu bar items
     initMenuBarItemFile();
+    initMenuBarTools();
     initMenuBarItemView();
     initMenuBarItemHelp();
   }
@@ -96,6 +97,49 @@ public class DashboardMenuBar extends JMenuBar {
     });
   }
 
+  private void initMenuBarTools() {
+    // Create menu bar item
+    JMenu mnTools = new JMenu("Tools");
+    this.add(mnTools);
+
+    JMenuItem mtnmClearGraph = new JMenuItem("Clear Graph");
+    mtnmClearGraph.addActionListener(e -> controller.workspace.setCurrentGraph(null));
+    mnTools.add(mtnmClearGraph);
+    
+    mnTools.addSeparator();
+    
+    JMenu mnAdvanced = new JMenu("Advanced");
+    mnTools.add(mnAdvanced);
+    
+    JMenuItem mtnmCleanCaches = new JMenuItem("Clean Caches");
+    mtnmCleanCaches.addActionListener(e -> controller.workspace.cleanCaches());
+    mnAdvanced.add(mtnmCleanCaches);
+    
+    JMenuItem mtnmClearCaches = new JMenuItem("Clear Caches");
+    mtnmClearCaches.addActionListener(e -> controller.workspace.clearCaches());
+    mnAdvanced.add(mtnmClearCaches);
+    
+    // Menu bar click behaviour
+    mnTools.addMenuListener(new MenuListener() {
+
+      @Override
+      public void menuSelected(MenuEvent e) {
+        mtnmClearGraph.setEnabled(controller.workspace.getCurrentGraph() != null);
+        boolean workspaceLoaded = controller.workspace.getWorkspaceName() != null;
+        mtnmCleanCaches.setEnabled(workspaceLoaded);
+        mtnmClearCaches.setEnabled(workspaceLoaded);
+      }
+
+      @Override
+      public void menuDeselected(MenuEvent e) {}
+
+      @Override
+      public void menuCanceled(MenuEvent e) {}
+
+    });
+    
+  }
+   
   private void initMenuBarItemView() {
     // Create menu bar item
     JMenu mnView = new JMenu("View");
