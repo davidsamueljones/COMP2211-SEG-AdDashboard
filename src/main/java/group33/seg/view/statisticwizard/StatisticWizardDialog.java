@@ -72,9 +72,8 @@ public class StatisticWizardDialog extends JDialog {
     gbl_pnlContent.columnWeights = new double[] {1.0, 0.0, 0.0};
     gbl_pnlContent.rowWeights = new double[] {1.0, 0.0};
     pnlContent.setLayout(gbl_pnlContent);
-
-     
-    pnlStatistic = new StatisticPanel();
+   
+    pnlStatistic = new StatisticPanel(controller);
     pnlStatistic.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     JScrollPane scrStatistic = new JScrollPane(pnlStatistic);
     scrStatistic.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
