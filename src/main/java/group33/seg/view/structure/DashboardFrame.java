@@ -22,6 +22,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import group33.seg.controller.DashboardController;
 import group33.seg.controller.handlers.WorkspaceHandler.WorkspaceListener;
@@ -69,25 +70,16 @@ public class DashboardFrame extends JFrame {
     this.controller = controller;
 
     this.setBounds(100, 100, 1280, 720);
-    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
     initGUI();
     initViewUpdaters();
 
     // Listen for if the workspace is closing to alert user they may want to save
-    addWindowListener(new WindowAdapter() {
+    this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+    this.addWindowListener(new WindowAdapter() {
       @Override
       public void windowClosing(WindowEvent e) {
-        WorkspaceInstance wsi = controller.workspace.getWorkspaceInstance();
-        if (wsi != null) {
-          int res = JOptionPane.showConfirmDialog(null,
-              String.format("Would you like to save the current workspace '%s' before exiting?",
-                  wsi.name),
-              "Save", JOptionPane.YES_NO_OPTION);
-          if (res == JOptionPane.YES_OPTION) {
-            controller.workspace.storeCurrentWorkspace(true);
-          }
-        }
+        handleDashboardClose();
       }
     });
   }
@@ -345,6 +337,28 @@ public class DashboardFrame extends JFrame {
       }
 
     });
+  }
+
+  /**
+   * Handle confirmation of save and close.
+   */
+  private void handleDashboardClose() {
+    WorkspaceInstance wsi = controller.workspace.getWorkspaceInstance();
+    if (controller.workspace.hasUnstoredChanges()) {
+      int res = JOptionPane.showConfirmDialog(null,
+          String.format("Would you like to save the current workspace '%s' before exiting?",
+              wsi.name),
+          "Save", JOptionPane.YES_NO_CANCEL_OPTION);
+      if (res == JOptionPane.CANCEL_OPTION) {
+        return;
+      }
+      if (res == JOptionPane.YES_OPTION) {
+        controller.workspace.storeCurrentWorkspace(true);
+      }
+    }
+    setVisible(false);
+    dispose();
+    System.exit(0);
   }
 
   /**
