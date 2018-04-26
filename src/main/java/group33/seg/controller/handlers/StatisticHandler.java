@@ -8,9 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import com.rits.cloning.Cloner;
 import group33.seg.controller.DashboardController.DashboardMVC;
-import group33.seg.controller.types.MetricQueryResponse;
 import group33.seg.controller.utilities.ProgressListener;
-import group33.seg.model.configs.MetricQuery;
 import group33.seg.model.configs.StatisticConfig;
 import group33.seg.model.types.Metric;
 import group33.seg.view.output.StatisticsView;
@@ -220,8 +218,7 @@ public class StatisticHandler {
    * @param updated Statistic configuration to compare with base
    * @return Update type as represented by Update enumeration
    */
-  private Update getStatisticUpdate(StatisticConfig original, StatisticConfig updated) {
-
+  public static Update getStatisticUpdate(StatisticConfig original, StatisticConfig updated) {
     // Check for any changes in querying that may change data
     boolean data = true;
     data &= (original.query == null ? (original.query == null)

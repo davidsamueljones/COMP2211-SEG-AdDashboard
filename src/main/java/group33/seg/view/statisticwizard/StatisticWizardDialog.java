@@ -5,6 +5,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Window;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -13,6 +15,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import group33.seg.controller.DashboardController;
+import group33.seg.controller.handlers.StatisticHandler;
+import group33.seg.controller.handlers.StatisticHandler.Update;
 import group33.seg.controller.utilities.ErrorBuilder;
 import group33.seg.model.configs.StatisticConfig;
 
@@ -60,9 +64,9 @@ public class StatisticWizardDialog extends JDialog {
     } else {
       setLocation(100, 100);
     }
-    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+    setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
   }
-  
+
 
   private void initGUI() {
     JPanel pnlContent = new JPanel();
@@ -72,7 +76,7 @@ public class StatisticWizardDialog extends JDialog {
     gbl_pnlContent.columnWeights = new double[] {1.0, 0.0, 0.0};
     gbl_pnlContent.rowWeights = new double[] {1.0, 0.0};
     pnlContent.setLayout(gbl_pnlContent);
-   
+
     pnlStatistic = new StatisticPanel(controller);
     pnlStatistic.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     JScrollPane scrStatistic = new JScrollPane(pnlStatistic);
@@ -112,14 +116,7 @@ public class StatisticWizardDialog extends JDialog {
 
     // Close the wizard, do not do any updates
     btnClose.addActionListener(e -> {
-      int res = JOptionPane.showConfirmDialog(StatisticWizardDialog.this,
-          "Are you sure you want to close the wizard, any unapplied changes will be lost?",
-          "Close", JOptionPane.YES_NO_OPTION);
-      if (res != JOptionPane.YES_OPTION) {
-        return;
-      }
-      setVisible(false);
-      dispose();
+      handleClose();
     });
 
     // Handle apply behaviour, no other effects
@@ -133,8 +130,32 @@ public class StatisticWizardDialog extends JDialog {
         dispose();
       }
     });
+
+    addWindowListener(new WindowAdapter() {
+      @Override
+      public void windowClosing(WindowEvent e) {
+        handleClose();
+      }
+    });
   }
-  
+
+  /**
+   * Handle the close, checking if close was desired.
+   */
+  private void handleClose() {
+    if (base == null
+        || StatisticHandler.getStatisticUpdate(base, makeStatisticConfig()) != Update.NOTHING) {
+      int res = JOptionPane.showConfirmDialog(StatisticWizardDialog.this,
+          "Are you sure you want to close the wizard, any unapplied changes will be lost?", "Close",
+          JOptionPane.YES_NO_OPTION);
+      if (res != JOptionPane.YES_OPTION) {
+        return;
+      }
+    }
+    setVisible(false);
+    dispose();
+  }
+
   /**
    * Load the given statistic configuration into the dialog. After a load it shall be treated as the
    * base statistic so any future changes will be treated as updates/increments of a previous load.
@@ -165,10 +186,10 @@ public class StatisticWizardDialog extends JDialog {
       return true;
     }
   }
-  
+
   /**
-   * Generate a statistic configuration using the current wizard configuration. The current base will be
-   * used as a reference point if it exists.
+   * Generate a statistic configuration using the current wizard configuration. The current base
+   * will be used as a reference point if it exists.
    * 
    * @return Generated statistic
    */
@@ -184,7 +205,7 @@ public class StatisticWizardDialog extends JDialog {
     pnlStatistic.updateConfig(config);
     return config;
   }
-  
+
   /**
    * @return The currently loaded statistic without any non-applied changes
    */
