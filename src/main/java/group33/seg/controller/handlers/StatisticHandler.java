@@ -184,6 +184,10 @@ public class StatisticHandler {
    * @return Mapping of metrics to returned values
    */
   private Map<Metric, Double> doStatisticQuery(StatisticConfig statistic) {
+    if (statistic.validate().isError()) {
+      return null;
+    }
+    
     Map<Metric, Double> cache = mvc.controller.workspace.getCache(statistic);
     if (cache != null) {
       return cache;
