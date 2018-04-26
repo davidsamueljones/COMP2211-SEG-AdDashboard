@@ -1,6 +1,5 @@
 package group33.seg.controller.handlers;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -9,16 +8,19 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import group33.seg.controller.DashboardController.DashboardMVC;
 import group33.seg.controller.database.DatabaseConfig;
+import group33.seg.controller.database.DatabaseQueryFactory;
 import group33.seg.controller.handlers.WorkspaceHandler.WorkspaceListener.Type;
 import group33.seg.controller.utilities.ErrorBuilder;
 import group33.seg.controller.utilities.GraphVisitor;
 import group33.seg.controller.utilities.SerializationUtils;
-import group33.seg.lib.Pair;
 import group33.seg.model.configs.CampaignConfig;
 import group33.seg.model.configs.GraphConfig;
 import group33.seg.model.configs.HistogramConfig;
@@ -47,14 +49,12 @@ public class WorkspaceHandler {
     this.mvc = mvc;
   }
 
-
   /**
    * @return The current workspace
    */
   public WorkspaceInstance getWorkspaceInstance() {
     return mvc.model.getWorkspaceInstance();
   }
-
 
   /**
    * @return The current workspace name
@@ -130,6 +130,7 @@ public class WorkspaceHandler {
    */
   public ErrorBuilder storeCurrentWorkspace(boolean overwrite) {
     WorkspaceInstance wsi = mvc.model.getWorkspaceInstance();
+    cleanCaches();
     return storeWorkspace(wsi, overwrite);
   }
 
@@ -386,41 +387,30 @@ public class WorkspaceHandler {
   }
 
   /**
-   * @return The list of statistics stored in the workspace (without caches)
+   * @return The list of statistics stored in the workspace
    */
   public List<StatisticConfig> getStatistics() {
     WorkspaceConfig workspace = mvc.model.getWorkspace();
     if (workspace != null) {
-      List<StatisticConfig> statistics = new ArrayList<>();
-      for (Pair<StatisticConfig, Map<Metric, Double>> pair : workspace.statistics) {
-        statistics.add(pair.key);
-      }
-      return statistics;
+      return workspace.statistics;
     } else {
       return null;
     }
   }
 
   /**
-   * Add a statistic to the workspace statistic list with an empty cache. If statistic already
-   * exists, update it, if it has changed, also clear the cache. Alert listeners that the statistic
-   * list has changed.
+   * Add a statistic to the workspace statistic list. If statistic already exists, update it. Alert
+   * listeners that the statistic list has changed.
    * 
    * @param statistic Statistic to place in workspace
    */
   public void putStatistic(StatisticConfig statistic) {
     WorkspaceConfig workspace = mvc.model.getWorkspace();
     int cur = getStatistics().indexOf(statistic);
-    Map<Metric, Double> cache = null;
     if (cur >= 0) {
-      StatisticConfig exStatistic = workspace.statistics.get(cur).key;
-      // Keep cache if query is unchanged
-      if (exStatistic.query.isEquals(statistic.query)) {
-        cache = workspace.statistics.get(cur).value;
-      }
-      workspace.statistics.set(cur, new Pair<>(statistic, cache));
+      workspace.statistics.set(cur, statistic);
     } else {
-      workspace.statistics.add(new Pair<>(statistic, cache));
+      workspace.statistics.add(statistic);
     }
     notifyListeners(Type.STATISTICS);
     return;
@@ -445,46 +435,55 @@ public class WorkspaceHandler {
   }
 
   /**
-   * For the given statistic, update its cache. Do not update the stored statistic, use
-   * {@link #putStatistic(statistic)} first to do this. A cache is a mappings of metrics to the
-   * cached values.
-   * 
-   * @param statistic Statistic to update cache for
-   * @param cache Cache to store (can be null)
-   * @return Whether the cache was updated (whether the statistic exists)
+   * Clear all caches.
    */
-  public boolean putCache(StatisticConfig statistic, Map<Metric, Double> cache) {
+  public void clearCaches() {
     WorkspaceConfig workspace = mvc.model.getWorkspace();
-    int cur = getStatistics().indexOf(statistic);
-    if (cur >= 0) {
-      StatisticConfig exStatistic = workspace.statistics.get(cur).key;
-      workspace.statistics.set(cur, new Pair<>(exStatistic, cache));
-      return true;
+    if (workspace != null) {
+      workspace.caches = new HashMap<>();
     }
-    return false;
   }
 
   /**
-   * Get the cache for a given statistic. A cache is a mappings of metrics to the cached values.
-   * 
-   * @param statistic Statistic to get cache for
-   * @return Cache for given statistic, null if statistic not found (or if no cache)
+   * Remove any cache not used by the workspace.
    */
-  public Map<Metric, Double> getCache(StatisticConfig statistic) {
+  public void cleanCaches() {
     WorkspaceConfig workspace = mvc.model.getWorkspace();
-    int cur = getStatistics().indexOf(statistic);
-    if (cur >= 0) {
-      return workspace.statistics.get(cur).value;
-    }
-    return null;
-  }
+    Set<String> used = new HashSet<>();
+    // Get list of queries used by graphs
+    for (GraphConfig graph : workspace.graphs) {
+      graph.accept(new GraphVisitor() {
 
-  /**
-   * Clear all statistic caches.
-   */
-  public void clearStatisticCaches() {
-    for (StatisticConfig statistic : getStatistics()) {
-      putCache(statistic, null);
+        @Override
+        public void visit(HistogramConfig graph) {
+          // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void visit(LineGraphConfig graph) {
+          for (LineConfig line : graph.lines) {
+            used.add(DatabaseQueryFactory.generateSQL(line.query));
+          }
+        }
+      });
+    }
+    // Get list of queries used by statistics
+    for (StatisticConfig statistic : workspace.statistics) {
+      for (Metric metric : Metric.getTypes()) {
+        statistic.query.metric = metric;
+        used.add(DatabaseQueryFactory.generateSQL(statistic.query));
+      }
+      statistic.query.metric = null;
+    }
+
+    // Remove any cache that is not used
+    Iterator<String> itrCaches = workspace.caches.keySet().iterator();
+    while (itrCaches.hasNext()) {
+      String cache = itrCaches.next();
+      if (!used.contains(cache)) {
+        itrCaches.remove();
+      }
     }
   }
 
