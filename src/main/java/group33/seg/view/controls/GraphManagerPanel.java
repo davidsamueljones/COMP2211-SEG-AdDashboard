@@ -1,5 +1,6 @@
 package group33.seg.view.controls;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
@@ -23,6 +24,7 @@ import javax.swing.border.TitledBorder;
 import group33.seg.controller.DashboardController;
 import group33.seg.controller.handlers.LineGraphHandler;
 import group33.seg.controller.handlers.WorkspaceHandler.WorkspaceListener;
+import group33.seg.controller.utilities.ErrorBuilder;
 import group33.seg.controller.utilities.GraphVisitor;
 import group33.seg.model.configs.GraphConfig;
 import group33.seg.model.configs.HistogramConfig;
@@ -98,6 +100,10 @@ public class GraphManagerPanel extends JPanel {
             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
         if (value instanceof GraphConfig) {
           GraphConfig config = (GraphConfig) value;
+          ErrorBuilder eb = config.validate();
+          if (eb.isError()) {
+            setBackground(new Color(250, 128, 114));
+          }
           setText(config.identifier);
           setToolTipText(String.format("<html>%s</html>", config.inText()));
         }
