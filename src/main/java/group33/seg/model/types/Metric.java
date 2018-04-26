@@ -10,14 +10,14 @@ public enum Metric {
   BOUNCES("Number of Bounces", Definitions.BOUNCES),
   CONVERSIONS("Number of Conversions", Definitions.CONVERSIONS),
   TOTAL_COST("Total Cost", Definitions.TOTAL_COST),
-  TOTAL_COST_HISTOGRAM("Total cost histogram", null),
+  TOTAL_COST_HISTOGRAM("Total Cost Histogram", null),
   CTR("CTR", Definitions.CTR),
   CPA("CPA", Definitions.CPA),
   CPC("CPC", Definitions.CPC),
   CPM("CPM", Definitions.CPM),
   BOUNCE_RATE("Bounce Rate", Definitions.BOUNCE_RATE);
 
-  private static final Metric[] GRAPH_METRICS = new Metric[] {
+  private static final Metric[] METRIC_TYPES = new Metric[] {
           IMPRESSIONS, CLICKS, UNIQUES, BOUNCES, CONVERSIONS, TOTAL_COST, CTR, CPA, CPC, CPM, BOUNCE_RATE
   };
   
@@ -36,8 +36,8 @@ public enum Metric {
     this.definition = definition;
   }
 
-  public static Metric[] graphValues() {
-     return GRAPH_METRICS;
+  public static Metric[] getTypes() {
+     return METRIC_TYPES;
   }
 
   @Override
