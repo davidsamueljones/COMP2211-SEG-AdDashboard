@@ -1,11 +1,15 @@
 package group33.seg.controller.database;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Filter;
 
+import group33.seg.lib.Range;
 import group33.seg.model.configs.BounceConfig;
+import group33.seg.model.configs.CampaignConfig;
 import group33.seg.model.configs.FilterConfig;
 import group33.seg.model.configs.MetricQuery;
 import group33.seg.model.types.Interval;
@@ -137,11 +141,15 @@ public class DatabaseQueryFactory {
     graphRangeQueries.put(
         Metric.CTR,
         "SELECT xaxis, ("
-            + " SELECT CASE il.impressions WHEN 0 THEN 0 ELSE (cl.clicks::double precision) / il.impressions END FROM"
+            + " SELECT CASE il.impressions WHEN 0 THEN 0 ELSE ((cl.clicks::double precision) / il.impressions) * 100 END FROM"
             + " (SELECT count(*) as clicks FROM <click_log> WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender> AND (date_trunc('<interval>', date) + (<start> - date_trunc('<interval>', <start>))) = xaxis AND date < <final>) as cl,"
             + " (SELECT count(*) as impressions FROM impression_log WHERE <campaign> AND <filterAge> AND <filterIncome> AND <filterGender> AND (date_trunc('<interval>', date) + (<start> - date_trunc('<interval>', <start>))) = xaxis AND date < <final>) as il) as yaxis"
             + " FROM"
             + " generate_series(<start>, <final>, '1 <interval>') AS xaxis;");
+
+    graphRangeQueries.put(
+            Metric.TOTAL_COST_HISTOGRAM,
+            "SELECT click_cost as yaxis FROM click_view WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender> AND <filterDate>");
   }
 
   /**
@@ -272,13 +280,17 @@ public class DatabaseQueryFactory {
     graphQueries.put(
             Metric.CTR,
             "SELECT xaxis, ("
-                    + " SELECT (cl.clicks::double precision) / il.impressions FROM"
+                    + " SELECT ((cl.clicks::double precision) / il.impressions) * 100 FROM"
                     + " (SELECT count(*) as clicks FROM <click_log> WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender> AND date_trunc('<interval>', date) = xaxis) as cl,"
                     + " (SELECT count(*) as impressions FROM impression_log WHERE <campaign> AND <filterAge> AND <filterIncome> AND <filterGender> AND date_trunc('<interval>', date) = xaxis) as il) as yaxis"
                     + " FROM"
                     + " (SELECT date_trunc('<interval>', min(date)) AS start FROM impression_log WHERE <campaign>) AS min,"
                     + " (SELECT date_trunc('<interval>', max(date)) AS final FROM impression_log WHERE <campaign>) AS max,"
                     + " generate_series(<start>, <final>, '1 <interval>') AS xaxis;");
+
+    graphQueries.put(
+            Metric.TOTAL_COST_HISTOGRAM,
+            "SELECT click_cost as yaxis FROM click_view WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>");
   }
 
   /** Define and store templates for every statistic metric type. */
@@ -301,7 +313,7 @@ public class DatabaseQueryFactory {
     // Total cost - includes both click and impression cost
     statisticQueries.put(
         Metric.TOTAL_COST,
-        "SELECT 'all' AS xaxis, (il.cost + cl.cost) / 100 AS yaxis FROM"
+        "SELECT 'all' AS xaxis, round(((il.cost + cl.cost) / 100)::NUMERIC, 2) AS yaxis FROM"
             + " (SELECT sum(impression_cost) AS cost FROM impression_log WHERE date BETWEEN <range> AND <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS il,"
             + " (SELECT sum(click_cost) AS cost FROM <click_log> WHERE date BETWEEN <range> AND <campaign>) AS cl;");
 
@@ -320,14 +332,14 @@ public class DatabaseQueryFactory {
     // values for them
     statisticQueries.put(
         Metric.BOUNCE_RATE,
-        "SELECT 'all' AS xaxis, bounces / NULLIF(clicks, 0) * 100 AS yaxis FROM"
+        "SELECT 'all' AS xaxis, round((bounces / NULLIF(clicks, 0) * 100)::NUMERIC, 2) AS yaxis FROM"
             + " (SELECT count(*) AS bounces FROM <server_log> WHERE entry_date BETWEEN <range> AND <bounce> AND <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS sl,"
             + " (SELECT count(*)::double precision AS clicks FROM <click_log> WHERE date BETWEEN <range> AND <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS cl;");
 
     // Average amount of money spent on a campaign for each conversion (CPA)
     statisticQueries.put(
         Metric.CPA,
-        "SELECT 'all' AS xaxis, (il.cost + cl.cost) / 100 / NULLIF(conversions, 0) AS yaxis FROM "
+        "SELECT 'all' AS xaxis, round(((il.cost + cl.cost) / 100 / NULLIF(conversions, 0))::NUMERIC, 2) AS yaxis FROM "
             + " (SELECT sum(impression_cost) AS cost FROM impression_log WHERE date BETWEEN <range> AND <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS il,"
             + " (SELECT sum(click_cost) AS cost FROM <click_log> WHERE date BETWEEN <range> AND <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS cl,"
             + " (SELECT count(*) AS conversions FROM <server_log> WHERE entry_date BETWEEN <range> AND conversion AND <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS sl;");
@@ -335,7 +347,7 @@ public class DatabaseQueryFactory {
     // The average amount of money spent for each click (CPC)
     statisticQueries.put(
         Metric.CPC,
-        "SELECT 'all' AS xaxis, (il.cost + cl.cost) / 100 / NULLIF(clicks, 0) AS yaxis FROM "
+        "SELECT 'all' AS xaxis, round(((il.cost + cl.cost) / 100 / NULLIF(clicks, 0))::NUMERIC, 2) AS yaxis FROM "
             + " (SELECT sum(impression_cost) AS cost FROM impression_log WHERE date BETWEEN <range> AND <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS il,"
             + " (SELECT  sum(click_cost) AS cost FROM <click_log> WHERE date BETWEEN <range> AND <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS cl,"
             + " (SELECT count(*) AS clicks FROM <click_log> WHERE date BETWEEN <range> AND <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS ccl;");
@@ -343,14 +355,14 @@ public class DatabaseQueryFactory {
     // The average amount of money spent per 1000 impressions (CPM)
     statisticQueries.put(
         Metric.CPM,
-        "SELECT 'all' AS xaxis, (il.cost / 100 / impressions) * 1000 AS yaxis FROM"
+        "SELECT 'all' AS xaxis, round(((il.cost / 100 / impressions) * 1000)::NUMERIC, 2) AS yaxis FROM"
             + " (SELECT sum(impression_cost) AS cost FROM impression_log WHERE date BETWEEN <range> AND <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS il,"
             + " (SELECT count(*) AS impressions FROM impression_log WHERE date BETWEEN <range> AND <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS iil;");
 
     // The average amount of clicks per impression (CTR)
     statisticQueries.put(
         Metric.CTR,
-        "SELECT 'all' AS xaxis, (clicks::double precision) / NULLIF(impressions, 0) AS yaxis FROM"
+        "SELECT 'all' AS xaxis, round(((clicks::double precision) / NULLIF(impressions, 0) * 100)::NUMERIC, 2) AS yaxis FROM"
             + " (SELECT count(*) AS clicks FROM <click_log> WHERE date BETWEEN <range> AND <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS cl,"
             + " (SELECT count(*) AS impressions FROM impression_log WHERE date BETWEEN <range> AND <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>) AS il;");
   }
@@ -411,6 +423,7 @@ public class DatabaseQueryFactory {
         if (request.filter.dates.min != null) {
           sql = sql.replace("<start>", "'" + f.format(request.filter.dates.min) + "'::TIMESTAMP");
           sql = sql.replace("<range>", "'" + f.format(request.filter.dates.min) + "'::TIMESTAMP AND '" + f.format(request.filter.dates.max) + "'::TIMESTAMP");
+          sql = sql.replace("<filterDate>", "date BETWEEN '" + f.format(request.filter.dates.min) + "'::TIMESTAMP and '" + f.format(request.filter.dates.max) + "'::TIMESTAMP" );
         }
         if (request.filter.dates.max != null) {
           sql = sql.replace("<final>", "'" + f.format(request.filter.dates.max) + "'::TIMESTAMP");

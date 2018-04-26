@@ -10,6 +10,7 @@ public enum Metric {
   BOUNCES("Number of Bounces", Definitions.BOUNCES),
   CONVERSIONS("Number of Conversions", Definitions.CONVERSIONS),
   TOTAL_COST("Total Cost", Definitions.TOTAL_COST),
+  TOTAL_COST_HISTOGRAM("Total cost histogram", null),
   CTR("CTR", Definitions.CTR),
   CPA("CPA", Definitions.CPA),
   CPC("CPC", Definitions.CPC),

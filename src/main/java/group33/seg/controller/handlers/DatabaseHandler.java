@@ -138,8 +138,15 @@ public class DatabaseHandler {
       Statement cs = conn.createStatement();
       ResultSet rs = cs.executeQuery(sql);
 
+      int i = 0;
+
       while (rs.next()) {
-        result.add(new Pair<>(rs.getString("xaxis"), (Number) rs.getObject("yaxis")));
+        try {
+          result.add(new Pair<>(rs.getString("xaxis"), (Number) rs.getObject("yaxis")));
+        } catch (SQLException e) {
+          result.add(new Pair<>(i + "", (Number) rs.getObject("yaxis")));
+          i++;
+        }
       }
     } catch (SQLException e) {
       e.printStackTrace();
