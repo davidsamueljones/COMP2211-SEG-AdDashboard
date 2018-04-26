@@ -1,11 +1,15 @@
 package group33.seg.controller.database;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Filter;
 
+import group33.seg.lib.Range;
 import group33.seg.model.configs.BounceConfig;
+import group33.seg.model.configs.CampaignConfig;
 import group33.seg.model.configs.FilterConfig;
 import group33.seg.model.configs.MetricQuery;
 import group33.seg.model.types.Interval;
@@ -142,6 +146,10 @@ public class DatabaseQueryFactory {
             + " (SELECT count(*) as impressions FROM impression_log WHERE <campaign> AND <filterAge> AND <filterIncome> AND <filterGender> AND (date_trunc('<interval>', date) + (<start> - date_trunc('<interval>', <start>))) = xaxis AND date < <final>) as il) as yaxis"
             + " FROM"
             + " generate_series(<start>, <final>, '1 <interval>') AS xaxis;");
+
+    graphRangeQueries.put(
+            Metric.TOTAL_COST_HISTOGRAM,
+            "SELECT click_cost as yaxis FROM click_view WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender> AND <filterDate>");
   }
 
   /**
@@ -279,6 +287,10 @@ public class DatabaseQueryFactory {
                     + " (SELECT date_trunc('<interval>', min(date)) AS start FROM impression_log WHERE <campaign>) AS min,"
                     + " (SELECT date_trunc('<interval>', max(date)) AS final FROM impression_log WHERE <campaign>) AS max,"
                     + " generate_series(<start>, <final>, '1 <interval>') AS xaxis;");
+
+    graphQueries.put(
+            Metric.TOTAL_COST_HISTOGRAM,
+            "SELECT click_cost as yaxis FROM click_view WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>");
   }
 
   /** Define and store templates for every statistic metric type. */
@@ -411,6 +423,7 @@ public class DatabaseQueryFactory {
         if (request.filter.dates.min != null) {
           sql = sql.replace("<start>", "'" + f.format(request.filter.dates.min) + "'::TIMESTAMP");
           sql = sql.replace("<range>", "'" + f.format(request.filter.dates.min) + "'::TIMESTAMP AND '" + f.format(request.filter.dates.max) + "'::TIMESTAMP");
+          sql = sql.replace("<filterDate>", "date BETWEEN '" + f.format(request.filter.dates.min) + "'::TIMESTAMP and '" + f.format(request.filter.dates.max) + "'::TIMESTAMP" );
         }
         if (request.filter.dates.max != null) {
           sql = sql.replace("<final>", "'" + f.format(request.filter.dates.max) + "'::TIMESTAMP");
