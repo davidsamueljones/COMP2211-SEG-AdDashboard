@@ -18,6 +18,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import group33.seg.controller.DashboardController;
 import group33.seg.controller.handlers.WorkspaceHandler.WorkspaceListener;
+import group33.seg.model.configs.WorkspaceInstance;
 import group33.seg.view.output.GraphsView;
 import group33.seg.view.output.StatisticsView;
 import group33.seg.view.utilities.ProgressDialog;
@@ -222,14 +223,15 @@ public class DashboardFrame extends JFrame {
     controller.database.closeConnections();
 
     // Handle the workspace load behaviour
-    String workspace = controller.workspace.getWorkspaceName();
-    boolean loaded = workspace != null;
+    WorkspaceInstance wsi = controller.workspace.getWorkspaceInstance();
+    boolean loaded = wsi != null;
     boolean connections = false;
     String error = null;
     if (!loaded) {
       error = "<html>There is no workspace loaded.<br>"
           + "Open a prior workspace or create a new workspace to start using the Ad-Dashboard.</html>";
     } else {
+      controller.settings.addRecentWorkspace(wsi.getWorkspaceFile().toString());
       connections = controller.workspace.updateDatabaseConnections();
       if (!connections) {
         error = "<html>The current workspace cannot connect to the server.<br>"
