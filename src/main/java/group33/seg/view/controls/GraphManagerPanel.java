@@ -75,7 +75,7 @@ public class GraphManagerPanel extends JPanel {
 
     JPanel pnlExisting = new JPanel();
     pnlExisting.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null),
-        "Existing Graphs", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        "Workspace Graphs", TitledBorder.LEADING, TitledBorder.TOP, null, null));
     GridBagConstraints gbc_pnlExisting = new GridBagConstraints();
     gbc_pnlExisting.fill = GridBagConstraints.BOTH;
     gbc_pnlExisting.gridx = 0;
