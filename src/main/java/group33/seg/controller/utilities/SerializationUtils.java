@@ -111,6 +111,15 @@ public class SerializationUtils {
     }
   }
 
+  /**
+   * Method for generating Cipher object from password
+   * @param password Password for encryption/decryption
+   * @param opmode Operation mode for the cipher object
+   * @return Cipher object for sealing object
+   * @throws NoSuchAlgorithmException
+   * @throws NoSuchPaddingException
+   * @throws InvalidKeyException
+   */
   private static Cipher makeCipher(char[] password, int opmode) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException {
     SecretKey key64 = new SecretKeySpec(new String(password).getBytes(), "Blowfish");
     Cipher cipher = Cipher.getInstance("Blowfish");
@@ -118,18 +127,47 @@ public class SerializationUtils {
     return cipher;
   }
 
+  /**
+   * Shortcut for making Cipher object for encryption
+   * @param password Password for encryption
+   * @return Cipher object for sealing object
+   * @throws NoSuchAlgorithmException
+   * @throws NoSuchPaddingException
+   * @throws InvalidKeyException
+   */
   private static Cipher makeEncryptCipher(char[] password) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException {
     return makeCipher(password, Cipher.ENCRYPT_MODE);
   }
 
+  /**
+   * Shortcut for making Cipher object for decryption
+   * @param password Password for decryption
+   * @return Cipher object for unpacking object
+   * @throws NoSuchAlgorithmException
+   * @throws NoSuchPaddingException
+   * @throws InvalidKeyException
+   */
   private static Cipher makeDecryptCipher(char[] password) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException {
     return makeCipher(password, Cipher.DECRYPT_MODE);
   }
 
+  /**
+   * Serialize an encrypted object and clear password on serialization
+   * @param obj Object to serialise
+   * @param os OutputStream to save obj to
+   * @param password for encryption
+   */
   public static void serializeEncrypted(Serializable obj, OutputStream os, char[] password){
     serializeEncrypted(obj, os, password, true);
   }
 
+  /**
+   * Serialize an encrypted object
+   * @param obj Object to serialise
+   * @param os OutputStream to save obj to
+   * @param password for encryption
+   * @param clearPasswordAfter if true then password is cleared
+   */
   public static void serializeEncrypted(Serializable obj, OutputStream os, char[] password, boolean clearPasswordAfter) {
     // Verify arguments
     if (os == null) {
@@ -167,10 +205,25 @@ public class SerializationUtils {
     }
   }
 
+  /**
+   * Shortcut for deserialising an encrypted object and clearing password
+   * @param is InputStream to read object from
+   * @param password to use for decryption
+   * @return object if decryption succeeded
+   *         null if something went wrong
+   */
   public static Object deserializeEncrypted(InputStream is, char[] password){
     return deserializeEncrypted(is, password, true);
   }
 
+  /**
+   * Deserialize an encrypted object
+   * @param is InputStream to read object from
+   * @param password to use for decryption
+   * @param clearPasswordAfter if true then password is cleared
+   * @return object if decryption succeeded
+   *         null if something went wrong
+   */
   public static Object deserializeEncrypted(InputStream is, char[] password,  boolean clearPasswordAfter){
     try {
       Cipher cipher = makeDecryptCipher(password);
