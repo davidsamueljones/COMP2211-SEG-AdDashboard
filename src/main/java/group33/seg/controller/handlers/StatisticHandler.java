@@ -221,12 +221,12 @@ public class StatisticHandler {
   public static Update getStatisticUpdate(StatisticConfig original, StatisticConfig updated) {
     // Check for any changes in querying that may change data
     boolean data = true;
-    data &= (original.query == null ? (original.query == null)
+    data &= (original.query == null ? (updated.query == null)
         : original.query.isEquals(updated.query));
 
     // Check for any changes of properties
     boolean properties = true;
-    properties &= (original.identifier == null ? (original.identifier == null)
+    properties &= (original.identifier == null ? (updated.identifier == null)
         : original.identifier.equals(updated.identifier));
     properties &= original.hide == updated.hide;
 
