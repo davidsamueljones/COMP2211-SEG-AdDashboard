@@ -4,6 +4,7 @@ import java.awt.Dialog.ModalityType;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -54,7 +55,7 @@ public class DashboardMenuBar extends JMenuBar {
     mntmChangeWorkspace.addActionListener(e -> {
       dashboard.showWorkspaceSelector();
     });
-    mntmChangeWorkspace.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, CMD_MODIFIER));
+    mntmChangeWorkspace.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, CMD_MODIFIER));
     mnFile.add(mntmChangeWorkspace);
 
     JMenuItem mntmModifyWorkspace = new JMenuItem("Modify Workspace");
@@ -74,8 +75,10 @@ public class DashboardMenuBar extends JMenuBar {
     mnFile.addSeparator();
 
     JMenuItem mntmExit = new JMenuItem("Exit");
-    mntmExit.addActionListener(e -> controller.display.closeDashboard());
-    mntmExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, CMD_MODIFIER));
+    mntmExit.addActionListener(e -> {
+      dashboard.dispatchEvent(new WindowEvent(dashboard, WindowEvent.WINDOW_CLOSING));
+    });
+    mntmExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, CMD_MODIFIER));
     mnFile.add(mntmExit);
     
     // Menu bar click behaviour
