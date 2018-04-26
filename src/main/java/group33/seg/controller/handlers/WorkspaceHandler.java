@@ -171,6 +171,43 @@ public class WorkspaceHandler {
   }
 
   /**
+   * Save encrypted database config and clear password
+   * @param saveLocation file to save to
+   * @param password to use for encryption
+   */
+  public ErrorBuilder saveDatabaseConfig(String saveLocation, char[] password) {
+    ErrorBuilder eb = new ErrorBuilder();
+
+    WorkspaceConfig workspace = mvc.model.getWorkspace();
+    if (workspace != null) {
+      DatabaseConfig databaseConfig = workspace.database;
+      if (databaseConfig != null) {
+        FileOutputStream fos = null;
+        try {
+          fos = new FileOutputStream(new File(saveLocation));
+          SerializationUtils.serializeEncrypted(workspace, fos, password);
+        } catch(IOException e) {
+          eb.addError("File not available");
+        } finally {
+          try {
+            if (fos != null) {
+              fos.close();
+            }
+          } catch (IOException e) {
+            // close failed, ignore
+          }
+        }
+      } else {
+        eb.addError("DatabaseConfig was null");
+      }
+    } else {
+      eb.addError("WorkspaceConfig was null");
+    }
+
+    return eb;
+  }
+
+  /**
    * Using the currently loaded workspace, update the database handlers connections. Will close
    * connections if no valid database configuration exists.
    * 
