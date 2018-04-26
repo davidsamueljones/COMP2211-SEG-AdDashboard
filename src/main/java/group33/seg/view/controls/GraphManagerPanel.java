@@ -180,7 +180,11 @@ public class GraphManagerPanel extends JPanel {
       if (res != JOptionPane.YES_OPTION) {
         return;
       }
-      controller.workspace.removeGraph(lstGraphs.getSelectedValue());
+      GraphConfig graph = lstGraphs.getSelectedValue();
+      controller.workspace.removeGraph(graph);
+      if (graph.equals(controller.workspace.getCurrentGraph())) {
+        controller.workspace.setCurrentGraph(null);
+      }
     });
 
     // Open wizard for selected graph
