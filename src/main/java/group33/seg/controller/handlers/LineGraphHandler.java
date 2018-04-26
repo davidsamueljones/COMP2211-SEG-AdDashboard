@@ -108,8 +108,6 @@ public class LineGraphHandler implements GraphHandlerInterface<LineGraphConfig> 
     // Get list of existing lines
     List<LineConfig> exLines = (this.graph == null ? null : graph.lines);
     for (LineConfig line : lines) {
-      // Ensure campaign is current with workspace (FIXME: INCREMENT 2 FEATURE)
-      line.query.campaign = mvc.controller.workspace.getCampaign();
       // Update line if it exists, otherwise add it
       int idx = (exLines == null ? -1 : exLines.indexOf(line));
       if (idx >= 0) {

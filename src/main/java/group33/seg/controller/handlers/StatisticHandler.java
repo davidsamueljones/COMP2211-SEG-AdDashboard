@@ -102,8 +102,6 @@ public class StatisticHandler {
             // Get list of existing statistics
             List<StatisticConfig> exStatistics = this.statistics;
             for (StatisticConfig statistic : statistics) {
-              // Ensure campaign is current with workspace (FIXME: INCREMENT 2 FEATURE)
-              statistic.query.campaign = mvc.controller.workspace.getCampaign();
               // Update statistic if it exists, otherwise add it
               int idx = (exStatistics == null ? -1 : exStatistics.indexOf(statistic));
               if (idx >= 0) {
