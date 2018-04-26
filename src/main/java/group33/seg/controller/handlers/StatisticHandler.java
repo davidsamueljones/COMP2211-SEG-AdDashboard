@@ -191,7 +191,7 @@ public class StatisticHandler {
     // Not cached so query it
     Map<Metric, Double> results = new HashMap<>();
     MetricQuery query = statistic.query;
-    for (Metric metric : Metric.values()) {
+    for (Metric metric : Metric.graphValues()) {
       updateProgress(
           String.format("Updating '%s' data of statistic '%s'...", metric, statistic.identifier));
       query.metric = metric;
