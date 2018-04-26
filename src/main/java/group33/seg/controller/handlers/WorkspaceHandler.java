@@ -36,10 +36,11 @@ public class WorkspaceHandler {
   /** MVC model that sub-controller has knowledge of */
   private final DashboardMVC mvc;
 
-
   /** Listeners for workspace changes */
   private List<WorkspaceListener> listeners = new ArrayList<>();
 
+  private boolean unstoredChanges = false;
+  
   /**
    * Instantiate a workspace handler.
    * 
@@ -47,6 +48,14 @@ public class WorkspaceHandler {
    */
   public WorkspaceHandler(DashboardMVC mvc) {
     this.mvc = mvc;
+    
+    addListener(type -> {
+      if (type == Type.WORKSPACE) {
+        unstoredChanges = false;
+      } else {
+        unstoredChanges = true;
+      }
+    });
   }
 
   /**
@@ -113,6 +122,13 @@ public class WorkspaceHandler {
   }
 
   /**
+   * @return Whether 'store' has been called since changes
+   */
+  public boolean hasUnstoredChanges() {
+    return unstoredChanges;
+  }
+  
+  /**
    * Update the model's workspace. Alerting listeners that the workspace has changed.
    * 
    * @param wsi New workspace to use
@@ -131,7 +147,9 @@ public class WorkspaceHandler {
   public ErrorBuilder storeCurrentWorkspace(boolean overwrite) {
     WorkspaceInstance wsi = mvc.model.getWorkspaceInstance();
     cleanCaches();
-    return storeWorkspace(wsi, overwrite);
+    ErrorBuilder eb = storeWorkspace(wsi, overwrite);
+    unstoredChanges &= eb.isError();
+    return eb;
   }
 
   /**
