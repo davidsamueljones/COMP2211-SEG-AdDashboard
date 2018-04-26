@@ -23,20 +23,22 @@ import group33.seg.model.configs.CampaignConfig;
 
 public class AvailableCampaignsPanel extends JPanel {
   private static final long serialVersionUID = 410986964221436793L;
-
-
+  
   private DashboardController controller;
 
   private JList<CampaignConfig> lstCampaigns;
   private DefaultListModel<CampaignConfig> mdl_lstCampaigns;
 
+  private CampaignConfig base;
+  
   /**
    * Create the panel, loading the workspace's current graphs.
    * 
    * @param controller Controller for this view object
    */
-  public AvailableCampaignsPanel(DashboardController controller) {
+  public AvailableCampaignsPanel(DashboardController controller, CampaignConfig base) {
     this.controller = controller;
+    this.base = base;
     initGUI();
   }
 
@@ -117,7 +119,12 @@ public class AvailableCampaignsPanel extends JPanel {
         Window frmCurrent = SwingUtilities.getWindowAncestor(AvailableCampaignsPanel.this);
         frmCurrent.setVisible(false);
         frmCurrent.dispose();
-        controller.workspace.setCampaign(campaign); 
+        CampaignConfig config = lstCampaigns.getSelectedValue();
+        if (base == null) {
+          controller.workspace.putCampaign(config);
+        } else {
+          controller.workspace.replaceCampaign(base, config);
+        }
       }
     });
   }

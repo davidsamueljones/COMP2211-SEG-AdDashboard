@@ -17,6 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 import group33.seg.controller.DashboardController;
+import group33.seg.model.configs.CampaignConfig;
 import group33.seg.view.utilities.Accessibility;
 
 public class CampaignSelectionDialog extends JDialog {
@@ -28,6 +29,8 @@ public class CampaignSelectionDialog extends JDialog {
   private JButton btnImportNew;
   private JButton btnClose;
 
+  private CampaignConfig base;
+
   /**
    * Create the dialog.
    *
@@ -35,10 +38,23 @@ public class CampaignSelectionDialog extends JDialog {
    * @param controller Controller for this view object
    */
   public CampaignSelectionDialog(Window parent, DashboardController controller) {
+    this(parent, controller, null);
+  }
+  
+  /**
+   * Create the dialog.
+   *
+   * @param parent Window to treat as a parent
+   * @param controller Controller for this view object
+   * @param campaign Campaign to replace in workspace
+   */
+  public CampaignSelectionDialog(Window parent, DashboardController controller,
+      CampaignConfig campaign) {
     super(parent, "Campaign Selector");
 
     this.controller = controller;
-
+    this.base = campaign;
+    
     // Initialise GUI
     initGUI();
 
@@ -140,12 +156,12 @@ public class CampaignSelectionDialog extends JDialog {
     pnlDialog.add(pnlControls, gbc_pnlControls);
 
     // Available Panel
-    AvailableCampaignsPanel pnlAvailable = new AvailableCampaignsPanel(controller);
+    AvailableCampaignsPanel pnlAvailable = new AvailableCampaignsPanel(controller, base);
     pnlControls.add(pnlAvailable);
     cl_pnlControls.addLayoutComponent(pnlAvailable, View.AVAILABLE.toString());
 
     // Import Panel
-    CampaignImportPanel pnlCampaignImport = new CampaignImportPanel(controller);
+    CampaignImportPanel pnlCampaignImport = new CampaignImportPanel(controller, base);
     pnlControls.add(pnlCampaignImport);
     cl_pnlControls.addLayoutComponent(pnlCampaignImport, View.IMPORTING.toString());
 
