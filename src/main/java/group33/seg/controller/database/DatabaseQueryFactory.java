@@ -149,7 +149,7 @@ public class DatabaseQueryFactory {
 
     graphRangeQueries.put(
             Metric.TOTAL_COST_HISTOGRAM,
-            "SELECT count(*) FROM click_view WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender> AND <filterDate>");
+            "SELECT click_cost as yaxis FROM click_view WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender> AND <filterDate>");
   }
 
   /**
@@ -290,7 +290,7 @@ public class DatabaseQueryFactory {
 
     graphQueries.put(
             Metric.TOTAL_COST_HISTOGRAM,
-            "SELECT count(*) FROM click_view WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>");
+            "SELECT click_cost as yaxis FROM click_view WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>");
   }
 
   /** Define and store templates for every statistic metric type. */
