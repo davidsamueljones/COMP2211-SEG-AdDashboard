@@ -8,10 +8,13 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
@@ -49,7 +52,7 @@ public class DashboardFrame extends JFrame {
   private JButton btnModifyWorkspace;
 
 
-  /** 
+  /**
    * Create the Dashboard frame.
    * 
    * @param controller Controller for this view object
@@ -63,6 +66,23 @@ public class DashboardFrame extends JFrame {
 
     initGUI();
     initViewUpdaters();
+
+    // Listen for if the workspace is closing to alert user they may want to save
+    addWindowListener(new WindowAdapter() {
+      @Override
+      public void windowClosing(WindowEvent e) {
+        WorkspaceInstance wsi = controller.workspace.getWorkspaceInstance();
+        if (wsi != null) {
+          int res = JOptionPane.showConfirmDialog(null,
+              String.format("Would you like to save the current workspace '%s' before exiting?",
+                  wsi.name),
+              "Save", JOptionPane.YES_NO_OPTION);
+          if (res == JOptionPane.YES_OPTION) {
+            controller.workspace.storeCurrentWorkspace(true);
+          }
+        }
+      }
+    });
   }
 
   /**
