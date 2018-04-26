@@ -14,8 +14,8 @@ public class WorkspaceConfig implements Serializable {
   /** Database settings workspace utilises */
   public DatabaseConfig database; 
   
-  /** Currently loaded campaign */
-  public CampaignConfig campaign;
+  /** Campaign configurations currently loaded in workspace */
+  public List<CampaignConfig> campaigns = new ArrayList<>();
 
   /** Currently loaded graph */
   public GraphConfig graph = null;

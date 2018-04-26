@@ -16,10 +16,14 @@ import group33.seg.controller.DashboardController.DashboardMVC;
 import group33.seg.controller.database.DatabaseConfig;
 import group33.seg.controller.handlers.WorkspaceHandler.WorkspaceListener.Type;
 import group33.seg.controller.utilities.ErrorBuilder;
+import group33.seg.controller.utilities.GraphVisitor;
 import group33.seg.controller.utilities.SerializationUtils;
 import group33.seg.lib.Pair;
 import group33.seg.model.configs.CampaignConfig;
 import group33.seg.model.configs.GraphConfig;
+import group33.seg.model.configs.HistogramConfig;
+import group33.seg.model.configs.LineConfig;
+import group33.seg.model.configs.LineGraphConfig;
 import group33.seg.model.configs.StatisticConfig;
 import group33.seg.model.configs.WorkspaceConfig;
 import group33.seg.model.configs.WorkspaceInstance;
@@ -188,24 +192,118 @@ public class WorkspaceHandler {
   }
 
   /**
-   * Set the campaign used by the workspace, alerting listeners that a campaign update has occurred.
-   * 
-   * @param campaign Campaign for workspace to use
+   * @return The list of campaigns stored in the workspace
    */
-  public void setCampaign(CampaignConfig campaign) {
+  public List<CampaignConfig> getCampaigns() {
     WorkspaceConfig workspace = mvc.model.getWorkspace();
-    if (workspace != null) {
-      workspace.campaign = campaign;
-      notifyListeners(Type.CAMPAIGN);
+    return workspace == null ? null : workspace.campaigns;
+  }
+
+  /**
+   * Add a campaign to the workspace campaign list or if it already exists, update it. Alert
+   * listeners that the campaign list has changed.
+   * 
+   * @param campaign Campaign to place in workspace
+   */
+  public void putCampaign(CampaignConfig campaign) {
+    List<CampaignConfig> campaigns = getCampaigns();
+    if (campaigns != null) {
+      int cur = campaigns.indexOf(campaign);
+      if (cur >= 0) {
+        campaigns.set(cur, campaign);
+      } else {
+        campaigns.add(campaign);
+      }
+      notifyListeners(Type.CAMPAIGNS);
     }
   }
 
   /**
-   * @return The current campaign used by the workspace
+   * Replace a campaign in the workspace campaign list. This will also update any references in
+   * workspace statistics/graphs that use this graph.
+   * 
+   * @param toReplace Campaign to replace in workspace (will be removed)
+   * @param campaign Campaign to put in place
+   * @return Whether campaign was replaced
    */
-  public CampaignConfig getCampaign() {
-    WorkspaceConfig workspace = mvc.model.getWorkspace();
-    return workspace == null ? null : workspace.campaign;
+  public boolean replaceCampaign(CampaignConfig toReplace, CampaignConfig campaign) {
+    List<CampaignConfig> campaigns = getCampaigns();
+    if (campaigns != null) {
+      int cur = campaigns.indexOf(toReplace);
+      if (cur >= 0) {
+        if (!campaigns.contains(campaign)) {
+          campaigns.set(cur, campaign);
+        } else {
+          campaigns.remove(cur);
+        }    
+        notifyListeners(Type.CAMPAIGNS);
+        replaceQueryCampaigns(toReplace, campaign);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Replace the campaign used in queries with a different campaign.
+   * 
+   * @param toReplace Campaign to replace
+   * @param campaign Campaign to put as replacement
+   */
+  private void replaceQueryCampaigns(CampaignConfig toReplace, CampaignConfig campaign) {
+    // Replace campaign in statistics
+    for (StatisticConfig statistic : getStatistics()) {
+      if (statistic.query.campaign.equals(toReplace)) {
+        statistic.query.campaign = campaign;
+      }
+    }
+    notifyListeners(Type.STATISTICS);
+    // Replace campaign in graphs
+    for (GraphConfig graph : getGraphs()) {
+      graph.accept(new GraphVisitor() {
+
+        @Override
+        public void visit(HistogramConfig graph) {
+          // TODO
+        }
+
+        @Override
+        public void visit(LineGraphConfig graph) {
+          for (LineConfig line : graph.lines) {
+            if (line.query.campaign.equals(line.query.campaign)) {
+              line.query.campaign = campaign;
+            }
+          }
+        }
+      });
+    }
+    notifyListeners(Type.GRAPHS);
+    notifyListeners(Type.CURRENT_GRAPH);
+  }
+
+  /**
+   * Remove the given campaign from the workspace campaigns. If a campaign is removed alert
+   * listeners that the campaign list has changed.
+   * 
+   * @param toRemove Campaign to remove from workspace
+   * @return Whether campaign was removed (if it existed)
+   */
+  public boolean removeCampaign(CampaignConfig toRemove) {
+    boolean removed = false;
+    List<CampaignConfig> campaigns = getCampaigns();
+    if (campaigns != null) {
+      Iterator<CampaignConfig> itrCampaigns = campaigns.iterator();
+      while (itrCampaigns.hasNext()) {
+        CampaignConfig campaign = itrCampaigns.next();
+        if (campaign.equals(toRemove)) {
+          itrCampaigns.remove();
+          notifyListeners(Type.CAMPAIGNS);
+          replaceQueryCampaigns(toRemove, null);
+          removed = true;
+        }
+      }
+    }
+    return removed;
   }
 
   /**
@@ -426,7 +524,7 @@ public class WorkspaceHandler {
      * Enumeration of types of workspace state update.
      */
     public enum Type {
-      WORKSPACE, CAMPAIGN, CURRENT_GRAPH, GRAPHS, STATISTICS;
+      WORKSPACE, CURRENT_GRAPH, CAMPAIGNS, GRAPHS, STATISTICS;
     }
 
   }
