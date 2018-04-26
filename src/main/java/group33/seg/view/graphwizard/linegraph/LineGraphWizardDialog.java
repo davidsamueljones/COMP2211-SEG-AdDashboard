@@ -1,12 +1,12 @@
 package group33.seg.view.graphwizard.linegraph;
 
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Window;
-import java.awt.Dialog.ModalityType;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -14,19 +14,15 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import group33.seg.controller.DashboardController;
 import group33.seg.controller.handlers.LineGraphHandler;
 import group33.seg.controller.utilities.ErrorBuilder;
 import group33.seg.model.configs.LineGraphConfig;
-import group33.seg.view.controls.GraphManagerPanel;
 import group33.seg.view.graphwizards.GraphWizardInterface;
-import group33.seg.view.output.StatisticsView;
-import group33.seg.view.utilities.ProgressDialog;
 
 public class LineGraphWizardDialog extends JDialog
     implements GraphWizardInterface<LineGraphConfig> {
-  
+
   private static final long serialVersionUID = -2529642040023886708L;
 
   private DashboardController controller;
@@ -71,7 +67,7 @@ public class LineGraphWizardDialog extends JDialog
     } else {
       setLocation(100, 100);
     }
-    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+    setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
   }
 
   /**
@@ -132,14 +128,7 @@ public class LineGraphWizardDialog extends JDialog
 
     // Close the wizard, do not do any updates
     btnClose.addActionListener(e -> {
-      int res = JOptionPane.showConfirmDialog(LineGraphWizardDialog.this,
-          "Are you sure you want to close the wizard, any unapplied changes will be lost?", "Close",
-          JOptionPane.YES_NO_OPTION);
-      if (res != JOptionPane.YES_OPTION) {
-        return;
-      }
-      setVisible(false);
-      dispose();
+      handleClose();
     });
 
     // Handle apply behaviour, no other effects
@@ -151,6 +140,13 @@ public class LineGraphWizardDialog extends JDialog
       if (success) {
         setVisible(false);
         dispose();
+      }
+    });
+
+    addWindowListener(new WindowAdapter() {
+      @Override
+      public void windowClosing(WindowEvent e) {
+        handleClose();
       }
     });
 
@@ -184,6 +180,22 @@ public class LineGraphWizardDialog extends JDialog
       controller.workspace.setCurrentGraph(config);
       return true;
     }
+  }
+
+  /**
+   * Handle the close, checking if close was desired.
+   */
+  private void handleClose() {
+    if (!LineGraphHandler.areGraphsEqual(base, makeGraphConfig())) {
+      int res = JOptionPane.showConfirmDialog(LineGraphWizardDialog.this,
+          "Are you sure you want to close the wizard, any unapplied changes will be lost?", "Close",
+          JOptionPane.YES_NO_OPTION);
+      if (res != JOptionPane.YES_OPTION) {
+        return;
+      }
+    }
+    setVisible(false);
+    dispose();
   }
 
   /**

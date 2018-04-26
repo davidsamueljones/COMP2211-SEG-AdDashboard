@@ -167,7 +167,8 @@ public class LineGraphHandler implements GraphHandlerInterface<LineGraphConfig> 
       EventQueue.invokeLater(() -> view.setLineProperties(line));
     }
     if (update == Update.FULL || update == Update.DATA) {
-      mvc.controller.graphs.updateProgress(String.format("Updating data of line '%s'...", line.identifier));
+      mvc.controller.graphs
+          .updateProgress(String.format("Updating data of line '%s'...", line.identifier));
       MetricQueryResponse mqr = mvc.controller.database.getQueryResponse(line.query);
       // Wait for result outside of EDT
       List<Pair<String, Number>> result = mqr.getResult();
@@ -187,6 +188,41 @@ public class LineGraphHandler implements GraphHandlerInterface<LineGraphConfig> 
   }
 
   /**
+   * Given an original and an updated graph configuration, determine if there are any changes.
+   */
+  public static boolean areGraphsEqual(LineGraphConfig original, LineGraphConfig updated) {
+    if (original == null && updated != null || original != null && updated == null) {
+      return false;
+    } else if (original == null && updated == null) {
+      return true;
+    }
+
+    boolean unchanged = true;
+    unchanged &= (original.identifier == null ? (updated.identifier == null)
+        : original.identifier.equals(updated.identifier));
+    unchanged &=
+        (original.title == null ? (updated.title == null) : original.title.equals(updated.title));
+    unchanged &= (original.xAxisTitle == null ? (updated.xAxisTitle == null)
+        : original.xAxisTitle.equals(updated.xAxisTitle));
+    unchanged &= (original.yAxisTitle == null ? (updated.yAxisTitle == null)
+        : original.yAxisTitle.equals(updated.yAxisTitle));
+    unchanged &=
+        (original.mode == null ? (updated.mode == null) : original.mode.equals(updated.mode));
+    unchanged &= original.showLegend == updated.showLegend;
+    unchanged &= (original.background == null ? (updated.background == null)
+        : original.background.equals(updated.background));
+    unchanged &=
+        (original.lines == null ? (updated.lines == null) : original.lines.equals(updated.lines));
+    if (unchanged) {
+      for (int i = 0; i < updated.lines.size(); i++) {
+        unchanged &= getLineUpdate(original.lines.get(i), updated.lines.get(i)) == Update.NOTHING;
+      }
+    }
+
+    return unchanged;
+  }
+
+  /**
    * Given an original and an updated line configuration, determine what type of update is required
    * to update the graph in the least cost-manner. As in, if only line properties have changed it is
    * best to not requery data due to computational cost.
@@ -198,15 +234,15 @@ public class LineGraphHandler implements GraphHandlerInterface<LineGraphConfig> 
   public static Update getLineUpdate(LineConfig original, LineConfig updated) {
     // Check for any changes in querying that may change data
     boolean data = true;
-    data &= (original.query == null ? (original.query == null)
-        : original.query.isEquals(updated.query));
+    data &=
+        (original.query == null ? (updated.query == null) : original.query.isEquals(updated.query));
 
     // Check for any changes of properties
     boolean properties = true;
-    properties &= (original.identifier == null ? (original.identifier == null)
+    properties &= (original.identifier == null ? (updated.identifier == null)
         : original.identifier.equals(updated.identifier));
     properties &=
-        (original.color == null ? (original.color == null) : original.color.equals(updated.color));
+        (original.color == null ? (updated.color == null) : original.color.equals(updated.color));
     properties &= original.thickness == updated.thickness;
     properties &= original.hide == updated.hide;
 
