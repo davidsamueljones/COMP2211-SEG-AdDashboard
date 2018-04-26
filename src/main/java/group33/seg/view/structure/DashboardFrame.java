@@ -186,6 +186,21 @@ public class DashboardFrame extends JFrame {
    * Show workspace selector dialog.
    */
   protected void showWorkspaceSelector() {
+    WorkspaceInstance wsi = controller.workspace.getWorkspaceInstance();
+    if (controller.workspace.hasUnstoredChanges()) {
+      int res = JOptionPane.showConfirmDialog(null,
+          String.format(
+              "Would you like to save the current workspace '%s' before changing workspace?",
+              wsi.name),
+          "Save", JOptionPane.YES_NO_CANCEL_OPTION);
+      if (res == JOptionPane.CANCEL_OPTION) {
+        return;
+      }
+      if (res == JOptionPane.YES_OPTION) {
+        controller.workspace.storeCurrentWorkspace(true);
+      }
+    }
+
     WorkspaceSelectionDialog changeWorkspace = new WorkspaceSelectionDialog(this, controller);
     changeWorkspace.setModalityType(ModalityType.APPLICATION_MODAL);
     changeWorkspace.setVisible(true);
@@ -345,9 +360,8 @@ public class DashboardFrame extends JFrame {
   private void handleDashboardClose() {
     WorkspaceInstance wsi = controller.workspace.getWorkspaceInstance();
     if (controller.workspace.hasUnstoredChanges()) {
-      int res = JOptionPane.showConfirmDialog(null,
-          String.format("Would you like to save the current workspace '%s' before exiting?",
-              wsi.name),
+      int res = JOptionPane.showConfirmDialog(null, String
+          .format("Would you like to save the current workspace '%s' before exiting?", wsi.name),
           "Save", JOptionPane.YES_NO_CANCEL_OPTION);
       if (res == JOptionPane.CANCEL_OPTION) {
         return;
