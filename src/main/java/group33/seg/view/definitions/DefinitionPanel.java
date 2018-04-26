@@ -50,7 +50,7 @@ public class DefinitionPanel extends JDynamicScrollPane {
     StringBuilder builder = new StringBuilder();
     builder.append("<html><h2><b>Definitions:</b></h2>");
     // builder.append("<p>");
-    for (Metric metric : Metric.values()) {
+    for (Metric metric : Metric.graphValues()) {
       builder.append("<p style='margin-top:5'");
       builder.append("<b>" + metric + ":</b> ");
       builder.append(metric.definition);

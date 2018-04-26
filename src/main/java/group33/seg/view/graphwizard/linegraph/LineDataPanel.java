@@ -63,7 +63,7 @@ public class LineDataPanel extends JPanel {
     add(lblMetricType, gbc_lblMetricType);
 
     cboMetric = new JComboBox<>();
-    for (Metric metric : Metric.values()) {
+    for (Metric metric : Metric.graphValues()) {
       cboMetric.addItem(metric);
     }
     GridBagConstraints gbc_cboMetric = new GridBagConstraints();

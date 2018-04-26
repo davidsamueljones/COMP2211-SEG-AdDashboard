@@ -16,6 +16,10 @@ public enum Metric {
   CPC("CPC", Definitions.CPC),
   CPM("CPM", Definitions.CPM),
   BOUNCE_RATE("Bounce Rate", Definitions.BOUNCE_RATE);
+
+  private static final Metric[] GRAPH_METRICS = new Metric[] {
+          IMPRESSIONS, CLICKS, UNIQUES, BOUNCES, CONVERSIONS, TOTAL_COST, CTR, CPA, CPC, CPM, BOUNCE_RATE
+  };
   
   /* Class configuration */
   private final String string;
@@ -27,9 +31,13 @@ public enum Metric {
    * @param string String to use for toString representation
    * @param definition The metric's definition/explanation
    */
-  private Metric(String string, String definition) {
+   Metric(String string, String definition) {
     this.string = string;
     this.definition = definition;
+  }
+
+  public static Metric[] graphValues() {
+     return GRAPH_METRICS;
   }
 
   @Override
