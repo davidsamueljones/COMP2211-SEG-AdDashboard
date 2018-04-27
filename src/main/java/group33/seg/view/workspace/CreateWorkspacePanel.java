@@ -25,6 +25,7 @@ import group33.seg.controller.DashboardController;
 import group33.seg.controller.database.DatabaseConfig;
 import group33.seg.controller.handlers.WorkspaceHandler;
 import group33.seg.controller.utilities.ErrorBuilder;
+import group33.seg.lib.Pair;
 import group33.seg.model.configs.WorkspaceConfig;
 import group33.seg.model.configs.WorkspaceInstance;
 import group33.seg.view.utilities.FileActionListener;
@@ -348,11 +349,13 @@ public class CreateWorkspacePanel extends JPanel {
 
     // Update workspace database connection
     if (tabsServerDetails.getSelectedComponent().equals(pnlSimple)) {
-      try {
-        wsi.workspace.database = new DatabaseConfig(txtServerConfig.getText());
-      } catch (FileNotFoundException e) {
-        eb.addError("Could not find database configuration file");
-      }
+        Pair<DatabaseConfig, ErrorBuilder> pair = DatabaseConfig.loadDatabaseConfig(txtServerConfig.getText(),
+            WorkspaceHandler.PRIVATE_KEY.toCharArray());
+       if (pair.key != null) {
+         wsi.workspace.database = pair.key;
+       } else {
+         eb.append(pair.value);
+       }
     } else {
       wsi.workspace.database = new DatabaseConfig(txtServer.getText(), txtUsername.getText(),
           String.valueOf(txtPassword.getPassword()));
