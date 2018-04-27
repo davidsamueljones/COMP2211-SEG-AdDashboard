@@ -1,23 +1,31 @@
 package group33.seg.controller.database;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
+import group33.seg.controller.utilities.ErrorBuilder;
+import group33.seg.controller.utilities.SerializationUtils;
+import group33.seg.lib.Pair;
+import group33.seg.model.configs.WorkspaceConfig;
+import group33.seg.model.configs.WorkspaceInstance;
 
 public class DatabaseConfig implements Serializable {
   private static final long serialVersionUID = -1279471354579637690L;
-  
+
   private String host;
   private String user;
   private String password;
-  
+
   private String reference;
-  
+
   /**
    * Create an instance using local configuration information.
    * 
@@ -95,12 +103,79 @@ public class DatabaseConfig implements Serializable {
   public String getPassword() {
     return password;
   }
-  
+
   /**
    * @return Configurations reference (likely a configuration file)
    */
   public String getReference() {
     return reference;
+  }
+
+  /**
+   * Decrypt and get a database configuration.
+   * 
+   * @param saveLocation File to load
+   * @param password Password to use for decryption
+   * @return Pair of database config if loaded, and error builder maintained during load
+   */
+  public static Pair<DatabaseConfig, ErrorBuilder> loadDatabaseConfig(String saveLocation,
+      char[] password) {
+    ErrorBuilder eb = new ErrorBuilder();
+    FileInputStream fis = null;
+    try {
+      fis = new FileInputStream(saveLocation);
+      Object object = SerializationUtils.deserializeEncrypted(fis, password);
+      if (object instanceof DatabaseConfig) {
+        return new Pair<>((DatabaseConfig) object, eb);
+      } else {
+        eb.addError("Loaded file is not a database configuration");
+      }
+    } catch (FileNotFoundException e) {
+      eb.addError("File does not exist or is a directory");
+    } finally {
+      try {
+        if (fis != null) {
+          fis.close();
+        }
+      } catch (IOException e) {
+        // close failed, ignore
+      }
+    }
+    return new Pair<>(null, eb);
+  }
+
+  /**
+   * Encrypt and store a database configuration.
+   *
+   * @param dbConfig Database configuration to save
+   * @param saveLocation File to save to
+   * @param password Password to use for encryption
+   * @param overwrite Whether to overwrite an existing file if it exists
+   * @return Error builder indicating if store was successful
+   */
+  public static ErrorBuilder storeDatabaseConfig(DatabaseConfig config, String saveLocation,
+      char[] password, boolean overwrite) {
+    ErrorBuilder eb = new ErrorBuilder();
+    if (Files.exists(Paths.get(saveLocation)) && !overwrite) {
+      eb.addError("File already exists in this location");
+    } else {
+      FileOutputStream fos = null;
+      try {
+        fos = new FileOutputStream(new File(saveLocation));
+        SerializationUtils.serializeEncrypted(config, fos, password);
+      } catch (IOException e) {
+        eb.addError("Unable to store file to location");
+      } finally {
+        try {
+          if (fos != null) {
+            fos.close();
+          }
+        } catch (IOException e) {
+          // close failed, ignore
+        }
+      }
+    }
+    return eb;
   }
 
 }

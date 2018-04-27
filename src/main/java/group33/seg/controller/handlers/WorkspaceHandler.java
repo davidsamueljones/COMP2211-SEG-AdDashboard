@@ -33,7 +33,7 @@ import group33.seg.model.configs.WorkspaceInstance;
 import group33.seg.model.types.Metric;
 
 public class WorkspaceHandler {
-  
+
   /** FIXME: Not production code */
   public static final String PRIVATE_KEY = "TEST_KEY";
 
@@ -86,6 +86,16 @@ public class WorkspaceHandler {
   }
 
   /**
+   * Update the model's workspace. Alerting listeners that the workspace has changed.
+   * 
+   * @param wsi New workspace to use
+   */
+  public void setWorkspace(WorkspaceInstance wsi) {
+    mvc.model.setWorkspace(wsi);
+    notifyListeners(Type.WORKSPACE);
+  }
+
+  /**
    * Load a workspace from a given file. If the load is successful, the model is updated.
    * 
    * @param strPath Path to file to load
@@ -123,23 +133,6 @@ public class WorkspaceHandler {
       }
     }
     return eb;
-  }
-
-  /**
-   * @return Whether 'store' has been called since changes
-   */
-  public boolean hasUnstoredChanges() {
-    return unstoredChanges;
-  }
-
-  /**
-   * Update the model's workspace. Alerting listeners that the workspace has changed.
-   * 
-   * @param wsi New workspace to use
-   */
-  public void setWorkspace(WorkspaceInstance wsi) {
-    mvc.model.setWorkspace(wsi);
-    notifyListeners(Type.WORKSPACE);
   }
 
   /**
@@ -192,45 +185,39 @@ public class WorkspaceHandler {
     }
     return eb;
   }
-
+  
   /**
-   * Save encrypted database config and clear password
-   *
+   * Encrypt and store the current databse configuration.
+   * 
    * @param saveLocation file to save to
    * @param password to use for encryption
+   * @param overwrite Whether to overwrite an existing file if it exists
+   * @return Error builder indicating if store was successful
    */
-  public ErrorBuilder saveDatabaseConfig(String saveLocation, char[] password) {
+  public ErrorBuilder storeDatabaseConfig(String saveLocation, char[] password,
+      boolean overwrite) {
     ErrorBuilder eb = new ErrorBuilder();
-
     WorkspaceConfig workspace = mvc.model.getWorkspace();
-    if (workspace != null) {
-      DatabaseConfig databaseConfig = workspace.database;
-      if (databaseConfig != null) {
-        FileOutputStream fos = null;
-        try {
-          fos = new FileOutputStream(new File(saveLocation));
-          SerializationUtils.serializeEncrypted(workspace, fos, password);
-        } catch (IOException e) {
-          eb.addError("File not available");
-        } finally {
-          try {
-            if (fos != null) {
-              fos.close();
-            }
-          } catch (IOException e) {
-            // close failed, ignore
-          }
-        }
-      } else {
-        eb.addError("DatabaseConfig was null");
-      }
+    if (workspace == null) {
+      eb.addError("No workspace loaded");
     } else {
-      eb.addError("WorkspaceConfig was null");
+      DatabaseConfig config = workspace.database;
+      if (config == null) {
+        eb.addError("No workspace database configuration set");
+      } else {
+        eb.append(DatabaseConfig.storeDatabaseConfig(config, saveLocation, password, overwrite));
+      }
     }
-
     return eb;
   }
 
+  /**
+   * @return Whether 'store' has been called since changes
+   */
+  public boolean hasUnstoredChanges() {
+    return unstoredChanges;
+  }
+  
   /**
    * Using the currently loaded workspace, update the database handlers connections. Will close
    * connections if no valid database configuration exists.
