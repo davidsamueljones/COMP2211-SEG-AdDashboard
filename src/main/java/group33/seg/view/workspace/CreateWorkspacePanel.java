@@ -349,13 +349,13 @@ public class CreateWorkspacePanel extends JPanel {
 
     // Update workspace database connection
     if (tabsServerDetails.getSelectedComponent().equals(pnlSimple)) {
-        Pair<DatabaseConfig, ErrorBuilder> pair = DatabaseConfig.loadDatabaseConfig(txtServerConfig.getText(),
-            WorkspaceHandler.PRIVATE_KEY.toCharArray());
-       if (pair.key != null) {
-         wsi.workspace.database = pair.key;
-       } else {
-         eb.append(pair.value);
-       }
+      Pair<DatabaseConfig, ErrorBuilder> pair = DatabaseConfig.loadDatabaseConfig(
+          txtServerConfig.getText(), WorkspaceHandler.PRIVATE_KEY.toCharArray());
+      if (pair.key != null) {
+        wsi.workspace.database = pair.key;
+      } else {
+        eb.append(pair.value);
+      }
     } else {
       wsi.workspace.database = new DatabaseConfig(txtServer.getText(), txtUsername.getText(),
           String.valueOf(txtPassword.getPassword()));
@@ -394,7 +394,8 @@ public class CreateWorkspacePanel extends JPanel {
       // Write the created workspace to the file system
       if (write) {
         // Store the workspace
-        eb.append(WorkspaceHandler.storeWorkspace(wsi, true));
+        eb.append(
+            WorkspaceHandler.storeWorkspace(wsi, WorkspaceHandler.PRIVATE_KEY.toCharArray(), true));
         // Delete the existing workspace if it was moved
         if (base != null && !newPath.equals(curPath)) {
           try {

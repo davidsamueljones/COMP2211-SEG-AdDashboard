@@ -112,7 +112,8 @@ public class WorkspaceHandler {
         // Open file input stream using identifiers respective file
         fis = new FileInputStream(path.toString());
         // Get object from file input stream
-        Object object = SerializationUtils.deserialize(fis);
+        Object object = SerializationUtils.deserializeEncrypted(fis,
+            WorkspaceHandler.PRIVATE_KEY.toCharArray());
         if (object instanceof WorkspaceConfig) {
           WorkspaceInstance wsi = new WorkspaceInstance(path);
           wsi.workspace = (WorkspaceConfig) object;
@@ -144,7 +145,7 @@ public class WorkspaceHandler {
   public ErrorBuilder storeCurrentWorkspace(boolean overwrite) {
     WorkspaceInstance wsi = mvc.model.getWorkspaceInstance();
     cleanCaches();
-    ErrorBuilder eb = storeWorkspace(wsi, overwrite);
+    ErrorBuilder eb = storeWorkspace(wsi, WorkspaceHandler.PRIVATE_KEY.toCharArray(), overwrite);
     unstoredChanges &= eb.isError();
     return eb;
   }
@@ -153,10 +154,12 @@ public class WorkspaceHandler {
    * Store a workspace to its instance's defined location.
    * 
    * @param wsi Workspace to save
+   * @param password Password to use for encryption
    * @param overwrite Whether to overwrite an existing file if it exists
    * @return Error builder indicating if store was successful
    */
-  public static ErrorBuilder storeWorkspace(WorkspaceInstance wsi, boolean overwrite) {
+  public static ErrorBuilder storeWorkspace(WorkspaceInstance wsi, char[] password,
+      boolean overwrite) {
     ErrorBuilder eb = new ErrorBuilder();
     if (wsi == null || wsi.workspace == null) {
       eb.addError("There is no workspace to store");
@@ -169,7 +172,7 @@ public class WorkspaceHandler {
         try {
           Files.createDirectories(path.getParent());
           fos = new FileOutputStream(path.toString());
-          SerializationUtils.serialize(wsi.workspace, fos);
+          SerializationUtils.serializeEncrypted(wsi.workspace, fos, password);
         } catch (IOException e) {
           eb.addError("Unable to store file to location");
         } finally {
@@ -185,17 +188,16 @@ public class WorkspaceHandler {
     }
     return eb;
   }
-  
+
   /**
    * Encrypt and store the current databse configuration.
    * 
    * @param saveLocation file to save to
-   * @param password to use for encryption
+   * @param password Password to use for encryption
    * @param overwrite Whether to overwrite an existing file if it exists
    * @return Error builder indicating if store was successful
    */
-  public ErrorBuilder storeDatabaseConfig(String saveLocation, char[] password,
-      boolean overwrite) {
+  public ErrorBuilder storeDatabaseConfig(String saveLocation, char[] password, boolean overwrite) {
     ErrorBuilder eb = new ErrorBuilder();
     WorkspaceConfig workspace = mvc.model.getWorkspace();
     if (workspace == null) {
@@ -217,7 +219,7 @@ public class WorkspaceHandler {
   public boolean hasUnstoredChanges() {
     return unstoredChanges;
   }
-  
+
   /**
    * Using the currently loaded workspace, update the database handlers connections. Will close
    * connections if no valid database configuration exists.
