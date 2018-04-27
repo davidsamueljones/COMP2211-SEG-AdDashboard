@@ -126,7 +126,9 @@ public class DatabaseConfig implements Serializable {
       fis = new FileInputStream(saveLocation);
       Object object = SerializationUtils.deserializeEncrypted(fis, password);
       if (object instanceof DatabaseConfig) {
-        return new Pair<>((DatabaseConfig) object, eb);
+        DatabaseConfig dbConfig = (DatabaseConfig) object;
+        dbConfig.reference = saveLocation;
+        return new Pair<>(dbConfig, eb);
       } else {
         eb.addError("Loaded file is not a database configuration");
       }
