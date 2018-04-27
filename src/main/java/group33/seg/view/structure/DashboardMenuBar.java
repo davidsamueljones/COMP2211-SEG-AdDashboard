@@ -5,18 +5,23 @@ import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import group33.seg.controller.DashboardController;
+import group33.seg.controller.handlers.WorkspaceHandler;
 import group33.seg.view.about.AboutDialog;
 import group33.seg.view.preferences.PreferencesDialog;
-import group33.seg.view.workspace.WorkspaceSelectionDialog;
 
 public class DashboardMenuBar extends JMenuBar {
   private static final long serialVersionUID = 7553179515259733852L;
@@ -71,7 +76,7 @@ public class DashboardMenuBar extends JMenuBar {
     });
     mtnmSaveWorkspace.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, CMD_MODIFIER));
     mnFile.add(mtnmSaveWorkspace);
-    
+
     mnFile.addSeparator();
 
     JMenuItem mntmExit = new JMenuItem("Exit");
@@ -80,7 +85,7 @@ public class DashboardMenuBar extends JMenuBar {
     });
     mntmExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, CMD_MODIFIER));
     mnFile.add(mntmExit);
-    
+
     // Menu bar click behaviour
     mnFile.addMenuListener(new MenuListener() {
 
@@ -108,20 +113,44 @@ public class DashboardMenuBar extends JMenuBar {
     JMenuItem mtnmClearGraph = new JMenuItem("Clear Graph");
     mtnmClearGraph.addActionListener(e -> controller.workspace.setCurrentGraph(null));
     mnTools.add(mtnmClearGraph);
-    
+
     mnTools.addSeparator();
-    
+
     JMenu mnAdvanced = new JMenu("Advanced");
     mnTools.add(mnAdvanced);
-    
+
     JMenuItem mtnmCleanCaches = new JMenuItem("Clean Caches");
     mtnmCleanCaches.addActionListener(e -> controller.workspace.cleanCaches());
     mnAdvanced.add(mtnmCleanCaches);
-    
+
     JMenuItem mtnmClearCaches = new JMenuItem("Clear Caches");
     mtnmClearCaches.addActionListener(e -> controller.workspace.clearCaches());
     mnAdvanced.add(mtnmClearCaches);
-    
+
+    mnAdvanced.addSeparator();
+
+    JMenuItem mntmExportSCC = new JMenuItem("Export SCC");
+    mntmExportSCC.setToolTipText("Export Server Connection Configuration (.scc)");
+    mntmExportSCC.addActionListener(e -> {
+      JFileChooser fc = new JFileChooser();
+      fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+      int res = fc.showSaveDialog(this);
+      if (res == JFileChooser.APPROVE_OPTION) {
+        File file = new File(fc.getSelectedFile() + ".scc");
+        if (Files.exists(Paths.get(file.toString()))) {
+          res = JOptionPane.showConfirmDialog(null,
+              "The file specified already exists, would you like to overwrite it?", "Overwrite",
+              JOptionPane.YES_NO_OPTION);
+          if (res != JOptionPane.YES_OPTION) {
+            return;
+          }
+        }
+        controller.workspace.storeDatabaseConfig(file.toString(),
+            WorkspaceHandler.PRIVATE_KEY.toCharArray(), true);
+      }
+    });
+    mnAdvanced.add(mntmExportSCC);
+
     // Menu bar click behaviour
     mnTools.addMenuListener(new MenuListener() {
 
@@ -131,6 +160,7 @@ public class DashboardMenuBar extends JMenuBar {
         boolean workspaceLoaded = controller.workspace.getWorkspaceName() != null;
         mtnmCleanCaches.setEnabled(workspaceLoaded);
         mtnmClearCaches.setEnabled(workspaceLoaded);
+        mntmExportSCC.setEnabled(workspaceLoaded);
       }
 
       @Override
@@ -140,9 +170,9 @@ public class DashboardMenuBar extends JMenuBar {
       public void menuCanceled(MenuEvent e) {}
 
     });
-    
+
   }
-   
+
   private void initMenuBarItemView() {
     // Create menu bar item
     JMenu mnView = new JMenu("View");
