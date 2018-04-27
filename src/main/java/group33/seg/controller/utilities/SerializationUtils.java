@@ -195,8 +195,7 @@ public class SerializationUtils {
 
       oos = new ObjectOutputStream(cipherOutputStream);
       oos.writeObject(sealedObject);
-    } catch (InvalidKeyException | IllegalBlockSizeException | NoSuchAlgorithmException | NoSuchPaddingException
-        | IOException e) {
+    } catch (Exception e) {
       System.err.println("Serialization failed");
     } finally {
       try {
@@ -253,9 +252,7 @@ public class SerializationUtils {
     } catch (StreamCorruptedException e) {
       //this is what happens when you use the wrong password
       return null;
-    } catch (NoSuchPaddingException | BadPaddingException | NoSuchAlgorithmException | InvalidKeyException | IOException
-        | ClassNotFoundException | IllegalBlockSizeException e) {
-      e.printStackTrace();
+    } catch (Exception e) {
       return null;
     }
   }
