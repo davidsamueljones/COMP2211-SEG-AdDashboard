@@ -1,5 +1,6 @@
 package group33.seg.controller.handlers;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -32,6 +33,9 @@ import group33.seg.model.configs.WorkspaceInstance;
 import group33.seg.model.types.Metric;
 
 public class WorkspaceHandler {
+  
+  /** FIXME: Not production code */
+  public static final String PRIVATE_KEY = "TEST_KEY";
 
   /** MVC model that sub-controller has knowledge of */
   private final DashboardMVC mvc;
@@ -40,7 +44,7 @@ public class WorkspaceHandler {
   private List<WorkspaceListener> listeners = new ArrayList<>();
 
   private boolean unstoredChanges = false;
-  
+
   /**
    * Instantiate a workspace handler.
    * 
@@ -48,7 +52,7 @@ public class WorkspaceHandler {
    */
   public WorkspaceHandler(DashboardMVC mvc) {
     this.mvc = mvc;
-    
+
     addListener(type -> {
       if (type == Type.WORKSPACE) {
         unstoredChanges = false;
@@ -127,7 +131,7 @@ public class WorkspaceHandler {
   public boolean hasUnstoredChanges() {
     return unstoredChanges;
   }
-  
+
   /**
    * Update the model's workspace. Alerting listeners that the workspace has changed.
    * 
@@ -193,7 +197,7 @@ public class WorkspaceHandler {
    * Save encrypted database config and clear password
    *
    * @param saveLocation file to save to
-   * @param password     to use for encryption
+   * @param password to use for encryption
    */
   public ErrorBuilder saveDatabaseConfig(String saveLocation, char[] password) {
     ErrorBuilder eb = new ErrorBuilder();
