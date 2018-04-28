@@ -48,7 +48,7 @@ public class TableImportHandler {
 
   /**
    * Start a managed import for the given file using the given table type. This has the same
-   * behaviour as calling {@link start} on a new thread but interrupting this call thread will cause
+   * behaviour as calling {@link TableImportHandler#start(String, DatabaseTable, int)} on a new thread but interrupting this call thread will cause
    * a cancellation request to occur automatically.
    * 
    * @param path Path to file for import
@@ -82,14 +82,14 @@ public class TableImportHandler {
   /**
    * Start an import for the given file using the given table type. This call will cause an
    * unchecked exception if a import is already ongoing. The PID used for this import is reported to
-   * the class instance so cancellations are possible using {@link cancel}.
+   * the class instance so cancellations are possible using {@link TableImportHandler#cancel()}.
    * 
    * @param path Path to file for import
    * @param table Table type to handle input data as
    * @param campaignID Campaign to use for table manipulation
    * @return Number of rows written
    */
-  private long start(String path, DatabaseTable table, int campaighID) {
+  private long start(String path, DatabaseTable table, int campaignID) {
     Connection conn = null;
     BaseConnection bconn = null;
 
@@ -112,7 +112,7 @@ public class TableImportHandler {
       this.pid = DatabaseHandler.getPID(bconn);
 
       try {
-        written = write(bconn, path, table, campaighID);
+        written = write(bconn, path, table, campaignID);
       } catch (SQLException e) {
         if (!cancelling) {
           throw new RuntimeException("Server error when importing", e);

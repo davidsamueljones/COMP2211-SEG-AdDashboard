@@ -249,7 +249,7 @@ public class GraphLinesPanel extends JPanel {
    * Add a new line panel, tracking accordingly for lookup.
    * 
    * @param identifier String identifier to use for panel
-   * @param panel Panel to add
+   * @param pnlLine Panel to add
    * @param idx Index for new line panel
    */
   private void addLinePanel(String identifier, LinePanel pnlLine, int idx) {

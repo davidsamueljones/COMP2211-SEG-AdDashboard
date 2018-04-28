@@ -572,7 +572,7 @@ public class WorkspaceHandler {
      * 
      * @param type The type of state update
      */
-    public void update(Type type);
+    void update(Type type);
 
     /**
      * Enumeration of types of workspace state update.

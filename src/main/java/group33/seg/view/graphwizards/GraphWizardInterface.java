@@ -11,7 +11,7 @@ public interface GraphWizardInterface<T extends GraphConfig> {
    * 
    * @param graph Configuration to load
    */
-  public void loadGraph(T graph);
+  void loadGraph(T graph);
 
   /**
    * Return the currently loaded graph without any non-applied changes. This should be the graph
@@ -19,6 +19,6 @@ public interface GraphWizardInterface<T extends GraphConfig> {
    * 
    * @return The currently loaded graph
    */
-  public T getGraph();
+  T getGraph();
 
 }

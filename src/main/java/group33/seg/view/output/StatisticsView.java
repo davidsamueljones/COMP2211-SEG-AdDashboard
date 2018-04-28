@@ -83,7 +83,7 @@ public class StatisticsView extends JPanel {
         return Metric.getTypes()[index];
       }
     };
-    JList<Metric> rowHeaders = new JList<Metric>(model_rowHeaders);
+    JList<Metric> rowHeaders = new JList<>(model_rowHeaders);
     rowHeaders.setCellRenderer(new MetricHeaderRenderer());
 
     // Ensure row sizing is the same between headers and table
