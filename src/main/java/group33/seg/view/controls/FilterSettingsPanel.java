@@ -295,7 +295,7 @@ public class FilterSettingsPanel extends JPanel {
    * Add a checkbox leaf to a parent node using the given text and state.
    * 
    * @param parent Parent to add leaf to
-   * @param data Data to store with respective node
+   * @param text Data to store with respective node
    * @param checked Whether checkbox should be selected
    * @return Generated node for data
    */

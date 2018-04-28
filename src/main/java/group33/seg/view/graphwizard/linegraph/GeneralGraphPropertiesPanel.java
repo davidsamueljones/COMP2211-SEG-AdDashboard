@@ -178,7 +178,7 @@ public class GeneralGraphPropertiesPanel extends JPanel {
    * Load the given background colour into the colour handling object. This should generate an
    * appropriate preview.
    * 
-   * @param color Colour to use, if null use default
+   * @param bg Colour to use, if null use default
    */
   private void loadBackgroundColor(Color bg) {
     if (bg == null) {

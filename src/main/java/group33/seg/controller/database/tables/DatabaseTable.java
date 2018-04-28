@@ -44,7 +44,7 @@ public abstract class DatabaseTable {
   public abstract String fromCSV(String input, int campaignID);
   
   /**
-   * @param Source for copy, paths must be single quoted
+   * @param source for copy, paths must be single quoted
    * @return Template used for COPY statements
    */
   public abstract String getCopyTemplate(String source);

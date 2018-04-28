@@ -43,7 +43,7 @@ public class DatabaseConfig implements Serializable {
   /**
    * Create an instance using information from a configuration to connect to a database.
    *
-   * @param file File containing authorisation information for db connection
+   * @param strPath Path to file containing authorisation information for db connection
    */
   public DatabaseConfig(String strPath) throws FileNotFoundException {
     // Verify that the input file exists and is not a directory
@@ -149,7 +149,7 @@ public class DatabaseConfig implements Serializable {
   /**
    * Encrypt and store a database configuration.
    *
-   * @param dbConfig Database configuration to save
+   * @param config Database configuration to save
    * @param saveLocation File to save to
    * @param password Password to use for encryption
    * @param overwrite Whether to overwrite an existing file if it exists

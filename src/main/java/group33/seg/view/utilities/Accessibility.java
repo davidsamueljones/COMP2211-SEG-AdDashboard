@@ -121,7 +121,7 @@ public class Accessibility {
    * Get a a font reduced by a given scaling factor.
    *
    * @param font Font to create a scaled version of
-   * @param scale Scaling factor to reverse
+   * @param currentScaling Scaling factor to reverse
    * @return Scaled font using original font properties
    */
   public static Font unscaleFont(Font font, double currentScaling) {

@@ -206,7 +206,7 @@ public class CampaignImportHandler {
    * @return List of campaigns as fully defined configurations
    */
   protected List<CampaignConfig> getAvailableCampaigns(Connection conn) {
-    List<CampaignConfig> campaigns = new ArrayList<CampaignConfig>();
+    List<CampaignConfig> campaigns = new ArrayList<>();
     PreparedStatement ps;
     try {
       ps = conn.prepareStatement("SELECT id, name FROM " + new CampaignTable().getTableName());

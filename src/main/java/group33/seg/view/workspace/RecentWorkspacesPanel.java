@@ -58,7 +58,7 @@ public class RecentWorkspacesPanel extends JPanel {
     add(lblHelp, gbc_lblHelp);
 
     model_lstWorkspaces = new DefaultListModel<>();
-    lstWorkspaces = new JList<String>(model_lstWorkspaces);
+    lstWorkspaces = new JList<>(model_lstWorkspaces);
     JScrollPane scrWorkspaces = new JScrollPane(lstWorkspaces);
     scrWorkspaces.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
     GridBagConstraints gbc_lstWorkspaces = new GridBagConstraints();

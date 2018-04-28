@@ -79,7 +79,7 @@ public class StatisticHandler {
    * Using the list of existing statistics, update or add a set of statistics to the campaign
    * statistics view.
    * 
-   * @param statistics Statistics to load
+   * @param inpStatistics Statistics to load
    */
   public void loadStatistics(List<StatisticConfig> inpStatistics) {
     // Do load on worker thread, updating progress listeners appropriately

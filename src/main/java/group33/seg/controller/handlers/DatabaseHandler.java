@@ -127,7 +127,7 @@ public class DatabaseHandler {
   /**
    * Return a database connection to the pool so it can be used again.
    * 
-   * @param c Connection to return to pool
+   * @param conn Connection to return to pool
    */
   public void returnConnection(Connection conn) {
     synchronized (connections) {
@@ -246,8 +246,7 @@ public class DatabaseHandler {
       ps.executeQuery();
       ResultSet rs = ps.getResultSet();
       rs.next();
-      int pid = rs.getInt(1);
-      return pid;
+        return rs.getInt(1);
     } catch (SQLException e) {
       return -1;
     }

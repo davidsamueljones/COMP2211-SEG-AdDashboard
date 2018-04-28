@@ -88,7 +88,7 @@ public class SettingsHandler {
     cleanupRecentWorkspaces();
 
     int count = prefs.getInt(RECENT_WORKSPACE_COUNT, 0);
-    List<String> recent = new ArrayList<String>();
+    List<String> recent = new ArrayList<>();
     for (int i = 0; i < count; i++) {
       recent.add(prefs.get(RECENT_WORKSPACE + i, null));
     }
@@ -104,7 +104,7 @@ public class SettingsHandler {
   private void cleanupRecentWorkspaces() {
     // Get list of current workspaces (removing from preferences)
     int count = prefs.getInt(RECENT_WORKSPACE_COUNT, 0);
-    List<String> recent = new ArrayList<String>();
+    List<String> recent = new ArrayList<>();
     for (int i = 0; i < count; i++) {
       String workspace = prefs.get(RECENT_WORKSPACE + i, null);
       prefs.remove(RECENT_WORKSPACE + i);

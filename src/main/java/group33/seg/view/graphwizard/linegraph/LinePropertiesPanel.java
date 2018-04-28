@@ -161,7 +161,7 @@ public class LinePropertiesPanel extends JPanel {
   }
 
   /**
-   * @param config Configuration to load into the view object
+   * @param line Line configuration to load into the view object
    */
   public void loadLine(LineConfig line) {
     if (line == null) {

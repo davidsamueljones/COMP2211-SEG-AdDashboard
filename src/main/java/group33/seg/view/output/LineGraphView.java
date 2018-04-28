@@ -259,7 +259,7 @@ public class LineGraphView extends JPanel {
 
   /**
    * For a given line configuration, update its respective line plot's data, using the provided data
-   * set. The line must have been added using {@link addLine} for this to be successful.
+   * set. The line must have been added using {@link LineGraphView#addLine(LineConfig)}  for this to be successful.
    * 
    * @param line Line configuration for which to modify
    * @param data Dataset to replace existing with
@@ -566,8 +566,6 @@ public class LineGraphView extends JPanel {
 
   /**
    * Enable any settings that are consistent throughout all behaviours.
-   * 
-   * @param chartPanel Chart panel to set behaviour for
    */
   private void enableGlobalBehaviour() {
     // Enable panning

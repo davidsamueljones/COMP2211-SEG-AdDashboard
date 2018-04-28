@@ -1,9 +1,9 @@
 package group33.seg.controller.handlers;
 
 public interface GraphHandlerInterface<T> {
-  public void reloadGraph();
+  void reloadGraph();
 
-  public void displayGraph(T config);
+  void displayGraph(T config);
 
-  public void clearGraph();
+  void clearGraph();
 }

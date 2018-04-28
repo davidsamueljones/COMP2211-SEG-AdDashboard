@@ -133,7 +133,7 @@ public class StatisticPanel extends JPanel {
   }
 
   /**
-   * @param config Configuration to load into the view object
+   * @param statistic Statistic configuration to load into the view object
    */
   public void loadStatistic(StatisticConfig statistic) {
     if (statistic == null || statistic.query == null) {
