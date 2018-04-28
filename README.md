@@ -1,31 +1,37 @@
 # Ad Auction Dashboard - Group 33
 
-The Ad Auction Dashboard is an application that will be used for easier evaluation of custom made campaigns.
+The Ad Auction Dashboard is an application that is used for easier evaluation of custom made campaigns.
 The project is developed using Agile methodologies and it is separated into 3 Increments. 
 
 ![Main Application](documents/application/MacOS.png "Application")
 
 
 ## Functionality
-The project is currently under development and it has the functionality that we promised to deliver in **Sprint One** and **Sprint Two** Backlogs.
-Currently a user of the system is able to see all key metrics as total statistics and as a graph. Other functionality the application supports includes:
-* Upload a new campaign 
-* Select from a list of already uploaded campaigns
-* Create custom graph, configure background colour, title, x and y axis name 
-* Customise line name, colour, thickness
-* Add multiple lines on a single graph 
-* Filter data by age, income, context, gender, date range
-* Generate data for specific intervals (minute, hour, day, week, or month)
+The Ad Auction Dashboard Project was completed in the span of three sprints. It has all the functionality that we promised to deliver in the three sprint backlogs,
+as well as additional features that were agreed upon with our client.
 
-## Future Development
-In **Sprint Three** backlog we have the rest of the user stories that we have not delivered in the previous two sprints.
-The features we are intending to include are:
-* Click costs histogram
-* Comparing audience segments
-* Comparing data from different campaigns
-* Time of day statistics
-* Specific day statistics
-* Workspace change option
+Some of the features of the application are:
+* Create a Workspace
+* Select from a list of already existing workspaces
+* Modify existing workspaces
+* Upload a new campaign 
+* Load a already uploaded campaign
+* Create custom graph
+    * Configure chart background colour, title, x and y axis labels 
+* View a metric line graph
+    * Select amongst all key metrics (e.g. Number of Impressions, Number of Bounces, CTR, CPA, etc.)
+    * Configure time interval (hour, day, week, month, or year)
+    * Filter data by age, income, context, gender, date range
+* Customise line
+    * Configure line name, colour, thickness
+* Add multiple lines on a single graph 
+    * Compare audience segments
+    * Compare data from different ranges 
+        * Overlay/Normal options available
+        * Compare data from a specific time within the day
+        * Compare data from a specific day
+* Generate a click cost histogram
+* Compare data for multiple campaigns 
 
 ## Getting Started
 The instructions below will guide you through the steps for running the code.
@@ -80,7 +86,7 @@ CREATE DATABASE <DB_NAME>;
    
 ###Running the tests
    
-   * To run the tests run ``mvn test``
+   * To run the tests use ``mvn test`` (You should have Maven installed)
    
 ## Built With
 * [TravisCI](http://www.dropwizard.io/1.0.2/docs/) - Distributed Continuous Integration Service
