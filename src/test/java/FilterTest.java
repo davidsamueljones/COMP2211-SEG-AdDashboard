@@ -253,4 +253,15 @@ public class FilterTest {
       assertTrue(testName.append(" is broken").toString(),incomeMatches(combination, (Long) response.get(0).value));
     }
   }
+
+  @Test
+  public void emptyFilterTest() {
+    FilterConfig filterConfig = new FilterConfig();
+    filterConfig.ages = new ArrayList<>();
+    MetricQuery emptyQuery = new MetricQuery(Metric.IMPRESSIONS, null, filterConfig);
+
+    List<Pair<String, Number>> response = databaseHandler.getQueryResponse(emptyQuery).getResult();
+
+    assertTrue("Result should have been empty", response.isEmpty());
+  }
 }

@@ -1,4 +1,5 @@
 import group33.seg.controller.database.*;
+import group33.seg.controller.database.DatabaseQueryFactory.MalformedFilterException;
 import group33.seg.controller.database.tables.ClickLogTable;
 import group33.seg.controller.database.tables.ImpressionLogTable;
 import group33.seg.controller.database.tables.ServerLogTable;
@@ -16,6 +17,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -70,8 +72,14 @@ public class DatabaseTest {
     for (Interval interval : Interval.values()) {
       MetricQuery mq =
           new MetricQuery(Metric.IMPRESSIONS, interval, null);
-      String res = DatabaseQueryFactory.generateSQL(mq);
-      assertTrue(!res.contains("<interval>"));
+    
+      try {
+        String res = DatabaseQueryFactory.generateSQL(mq);
+        assertTrue(!res.contains("<interval>"));
+      } catch (MalformedFilterException e) {
+        fail();
+      }
+      
     }
   }
 }

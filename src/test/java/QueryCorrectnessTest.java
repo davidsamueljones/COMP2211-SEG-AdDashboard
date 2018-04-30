@@ -136,7 +136,7 @@ public class QueryCorrectnessTest {
   }
 
   @Test
-  public void notNegativeTest(){
+  public void notNegativeTest() {
     for (Metric metric : notNegative) {
       //statistic test
       MetricQuery statQuery = new MetricQuery(metric, null, null, null, campaign);
