@@ -1,9 +1,7 @@
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.FileNotFoundException;
-import java.sql.Connection;
-import java.sql.SQLException;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,15 +13,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import group33.seg.controller.DashboardController;
-import group33.seg.controller.database.DatabaseConfig;
-import group33.seg.controller.database.tables.CampaignTable;
-import group33.seg.controller.database.tables.ClickLogTable;
-import group33.seg.controller.database.tables.ImpressionLogTable;
-import group33.seg.controller.database.tables.ServerLogTable;
 import group33.seg.controller.handlers.DatabaseHandler;
 import group33.seg.lib.Pair;
+import group33.seg.lib.Range;
 import group33.seg.model.configs.CampaignConfig;
-import group33.seg.model.configs.CampaignImportConfig;
 import group33.seg.model.configs.FilterConfig;
 import group33.seg.model.configs.MetricQuery;
 import group33.seg.model.types.Metric;
@@ -263,5 +256,18 @@ public class FilterTest {
     List<Pair<String, Number>> response = databaseHandler.getQueryResponse(emptyQuery).getResult();
 
     assertTrue("Result should have been empty", response.isEmpty());
+  }
+
+  @Test
+  public void startDateAfterEndDateTest() {
+    FilterConfig filterConfig = new FilterConfig();
+    filterConfig.dates = new Range<Date>(new Date(), new Date(2015, 1, 1));
+
+    MetricQuery emptyQuery = new MetricQuery(Metric.IMPRESSIONS, null, filterConfig);
+
+    List<Pair<String, Number>> response = databaseHandler.getQueryResponse(emptyQuery).getResult();
+
+    assertTrue("should only have one result, had " + response.size(), response.size() == 1);
+    assertTrue("should have returned 0, returned " + response.get(0).value, response.get(0).value.longValue() == 0);
   }
 }
