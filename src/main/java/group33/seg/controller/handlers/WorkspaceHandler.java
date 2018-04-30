@@ -44,7 +44,7 @@ public class WorkspaceHandler {
   private List<WorkspaceListener> listeners = new ArrayList<>();
 
   private boolean unstoredChanges = false;
-
+  
   /**
    * Instantiate a workspace handler.
    * 
@@ -562,6 +562,54 @@ public class WorkspaceHandler {
     }
   }
 
+  /**
+   * @return The next default graph identifier (unused)
+   */
+  public String getNextGraphIdentifier() {
+    List<GraphConfig> graphs = getGraphs();
+    final String prefix = "Graph ";
+    int next = 1;
+    if (graphs != null) {
+      next = graphs.size() + 1;
+      for (GraphConfig graph : graphs) {
+        String idx = graph.identifier.replace(prefix, "");
+        try {
+          int found = Integer.valueOf(idx);
+          if (found >= next) {
+            next = found + 1;
+          }
+        } catch (Exception e) {
+          // ignore
+        }
+      }
+    }
+    return prefix + next;
+  }
+  
+  /**
+   * @return The next default statistic identifier (unused)
+   */
+  public String getNextStatisticIdentifier() {
+    List<StatisticConfig> statistics = getStatistics();
+    final String prefix = "Statistic ";
+    int next = 1;
+    if (statistics != null) {
+      next = statistics.size() + 1;
+      for (StatisticConfig statistic : statistics) {
+        String idx = statistic.identifier.replace(prefix, "");
+        try {
+          int found = Integer.valueOf(idx);
+          if (found >= next) {
+            next = found+1;
+          }
+        } catch (Exception e) {
+          // ignore
+        }
+      }
+    }
+    return prefix + next;
+  }
+  
   /**
    * Interface for handling updates from the workspace handler.
    */
