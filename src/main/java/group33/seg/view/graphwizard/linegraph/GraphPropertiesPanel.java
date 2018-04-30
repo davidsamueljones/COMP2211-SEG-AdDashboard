@@ -6,18 +6,24 @@ import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
+import group33.seg.controller.DashboardController;
 import group33.seg.model.configs.LineGraphConfig;
 
 public class GraphPropertiesPanel extends JScrollPane {
   private static final long serialVersionUID = 3622228245996396838L;
 
+  private DashboardController controller;
+  
   protected GeneralGraphPropertiesPanel pnlGeneralProperties;
   protected PlottingModePanel pnlPlottingMode;
 
   /**
-   * Initialise the simple panel, no external controllers required.
+   * Create the panel.
+   *
+   * @param controller Controller for this view object
    */
-  public GraphPropertiesPanel() {
+  public GraphPropertiesPanel(DashboardController controller) {
+    this.controller = controller;
     initGUI();
   }
 
@@ -33,7 +39,7 @@ public class GraphPropertiesPanel extends JScrollPane {
     gbl_pnlMain.rowWeights = new double[] {0.0, 0.0, 0.0, 1.0};
     pnlMain.setLayout(gbl_pnlMain);
 
-    pnlGeneralProperties = new GeneralGraphPropertiesPanel();
+    pnlGeneralProperties = new GeneralGraphPropertiesPanel(controller);
     GridBagConstraints gbc_pnlGeneralProperties = new GridBagConstraints();
     gbc_pnlGeneralProperties.fill = GridBagConstraints.BOTH;
     gbc_pnlGeneralProperties.gridx = 0;

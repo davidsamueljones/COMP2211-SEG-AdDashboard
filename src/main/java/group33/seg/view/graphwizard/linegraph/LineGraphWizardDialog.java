@@ -95,7 +95,7 @@ public class LineGraphWizardDialog extends JDialog
     gbc_tabsProperties.gridy = 0;
     pnlContent.add(tabsProperties, gbc_tabsProperties);
 
-    pnlGraphProperties = new GraphPropertiesPanel();
+    pnlGraphProperties = new GraphPropertiesPanel(controller);
     tabsProperties.add("Graph Properties", pnlGraphProperties);
 
     pnlLines = new GraphLinesPanel(controller);

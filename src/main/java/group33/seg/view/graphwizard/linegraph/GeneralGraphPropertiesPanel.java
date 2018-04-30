@@ -11,12 +11,15 @@ import javax.swing.JColorChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import group33.seg.controller.DashboardController;
 import group33.seg.model.configs.LineGraphConfig;
 import group33.seg.view.output.LineGraphView;
 
 public class GeneralGraphPropertiesPanel extends JPanel {
   private static final long serialVersionUID = -1585475807433849072L;
 
+  private DashboardController controller;
+  
   protected JTextField txtIdentifier;
   protected JTextField txtTitle;
   protected JTextField txtXAxisTitle;
@@ -25,9 +28,12 @@ public class GeneralGraphPropertiesPanel extends JPanel {
   protected JCheckBox chckbxShowLegend;
 
   /**
-   * Initialise the simple panel, no external controllers required.
+   * Create the panel.
+   *
+   * @param controller Controller for this view object
    */
-  public GeneralGraphPropertiesPanel() {
+  public GeneralGraphPropertiesPanel(DashboardController controller) {
+    this.controller = controller;
     initGUI();
   }
 
@@ -209,10 +215,11 @@ public class GeneralGraphPropertiesPanel extends JPanel {
    * Apply reset state to the view object.
    */
   public void reset() {
-    txtIdentifier.setText("");
-    txtTitle.setText("");
-    txtXAxisTitle.setText("");
-    txtYAxisTitle.setText("");
+    String identifier = controller.workspace.getNextGraphIdentifier();
+    txtIdentifier.setText(identifier);
+    txtTitle.setText(identifier);
+    txtXAxisTitle.setText("Time");
+    txtYAxisTitle.setText("n");
     loadBackgroundColor(null);
     chckbxShowLegend.setSelected(true);
   }
