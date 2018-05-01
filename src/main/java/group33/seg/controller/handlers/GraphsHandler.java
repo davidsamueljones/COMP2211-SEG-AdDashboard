@@ -154,7 +154,7 @@ public class GraphsHandler {
     } else if (clear) {
       next.clearGraph();
     }
-    currentHandler = lineGraphHandler;
+    currentHandler = next;
   }
   
   /**
