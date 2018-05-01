@@ -16,6 +16,7 @@ import group33.seg.controller.DashboardController;
 import group33.seg.model.configs.CampaignConfig;
 import group33.seg.model.configs.HistogramConfig;
 import group33.seg.model.configs.MetricQuery;
+import group33.seg.model.types.Interval;
 import group33.seg.model.types.Metric;
 import group33.seg.view.controls.BounceDefinitionPanel;
 import group33.seg.view.controls.FilterViewPanel;
@@ -197,6 +198,7 @@ public class HistogramDataPanel extends JPanel {
     query.campaign = (CampaignConfig) cboCampaign.getSelectedItem();
     query.filter = pnlFilter.getFilter();
     query.bounceDef = pnlBounceRate.getBounceDef();
+    query.interval = Interval.DAY; // IGNORED
     config.query = query;
   }
 
