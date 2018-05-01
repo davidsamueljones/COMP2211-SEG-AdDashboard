@@ -15,7 +15,6 @@ import javax.swing.JPanel;
 import group33.seg.controller.DashboardController;
 import group33.seg.model.configs.CampaignConfig;
 import group33.seg.model.configs.HistogramConfig;
-import group33.seg.model.configs.LineConfig;
 import group33.seg.model.configs.MetricQuery;
 import group33.seg.model.types.Metric;
 import group33.seg.view.controls.BounceDefinitionPanel;
@@ -49,7 +48,8 @@ public class HistogramDataPanel extends JPanel {
     // * GUI HANDLING
     // ************************************************************************************
 
-    setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(),
+        BorderFactory.createEmptyBorder(5, 5, 5, 5)));
 
     GridBagLayout gridBagLayout = new GridBagLayout();
     gridBagLayout.rowHeights = new int[] {0, 0, 0, 0};
