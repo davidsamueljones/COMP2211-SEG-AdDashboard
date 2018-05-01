@@ -36,9 +36,7 @@ public class CampaignConfig implements Serializable {
     if (!(obj instanceof CampaignConfig))
       return false;
     CampaignConfig other = (CampaignConfig) obj;
-    if (uid != other.uid)
-      return false;
-    return true;
+    return uid == other.uid;
   }
   
 }

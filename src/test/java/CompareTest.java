@@ -210,7 +210,13 @@ public class CompareTest {
   }
 
   @Test
-  public void compareCampaigns() {
+    public void nonExistentCampaign() {
+      CampaignConfig config = new CampaignConfig(8);
+      MetricQuery impressions = new MetricQuery(Metric.IMPRESSIONS, null, null,null, config);
 
+      List<Pair<String, Number>> queryResponse = databaseHandler.getQueryResponse(impressions).getResult();
+      Number actualImpressions = queryResponse.get(0).value;
+
+      assertTrue(actualImpressions.longValue() == 0);
   }
 }
