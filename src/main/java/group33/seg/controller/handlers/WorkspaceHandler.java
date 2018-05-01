@@ -18,6 +18,7 @@ import java.util.Set;
 import group33.seg.controller.DashboardController.DashboardMVC;
 import group33.seg.controller.database.DatabaseConfig;
 import group33.seg.controller.database.DatabaseQueryFactory;
+import group33.seg.controller.database.DatabaseQueryFactory.MalformedFilterException;
 import group33.seg.controller.handlers.WorkspaceHandler.WorkspaceListener.Type;
 import group33.seg.controller.utilities.ErrorBuilder;
 import group33.seg.controller.utilities.GraphVisitor;
@@ -512,7 +513,11 @@ public class WorkspaceHandler {
         @Override
         public void visit(LineGraphConfig graph) {
           for (LineConfig line : graph.lines) {
-            used.add(DatabaseQueryFactory.generateSQL(line.query));
+            try {
+              used.add(DatabaseQueryFactory.generateSQL(line.query));
+            } catch (MalformedFilterException e) {
+              //just do nothing if it's broken
+            }
           }
         }
       });
@@ -521,7 +526,11 @@ public class WorkspaceHandler {
     for (StatisticConfig statistic : workspace.statistics) {
       for (Metric metric : Metric.getStatisticTypes()) {
         statistic.query.metric = metric;
-        used.add(DatabaseQueryFactory.generateSQL(statistic.query));
+        try {
+          used.add(DatabaseQueryFactory.generateSQL(statistic.query));
+        } catch (MalformedFilterException e) {
+          //just do nothing if it's broken
+        }
       }
       statistic.query.metric = null;
     }

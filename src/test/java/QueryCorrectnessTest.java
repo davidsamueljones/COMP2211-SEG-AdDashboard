@@ -1,29 +1,27 @@
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import java.io.FileNotFoundException;
-import java.sql.Connection;
-import java.sql.SQLException;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayDeque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-import group33.seg.controller.database.tables.CampaignTable;
-import group33.seg.controller.database.tables.ClickLogTable;
-import group33.seg.controller.database.tables.ImpressionLogTable;
-import group33.seg.controller.database.tables.ServerLogTable;
-import group33.seg.model.configs.*;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 import group33.seg.controller.DashboardController;
-import group33.seg.controller.database.DatabaseConfig;
 import group33.seg.controller.handlers.DatabaseHandler;
 import group33.seg.lib.Pair;
 import group33.seg.lib.Range;
+import group33.seg.model.configs.BounceConfig;
+import group33.seg.model.configs.CampaignConfig;
+import group33.seg.model.configs.FilterConfig;
+import group33.seg.model.configs.MetricQuery;
 import group33.seg.model.types.Interval;
 import group33.seg.model.types.Metric;
 import utils.QueryTestUtil;
@@ -34,6 +32,10 @@ public class QueryCorrectnessTest {
   private static final double MARGIN_OF_ERROR = 0.01;
   private static DatabaseHandler databaseHandler;
   private static CampaignConfig campaign;
+  
+  private static ArrayDeque<Metric> notNegative;
+  private static ArrayDeque<Interval> intervals;
+
   /**
    * Initialise tables and populate before running the tests
    */
@@ -43,6 +45,26 @@ public class QueryCorrectnessTest {
     assertNotNull(controller);
     CampaignConfig campaign = controller.imports.getImportedCampaign();
     databaseHandler = controller.database;
+
+    notNegative = new ArrayDeque<>();
+    notNegative.add(Metric.BOUNCE_RATE);
+    notNegative.add(Metric.BOUNCES);
+    notNegative.add(Metric.CLICKS);
+    notNegative.add(Metric.CONVERSIONS);
+    notNegative.add(Metric.CPA);
+    notNegative.add(Metric.CPC);
+    notNegative.add(Metric.CPM);
+    notNegative.add(Metric.CTR);
+    notNegative.add(Metric.IMPRESSIONS);
+    notNegative.add(Metric.TOTAL_COST);
+    notNegative.add(Metric.UNIQUES);
+
+    intervals = new ArrayDeque<>();
+    intervals.add(Interval.DAY);
+    intervals.add(Interval.HOUR);
+    intervals.add(Interval.MONTH);
+    intervals.add(Interval.WEEK);
+    intervals.add(Interval.YEAR);
   }
 
   /**
@@ -111,6 +133,34 @@ public class QueryCorrectnessTest {
     if (databaseHandler == null) {
       fail("Database setup failed");
     }
+  }
+
+  @Test
+  public void notNegativeTest() {
+    for (Metric metric : notNegative) {
+      //statistic test
+      MetricQuery statQuery = new MetricQuery(metric, null, null, null, campaign);
+      assertTrue("statistic negative for " + metric.toString(), notNegative(statQuery));
+
+      //graph test
+      for (Interval interval : intervals) {
+        MetricQuery graphQuery = new MetricQuery(metric, interval, null, null, campaign);
+        assertTrue("graph negative for " + metric.toString() + ", interval " + interval.toString(), notNegative(graphQuery));
+      }
+    }
+  }
+
+  public boolean notNegative(MetricQuery query) {
+    List<Pair<String, Number>> response = databaseHandler.getQueryResponse(query).getResult();
+    for (Pair<String, Number> pair : response) {
+      if (pair.value != null) {
+        if (pair.value.doubleValue() < 0) {
+          return false;
+        }
+      }
+    }
+
+    return true;
   }
 
   @Test

@@ -18,6 +18,7 @@ import group33.seg.controller.DashboardController.DashboardMVC;
 import group33.seg.controller.database.DatabaseConfig;
 import group33.seg.controller.database.DatabaseConnection;
 import group33.seg.controller.database.DatabaseQueryFactory;
+import group33.seg.controller.database.DatabaseQueryFactory.MalformedFilterException;
 import group33.seg.controller.types.MetricQueryResponse;
 import group33.seg.controller.utilities.GraphVisitor;
 import group33.seg.lib.Pair;
@@ -144,10 +145,12 @@ public class DatabaseHandler {
 
   private List<Pair<String, Number>> getGraphData(MetricQuery request) {
     Connection conn = getConnection();
-    String sql = DatabaseQueryFactory.generateSQL(request);
+
     List<Pair<String, Number>> result = new LinkedList<>();
 
     try {
+      String sql = DatabaseQueryFactory.generateSQL(request);
+
       Statement cs = conn.createStatement();
       ResultSet rs = cs.executeQuery(sql);
 
@@ -161,7 +164,7 @@ public class DatabaseHandler {
           i++;
         }
       }
-    } catch (SQLException e) {
+    } catch (MalformedFilterException | SQLException e) {
       e.printStackTrace();
     }
     returnConnection(conn);
@@ -183,7 +186,12 @@ public class DatabaseHandler {
       return null;
     }
     // Generate query string
-    String sql = DatabaseQueryFactory.generateSQL(statistic.query);
+    String sql = null;
+    try {
+      sql = DatabaseQueryFactory.generateSQL(statistic.query);
+    } catch (MalformedFilterException e) {
+      e.printStackTrace();
+    }
     // Check for caches
     WorkspaceConfig workspace = mvc.model.getWorkspace();
     List<Pair<String, Number>> result = null;

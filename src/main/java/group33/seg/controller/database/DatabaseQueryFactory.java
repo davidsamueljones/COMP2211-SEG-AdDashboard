@@ -3,6 +3,8 @@ package group33.seg.controller.database;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Filter;
@@ -374,7 +376,7 @@ public class DatabaseQueryFactory {
    * @param request Query to generate SQL for
    * @return SQL generated from given MetricQuery
    */
-  public static String generateSQL(MetricQuery request) {
+  public static String generateSQL(MetricQuery request) throws MalformedFilterException {
     String sql;
 
     // If the user sets an interval create graph query and apply grouping
@@ -389,6 +391,9 @@ public class DatabaseQueryFactory {
     } else {
       sql = statisticQueries.get(request.metric);
     }
+
+    // Check for invalid filtering
+    malformedFilterCheck(request.filter);
 
     // Adjust <bounce> placeholder according to bounce definition preference
     if (request.bounceDef != null) {
@@ -536,5 +541,45 @@ public class DatabaseQueryFactory {
         return sql;
     }
     return sql.replace("<interval>", groupingString);
+  }
+
+  public static class MalformedFilterException extends Exception {
+    private static final long serialVersionUID = 291915740307942812L;
+  }
+
+  /**
+   * Checks if FilterConfig is invalid.
+   * @param filterConfig which is checked for validity
+   * @throws MalformedFilterException when the filter is initialised but empty
+   */
+  private static void malformedFilterCheck(FilterConfig filterConfig) throws MalformedFilterException {
+    if (filterConfig == null) {
+      return;
+    }
+
+    ArrayDeque<Collection<?>> filters = new ArrayDeque<>();
+    if (filterConfig.ages != null) {
+      filters.add(filterConfig.ages);
+    }
+
+    if (filterConfig.contexts != null) {
+      filters.add(filterConfig.contexts);
+    }
+
+    if (filterConfig.genders != null) {
+      filters.add(filterConfig.genders);
+    }
+
+    if (filterConfig.incomes != null) {
+      filters.add(filterConfig.incomes);
+    }
+
+    for (Collection<?> filter : filters) {
+      if (filter != null) {
+        if (filter.size() == 0) {
+          throw new MalformedFilterException();
+        }
+      }
+    }
   }
 }
