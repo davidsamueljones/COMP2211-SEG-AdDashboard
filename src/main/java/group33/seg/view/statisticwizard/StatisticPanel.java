@@ -151,7 +151,7 @@ public class StatisticPanel extends JPanel {
    * Apply reset state to the view object.
    */
   private void clear() {
-    txtIdentifier.setText("");
+    txtIdentifier.setText(controller.workspace.getNextStatisticIdentifier());
     cboCampaign.setSelectedIndex(cboCampaign.getItemCount() == 1 ? 0 : -1);
     pnlFilter.loadFilter(null);
     pnlBounceRate.loadDef(null);

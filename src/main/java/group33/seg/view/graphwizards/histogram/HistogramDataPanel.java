@@ -1,4 +1,4 @@
-package group33.seg.view.graphwizard.linegraph;
+package group33.seg.view.graphwizards.histogram;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -12,24 +12,22 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.ListCellRenderer;
 import group33.seg.controller.DashboardController;
 import group33.seg.model.configs.CampaignConfig;
+import group33.seg.model.configs.HistogramConfig;
 import group33.seg.model.configs.LineConfig;
 import group33.seg.model.configs.MetricQuery;
-import group33.seg.model.types.Interval;
 import group33.seg.model.types.Metric;
 import group33.seg.view.controls.BounceDefinitionPanel;
 import group33.seg.view.controls.FilterViewPanel;
 
-public class LineDataPanel extends JPanel {
-  private static final long serialVersionUID = -7116368239383924369L;
+public class HistogramDataPanel extends JPanel {
+  private static final long serialVersionUID = 8629318246093199609L;
 
   private DashboardController controller;
 
   protected JComboBox<CampaignConfig> cboCampaign;
   protected JComboBox<Metric> cboMetric;
-  protected JComboBox<Interval> cboInterval;
   protected FilterViewPanel pnlFilter;
   protected BounceDefinitionPanel pnlBounceRate;
 
@@ -38,7 +36,7 @@ public class LineDataPanel extends JPanel {
    *
    * @param controller Controller for this view object
    */
-  public LineDataPanel(DashboardController controller) {
+  public HistogramDataPanel(DashboardController controller) {
     this.controller = controller;
     initGUI();
   }
@@ -51,13 +49,12 @@ public class LineDataPanel extends JPanel {
     // * GUI HANDLING
     // ************************************************************************************
 
-    setBorder(BorderFactory.createCompoundBorder(
-        BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Data"),
-        BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+    setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
     GridBagLayout gridBagLayout = new GridBagLayout();
+    gridBagLayout.rowHeights = new int[] {0, 0, 0, 0};
     gridBagLayout.columnWeights = new double[] {0.0, 1.0, 0.0};
-    gridBagLayout.rowWeights = new double[] {0.0, 0.0, 0.0, 0.0};
+    gridBagLayout.rowWeights = new double[] {0.0, 0.0, 0.0, 1.0};
     setLayout(gridBagLayout);
 
     JLabel lblCampaign = new JLabel("Campaign:");
@@ -103,7 +100,7 @@ public class LineDataPanel extends JPanel {
     add(lblMetricType, gbc_lblMetricType);
 
     cboMetric = new JComboBox<>();
-    for (Metric metric : Metric.getLineGraphTypes()) {
+    for (Metric metric : Metric.getHistogramTypes()) {
       cboMetric.addItem(metric);
     }
     GridBagConstraints gbc_cboMetric = new GridBagConstraints();
@@ -120,27 +117,6 @@ public class LineDataPanel extends JPanel {
     gbc_btnMetricHelp.gridy = 1;
     add(btnMetricHelp, gbc_btnMetricHelp);
 
-    JLabel lblInterval = new JLabel("Interval:");
-    GridBagConstraints gbc_lblInterval = new GridBagConstraints();
-    gbc_lblInterval.insets = new Insets(0, 0, 5, 5);
-    gbc_lblInterval.anchor = GridBagConstraints.EAST;
-    gbc_lblInterval.fill = GridBagConstraints.VERTICAL;
-    gbc_lblInterval.gridx = 0;
-    gbc_lblInterval.gridy = 2;
-    add(lblInterval, gbc_lblInterval);
-
-    cboInterval = new JComboBox<>();
-    for (Interval interval : Interval.values()) {
-      cboInterval.addItem(interval);
-    }
-    GridBagConstraints gbc_cboInterval = new GridBagConstraints();
-    gbc_cboInterval.fill = GridBagConstraints.HORIZONTAL;
-    gbc_cboInterval.gridwidth = 2;
-    gbc_cboInterval.insets = new Insets(0, 0, 5, 0);
-    gbc_cboInterval.gridx = 1;
-    gbc_cboInterval.gridy = 2;
-    add(cboInterval, gbc_cboInterval);
-
     pnlFilter = new FilterViewPanel();
     pnlFilter.setPreferredSize(new Dimension(pnlFilter.getPreferredSize().width, 150));
     GridBagConstraints gbc_pnlFilter = new GridBagConstraints();
@@ -148,7 +124,7 @@ public class LineDataPanel extends JPanel {
     gbc_pnlFilter.gridwidth = 3;
     gbc_pnlFilter.insets = new Insets(0, 0, 5, 0);
     gbc_pnlFilter.gridx = 0;
-    gbc_pnlFilter.gridy = 3;
+    gbc_pnlFilter.gridy = 2;
     add(pnlFilter, gbc_pnlFilter);
 
     pnlBounceRate = new BounceDefinitionPanel();
@@ -157,7 +133,7 @@ public class LineDataPanel extends JPanel {
     gbc_pnlBounceRate.gridwidth = 3;
     gbc_pnlBounceRate.insets = new Insets(0, 0, 0, 0);
     gbc_pnlBounceRate.gridx = 0;
-    gbc_pnlBounceRate.gridy = 4;
+    gbc_pnlBounceRate.gridy = 3;
     add(pnlBounceRate, gbc_pnlBounceRate);
 
     // ************************************************************************************
@@ -186,18 +162,17 @@ public class LineDataPanel extends JPanel {
   }
 
   /**
-   * @param line Line configuration to load into the view object
+   * @param graph Graph configuration to load into the view object
    */
-  public void loadLine(LineConfig line) {
-    if (line == null || line.query == null) {
+  public void loadGraph(HistogramConfig graph) {
+    if (graph == null || graph.query == null) {
       clear();
       return;
     }
-    cboCampaign.setSelectedItem(line.query.campaign);
-    cboMetric.setSelectedItem(line.query.metric);
-    cboInterval.setSelectedItem(line.query.interval);
-    pnlFilter.loadFilter(line.query.filter);
-    pnlBounceRate.loadDef(line.query.bounceDef);
+    cboCampaign.setSelectedItem(graph.query.campaign);
+    cboMetric.setSelectedItem(graph.query.metric);
+    pnlFilter.loadFilter(graph.query.filter);
+    pnlBounceRate.loadDef(graph.query.bounceDef);
     pnlBounceRate.setVisible(MetricQuery.needBounceDef((Metric) cboMetric.getSelectedItem()));
   }
 
@@ -206,8 +181,7 @@ public class LineDataPanel extends JPanel {
    */
   public void clear() {
     cboCampaign.setSelectedIndex(cboCampaign.getItemCount() == 1 ? 0 : -1);
-    cboMetric.setSelectedItem(null);
-    cboInterval.setSelectedItem(null);
+    cboMetric.setSelectedIndex(cboMetric.getItemCount() == 1 ? 0 : -1);
     pnlFilter.loadFilter(null);
     pnlBounceRate.setVisible(false);
   }
@@ -217,10 +191,9 @@ public class LineDataPanel extends JPanel {
    * 
    * @param config Configuration to update
    */
-  public void updateConfig(LineConfig config) {
+  public void updateConfig(HistogramConfig config) {
     MetricQuery query = new MetricQuery();
     query.metric = (Metric) cboMetric.getSelectedItem();
-    query.interval = (Interval) cboInterval.getSelectedItem();
     query.campaign = (CampaignConfig) cboCampaign.getSelectedItem();
     query.filter = pnlFilter.getFilter();
     query.bounceDef = pnlBounceRate.getBounceDef();

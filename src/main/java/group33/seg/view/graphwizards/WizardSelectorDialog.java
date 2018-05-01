@@ -58,13 +58,13 @@ public class WizardSelectorDialog extends JDialog {
     gbc_btnLineGraph.gridy = 1;
     pnlContent.add(btnLineGraph, gbc_btnLineGraph);
 
-    JButton btnCPMHistogram = new JButton("CPM Histogram");
-    GridBagConstraints gbc_btnCPMHistogram = new GridBagConstraints();
-    gbc_btnCPMHistogram.insets = new Insets(0, 0, 0, 3);
-    gbc_btnCPMHistogram.anchor = GridBagConstraints.WEST;
-    gbc_btnCPMHistogram.gridx = 1;
-    gbc_btnCPMHistogram.gridy = 1;
-    pnlContent.add(btnCPMHistogram, gbc_btnCPMHistogram);
+    JButton btnHistogram = new JButton("Histogram");
+    GridBagConstraints gbc_btnHistogram = new GridBagConstraints();
+    gbc_btnHistogram.insets = new Insets(0, 0, 0, 3);
+    gbc_btnHistogram.anchor = GridBagConstraints.WEST;
+    gbc_btnHistogram.gridx = 1;
+    gbc_btnHistogram.gridy = 1;
+    pnlContent.add(btnHistogram, gbc_btnHistogram);
 
     // Select line graph type
     btnLineGraph.addActionListener(e -> {
@@ -73,7 +73,7 @@ public class WizardSelectorDialog extends JDialog {
       dispose();
     });
     // Select CPM histogram type
-    btnCPMHistogram.addActionListener(e -> {
+    btnHistogram.addActionListener(e -> {
       selected = new HistogramConfig();
       setVisible(false);
       dispose();

@@ -150,7 +150,7 @@ public class DatabaseQueryFactory {
             + " generate_series(<start>, <final>, '1 <interval>') AS xaxis;");
 
     graphRangeQueries.put(
-            Metric.TOTAL_COST_HISTOGRAM,
+            Metric.CLICK_COST,
             "SELECT click_cost as yaxis FROM click_view WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender> AND <filterDate>");
   }
 
@@ -290,8 +290,9 @@ public class DatabaseQueryFactory {
                     + " (SELECT date_trunc('<interval>', max(date)) AS final FROM impression_log WHERE <campaign>) AS max,"
                     + " generate_series(<start>, <final>, '1 <interval>') AS xaxis;");
 
+    // HISTOGRAM ONLY QUERY
     graphQueries.put(
-            Metric.TOTAL_COST_HISTOGRAM,
+            Metric.CLICK_COST,
             "SELECT click_cost as yaxis FROM click_view WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>");
   }
 

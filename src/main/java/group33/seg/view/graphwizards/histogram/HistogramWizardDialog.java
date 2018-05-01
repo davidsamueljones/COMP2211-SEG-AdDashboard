@@ -10,9 +10,13 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.SwingConstants;
 import group33.seg.controller.DashboardController;
 import group33.seg.controller.utilities.ErrorBuilder;
 import group33.seg.model.configs.HistogramConfig;
+import group33.seg.view.graphwizard.linegraph.LineGraphLinesPanel;
+import group33.seg.view.graphwizard.linegraph.LineGraphPropertiesPanel;
 import group33.seg.view.graphwizards.GraphWizardInterface;
 
 public class HistogramWizardDialog extends JDialog
@@ -22,6 +26,9 @@ public class HistogramWizardDialog extends JDialog
 
   private DashboardController controller;
 
+  private HistogramPropertiesPanel pnlGraphProperties;
+  private HistogramDataPanel pnlData;
+  
   /** Last loaded (or updated) graph */
   private HistogramConfig base;
 
@@ -42,7 +49,6 @@ public class HistogramWizardDialog extends JDialog
    * @param controller Controller for this view object
    * @param graph Configuration to load into view
    */
-
   public HistogramWizardDialog(Window parent, DashboardController controller,
       HistogramConfig graph) {
     super(parent, "Histogram Wizard");
@@ -77,6 +83,21 @@ public class HistogramWizardDialog extends JDialog
     gbl_pnlContent.columnWeights = new double[] {1.0, 0.0, 0.0};
     gbl_pnlContent.rowWeights = new double[] {1.0, 0.0};
     pnlContent.setLayout(gbl_pnlContent);
+
+    JTabbedPane tabsProperties = new JTabbedPane(SwingConstants.TOP);
+    GridBagConstraints gbc_tabsProperties = new GridBagConstraints();
+    gbc_tabsProperties.gridwidth = 3;
+    gbc_tabsProperties.insets = new Insets(0, 0, 5, 0);
+    gbc_tabsProperties.fill = GridBagConstraints.BOTH;
+    gbc_tabsProperties.gridx = 0;
+    gbc_tabsProperties.gridy = 0;
+    pnlContent.add(tabsProperties, gbc_tabsProperties);
+
+    pnlGraphProperties = new HistogramPropertiesPanel(controller);
+    tabsProperties.add("Graph Properties", pnlGraphProperties);
+
+    pnlData = new HistogramDataPanel(controller);
+    tabsProperties.add("Data", pnlData);
 
     JButton btnClose = new JButton("Close");
     GridBagConstraints gbc_btnClose = new GridBagConstraints();
@@ -136,8 +157,9 @@ public class HistogramWizardDialog extends JDialog
    * @param graph Configuration to load
    */
   public void loadGraph(HistogramConfig graph) {
-    // TODO
     this.base = graph;
+    pnlGraphProperties.loadGraph(graph);
+    pnlData.loadGraph(graph);
   }
 
   /**
@@ -178,7 +200,8 @@ public class HistogramWizardDialog extends JDialog
       config = new HistogramConfig();
     }
     // Get updated configuration from wizard
-    config.identifier = "TEST_HISTOGRAM";
+    pnlGraphProperties.updateConfig(config);
+    pnlData.updateConfig(config);
     return config;
   }
 

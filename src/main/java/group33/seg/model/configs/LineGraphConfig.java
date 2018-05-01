@@ -19,9 +19,6 @@ public class LineGraphConfig extends GraphConfig {
   /** Set of lines that graph should display */
   public List<LineConfig> lines = null;
 
-  /** Whether the graph legend should be shown on the graph */
-  public boolean showLegend = true;
-
   /**
    * Instantiate a line graph configuration with a random UUID.
    */
@@ -47,7 +44,6 @@ public class LineGraphConfig extends GraphConfig {
   public String inText() {
     StringBuilder builder = new StringBuilder(super.inText());
     builder.append("<br><br><b>Mode:</b> " + mode);
-    builder.append("<br><b>Legend:</b> " + (showLegend ? "Enabled" : "Disabled"));
     builder.append("<br><b>Lines:</b><br>");
     if (lines == null || lines.isEmpty()) {
       builder.append("* No Lines *");

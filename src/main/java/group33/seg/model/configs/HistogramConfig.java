@@ -45,7 +45,7 @@ public class HistogramConfig extends GraphConfig {
    * 
    * @return Normalised bin weightings
    */
-  public List<Double> getNormalisedBins() {
+  public static List<Double> getNormalisedBins(List<Integer> bins) {
     
     List<Double> normalised = new ArrayList<Double>();
     if (bins != null) {
@@ -64,7 +64,7 @@ public class HistogramConfig extends GraphConfig {
   public String inText() {
     StringBuilder builder = new StringBuilder(super.inText());
     builder.append("<br><b>Bins:</b><br>");
-    List<Double> bins = getNormalisedBins();
+    List<Double> bins = getNormalisedBins(this.bins);
     if (bins == null || bins.isEmpty()) {
       builder.append("* No Bins *");
     } else {
@@ -72,7 +72,7 @@ public class HistogramConfig extends GraphConfig {
       int count = 0;
       while (itrBins.hasNext()) {
         count++;
-        builder.append(String.format("Bin %d [%.2d]", count, itrBins.next()));
+        builder.append(String.format("Bin %d [%d%%]", count, (int) (100 * itrBins.next())));
         if (itrBins.hasNext()) {
           builder.append(", ");
         }
@@ -90,10 +90,7 @@ public class HistogramConfig extends GraphConfig {
     }
     if (barColor == null) {
       eb.addError("No bar colour set");
-    }
-    if (barColor == null) {
-      eb.addError("No bar colour set");
-    }    
+    } 
     if (bins == null || bins.isEmpty()) {
       eb.addError("Must have at least one bin");
     }
