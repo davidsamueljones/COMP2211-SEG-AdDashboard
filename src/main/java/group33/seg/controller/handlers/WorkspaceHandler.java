@@ -519,7 +519,7 @@ public class WorkspaceHandler {
     }
     // Get list of queries used by statistics
     for (StatisticConfig statistic : workspace.statistics) {
-      for (Metric metric : Metric.getTypes()) {
+      for (Metric metric : Metric.getStatisticTypes()) {
         statistic.query.metric = metric;
         used.add(DatabaseQueryFactory.generateSQL(statistic.query));
       }

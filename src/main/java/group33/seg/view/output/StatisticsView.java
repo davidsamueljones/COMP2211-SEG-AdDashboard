@@ -75,12 +75,12 @@ public class StatisticsView extends JPanel {
 
       @Override
       public int getSize() {
-        return Metric.getTypes().length;
+        return Metric.getStatisticTypes().length;
       }
 
       @Override
       public Metric getElementAt(int index) {
-        return Metric.getTypes()[index];
+        return Metric.getStatisticTypes()[index];
       }
     };
     JList<Metric> rowHeaders = new JList<>(model_rowHeaders);
@@ -224,7 +224,7 @@ public class StatisticsView extends JPanel {
 
     @Override
     public int getRowCount() {
-      return Metric.getTypes().length;
+      return Metric.getStatisticTypes().length;
     }
 
     @Override
@@ -241,7 +241,7 @@ public class StatisticsView extends JPanel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-      Metric metric = Metric.getTypes()[rowIndex];
+      Metric metric = Metric.getStatisticTypes()[rowIndex];
       Map<Metric, Double> values = getVisibleStatistics().get(columnIndex).value;
       return (values == null ? null : values.get(metric));
     }

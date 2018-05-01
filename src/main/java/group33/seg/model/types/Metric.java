@@ -10,15 +10,23 @@ public enum Metric {
   BOUNCES("Number of Bounces", Definitions.BOUNCES),
   CONVERSIONS("Number of Conversions", Definitions.CONVERSIONS),
   TOTAL_COST("Total Cost", Definitions.TOTAL_COST),
-  TOTAL_COST_HISTOGRAM("Total Cost Histogram", null),
+  CLICK_COST("Click Cost", Definitions.CLICK_COST),
   CTR("CTR", Definitions.CTR),
   CPA("CPA", Definitions.CPA),
   CPC("CPC", Definitions.CPC),
   CPM("CPM", Definitions.CPM),
   BOUNCE_RATE("Bounce Rate", Definitions.BOUNCE_RATE);
 
-  private static final Metric[] METRIC_TYPES = new Metric[] {
+  private static final Metric[] LINE_GRAPH_METRIC_TYPES = new Metric[] {
           IMPRESSIONS, CLICKS, UNIQUES, BOUNCES, CONVERSIONS, TOTAL_COST, CTR, CPA, CPC, CPM, BOUNCE_RATE
+  };
+  
+  private static final Metric[] HISTOGRAM_METRIC_TYPES = new Metric[] {
+      CLICK_COST
+  };
+  
+  private static final Metric[] STATISTIC_METRIC_TYPES = new Metric[] {
+      IMPRESSIONS, CLICKS, UNIQUES, BOUNCES, CONVERSIONS, TOTAL_COST, CTR, CPA, CPC, CPM, BOUNCE_RATE
   };
   
   /* Class configuration */
@@ -36,10 +44,27 @@ public enum Metric {
     this.definition = definition;
   }
 
-  public static Metric[] getTypes() {
-     return METRIC_TYPES;
+   /**
+    * @return Metrics valid for line graphs
+    */
+  public static Metric[] getLineGraphTypes() {
+     return LINE_GRAPH_METRIC_TYPES;
+  }
+  
+  /**
+   * @return Metrics valid for histograms
+   */
+  public static Metric[] getHistogramTypes() {
+    return HISTOGRAM_METRIC_TYPES;
   }
 
+  /**
+   * @return Metrics valid for statistics
+   */
+  public static Metric[] getStatisticTypes() {
+    return STATISTIC_METRIC_TYPES;
+  }
+  
   @Override
   public String toString() {
     return string;
@@ -58,6 +83,7 @@ public enum Metric {
     static final String CONVERSIONS = "A conversion, or acquisition, occurs when a user clicks and then acts on an ad. "
         + "The specific definition of an action depends on the campaign (e.g., buying a product, registering as a new "
         + "customer or joining a mailing list).";
+    static final String CLICK_COST = "The cost of a particular click (usually determined through an auction process).";
     static final String TOTAL_COST = "Sum of impression costs and click costs";
     static final String CTR = "Click-through-rate is the average number of clicks per impression.";
     static final String CPA = "Cost-per-acquisition is the average amount of money spent on an advertising campaign" + 
