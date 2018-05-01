@@ -198,6 +198,7 @@ public class HistogramBinsPanel extends JPanel {
       reset();
     } else {
       loadBinColour(config.barColor);
+      loadBins(config.bins);
       this.base = config;
       btnResetBins.setEnabled(this.base != null);
     }
