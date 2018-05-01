@@ -1,4 +1,4 @@
-package group33.seg.view.graphwizard.linegraph;
+package group33.seg.view.graphwizards;
 
 import java.awt.Color;
 import java.awt.GridBagConstraints;
@@ -12,7 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import group33.seg.controller.DashboardController;
-import group33.seg.model.configs.LineGraphConfig;
+import group33.seg.model.configs.GraphConfig;
 import group33.seg.view.output.LineGraphView;
 
 public class GeneralGraphPropertiesPanel extends JPanel {
@@ -198,7 +198,7 @@ public class GeneralGraphPropertiesPanel extends JPanel {
   /**
    * @param config Configuration to load into the view object
    */
-  public void loadGraph(LineGraphConfig config) {
+  public void loadGraph(GraphConfig config) {
     if (config == null) {
       reset();
     } else {
@@ -229,7 +229,7 @@ public class GeneralGraphPropertiesPanel extends JPanel {
    * 
    * @param config Configuration to update
    */
-  public void updateConfig(LineGraphConfig config) {
+  public void updateConfig(GraphConfig config) {
     config.identifier = txtIdentifier.getText();
     config.title = txtTitle.getText();
     config.xAxisTitle = txtXAxisTitle.getText();

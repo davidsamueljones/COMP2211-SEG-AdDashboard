@@ -27,8 +27,8 @@ public class LineGraphWizardDialog extends JDialog
 
   private DashboardController controller;
 
-  private GraphPropertiesPanel pnlGraphProperties;
-  private GraphLinesPanel pnlLines;
+  private LineGraphPropertiesPanel pnlGraphProperties;
+  private LineGraphLinesPanel pnlLines;
 
   /** Last loaded (or updated) graph */
   private LineGraphConfig base;
@@ -95,10 +95,10 @@ public class LineGraphWizardDialog extends JDialog
     gbc_tabsProperties.gridy = 0;
     pnlContent.add(tabsProperties, gbc_tabsProperties);
 
-    pnlGraphProperties = new GraphPropertiesPanel(controller);
+    pnlGraphProperties = new LineGraphPropertiesPanel(controller);
     tabsProperties.add("Graph Properties", pnlGraphProperties);
 
-    pnlLines = new GraphLinesPanel(controller);
+    pnlLines = new LineGraphLinesPanel(controller);
     tabsProperties.add("Lines", pnlLines);
 
     JButton btnClose = new JButton("Close");
