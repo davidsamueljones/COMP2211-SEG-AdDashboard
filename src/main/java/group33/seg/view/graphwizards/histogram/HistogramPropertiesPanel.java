@@ -48,6 +48,7 @@ public class HistogramPropertiesPanel extends JScrollPane {
     
     pnlGeneralProperties = new GeneralGraphPropertiesPanel(controller);
     pnlGeneralProperties.setDefaults(null, "Values (binned)", "Frequency");
+    pnlGeneralProperties.chckbxShowLegend.setVisible(false);
     
     GridBagConstraints gbc_pnlGeneralProperties = new GridBagConstraints();
     gbc_pnlGeneralProperties.fill = GridBagConstraints.BOTH;

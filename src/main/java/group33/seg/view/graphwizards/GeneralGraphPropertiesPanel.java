@@ -25,7 +25,7 @@ public class GeneralGraphPropertiesPanel extends JPanel {
   protected JTextField txtXAxisTitle;
   protected JTextField txtYAxisTitle;
   protected JLabel lblSelectedBackgroundColour;
-  protected JCheckBox chckbxShowLegend;
+  public JCheckBox chckbxShowLegend;
 
   private String defaultTitle = "";
   private String defaultXAxis = "";
