@@ -1,10 +1,14 @@
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -253,21 +257,37 @@ public class FilterTest {
     filterConfig.ages = new ArrayList<>();
     MetricQuery emptyQuery = new MetricQuery(Metric.IMPRESSIONS, null, filterConfig);
 
-    List<Pair<String, Number>> response = databaseHandler.getQueryResponse(emptyQuery).getResult();
+    List<Pair<String, Number>> actualResponse = databaseHandler.getQueryResponse(emptyQuery).getResult();
 
-    assertTrue("Result should have been empty", response.isEmpty());
+    assertTrue("Result should have been empty", actualResponse.isEmpty());
   }
 
   @Test
-  public void startDateAfterEndDateTest() {
-    FilterConfig filterConfig = new FilterConfig();
-    filterConfig.dates = new Range<Date>(new Date(), new Date(2015, 1, 1));
+  public void startDateAfterEndDateTest() throws ParseException {
+    DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    FilterConfig filter = new FilterConfig();
+    filter.dates = new Range<>(f.parse("2015-01-07 00:00:00"), f.parse("2015-01-01 00:00:00"));
 
-    MetricQuery emptyQuery = new MetricQuery(Metric.IMPRESSIONS, null, filterConfig);
+    MetricQuery emptyQuery = new MetricQuery(Metric.IMPRESSIONS, null, filter);
 
-    List<Pair<String, Number>> response = databaseHandler.getQueryResponse(emptyQuery).getResult();
+    List<Pair<String, Number>> actualResponse = databaseHandler.getQueryResponse(emptyQuery).getResult();
 
-    assertTrue("should only have one result, had " + response.size(), response.size() == 1);
-    assertTrue("should have returned 0, returned " + response.get(0).value, response.get(0).value.longValue() == 0);
+    assertTrue("should only have one result, had " + actualResponse.size(), actualResponse.size() == 1);
+    assertTrue("should have returned 0, returned " + actualResponse.get(0).value, actualResponse.get(0).value.longValue() == 0);
+  }
+
+  @Test
+  public void dateRangeNotExistingTest() throws ParseException {
+    List<Pair<String, Number>> expectedResponse = new LinkedList<>();
+    expectedResponse.add(new Pair<>("all", 0));
+
+    DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    FilterConfig filter = new FilterConfig();
+    filter.dates = new Range<>(f.parse("2018-01-07 00:00:00"), f.parse("2018-01-01 00:00:00"));
+
+    MetricQuery query = new MetricQuery(Metric.IMPRESSIONS, null, filter);
+    List<Pair<String, Number>> actualResponse = databaseHandler.getQueryResponse(query).getResult();
+
+    assertTrue(expectedResponse.get(0).value.longValue() == actualResponse.get(0).value.longValue());
   }
 }

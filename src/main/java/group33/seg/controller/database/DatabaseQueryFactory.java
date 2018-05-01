@@ -282,7 +282,7 @@ public class DatabaseQueryFactory {
     graphQueries.put(
             Metric.CTR,
             "SELECT xaxis, ("
-                    + " SELECT ((cl.clicks::double precision) / il.impressions) * 100 FROM"
+                    + " SELECT CASE il.impressions WHEN 0 THEN 0 ELSE ((cl.clicks::double precision) / il.impressions) * 100 END FROM"
                     + " (SELECT count(*) as clicks FROM <click_log> WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender> AND date_trunc('<interval>', date) = xaxis) as cl,"
                     + " (SELECT count(*) as impressions FROM impression_log WHERE <campaign> AND <filterAge> AND <filterIncome> AND <filterGender> AND date_trunc('<interval>', date) = xaxis) as il) as yaxis"
                     + " FROM"

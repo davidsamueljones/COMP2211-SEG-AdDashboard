@@ -3,7 +3,6 @@ import group33.seg.controller.database.DatabaseQueryFactory.MalformedFilterExcep
 import group33.seg.controller.database.tables.ClickLogTable;
 import group33.seg.controller.database.tables.ImpressionLogTable;
 import group33.seg.controller.database.tables.ServerLogTable;
-import group33.seg.model.configs.CampaignConfig;
 import group33.seg.model.configs.MetricQuery;
 import group33.seg.model.types.Interval;
 import group33.seg.model.types.Metric;
@@ -22,8 +21,6 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DatabaseTest {
-
-  @Mock private DatabaseConnection dbConn;
 
   @Mock private DatabaseConfig config;
 
