@@ -13,6 +13,9 @@ public class HistogramConfig extends GraphConfig {
   /** Query to fetch data with */
   public MetricQuery query; 
   
+  /** Number of bins */
+  public int binCount;
+  
   /** List of bins weightings (use sum of all weightings to normalise) */
   public List<Integer> bins;
   
@@ -88,10 +91,13 @@ public class HistogramConfig extends GraphConfig {
     if (query == null) {
       eb.addError("Histogram must have a query");
     }
+    if (query != null && query.campaign == null) {
+      eb.addError("Histogram must have a campaign set");
+    }
     if (barColor == null) {
       eb.addError("No bar colour set");
     } 
-    if (bins == null || bins.isEmpty()) {
+    if (bins != null && bins.isEmpty()) {
       eb.addError("Must have at least one bin");
     }
 
