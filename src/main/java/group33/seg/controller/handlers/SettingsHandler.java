@@ -11,6 +11,7 @@ import group33.seg.view.utilities.Accessibility;
 
 public class SettingsHandler {
   public static final String FONT_SCALING = "font_scaling";
+  public static final String TOOL_TIPS_ENABLED = "tool_tips_enabled";
   public static final String BUFFERED_GRAPH = "buffered_graph";
   public static final String RECENT_WORKSPACE_COUNT = "recent_workspace_count";
   public static final String RECENT_WORKSPACE = "recent_workspace";
@@ -60,6 +61,7 @@ public class SettingsHandler {
     if (prefs != null) {
       // Assign default preferences
       prefs.putDouble(FONT_SCALING, Accessibility.DEFAULT_SCALING);
+      prefs.putBoolean(TOOL_TIPS_ENABLED, true);
       prefs.putBoolean(BUFFERED_GRAPH, true);
       prefs.putInt(RECENT_WORKSPACE_COUNT, 0);
     }

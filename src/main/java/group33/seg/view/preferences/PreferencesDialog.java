@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import group33.seg.controller.DashboardController;
 import group33.seg.controller.handlers.SettingsHandler;
 import javax.swing.JRadioButton;
+import javax.swing.JCheckBox;
 
 public class PreferencesDialog extends JDialog {
   private static final long serialVersionUID = -8083386947121993055L;
@@ -23,6 +24,8 @@ public class PreferencesDialog extends JDialog {
   private DashboardController controller;
 
   private FontSizePanel pnlFontSize;
+  private JCheckBox chckbxToolTipsEnabled;
+
   private JRadioButton radGraphFast;
   private JRadioButton radQuality;
 
@@ -46,7 +49,7 @@ public class PreferencesDialog extends JDialog {
 
     // Set sizing
     pack();
-    setResizable(false);    
+    setResizable(false);
     // Set positioning
     if (parent != null) {
       setLocationRelativeTo(parent);
@@ -82,10 +85,10 @@ public class PreferencesDialog extends JDialog {
     gbc_pnlAccessibility.gridy = 0;
     pnlDialog.add(pnlAccessibility, gbc_pnlAccessibility);
     GridBagLayout gbl_pnlAccessibility = new GridBagLayout();
-    gbl_pnlAccessibility.columnWidths = new int[] {0, 0};
-    gbl_pnlAccessibility.rowHeights = new int[] {0, 0};
+    gbl_pnlAccessibility.columnWidths = new int[] {0};
+    gbl_pnlAccessibility.rowHeights = new int[] {0, 0, 0};
     gbl_pnlAccessibility.columnWeights = new double[] {1.0};
-    gbl_pnlAccessibility.rowWeights = new double[] {0.0, 1.0};
+    gbl_pnlAccessibility.rowWeights = new double[] {0.0, 0.0, 1.0};
     pnlAccessibility.setLayout(gbl_pnlAccessibility);
 
     pnlFontSize = new FontSizePanel(controller);
@@ -98,6 +101,16 @@ public class PreferencesDialog extends JDialog {
     gbc_pnlFontSize.gridx = 0;
     gbc_pnlFontSize.gridy = 0;
     pnlAccessibility.add(pnlFontSize, gbc_pnlFontSize);
+
+    chckbxToolTipsEnabled = new JCheckBox("Tool Tips Enabled");
+    GridBagConstraints gbc_chckbxToolTipsEnabled = new GridBagConstraints();
+    gbc_chckbxToolTipsEnabled.anchor = GridBagConstraints.WEST;
+    gbc_chckbxToolTipsEnabled.insets = new Insets(0, 0, 5, 0);
+    gbc_chckbxToolTipsEnabled.gridx = 0;
+    gbc_chckbxToolTipsEnabled.gridy = 1;
+    pnlAccessibility.add(chckbxToolTipsEnabled, gbc_chckbxToolTipsEnabled);
+    chckbxToolTipsEnabled
+        .setSelected(controller.settings.prefs.getBoolean(SettingsHandler.TOOL_TIPS_ENABLED, true));
 
     JPanel pnlOther = new JPanel();
     pnlOther
@@ -214,6 +227,8 @@ public class PreferencesDialog extends JDialog {
   private boolean reloadNeeded() {
     boolean reloadNeeded = false;
     reloadNeeded |= pnlFontSize.hasChanged();
+    reloadNeeded |= chckbxToolTipsEnabled.isSelected() != controller.settings.prefs
+        .getBoolean(SettingsHandler.TOOL_TIPS_ENABLED, true);
     reloadNeeded |= getGraphsUseBuffer() != controller.settings.prefs
         .getBoolean(SettingsHandler.BUFFERED_GRAPH, true);
     return reloadNeeded;
@@ -224,6 +239,8 @@ public class PreferencesDialog extends JDialog {
    */
   private void updateSettings() {
     pnlFontSize.updateSettings();
+    controller.settings.prefs.putBoolean(SettingsHandler.TOOL_TIPS_ENABLED,
+        chckbxToolTipsEnabled.isSelected());
     controller.settings.prefs.putBoolean(SettingsHandler.BUFFERED_GRAPH, getGraphsUseBuffer());
   }
 

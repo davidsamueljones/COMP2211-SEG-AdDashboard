@@ -65,7 +65,7 @@ public class DisplayHandler {
       // Unattach views from controller
       mvc.controller.graphs.setLineGraphView(null);
       mvc.controller.statistics.setView(null, false);
-      
+
       dashboard.setVisible(false);
       dashboard.dispose();
       mvc.view.setDashboard(null);
@@ -118,7 +118,7 @@ public class DisplayHandler {
       definitions.setVisible(true);
     });
   }
-  
+
   /**
    * Hide the controlled definition dialog.
    */
@@ -141,6 +141,7 @@ public class DisplayHandler {
     applyUIFontScaling();
     // Apply any other global properties
     ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
+    applyToolTipsEnabled();
   }
 
   /**
@@ -160,6 +161,15 @@ public class DisplayHandler {
   public void applyUIFontScaling(double scaling) {
     Accessibility.scaleDefaultUIFontSize(scaling);
     mvc.controller.graphs.setFontScale(scaling);
+  }
+
+  /**
+   * Apply whether tool tips are enabled using the settings handler.
+   */
+  public void applyToolTipsEnabled() {
+    boolean enabled =
+        mvc.controller.settings.prefs.getBoolean(SettingsHandler.TOOL_TIPS_ENABLED, true);
+    ToolTipManager.sharedInstance().setEnabled(enabled);
   }
 
 }
