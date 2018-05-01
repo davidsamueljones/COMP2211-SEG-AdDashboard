@@ -2,6 +2,7 @@ package group33.seg.view.graphwizards.histogram;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerModel;
@@ -19,24 +20,34 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BoxLayout;
+import javax.swing.JTabbedPane;
 
 public class HistogramBinsPanel extends JPanel {
   private static final long serialVersionUID = -998060022279065856L;
 
+  private JTabbedPane tabsBinModes;
+  private JPanel pnlSimple;
+  private JPanel pnlAdvanced;
+
   private JLabel lblSelectedBinColour;
-  private JPanel pnlBins;
+
+  private JSpinner nudBinCount;
+
   private JButton btnResetBins;
   private JButton btnUseDefaults;
-
+  private JPanel pnlBins;
+  
   private List<BinPanel> bins = new ArrayList<BinPanel>();
 
   private HistogramConfig base = null;
+
 
   /**
    * Create the panel.
@@ -53,17 +64,16 @@ public class HistogramBinsPanel extends JPanel {
         BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Histogram Bins"),
         BorderFactory.createEmptyBorder(5, 5, 5, 5)));
     GridBagLayout gridBagLayout = new GridBagLayout();
-    gridBagLayout.columnWidths = new int[] {0, 0};
-    gridBagLayout.rowHeights = new int[] {0, 0, 0, 0, 0};
-    gridBagLayout.columnWeights = new double[] {1.0, 1.0};
-    gridBagLayout.rowWeights = new double[] {0.0, 0.0, 0.0, 0.0, 1.0};
+    gridBagLayout.columnWidths = new int[] {0};
+    gridBagLayout.rowHeights = new int[] {0, 0};
+    gridBagLayout.columnWeights = new double[] {1.0};
+    gridBagLayout.rowWeights = new double[] {0.0, 1.0};
     setLayout(gridBagLayout);
 
     JPanel pnlColour = new JPanel();
     GridBagConstraints gbc_pnlColour = new GridBagConstraints();
-    gbc_pnlColour.insets = new Insets(0, 0, 5, 0);
+    gbc_pnlColour.insets = new Insets(0, 0, 5, 5);
     gbc_pnlColour.fill = GridBagConstraints.BOTH;
-    gbc_pnlColour.gridwidth = 2;
     gbc_pnlColour.gridx = 0;
     gbc_pnlColour.gridy = 0;
     add(pnlColour, gbc_pnlColour);
@@ -86,9 +96,6 @@ public class HistogramBinsPanel extends JPanel {
     lblSelectedBinColour.setBorder(
         BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK, 1, true),
             BorderFactory.createEmptyBorder(2, 10, 2, 10)));
-    lblSelectedBinColour.setToolTipText(
-        "<html>The background colour is the main background colour of the graph.<br>"
-            + "The text colour is the guideline colour.</html>");
     lblSelectedBinColour.setOpaque(true);
     GridBagConstraints gbc_lblSelectedBackgroundColour = new GridBagConstraints();
     gbc_lblSelectedBackgroundColour.insets = new Insets(0, 0, 0, 5);
@@ -111,51 +118,114 @@ public class HistogramBinsPanel extends JPanel {
     // + "as percentages of the full data range. Add the required number of bins and "
     // + "configure the weights appropriately.</html>");
     GridBagConstraints gbc_lblHelp = new GridBagConstraints();
-    gbc_lblHelp.gridwidth = 2;
     gbc_lblHelp.fill = GridBagConstraints.HORIZONTAL;
     gbc_lblHelp.insets = new Insets(0, 0, 5, 0);
     gbc_lblHelp.gridx = 0;
     gbc_lblHelp.gridy = 1;
     add(lblHelp, gbc_lblHelp);
 
+    tabsBinModes = new JTabbedPane(JTabbedPane.TOP);
+    GridBagConstraints gbc_tabsBinModes = new GridBagConstraints();
+    gbc_tabsBinModes.insets = new Insets(0, 0, 5, 5);
+    gbc_tabsBinModes.fill = GridBagConstraints.BOTH;
+    gbc_tabsBinModes.gridx = 0;
+    gbc_tabsBinModes.gridy = 2;
+    add(tabsBinModes, gbc_tabsBinModes);
+
+    pnlSimple = new JPanel();
+    pnlSimple.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    tabsBinModes.addTab("Simple", null, pnlSimple, null);
+    GridBagLayout gbl_pnlSimple = new GridBagLayout();
+    gbl_pnlSimple.columnWidths = new int[] {0, 0, 0};
+    gbl_pnlSimple.rowHeights = new int[] {0, 0, 0};
+    gbl_pnlSimple.columnWeights = new double[] {0.0, 0.0, Double.MIN_VALUE};
+    gbl_pnlSimple.rowWeights = new double[] {0.0, 1.0, Double.MIN_VALUE};
+    pnlSimple.setLayout(gbl_pnlSimple);
+
+    JLabel lblBinCount = new JLabel("Bin Count:");
+    GridBagConstraints gbc_lblBinCount = new GridBagConstraints();
+    gbc_lblBinCount.insets = new Insets(0, 0, 5, 5);
+    gbc_lblBinCount.gridx = 0;
+    gbc_lblBinCount.gridy = 0;
+    pnlSimple.add(lblBinCount, gbc_lblBinCount);
+
+    SpinnerNumberModel model = new SpinnerNumberModel(20, 1, 1000, 1);
+    nudBinCount = new JSpinner(model);
+    GridBagConstraints gbc_nudBinCount = new GridBagConstraints();
+    gbc_nudBinCount.insets = new Insets(0, 0, 5, 0);
+    gbc_nudBinCount.gridx = 1;
+    gbc_nudBinCount.gridy = 0;
+    pnlSimple.add(nudBinCount, gbc_nudBinCount);
+
+    pnlAdvanced = new JPanel();
+    pnlAdvanced.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    tabsBinModes.addTab("Advanced", null, pnlAdvanced, null);
+    GridBagLayout gbl_pnlAdvanced = new GridBagLayout();
+    gbl_pnlAdvanced.columnWidths = new int[] {0, 0, 0};
+    gbl_pnlAdvanced.rowHeights = new int[] {0, 0, 0};
+    gbl_pnlAdvanced.columnWeights = new double[] {1.0, 1.0, Double.MIN_VALUE};
+    gbl_pnlAdvanced.rowWeights = new double[] {0.0, 0.0, Double.MIN_VALUE};
+    pnlAdvanced.setLayout(gbl_pnlAdvanced);
+
     JButton btnAddBin = new JButton("Add Bin");
     GridBagConstraints gbc_btnAddBin = new GridBagConstraints();
-    gbc_btnAddBin.gridwidth = 2;
     gbc_btnAddBin.fill = GridBagConstraints.HORIZONTAL;
+    gbc_btnAddBin.gridwidth = 2;
     gbc_btnAddBin.insets = new Insets(0, 0, 5, 0);
     gbc_btnAddBin.gridx = 0;
-    gbc_btnAddBin.gridy = 2;
-    add(btnAddBin, gbc_btnAddBin);
+    gbc_btnAddBin.gridy = 0;
+    pnlAdvanced.add(btnAddBin, gbc_btnAddBin);
 
     btnResetBins = new JButton("Reset Bins");
-    btnResetBins.setToolTipText("Reset the bins to use the last loaded values");
     GridBagConstraints gbc_btnResetBins = new GridBagConstraints();
     gbc_btnResetBins.fill = GridBagConstraints.HORIZONTAL;
-    gbc_btnResetBins.insets = new Insets(0, 0, 5, 5);
+    gbc_btnResetBins.insets = new Insets(0, 0, 0, 5);
     gbc_btnResetBins.gridx = 0;
-    gbc_btnResetBins.gridy = 3;
-    add(btnResetBins, gbc_btnResetBins);
+    gbc_btnResetBins.gridy = 1;
+    pnlAdvanced.add(btnResetBins, gbc_btnResetBins);
+    btnResetBins.setToolTipText("Reset the bins to use the last loaded values");
 
     btnUseDefaults = new JButton("Use Defaults");
-    btnUseDefaults.setToolTipText("Reset the bins to use the default bin allocations");
     GridBagConstraints gbc_btnUseDefaults = new GridBagConstraints();
     gbc_btnUseDefaults.fill = GridBagConstraints.HORIZONTAL;
-    gbc_btnUseDefaults.insets = new Insets(0, 0, 5, 0);
     gbc_btnUseDefaults.gridx = 1;
-    gbc_btnUseDefaults.gridy = 3;
-    add(btnUseDefaults, gbc_btnUseDefaults);
+    gbc_btnUseDefaults.gridy = 1;
+    pnlAdvanced.add(btnUseDefaults, gbc_btnUseDefaults);
+    btnUseDefaults.setToolTipText("Reset the bins to use the default bin allocations");
 
     pnlBins = new JPanel();
-    // pnlBins.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(),
-    // BorderFactory.createEmptyBorder(2, 0, 2, 0)));
+    pnlBins.setBorder(BorderFactory.createEmptyBorder(4, 2, 4, 2));
+    JScrollPane scrBins = new JScrollPane(pnlBins);
+    scrBins.setPreferredSize(new Dimension(0, 150));
     GridBagConstraints gbc_pnlBins = new GridBagConstraints();
+    gbc_pnlBins.insets = new Insets(5, 5, 5, 5);
     gbc_pnlBins.gridwidth = 2;
     gbc_pnlBins.fill = GridBagConstraints.BOTH;
     gbc_pnlBins.gridx = 0;
-    gbc_pnlBins.gridy = 4;
-    add(pnlBins, gbc_pnlBins);
+    gbc_pnlBins.gridy = 2;
+    pnlAdvanced.add(scrBins, gbc_pnlBins);
     pnlBins.setLayout(new BoxLayout(pnlBins, BoxLayout.Y_AXIS));
 
+    // Allow resetting of bins to their defaults
+    btnUseDefaults.addActionListener(e -> {
+      loadDefaultBins();
+    });
+
+    // Allow resetting of bins to last state
+    btnResetBins.addActionListener(e -> {
+      loadBins(base.bins);
+    });
+
+    // Allow addition of a new bin
+    btnAddBin.addActionListener(e -> {
+      if (bins.size() >= 20) {
+        JOptionPane.showMessageDialog(null,
+            "Unable to add new bin.\r\n" + "Maximum number of advanced bins is 20", "Add Bin Error",
+            JOptionPane.ERROR_MESSAGE);
+      } else {
+        addBin(1);
+      }
+    });
 
     // Allow selection of a new colour
     btnSetColor.addActionListener(e -> {
@@ -165,27 +235,6 @@ public class HistogramBinsPanel extends JPanel {
       if (color != null) {
         loadBinColour(color);
       }
-    });
-
-    // Allow addition of a new bin
-    btnAddBin.addActionListener(e -> {
-      if (bins.size() >= 20) {
-        JOptionPane.showMessageDialog(null,
-            "Unable to add new bin.\r\n" + "Maximum number of bins is 20 bins", "Add Bin Error",
-            JOptionPane.ERROR_MESSAGE);
-      } else {
-        addBin(1);
-      }
-    });
-
-    // Allow resetting of bins to last state
-    btnResetBins.addActionListener(e -> {
-      loadBins(base.bins);
-    });
-
-    // Allow resetting of bins to their defaults
-    btnUseDefaults.addActionListener(e -> {
-      loadDefaultBins();
     });
 
   }
@@ -198,9 +247,15 @@ public class HistogramBinsPanel extends JPanel {
       reset();
     } else {
       loadBinColour(config.barColor);
-      loadBins(config.bins);
+      if (config.bins == null) {
+        tabsBinModes.setSelectedComponent(pnlSimple);
+        nudBinCount.setValue(config.binCount);
+      } else {
+        tabsBinModes.setSelectedComponent(pnlAdvanced);
+        loadBins(config.bins);
+      }
       this.base = config;
-      btnResetBins.setEnabled(this.base != null);
+      btnResetBins.setEnabled(this.base != null && config.bins != null);
     }
   }
 
@@ -209,6 +264,7 @@ public class HistogramBinsPanel extends JPanel {
    */
   public void reset() {
     loadBinColour(null);
+    nudBinCount.setValue(20);
     loadDefaultBins();
     btnResetBins.setEnabled(false);
   }
@@ -220,7 +276,12 @@ public class HistogramBinsPanel extends JPanel {
    */
   public void updateConfig(HistogramConfig config) {
     config.barColor = lblSelectedBinColour.getBackground();
-    config.bins = getBinValues();
+    if (tabsBinModes.getSelectedComponent().equals(pnlSimple)) {
+      config.binCount = (int) nudBinCount.getValue();
+      config.bins = null;
+    } else {
+      config.bins = getBinValues();
+    }
   }
 
   /**
@@ -233,9 +294,8 @@ public class HistogramBinsPanel extends JPanel {
     if (bg == null) {
       bg = HistogramView.DEFAULT_FOREGROUND;
     }
-    Color fg = GraphsView.getGridlineColor(bg);
     lblSelectedBinColour.setBackground(bg);
-    lblSelectedBinColour.setForeground(fg);
+    lblSelectedBinColour.setForeground(bg);
   }
 
   /**
@@ -282,7 +342,13 @@ public class HistogramBinsPanel extends JPanel {
       updateBins();
     });
     pnlBin.btnRemove.addActionListener(e -> {
-      removeBin(pnlBin);
+      if (bins.size() == 1) {
+        JOptionPane.showMessageDialog(null,
+            "Unable to remove bin.\r\n" + "Must have at least one bin.", "Remove Bin Error",
+            JOptionPane.ERROR_MESSAGE);
+      } else {
+        removeBin(pnlBin);
+      }
     });
     pnlBins.revalidate();
   }
@@ -295,8 +361,8 @@ public class HistogramBinsPanel extends JPanel {
   private void removeBin(BinPanel pnlBin) {
     bins.remove(pnlBin);
     pnlBins.remove(pnlBin);
-    pnlBins.revalidate();
     updateBins();
+    pnlBins.revalidate();
   }
 
   /**
