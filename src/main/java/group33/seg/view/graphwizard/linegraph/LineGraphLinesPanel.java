@@ -24,7 +24,7 @@ import group33.seg.model.configs.LineConfig;
 import group33.seg.model.configs.StatisticConfig;
 import group33.seg.view.graphwizards.StatisticImportDialog;
 
-public class GraphLinesPanel extends JPanel {
+public class LineGraphLinesPanel extends JPanel {
   private static final long serialVersionUID = -1169530766129778297L;
   private final static int MAX_TAB_TITLE_LEN = 15;
 
@@ -41,7 +41,7 @@ public class GraphLinesPanel extends JPanel {
    *
    * @param controller Controller for this view object
    */
-  public GraphLinesPanel(DashboardController controller) {
+  public LineGraphLinesPanel(DashboardController controller) {
     this.controller = controller;
     initGUI();
   }
@@ -109,7 +109,7 @@ public class GraphLinesPanel extends JPanel {
 
     // Import a statistic to act as a new line in the graph
     btnImport.addActionListener(e -> {
-      Window frmCurrent = SwingUtilities.getWindowAncestor(GraphLinesPanel.this);
+      Window frmCurrent = SwingUtilities.getWindowAncestor(LineGraphLinesPanel.this);
       StatisticImportDialog dialog = new StatisticImportDialog(frmCurrent, controller);
       dialog.setModalityType(ModalityType.APPLICATION_MODAL);
       dialog.setVisible(true);
@@ -125,7 +125,7 @@ public class GraphLinesPanel extends JPanel {
 
     // Remove currently selected line from graph
     btnRemove.addActionListener(e -> {
-      int res = JOptionPane.showConfirmDialog(GraphLinesPanel.this,
+      int res = JOptionPane.showConfirmDialog(LineGraphLinesPanel.this,
           "Are you sure you want to remove the current line?", "Remove Line",
           JOptionPane.YES_NO_OPTION);
       if (res != JOptionPane.YES_OPTION) {

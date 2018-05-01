@@ -10,7 +10,7 @@ import javax.swing.JRadioButton;
 import group33.seg.model.configs.LineGraphConfig;
 import group33.seg.model.configs.LineGraphConfig.Mode;
 
-public class PlottingModePanel extends JPanel {
+public class LineGraphModePanel extends JPanel {
   private static final long serialVersionUID = 4139382753869737135L;
 
   protected JRadioButton radOverlaid;
@@ -19,7 +19,7 @@ public class PlottingModePanel extends JPanel {
   /**
    * Initialise the simple panel, no external controllers required.
    */
-  public PlottingModePanel() {
+  public LineGraphModePanel() {
     initGUI();
   }
 

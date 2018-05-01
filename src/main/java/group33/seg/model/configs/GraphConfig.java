@@ -35,6 +35,9 @@ public abstract class GraphConfig implements Serializable {
   /** Colour for graph background */
   public Color background = null;
   
+  /** Whether the graph legend should be shown on the graph */
+  public boolean showLegend = true;
+  
   /**
    * Instantiate a graph configuration with a random UUID.
    */
@@ -76,6 +79,7 @@ public abstract class GraphConfig implements Serializable {
     builder.append(xAxisTitle == null || xAxisTitle.isEmpty() ? "None" : xAxisTitle);
     builder.append("<br><b>Y-Axis:</b> ");
     builder.append(yAxisTitle == null || yAxisTitle.isEmpty() ? "None" : yAxisTitle);
+    builder.append("<br><b>Legend:</b> " + (showLegend ? "Enabled" : "Disabled"));
     return builder.toString();
   }
 

@@ -6,13 +6,15 @@ import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import group33.seg.model.configs.HistogramConfig;
 import group33.seg.view.utilities.CustomChartPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.io.IOException;
 
 public class HistogramView extends JPanel {
-  public static Color DEFAULT_BACKGROUND = Color.getHSBColor(0, 0, (float) 0.9);
+  
+  public static Color DEFAULT_FOREGROUND = Color.getHSBColor(0.556f, 1, 0.9f);
   
   private CustomChartPanel pnlChart;
 
@@ -66,6 +68,16 @@ public class HistogramView extends JPanel {
   public void applyFontScale(double scale) {
     // TODO Auto-generated method stub
 
+  }
+
+  public Object clearGraph() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  public Object setGraphProperties(HistogramConfig graph) {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }
