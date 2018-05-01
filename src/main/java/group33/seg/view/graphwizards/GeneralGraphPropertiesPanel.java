@@ -13,7 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import group33.seg.controller.DashboardController;
 import group33.seg.model.configs.GraphConfig;
-import group33.seg.view.output.LineGraphView;
+import group33.seg.view.output.GraphsView;
 
 public class GeneralGraphPropertiesPanel extends JPanel {
   private static final long serialVersionUID = -1585475807433849072L;
@@ -27,6 +27,10 @@ public class GeneralGraphPropertiesPanel extends JPanel {
   protected JLabel lblSelectedBackgroundColour;
   protected JCheckBox chckbxShowLegend;
 
+  private String defaultTitle = "";
+  private String defaultXAxis = "";
+  private String defaultYAxis = "";
+  
   /**
    * Create the panel.
    *
@@ -171,7 +175,7 @@ public class GeneralGraphPropertiesPanel extends JPanel {
     // Allow selection of a new colour
     btnSetColor.addActionListener(e -> {
       // Use JColorChooser, null returned on cancel
-      Color color = JColorChooser.showDialog(null, "Line Colour Chooser",
+      Color color = JColorChooser.showDialog(null, "Background Colour Chooser",
           lblSelectedBackgroundColour.getBackground());
       if (color != null) {
         loadBackgroundColor(color);
@@ -188,9 +192,9 @@ public class GeneralGraphPropertiesPanel extends JPanel {
    */
   private void loadBackgroundColor(Color bg) {
     if (bg == null) {
-      bg = LineGraphView.DEFAULT_BACKGROUND;
+      bg = GraphsView.DEFAULT_BACKGROUND;
     }
-    Color fg = LineGraphView.getGridlineColor(bg);
+    Color fg = GraphsView.getGridlineColor(bg);
     lblSelectedBackgroundColour.setBackground(bg);
     lblSelectedBackgroundColour.setForeground(fg);
   }
@@ -217,9 +221,9 @@ public class GeneralGraphPropertiesPanel extends JPanel {
   public void reset() {
     String identifier = controller.workspace.getNextGraphIdentifier();
     txtIdentifier.setText(identifier);
-    txtTitle.setText(identifier);
-    txtXAxisTitle.setText("Time");
-    txtYAxisTitle.setText("n");
+    txtTitle.setText(defaultTitle == null ? identifier : defaultTitle);
+    txtXAxisTitle.setText(defaultXAxis);
+    txtYAxisTitle.setText(defaultYAxis);
     loadBackgroundColor(null);
     chckbxShowLegend.setSelected(true);
   }
@@ -236,6 +240,19 @@ public class GeneralGraphPropertiesPanel extends JPanel {
     config.yAxisTitle = txtYAxisTitle.getText();
     config.background = lblSelectedBackgroundColour.getBackground();
     config.showLegend = chckbxShowLegend.isSelected();
+  }
+  
+  /**
+   * Set default displayed values.
+   * 
+   * @param title Default title
+   * @param xAxis Default text for X-Axis
+   * @param yAxis Default text for Y-Axis
+   */
+  public void setDefaults(String title, String xAxis, String yAxis) {
+    defaultTitle = title;
+    defaultXAxis = xAxis;
+    defaultYAxis = yAxis;
   }
 
 }

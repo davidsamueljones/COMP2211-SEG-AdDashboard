@@ -11,7 +11,6 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -44,8 +43,6 @@ import group33.seg.view.utilities.CustomDateAxis;
 
 public class LineGraphView extends JPanel {
   private static final long serialVersionUID = -7920465975957290150L;
-
-  public static Color DEFAULT_BACKGROUND = Color.getHSBColor(0, 0, (float) 0.9);
   
   public static float MIN_THICKNESS = 1.0f;
   public static float MAX_THICKNESS = 5.0f;
@@ -229,7 +226,7 @@ public class LineGraphView extends JPanel {
     pnlChart.setChart(chart);
     chart.setTitle(graph.title);
     plot.setBackgroundPaint(graph.background);
-    Color colGridlines = getGridlineColor(graph.background);
+    Color colGridlines = GraphsView.getGridlineColor(graph.background);
     plot.setDomainGridlinePaint(colGridlines);
     plot.setRangeGridlinePaint(colGridlines);
     plot.getDomainAxis().setLabel(graph.xAxisTitle);
@@ -316,7 +313,7 @@ public class LineGraphView extends JPanel {
     chart.setTitle("");
     plot.getDomainAxis().setLabel("");
     plot.getRangeAxis().setLabel("");
-    plot.setBackgroundPaint(DEFAULT_BACKGROUND);
+    plot.setBackgroundPaint(GraphsView.DEFAULT_BACKGROUND);
   }
 
   /**
@@ -681,29 +678,6 @@ public class LineGraphView extends JPanel {
     float dif = MAX_THICKNESS - MIN_THICKNESS;
     float thickness = MIN_THICKNESS + dif * scale / 100.0f;
     return new BasicStroke(thickness, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-  }
-  
-  /**
-   * Get the gridline colour that a view instance would use for the given background colour.
-   * 
-   * @param bg Background colour
-   * @return Gridline colour corresponding to background colour
-   */
-  public static Color getGridlineColor(Color bg) {
-    float[] bgHSB = Color.RGBtoHSB(bg.getRed(), bg.getGreen(), bg.getBlue(), null);
-    float bgBrightness = bgHSB[2];
-    final float crossOver = (float) 0.5;
-    final float fgMinBrightness = (float) 0.2;
-    final float fgMaxBrightness = (float) 1.0;
-    float fgBrightness;
-    if (bgBrightness > crossOver) {
-      fgBrightness = Math.min(fgMaxBrightness,
-          fgMinBrightness + (float) Math.pow(crossOver - bgBrightness, 2));
-    } else {
-      fgBrightness = Math.max(fgMinBrightness,
-          fgMaxBrightness - (float) Math.pow(crossOver + bgBrightness, 2));
-    }
-    return Color.getHSBColor(bgHSB[0], bgHSB[1], fgBrightness);
   }
 
 }

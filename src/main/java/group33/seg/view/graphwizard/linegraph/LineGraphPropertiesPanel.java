@@ -41,6 +41,7 @@ public class LineGraphPropertiesPanel extends JScrollPane {
     pnlMain.setLayout(gbl_pnlMain);
 
     pnlGeneralProperties = new GeneralGraphPropertiesPanel(controller);
+    pnlGeneralProperties.setDefaults(null, "Time", "n");
     GridBagConstraints gbc_pnlGeneralProperties = new GridBagConstraints();
     gbc_pnlGeneralProperties.fill = GridBagConstraints.BOTH;
     gbc_pnlGeneralProperties.gridx = 0;

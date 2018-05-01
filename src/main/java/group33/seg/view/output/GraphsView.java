@@ -2,6 +2,7 @@ package group33.seg.view.output;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import javax.swing.JButton;
@@ -18,7 +19,9 @@ import group33.seg.model.configs.LineGraphConfig;
 
 public class GraphsView extends JPanel {
   private static final long serialVersionUID = 6541885932864334941L;
-
+  
+  public static Color DEFAULT_BACKGROUND = Color.getHSBColor(0, 0, (float) 0.9);
+  
   private static final String NO_GRAPH_VIEW = "NO_GRAPH";
   private static final String LINE_GRAPH_VIEW = "LINE_GRAPH";
   private static final String HISTOGRAM_VIEW = "HISTOGRAM";
@@ -107,6 +110,29 @@ public class GraphsView extends JPanel {
         }
       });
     }
+  }
+  
+  /**
+   * Get the gridline colour that a view instance would use for the given background colour.
+   * 
+   * @param bg Background colour
+   * @return Gridline colour corresponding to background colour
+   */
+  public static Color getGridlineColor(Color bg) {
+    float[] bgHSB = Color.RGBtoHSB(bg.getRed(), bg.getGreen(), bg.getBlue(), null);
+    float bgBrightness = bgHSB[2];
+    final float crossOver = (float) 0.5;
+    final float fgMinBrightness = (float) 0.2;
+    final float fgMaxBrightness = (float) 1.0;
+    float fgBrightness;
+    if (bgBrightness > crossOver) {
+      fgBrightness = Math.min(fgMaxBrightness,
+          fgMinBrightness + (float) Math.pow(crossOver - bgBrightness, 2));
+    } else {
+      fgBrightness = Math.max(fgMinBrightness,
+          fgMaxBrightness - (float) Math.pow(crossOver + bgBrightness, 2));
+    }
+    return Color.getHSBColor(bgHSB[0], bgHSB[1], fgBrightness);
   }
   
 }
