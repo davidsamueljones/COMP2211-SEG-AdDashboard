@@ -1,11 +1,13 @@
 package group33.seg.view.structure;
 
+import java.awt.Desktop;
 import java.awt.Dialog.ModalityType;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import javax.swing.JCheckBoxMenuItem;
@@ -241,6 +243,28 @@ public class DashboardMenuBar extends JMenuBar {
       AboutDialog about = new AboutDialog(frmCurrent);
       about.setModalityType(ModalityType.APPLICATION_MODAL);
       about.setVisible(true);
+    });
+
+    JMenuItem mtnmUserManual = new JMenuItem("User Manual");
+    mnHelp.add(mtnmUserManual);
+    mtnmUserManual.addActionListener(e -> {
+      int res =
+          JOptionPane.showConfirmDialog(null,
+              "The user manual will open using your default PDF application.\r\n"
+                  + "Are you sure you want to open it?",
+              "Open User Manual", JOptionPane.YES_NO_OPTION);
+      if (res != JOptionPane.YES_OPTION) {
+        return;
+      }
+
+      // Use current panel's form as parent
+      try {
+        Desktop.getDesktop()
+            .open(new File(getClass().getResource("/ad_dashboard_usermanual.pdf").toURI()));
+      } catch (Exception ex) {
+        JOptionPane.showMessageDialog(null, "Could not find user manual", "Error",
+            JOptionPane.ERROR_MESSAGE);
+      }
     });
 
     mnHelp.addSeparator();
