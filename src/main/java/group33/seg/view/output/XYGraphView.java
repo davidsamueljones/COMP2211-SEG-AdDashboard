@@ -1,6 +1,7 @@
 package group33.seg.view.output;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.InputEvent;
@@ -23,7 +24,8 @@ import group33.seg.view.utilities.CustomChartPanel;
 
 public abstract class XYGraphView extends JPanel {
   private static final long serialVersionUID = -1616084431265689374L;
-
+  public static Color DEFAULT_BACKGROUND = Color.getHSBColor(0, 0, (float) 0.9);
+  
   protected CustomChartPanel pnlChart;
 
   protected JFreeChart chart;
@@ -245,7 +247,7 @@ public abstract class XYGraphView extends JPanel {
    */
   public void applyFontScale(double scale) {
     // Create a new theme
-    StandardChartTheme theme = (StandardChartTheme) StandardChartTheme.createJFreeTheme();
+    StandardChartTheme theme = new StandardChartTheme("Legacy");
     // Scale theme's fonts
     Font fontXL = Accessibility.scaleFont(theme.getExtraLargeFont(), scale);
     Font fontL = Accessibility.scaleFont(theme.getLargeFont(), scale);
@@ -260,4 +262,28 @@ public abstract class XYGraphView extends JPanel {
     theme.apply(chart);
   }
 
+
+  /**
+   * Get the gridline colour that a view instance would use for the given background colour.
+   * 
+   * @param bg Background colour
+   * @return Gridline colour corresponding to background colour
+   */
+  public static Color getGridlineColor(Color bg) {
+    float[] bgHSB = Color.RGBtoHSB(bg.getRed(), bg.getGreen(), bg.getBlue(), null);
+    float bgBrightness = bgHSB[2];
+    final float crossOver = (float) 0.5;
+    final float fgMinBrightness = (float) 0.2;
+    final float fgMaxBrightness = (float) 1.0;
+    float fgBrightness;
+    if (bgBrightness > crossOver) {
+      fgBrightness = Math.min(fgMaxBrightness,
+          fgMinBrightness + (float) Math.pow(crossOver - bgBrightness, 2));
+    } else {
+      fgBrightness = Math.max(fgMinBrightness,
+          fgMaxBrightness - (float) Math.pow(crossOver + bgBrightness, 2));
+    }
+    return Color.getHSBColor(bgHSB[0], bgHSB[1], fgBrightness);
+  }
+  
 }

@@ -105,7 +105,7 @@ public class LineGraphView extends XYGraphView {
     pnlChart.setChart(chart);
     chart.setTitle(graph.title);
     plot.setBackgroundPaint(graph.background);
-    Color colGridlines = GraphsView.getGridlineColor(graph.background);
+    Color colGridlines = XYGraphView.getGridlineColor(graph.background);
     plot.setDomainGridlinePaint(colGridlines);
     plot.setRangeGridlinePaint(colGridlines);
     plot.getDomainAxis().setLabel(graph.xAxisTitle);
@@ -193,7 +193,7 @@ public class LineGraphView extends XYGraphView {
     chart.setTitle("");
     plot.getDomainAxis().setLabel("");
     plot.getRangeAxis().setLabel("");
-    plot.setBackgroundPaint(GraphsView.DEFAULT_BACKGROUND);
+    plot.setBackgroundPaint(XYGraphView.DEFAULT_BACKGROUND);
   }
 
   /**
