@@ -288,7 +288,7 @@ public class DatabaseQueryFactory {
     // HISTOGRAM ONLY QUERY
     graphQueries.put(
             Metric.CLICK_COST,
-            "SELECT click_cost as yaxis FROM click_view WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>");
+            "SELECT round(click_cost::NUMERIC,2) as yaxis FROM click_view WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>");
   }
 
   /** Define and store templates for every statistic metric type. */
