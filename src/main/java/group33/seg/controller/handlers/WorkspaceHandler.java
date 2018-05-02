@@ -13,12 +13,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import group33.seg.controller.DashboardController.DashboardMVC;
 import group33.seg.controller.database.DatabaseConfig;
 import group33.seg.controller.database.DatabaseQueryFactory;
-import group33.seg.controller.database.DatabaseQueryFactory.MalformedFilterException;
 import group33.seg.controller.handlers.WorkspaceHandler.WorkspaceListener.Type;
 import group33.seg.controller.utilities.ErrorBuilder;
 import group33.seg.controller.utilities.GraphVisitor;
@@ -45,7 +43,7 @@ public class WorkspaceHandler {
   private List<WorkspaceListener> listeners = new ArrayList<>();
 
   private boolean unstoredChanges = false;
-  
+
   /**
    * Instantiate a workspace handler.
    * 
@@ -309,7 +307,13 @@ public class WorkspaceHandler {
 
         @Override
         public void visit(HistogramConfig graph) {
-          // TODO
+          if (graph.query != null && graph.query.campaign != null
+              && graph.query.campaign.equals(toReplace)) {
+            graph.query.campaign = campaign;
+            if (graph.equals(getCurrentGraph())) {
+              notifyListeners(Type.CURRENT_GRAPH);
+            }
+          }
         }
 
         @Override
@@ -506,8 +510,11 @@ public class WorkspaceHandler {
 
         @Override
         public void visit(HistogramConfig graph) {
-          // TODO Auto-generated method stub
-
+          try {
+            used.add(DatabaseQueryFactory.generateSQL(graph.query));
+          } catch (Exception e) {
+            // just do nothing if it's broken
+          }
         }
 
         @Override
@@ -515,8 +522,8 @@ public class WorkspaceHandler {
           for (LineConfig line : graph.lines) {
             try {
               used.add(DatabaseQueryFactory.generateSQL(line.query));
-            } catch (MalformedFilterException e) {
-              //just do nothing if it's broken
+            } catch (Exception e) {
+              // just do nothing if it's broken
             }
           }
         }
@@ -528,8 +535,8 @@ public class WorkspaceHandler {
         statistic.query.metric = metric;
         try {
           used.add(DatabaseQueryFactory.generateSQL(statistic.query));
-        } catch (MalformedFilterException e) {
-          //just do nothing if it's broken
+        } catch (Exception e) {
+          // just do nothing if it's broken
         }
       }
       statistic.query.metric = null;
@@ -594,7 +601,7 @@ public class WorkspaceHandler {
     }
     return prefix + next;
   }
-  
+
   /**
    * @return The next default statistic identifier (unused)
    */
@@ -609,7 +616,7 @@ public class WorkspaceHandler {
         try {
           int found = Integer.valueOf(idx);
           if (found >= next) {
-            next = found+1;
+            next = found + 1;
           }
         } catch (Exception e) {
           // ignore
@@ -618,7 +625,7 @@ public class WorkspaceHandler {
     }
     return prefix + next;
   }
-  
+
   /**
    * Interface for handling updates from the workspace handler.
    */
