@@ -13,13 +13,13 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import group33.seg.controller.DashboardController;
 import group33.seg.model.configs.GraphConfig;
-import group33.seg.view.output.GraphsView;
+import group33.seg.view.output.XYGraphView;
 
 public class GeneralGraphPropertiesPanel extends JPanel {
   private static final long serialVersionUID = -1585475807433849072L;
 
   private DashboardController controller;
-  
+
   protected JTextField txtIdentifier;
   protected JTextField txtTitle;
   protected JTextField txtXAxisTitle;
@@ -30,7 +30,7 @@ public class GeneralGraphPropertiesPanel extends JPanel {
   private String defaultTitle = "";
   private String defaultXAxis = "";
   private String defaultYAxis = "";
-  
+
   /**
    * Create the panel.
    *
@@ -192,9 +192,9 @@ public class GeneralGraphPropertiesPanel extends JPanel {
    */
   private void loadBackgroundColor(Color bg) {
     if (bg == null) {
-      bg = GraphsView.DEFAULT_BACKGROUND;
+      bg = XYGraphView.DEFAULT_BACKGROUND;
     }
-    Color fg = GraphsView.getGridlineColor(bg);
+    Color fg = XYGraphView.getGridlineColor(bg);
     lblSelectedBackgroundColour.setBackground(bg);
     lblSelectedBackgroundColour.setForeground(fg);
   }
@@ -241,7 +241,7 @@ public class GeneralGraphPropertiesPanel extends JPanel {
     config.background = lblSelectedBackgroundColour.getBackground();
     config.showLegend = chckbxShowLegend.isSelected();
   }
-  
+
   /**
    * Set default displayed values.
    * 

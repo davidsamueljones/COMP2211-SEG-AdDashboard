@@ -22,7 +22,6 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import group33.seg.controller.DashboardController;
-import group33.seg.controller.handlers.LineGraphHandler;
 import group33.seg.controller.handlers.WorkspaceHandler.WorkspaceListener;
 import group33.seg.controller.utilities.ErrorBuilder;
 import group33.seg.controller.utilities.GraphVisitor;
@@ -33,7 +32,6 @@ import group33.seg.view.graphwizard.linegraph.LineGraphWizardDialog;
 import group33.seg.view.graphwizards.GraphWizardInterface;
 import group33.seg.view.graphwizards.WizardSelectorDialog;
 import group33.seg.view.graphwizards.histogram.HistogramWizardDialog;
-import group33.seg.view.utilities.ProgressDialog;
 
 public class GraphManagerPanel extends JPanel {
   private static final long serialVersionUID = 6541885932864334941L;
@@ -159,7 +157,7 @@ public class GraphManagerPanel extends JPanel {
     // Listen for changes in workspace graphs, updating list if required
     controller.workspace.addListener(type -> {
       if (type == WorkspaceListener.Type.WORKSPACE || type == WorkspaceListener.Type.GRAPHS) {
-        SwingUtilities.invokeLater(() -> refreshGraphs());
+        SwingUtilities.invokeLater(this::refreshGraphs);
       }
     });
 

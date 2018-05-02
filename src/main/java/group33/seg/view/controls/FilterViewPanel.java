@@ -7,10 +7,9 @@ import java.awt.Insets;
 import java.awt.Window;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JLabel;
+import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
@@ -19,12 +18,12 @@ import group33.seg.model.configs.FilterConfig;
 
 public class FilterViewPanel extends JPanel {
   private static final long serialVersionUID = 8739821651130799927L;
-  
+
   private JTextPane txtFilter;
   private JButton btnModifyFilter;
 
   private FilterConfig filter = null;
-  
+
   /**
    * Create the panel.
    */
@@ -46,7 +45,7 @@ public class FilterViewPanel extends JPanel {
           BorderFactory.createEmptyBorder(5, 5, 5, 5));
       this.setBorder(border);
     }
-    
+
     loadFilter(null);
   }
 
@@ -74,7 +73,7 @@ public class FilterViewPanel extends JPanel {
 
     txtFilter = new JTextPane();
     txtFilter.setContentType("text/html");
-    txtFilter.putClientProperty(JTextPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
+    txtFilter.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
     txtFilter.setEditable(false);
     JScrollPane scrFilter = new JScrollPane(txtFilter);
     scrFilter.setPreferredSize(new Dimension(0, scrFilter.getPreferredSize().height));
@@ -103,7 +102,7 @@ public class FilterViewPanel extends JPanel {
       loadFilter(dialog.getFilter());
     });
   }
-  
+
   public void loadFilter(FilterConfig filter) {
     this.filter = filter;
     if (filter != null) {

@@ -1,23 +1,18 @@
 package group33.seg.view.graphwizards.histogram;
 
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import group33.seg.controller.DashboardController;
 import group33.seg.model.configs.HistogramConfig;
 import group33.seg.view.graphwizards.GeneralGraphPropertiesPanel;
-import group33.seg.view.utilities.JDynamicScrollPane;
 
 public class HistogramPropertiesPanel extends JScrollPane {
   private static final long serialVersionUID = -7939485328852855457L;
-  
+
   private DashboardController controller;
 
   protected GeneralGraphPropertiesPanel pnlGeneralProperties;
@@ -36,7 +31,7 @@ public class HistogramPropertiesPanel extends JScrollPane {
   /**
    * Initialise GUI and any event listeners.
    */
-  private void initGUI() {  
+  private void initGUI() {
     JPanel pnlMain = new JPanel();
     pnlMain.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     GridBagLayout gbl_pnlMain = new GridBagLayout();
@@ -45,11 +40,11 @@ public class HistogramPropertiesPanel extends JScrollPane {
     gbl_pnlMain.rowWeights = new double[] {0.0, 0.0, 1.0};
     pnlMain.setLayout(gbl_pnlMain);
     this.setViewportView(pnlMain);
-    
+
     pnlGeneralProperties = new GeneralGraphPropertiesPanel(controller);
     pnlGeneralProperties.setDefaults(null, "Values (binned)", "Frequency");
     pnlGeneralProperties.chckbxShowLegend.setVisible(false);
-    
+
     GridBagConstraints gbc_pnlGeneralProperties = new GridBagConstraints();
     gbc_pnlGeneralProperties.fill = GridBagConstraints.BOTH;
     gbc_pnlGeneralProperties.gridx = 0;
@@ -62,7 +57,7 @@ public class HistogramPropertiesPanel extends JScrollPane {
     gbc_pnlBins.gridx = 0;
     gbc_pnlBins.gridy = 1;
     pnlMain.add(pnlBins, gbc_pnlBins);
-    
+
     this.getVerticalScrollBar().setUnitIncrement(10);
     this.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
   }
@@ -84,5 +79,5 @@ public class HistogramPropertiesPanel extends JScrollPane {
     pnlGeneralProperties.updateConfig(config);
     pnlBins.updateConfig(config);
   }
-  
+
 }

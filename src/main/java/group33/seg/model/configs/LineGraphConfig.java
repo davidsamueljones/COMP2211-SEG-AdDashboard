@@ -34,7 +34,7 @@ public class LineGraphConfig extends GraphConfig {
   public LineGraphConfig(String uuid) {
     super(uuid);
   }
-  
+
   @Override
   public void accept(GraphVisitor visitor) {
     visitor.visit(this);
@@ -90,8 +90,8 @@ public class LineGraphConfig extends GraphConfig {
     return eb;
   }
 
-  /** 
-   * Enumeration of line drawing modes. 
+  /**
+   * Enumeration of line drawing modes.
    */
   public enum Mode {
     NORMAL, /* Indicates data should be plotted at its absolute position */

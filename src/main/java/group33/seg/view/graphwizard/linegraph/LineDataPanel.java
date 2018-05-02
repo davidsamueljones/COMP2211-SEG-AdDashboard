@@ -12,7 +12,6 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.ListCellRenderer;
 import group33.seg.controller.DashboardController;
 import group33.seg.model.configs.CampaignConfig;
 import group33.seg.model.configs.LineConfig;

@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.List;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.plot.DefaultDrawingSupplier;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
@@ -43,10 +42,10 @@ public class HistogramView extends XYGraphView {
     frequencyAxis.setNumberFormatOverride(new DecimalFormat("0"));
     NumberAxis valueAxis = new NumberAxis();
     valueAxis.setAutoRangeIncludesZero(false);
-
+    
     renderer = new XYBarRenderer();
-    renderer.setBarPainter(new StandardXYBarPainter());
     plot = new XYPlot(dataset, valueAxis, frequencyAxis, renderer);
+    plot.setRenderer(renderer);
     plot.setDomainZeroBaselineVisible(true);
     plot.setRangeZeroBaselineVisible(true);
 
@@ -62,19 +61,15 @@ public class HistogramView extends XYGraphView {
     pnlChart.setChart(chart);
     chart.setTitle(graph.title);
     plot.setBackgroundPaint(graph.background);
-    Color colGridlines = GraphsView.getGridlineColor(graph.background);
+    Color colGridlines = XYGraphView.getGridlineColor(graph.background);
     plot.setDomainGridlinePaint(colGridlines);
     plot.setRangeGridlinePaint(colGridlines);
     plot.getDomainAxis().setLabel(graph.xAxisTitle);
     plot.getRangeAxis().setLabel(graph.yAxisTitle);
-
-    Color[] color = {graph.barColor};
-    plot.setDrawingSupplier(
-        new DefaultDrawingSupplier(color, DefaultDrawingSupplier.DEFAULT_FILL_PAINT_SEQUENCE,
-            DefaultDrawingSupplier.DEFAULT_OUTLINE_PAINT_SEQUENCE,
-            DefaultDrawingSupplier.DEFAULT_STROKE_SEQUENCE,
-            DefaultDrawingSupplier.DEFAULT_OUTLINE_STROKE_SEQUENCE,
-            DefaultDrawingSupplier.DEFAULT_SHAPE_SEQUENCE));
+    renderer.setBarPainter(new StandardXYBarPainter());
+    renderer.setSeriesPaint(0, graph.barColor);
+    renderer.setSeriesOutlinePaint(0, XYGraphView.getGridlineColor(graph.barColor));
+    renderer.setDrawBarOutline(true);
   }
 
   /**
@@ -84,7 +79,7 @@ public class HistogramView extends XYGraphView {
     chart.setTitle("");
     plot.getDomainAxis().setLabel("");
     plot.getRangeAxis().setLabel("");
-    plot.setBackgroundPaint(GraphsView.DEFAULT_BACKGROUND);
+    plot.setBackgroundPaint(XYGraphView.DEFAULT_BACKGROUND);
     dataset.clearObservations();
   }
 

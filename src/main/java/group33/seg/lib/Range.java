@@ -2,12 +2,12 @@ package group33.seg.lib;
 
 import java.io.Serializable;
 
-/** 
- * Helper class for storing data ranges. 
+/**
+ * Helper class for storing data ranges.
  */
 public class Range<T> implements Serializable {
   private static final long serialVersionUID = 2602820261310555424L;
-  
+
   public final T min;
   public final T max;
 
@@ -21,7 +21,7 @@ public class Range<T> implements Serializable {
     this.min = min;
     this.max = max;
   }
-  
+
   @Override
   public String toString() {
     String strMin = (min == null ? "[]" : min.toString());
@@ -59,5 +59,5 @@ public class Range<T> implements Serializable {
       return false;
     return true;
   }
-  
+
 }

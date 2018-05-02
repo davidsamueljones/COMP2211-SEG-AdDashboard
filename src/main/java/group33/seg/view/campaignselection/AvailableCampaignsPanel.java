@@ -23,14 +23,14 @@ import group33.seg.model.configs.CampaignConfig;
 
 public class AvailableCampaignsPanel extends JPanel {
   private static final long serialVersionUID = 410986964221436793L;
-  
+
   private DashboardController controller;
 
   private JList<CampaignConfig> lstCampaigns;
   private DefaultListModel<CampaignConfig> mdl_lstCampaigns;
 
   private CampaignConfig base;
-  
+
   /**
    * Create the panel, loading the workspace's current graphs.
    * 
@@ -107,7 +107,7 @@ public class AvailableCampaignsPanel extends JPanel {
     add(btnLoadCampaign, gbc_btnLoadCampaign);
 
     SwingUtilities.invokeLater(this::refreshCampaigns);
-    
+
     // ************************************************************************************
     // * EVENT HANDLING
     // ************************************************************************************

@@ -1,24 +1,20 @@
 package group33.seg.view.workspace;
 
-import javax.swing.JPanel;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Window;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import java.awt.GridBagConstraints;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import group33.seg.controller.DashboardController;
 import group33.seg.controller.utilities.ErrorBuilder;
-import group33.seg.model.configs.WorkspaceInstance;
 import group33.seg.view.utilities.FileActionListener;
-import java.awt.Insets;
-import java.awt.Window;
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
 
 public class OpenWorkspacePanel extends JPanel {
   private static final long serialVersionUID = -2588808491016545205L;

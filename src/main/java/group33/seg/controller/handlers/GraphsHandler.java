@@ -24,13 +24,13 @@ public class GraphsHandler {
 
   /** Graphs view */
   private GraphsView graphsView = null;
-  
+
   /** Line graph handler */
   private LineGraphHandler lineGraphHandler = null;
-  
+
   /** Histogram handler */
   private HistogramHandler histogramHandler = null;
-  
+
   /** Handler currently in use */
   private GraphHandlerInterface<?> currentHandler = null;
 
@@ -62,7 +62,7 @@ public class GraphsHandler {
   public void setGraphsView(GraphsView view) {
     graphsView = view;
   }
-  
+
   /**
    * Create a new line graph handler making use of the given view output.
    */
@@ -86,7 +86,7 @@ public class GraphsHandler {
       histogramHandler = new HistogramHandler(mvc, view);
     }
   }
-  
+
   /**
    * Display the given graph configuration with the appropriate graph handler. Default behaviour of
    * updating without forcing recreation is applied.
@@ -116,7 +116,7 @@ public class GraphsHandler {
         if (graphsView != null) {
           EventQueue.invokeLater(() -> graphsView.loadView(graph));
         }
-        if (graph != null) {      
+        if (graph != null) {
           // Handle display behaviour depending on the type of graph
           graph.accept(new GraphVisitor() {
 
@@ -132,9 +132,9 @@ public class GraphsHandler {
               histogramHandler.displayGraph(graph);
             }
           });
-        }      
+        }
         updateProgress("Finished loading graph into view");
-      } finally {       
+      } finally {
         alertFinished();
       }
     });
@@ -156,7 +156,7 @@ public class GraphsHandler {
     }
     currentHandler = next;
   }
-  
+
   /**
    * Set font scale to apply to all current and future charts.
    * 

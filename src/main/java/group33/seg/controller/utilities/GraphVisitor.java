@@ -11,12 +11,12 @@ public interface GraphVisitor {
    * @param graph Graph configuration
    */
   void visit(LineGraphConfig graph);
-  
+
   /**
    * Handle visitor behaviour for a histogram.
    * 
    * @param graph Graph configuration
    */
   void visit(HistogramConfig graph);
-  
+
 }

@@ -1,9 +1,7 @@
 package group33.seg.view.output;
 
-import static group33.seg.view.output.XYGraphView.setPanModifier;
-import static group33.seg.view.output.XYGraphView.useBoxZoom;
-import static group33.seg.view.output.XYGraphView.useScrollZoom;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.InputEvent;
@@ -26,12 +24,13 @@ import group33.seg.view.utilities.CustomChartPanel;
 
 public abstract class XYGraphView extends JPanel {
   private static final long serialVersionUID = -1616084431265689374L;
-
+  public static Color DEFAULT_BACKGROUND = Color.getHSBColor(0, 0, (float) 0.9);
+  
   protected CustomChartPanel pnlChart;
 
   protected JFreeChart chart;
   protected XYPlot plot;
-  
+
   /**
    * Fully configure an empty chart and its controls.
    */
@@ -40,7 +39,7 @@ public abstract class XYGraphView extends JPanel {
     initGUI(useBuffer);
     initControlScheme();
   }
-  
+
   /**
    * Initialise the GUI and any event listeners.
    */
@@ -133,7 +132,7 @@ public abstract class XYGraphView extends JPanel {
    * Initialise an empty chart.
    */
   protected abstract void initChart();
-  
+
   /**
    * Initialise the default control scheme of the chart.
    */
@@ -142,8 +141,8 @@ public abstract class XYGraphView extends JPanel {
     // Enable zoom using scroll as default
     enablePanMode();
   }
-  
-  
+
+
   /**
    * Enable mouse drag pan and scroll zoom behaviour for the current chart panel.
    */
@@ -159,7 +158,7 @@ public abstract class XYGraphView extends JPanel {
     setPanModifier(pnlChart, InputEvent.ALT_MASK | InputEvent.BUTTON1_MASK);
     useBoxZoom(pnlChart);
   }
-  
+
   /**
    * Enable any settings that are consistent throughout all behaviours.
    */
@@ -196,7 +195,7 @@ public abstract class XYGraphView extends JPanel {
       }
     });
   }
-  
+
   /**
    * For the given chart panel, set it up to use the pointer for zooming using a drag-box. This will
    * reverse effects of using scroll zoom due to incompatibilities between using both at the same
@@ -239,7 +238,7 @@ public abstract class XYGraphView extends JPanel {
       System.err.println("Unable to set pan modifier");
     }
   }
-  
+
   /**
    * Using a new font scheme apply the given scaling to all textual components of the histogram
    * graph view.
@@ -248,7 +247,7 @@ public abstract class XYGraphView extends JPanel {
    */
   public void applyFontScale(double scale) {
     // Create a new theme
-    StandardChartTheme theme = (StandardChartTheme) StandardChartTheme.createJFreeTheme();
+    StandardChartTheme theme = new StandardChartTheme("Legacy");
     // Scale theme's fonts
     Font fontXL = Accessibility.scaleFont(theme.getExtraLargeFont(), scale);
     Font fontL = Accessibility.scaleFont(theme.getLargeFont(), scale);
@@ -261,6 +260,30 @@ public abstract class XYGraphView extends JPanel {
     theme.setSmallFont(fontS);
     // Apply theme
     theme.apply(chart);
+  }
+
+
+  /**
+   * Get the gridline colour that a view instance would use for the given background colour.
+   * 
+   * @param bg Background colour
+   * @return Gridline colour corresponding to background colour
+   */
+  public static Color getGridlineColor(Color bg) {
+    float[] bgHSB = Color.RGBtoHSB(bg.getRed(), bg.getGreen(), bg.getBlue(), null);
+    float bgBrightness = bgHSB[2];
+    final float crossOver = (float) 0.5;
+    final float fgMinBrightness = (float) 0.2;
+    final float fgMaxBrightness = (float) 1.0;
+    float fgBrightness;
+    if (bgBrightness > crossOver) {
+      fgBrightness = Math.min(fgMaxBrightness,
+          fgMinBrightness + (float) Math.pow(crossOver - bgBrightness, 2));
+    } else {
+      fgBrightness = Math.max(fgMinBrightness,
+          fgMaxBrightness - (float) Math.pow(crossOver + bgBrightness, 2));
+    }
+    return Color.getHSBColor(bgHSB[0], bgHSB[1], fgBrightness);
   }
   
 }

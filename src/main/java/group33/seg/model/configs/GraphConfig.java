@@ -34,10 +34,10 @@ public abstract class GraphConfig implements Serializable {
 
   /** Colour for graph background */
   public Color background = null;
-  
+
   /** Whether the graph legend should be shown on the graph */
   public boolean showLegend = true;
-  
+
   /**
    * Instantiate a graph configuration with a random UUID.
    */

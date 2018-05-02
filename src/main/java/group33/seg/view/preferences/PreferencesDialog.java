@@ -1,22 +1,20 @@
 package group33.seg.view.preferences;
 
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Point;
 import java.awt.Window;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import group33.seg.controller.DashboardController;
 import group33.seg.controller.handlers.SettingsHandler;
-import javax.swing.JRadioButton;
-import javax.swing.JCheckBox;
 
 public class PreferencesDialog extends JDialog {
   private static final long serialVersionUID = -8083386947121993055L;

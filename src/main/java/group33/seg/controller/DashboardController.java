@@ -17,13 +17,13 @@ public class DashboardController {
 
   /** Handler for settings */
   public final SettingsHandler settings;
-  
+
   /** Handler for workspace */
   public final WorkspaceHandler workspace;
-  
+
   /** Handler for database access */
   public final DatabaseHandler database;
-  
+
   /** Handler for general GUI updates */
   public final DisplayHandler display;
 
@@ -35,8 +35,8 @@ public class DashboardController {
 
   /** Handler for statistic updates */
   public final StatisticHandler statistics;
-  
-  
+
+
   /**
    * Instantiate a dashboard controller to control interactions between a given view and model. Uses
    * suite of sub-controllers to break down functionality. Controller creates an MVC instance that

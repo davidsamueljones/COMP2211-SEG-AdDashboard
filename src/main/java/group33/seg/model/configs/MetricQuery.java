@@ -1,7 +1,6 @@
 package group33.seg.model.configs;
 
 import java.io.Serializable;
-import group33.seg.controller.utilities.ErrorBuilder;
 import group33.seg.model.types.Interval;
 import group33.seg.model.types.Metric;
 
@@ -70,7 +69,7 @@ public class MetricQuery implements Serializable {
     StringBuilder builder = new StringBuilder();
     builder.append("<b>Campaign:</b> " + (campaign == null ? "All" : campaign.name));
     builder.append("<br><b>Metric:</b> " + (metric == null ? "All" : metric));
-    builder.append(interval == null ? "" : "<br><b>Interval:</b> " +  interval);
+    builder.append(interval == null ? "" : "<br><b>Interval:</b> " + interval);
     builder.append("<br><b>Filter:</b><br>"
         + (filter == null ? FilterConfig.NO_FILTER_TEXT : filter.inText()));
     if (needBounceDef(metric)) {
@@ -87,12 +86,12 @@ public class MetricQuery implements Serializable {
    * @param other Other instance to compare against
    * @return Whether instances are the same
    */
-  public boolean isEquals(MetricQuery other) {
+  public boolean isEqual(MetricQuery other) {
     boolean equal = true;
     equal &= (campaign == null ? (other.campaign == null) : campaign.equals(other.campaign));
     equal &= (metric == null ? (other.metric == null) : metric.equals(other.metric));
     equal &= (interval == null ? (other.interval == null) : interval.equals(other.interval));
-    equal &= (filter == null ? (other.filter == null) : filter.isEquals(other.filter));
+    equal &= (filter == null ? (other.filter == null) : filter.isEqual(other.filter));
     if (MetricQuery.needBounceDef(metric)) {
       equal &= (bounceDef == null ? (other.bounceDef == null) : bounceDef.isEqual(other.bounceDef));
     }

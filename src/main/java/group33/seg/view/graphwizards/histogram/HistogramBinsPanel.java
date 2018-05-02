@@ -1,33 +1,29 @@
 package group33.seg.view.graphwizards.histogram;
 
-import javax.swing.BorderFactory;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
-import javax.swing.JTextField;
-import javax.swing.SpinnerModel;
-import javax.swing.SpinnerNumberModel;
-import group33.seg.model.configs.HistogramConfig;
-import group33.seg.view.output.GraphsView;
-import group33.seg.view.output.HistogramView;
-import group33.seg.view.output.LineGraphView;
-import group33.seg.view.utilities.JDynamicScrollPane;
-import java.awt.GridBagLayout;
-import javax.swing.JButton;
-import javax.swing.JColorChooser;
-import javax.swing.JFormattedTextField;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JColorChooser;
+import javax.swing.JFormattedTextField;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
+import group33.seg.model.configs.HistogramConfig;
+import group33.seg.view.output.HistogramView;
 
 public class HistogramBinsPanel extends JPanel {
   private static final long serialVersionUID = -998060022279065856L;
@@ -43,8 +39,8 @@ public class HistogramBinsPanel extends JPanel {
   private JButton btnResetBins;
   private JButton btnUseDefaults;
   private JPanel pnlBins;
-  
-  private List<BinPanel> bins = new ArrayList<BinPanel>();
+
+  private List<BinPanel> bins = new ArrayList<>();
 
   private HistogramConfig base = null;
 
@@ -124,7 +120,7 @@ public class HistogramBinsPanel extends JPanel {
     gbc_lblHelp.gridy = 1;
     add(lblHelp, gbc_lblHelp);
 
-    tabsBinModes = new JTabbedPane(JTabbedPane.TOP);
+    tabsBinModes = new JTabbedPane(SwingConstants.TOP);
     GridBagConstraints gbc_tabsBinModes = new GridBagConstraints();
     gbc_tabsBinModes.insets = new Insets(0, 0, 5, 5);
     gbc_tabsBinModes.fill = GridBagConstraints.BOTH;

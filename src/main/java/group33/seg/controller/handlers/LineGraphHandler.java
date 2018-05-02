@@ -1,19 +1,15 @@
 package group33.seg.controller.handlers;
 
 import java.awt.EventQueue;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import com.rits.cloning.Cloner;
 import group33.seg.controller.DashboardController.DashboardMVC;
 import group33.seg.controller.handlers.GraphsHandler.Update;
 import group33.seg.controller.types.MetricQueryResponse;
-import group33.seg.controller.utilities.ProgressListener;
 import group33.seg.lib.Pair;
 import group33.seg.model.configs.LineConfig;
 import group33.seg.model.configs.LineGraphConfig;
 import group33.seg.view.output.LineGraphView;
-import group33.seg.view.utilities.ProgressDialog;
 
 public class LineGraphHandler implements GraphHandlerInterface<LineGraphConfig> {
 
@@ -75,7 +71,7 @@ public class LineGraphHandler implements GraphHandlerInterface<LineGraphConfig> 
   public void clearGraph() {
     mvc.controller.graphs.updateProgress("Clearing graph...");
     this.graph = null;
-    EventQueue.invokeLater(() -> view.clearGraph());
+    EventQueue.invokeLater(view::clearGraph);
   }
 
   /**
@@ -235,7 +231,7 @@ public class LineGraphHandler implements GraphHandlerInterface<LineGraphConfig> 
     // Check for any changes in querying that may change data
     boolean data = true;
     data &=
-        (original.query == null ? (updated.query == null) : original.query.isEquals(updated.query));
+        (original.query == null ? (updated.query == null) : original.query.isEqual(updated.query));
 
     // Check for any changes of properties
     boolean properties = true;

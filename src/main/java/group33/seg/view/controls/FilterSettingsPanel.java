@@ -259,16 +259,16 @@ public class FilterSettingsPanel extends JPanel {
   private void loadDates(FilterConfig filter) {
     if (filter != null && filter.dates != null) {
       dtpStartDate.setDate(filter.dates.min);
-      if (filter.dates.min != null) {    
+      if (filter.dates.min != null) {
         nudStartTime.setValue(filter.dates.min);
       }
       dtpEndDate.setDate(filter.dates.max);
-      if (filter.dates.max != null) {    
+      if (filter.dates.max != null) {
         nudEndTime.setValue(filter.dates.max);
       }
     }
   }
-    
+
   /**
    * Add many checkbox leafs to a parent node. If a checked collection is not provided all
    * checkboxes will be unchecked, otherwise a respective leaf will be checked if it exists in the

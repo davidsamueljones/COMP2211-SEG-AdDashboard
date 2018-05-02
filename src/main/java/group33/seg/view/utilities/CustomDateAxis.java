@@ -121,6 +121,7 @@ public class CustomDateAxis extends DateAxis {
 
 }
 
+
 /**
  * Helper class that hides any number input.
  */
@@ -141,4 +142,4 @@ class HiddenNumberFormat extends NumberFormat {
   public StringBuffer format(double number, StringBuffer toAppendTo, FieldPosition pos) {
     return new StringBuffer();
   }
-};
+}

@@ -59,7 +59,7 @@ public class HistogramHandler implements GraphHandlerInterface<HistogramConfig> 
   public void clearGraph() {
     mvc.controller.graphs.updateProgress("Clearing graph...");
     this.graph = null;
-    EventQueue.invokeLater(() -> view.clearGraph());
+    EventQueue.invokeLater(view::clearGraph);
   }
 
   /**
@@ -118,7 +118,7 @@ public class HistogramHandler implements GraphHandlerInterface<HistogramConfig> 
       return true;
     }
     return (original.query == null ? (updated.query == null)
-        : original.query.isEquals(updated.query));
+        : original.query.isEqual(updated.query));
   }
 
   /**

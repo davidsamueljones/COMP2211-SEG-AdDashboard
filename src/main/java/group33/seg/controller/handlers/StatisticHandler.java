@@ -222,7 +222,7 @@ public class StatisticHandler {
     // Check for any changes in querying that may change data
     boolean data = true;
     data &= (original.query == null ? (updated.query == null)
-        : original.query.isEquals(updated.query));
+        : original.query.isEqual(updated.query));
 
     // Check for any changes of properties
     boolean properties = true;

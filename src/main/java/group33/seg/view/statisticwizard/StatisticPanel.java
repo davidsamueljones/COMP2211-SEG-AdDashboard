@@ -6,7 +6,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import javax.swing.DefaultListCellRenderer;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -17,22 +16,20 @@ import group33.seg.controller.DashboardController;
 import group33.seg.model.configs.CampaignConfig;
 import group33.seg.model.configs.MetricQuery;
 import group33.seg.model.configs.StatisticConfig;
-import group33.seg.model.types.Interval;
-import group33.seg.model.types.Metric;
 import group33.seg.view.controls.BounceDefinitionPanel;
 import group33.seg.view.controls.FilterViewPanel;
 
 public class StatisticPanel extends JPanel {
   private static final long serialVersionUID = 5602951595852368687L;
-  
+
   private DashboardController controller;
-  
+
   protected JTextField txtIdentifier;
   protected JComboBox<CampaignConfig> cboCampaign;
   protected FilterViewPanel pnlFilter;
   protected BounceDefinitionPanel pnlBounceRate;
   protected JCheckBox chckbxHideStatistic;
-  
+
   /**
    * Create the panel.
    *
@@ -83,7 +80,7 @@ public class StatisticPanel extends JPanel {
     }
     cboCampaign.setRenderer(new DefaultListCellRenderer() {
       private static final long serialVersionUID = 1L;
-      
+
       @Override
       public Component getListCellRendererComponent(JList<?> list, Object value, int index,
           boolean isSelected, boolean cellHasFocus) {
@@ -102,7 +99,7 @@ public class StatisticPanel extends JPanel {
     gbc_cboCampaign.gridx = 1;
     gbc_cboCampaign.gridy = 1;
     add(cboCampaign, gbc_cboCampaign);
-    
+
     pnlFilter = new FilterViewPanel();
     pnlFilter.setPreferredSize(new Dimension(pnlFilter.getPreferredSize().width, 150));
     GridBagConstraints gbc_pnlFilter = new GridBagConstraints();

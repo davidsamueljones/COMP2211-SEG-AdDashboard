@@ -41,8 +41,7 @@ public class DefinitionPanel extends JDynamicScrollPane {
   }
 
   /**
-   * Present all metric definitions against their respective metric as a formatted html
-   * string.
+   * Present all metric definitions against their respective metric as a formatted html string.
    * 
    * @return All metric definitions as a formatted string
    */

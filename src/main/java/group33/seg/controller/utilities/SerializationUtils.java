@@ -4,7 +4,6 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -14,12 +13,9 @@ import java.io.Serializable;
 import java.io.StreamCorruptedException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
-import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SealedObject;
 import javax.crypto.SecretKey;
@@ -114,6 +110,7 @@ public class SerializationUtils {
 
   /**
    * Method for generating Cipher object from password
+   * 
    * @param password Password for encryption/decryption
    * @param opmode Operation mode for the cipher object
    * @return Cipher object for sealing object
@@ -131,6 +128,7 @@ public class SerializationUtils {
 
   /**
    * Shortcut for making Cipher object for encryption
+   * 
    * @param password Password for encryption
    * @return Cipher object for sealing object
    * @throws NoSuchAlgorithmException
@@ -144,6 +142,7 @@ public class SerializationUtils {
 
   /**
    * Shortcut for making Cipher object for decryption
+   * 
    * @param password Password for decryption
    * @return Cipher object for unpacking object
    * @throws NoSuchAlgorithmException
@@ -157,6 +156,7 @@ public class SerializationUtils {
 
   /**
    * Serialize an encrypted object and clear password on serialization
+   * 
    * @param obj Object to serialise
    * @param os OutputStream to save obj to
    * @param password for encryption
@@ -167,6 +167,7 @@ public class SerializationUtils {
 
   /**
    * Serialize an encrypted object
+   * 
    * @param obj Object to serialise
    * @param os OutputStream to save obj to
    * @param password for encryption
@@ -183,7 +184,7 @@ public class SerializationUtils {
     try {
       Cipher cipher = makeEncryptCipher(password);
 
-      //clear password
+      // clear password
       if (clearPasswordAfter) {
         for (int i = 0; i < password.length; i++) {
           password[i] = '0';
@@ -191,7 +192,8 @@ public class SerializationUtils {
       }
 
       SealedObject sealedObject = new SealedObject(obj, cipher);
-      CipherOutputStream cipherOutputStream = new CipherOutputStream(new BufferedOutputStream(os), cipher);
+      CipherOutputStream cipherOutputStream =
+          new CipherOutputStream(new BufferedOutputStream(os), cipher);
 
       oos = new ObjectOutputStream(cipherOutputStream);
       oos.writeObject(sealedObject);
@@ -212,10 +214,10 @@ public class SerializationUtils {
 
   /**
    * Shortcut for deserialising an encrypted object and clearing password
+   * 
    * @param is InputStream to read object from
    * @param password to use for decryption
-   * @return object if decryption succeeded
-   *         null if something went wrong
+   * @return object if decryption succeeded null if something went wrong
    */
   public static Object deserializeEncrypted(InputStream is, char[] password) {
     return deserializeEncrypted(is, password, true);
@@ -223,24 +225,26 @@ public class SerializationUtils {
 
   /**
    * Deserialize an encrypted object
+   * 
    * @param is InputStream to read object from
    * @param password to use for decryption
    * @param clearPasswordAfter if true then password is cleared
-   * @return object if decryption succeeded
-   *         null if something went wrong
+   * @return object if decryption succeeded null if something went wrong
    */
-  public static Object deserializeEncrypted(InputStream is, char[] password, boolean clearPasswordAfter) {
+  public static Object deserializeEncrypted(InputStream is, char[] password,
+      boolean clearPasswordAfter) {
     try {
       Cipher cipher = makeDecryptCipher(password);
 
-      //clear password
+      // clear password
       if (clearPasswordAfter) {
         for (int i = 0; i < password.length; i++) {
           password[i] = '0';
         }
       }
 
-      CipherInputStream cipherInputStream = new CipherInputStream(new BufferedInputStream(is), cipher);
+      CipherInputStream cipherInputStream =
+          new CipherInputStream(new BufferedInputStream(is), cipher);
       ObjectInputStream inputStream = new ObjectInputStream(cipherInputStream);
 
       SealedObject sealedObject = (SealedObject) inputStream.readObject();
@@ -250,7 +254,7 @@ public class SerializationUtils {
       return obj;
 
     } catch (StreamCorruptedException e) {
-      //this is what happens when you use the wrong password
+      // this is what happens when you use the wrong password
       return null;
     } catch (Exception e) {
       return null;

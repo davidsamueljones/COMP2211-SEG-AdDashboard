@@ -1,17 +1,12 @@
 package group33.seg.controller.database;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Filter;
-
-import group33.seg.lib.Range;
 import group33.seg.model.configs.BounceConfig;
-import group33.seg.model.configs.CampaignConfig;
 import group33.seg.model.configs.FilterConfig;
 import group33.seg.model.configs.MetricQuery;
 import group33.seg.model.types.Interval;
@@ -293,7 +288,7 @@ public class DatabaseQueryFactory {
     // HISTOGRAM ONLY QUERY
     graphQueries.put(
             Metric.CLICK_COST,
-            "SELECT click_cost as yaxis FROM click_view WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>");
+            "SELECT round(click_cost::NUMERIC,2) as yaxis FROM click_view WHERE <campaign> AND <filterAge> AND <filterContext> AND <filterIncome> AND <filterGender>");
   }
 
   /** Define and store templates for every statistic metric type. */

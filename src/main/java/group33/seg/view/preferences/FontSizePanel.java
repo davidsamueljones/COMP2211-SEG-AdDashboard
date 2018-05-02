@@ -134,7 +134,7 @@ public class FontSizePanel extends JPanel {
   private double getSliderScale() {
     return sldFontSize.getValue() / (double) 100;
   }
-  
+
   private void setUIFontScaling(double newScaling) {
     double currentScaling = controller.settings.prefs.getDouble(SettingsHandler.FONT_SCALING,
         Accessibility.DEFAULT_SCALING);

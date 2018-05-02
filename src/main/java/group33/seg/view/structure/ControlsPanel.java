@@ -17,9 +17,9 @@ import group33.seg.view.utilities.CollapsiblePanel;
 
 public class ControlsPanel extends JScrollPane {
   private static final long serialVersionUID = 335036489710020302L;
- 
+
   private final DashboardController controller;
-  
+
   private CampaignManagerPanel pnlCampaignManager;
   private GraphManagerPanel pnlGraphManager;
   private StatisticManagerPanel pnlStatisticManager;
@@ -31,10 +31,10 @@ public class ControlsPanel extends JScrollPane {
    */
   public ControlsPanel(DashboardController controller) {
     this.controller = controller;
-    
+
     initGUI();
   }
-  
+
   private void initGUI() {
 
     // Store control groups on a separate panel
@@ -71,7 +71,7 @@ public class ControlsPanel extends JScrollPane {
       gbc_colpnlGraphManager.gridx = 0;
       gbc_colpnlGraphManager.gridy = 2;
       pnlControls.add(colpnlGraphManager, gbc_colpnlGraphManager);
-      
+
       // Statistic Viewer
       CollapsiblePanel colpnlStatisticManager = new CollapsiblePanel("Statistic Manager");
       applyCollapsiblePanelStyle(colpnlStatisticManager);
@@ -93,11 +93,11 @@ public class ControlsPanel extends JScrollPane {
     this.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
     this.getVerticalScrollBar().setUnitIncrement(10);
   }
-  
+
   private void applyCollapsiblePanelStyle(CollapsiblePanel colpnl) {
-//    Font curFont = colpnl.getToggleButton().getFont();
-//    Font newFont = Accessibility.stripLaF(curFont.deriveFont(curFont.getStyle() | Font.BOLD));
-//    colpnl.getToggleButton().setFont(newFont);
+    // Font curFont = colpnl.getToggleButton().getFont();
+    // Font newFont = Accessibility.stripLaF(curFont.deriveFont(curFont.getStyle() | Font.BOLD));
+    // colpnl.getToggleButton().setFont(newFont);
     Accessibility.scaleJComponentFontSize(colpnl.getToggleButton(), 1.25);
   }
 

@@ -62,7 +62,7 @@ public class LineConfig implements Serializable {
     builder.append("<br><br>" + query.inText());
     return builder.toString();
   }
-  
+
   @Override
   public int hashCode() {
     final int prime = 31;

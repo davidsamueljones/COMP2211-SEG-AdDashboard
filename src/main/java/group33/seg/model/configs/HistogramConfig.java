@@ -11,17 +11,17 @@ public class HistogramConfig extends GraphConfig {
   private static final long serialVersionUID = -3528347690642461216L;
 
   /** Query to fetch data with */
-  public MetricQuery query; 
-  
+  public MetricQuery query;
+
   /** Number of bins */
   public int binCount;
-  
+
   /** List of bins weightings (use sum of all weightings to normalise) */
   public List<Integer> bins;
-  
+
   /** Colour of bars plotted */
   public Color barColor;
-  
+
   /**
    * Instantiate a histogram configuration with a random UUID.
    */
@@ -37,20 +37,20 @@ public class HistogramConfig extends GraphConfig {
   public HistogramConfig(String uuid) {
     super(uuid);
   }
-  
+
   @Override
   public void accept(GraphVisitor visitor) {
     visitor.visit(this);
   }
-  
+
   /**
    * Get the bin weightings so that the sum of all bin weightings is 1.
    * 
    * @return Normalised bin weightings
    */
   public static List<Double> getNormalisedBins(List<Integer> bins) {
-    
-    List<Double> normalised = new ArrayList<Double>();
+
+    List<Double> normalised = new ArrayList<>();
     if (bins != null) {
       int sum = 0;
       for (Integer weight : bins) {
@@ -62,7 +62,7 @@ public class HistogramConfig extends GraphConfig {
     }
     return normalised;
   }
-  
+
   @Override
   public String inText() {
     StringBuilder builder = new StringBuilder(super.inText());
@@ -83,7 +83,7 @@ public class HistogramConfig extends GraphConfig {
     }
     return builder.toString();
   }
-  
+
   @Override
   public ErrorBuilder validate() {
     ErrorBuilder eb = super.validate();
@@ -96,7 +96,7 @@ public class HistogramConfig extends GraphConfig {
     }
     if (barColor == null) {
       eb.addError("No bar colour set");
-    } 
+    }
     if (bins != null && bins.isEmpty()) {
       eb.addError("Must have at least one bin");
     }

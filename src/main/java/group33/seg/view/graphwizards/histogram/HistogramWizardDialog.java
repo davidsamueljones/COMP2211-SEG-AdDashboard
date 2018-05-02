@@ -15,8 +15,6 @@ import javax.swing.SwingConstants;
 import group33.seg.controller.DashboardController;
 import group33.seg.controller.utilities.ErrorBuilder;
 import group33.seg.model.configs.HistogramConfig;
-import group33.seg.view.graphwizard.linegraph.LineGraphLinesPanel;
-import group33.seg.view.graphwizard.linegraph.LineGraphPropertiesPanel;
 import group33.seg.view.graphwizards.GraphWizardInterface;
 
 public class HistogramWizardDialog extends JDialog
@@ -28,7 +26,7 @@ public class HistogramWizardDialog extends JDialog
 
   private HistogramPropertiesPanel pnlGraphProperties;
   private HistogramDataPanel pnlData;
-  
+
   /** Last loaded (or updated) graph */
   private HistogramConfig base;
 
@@ -150,12 +148,7 @@ public class HistogramWizardDialog extends JDialog
 
   }
 
-  /**
-   * Load the given graph configuration into the dialog. After a load it shall be treated as the
-   * base graph so any future changes will be treated as updates/increments of a previous load.
-   * 
-   * @param graph Configuration to load
-   */
+  @Override
   public void loadGraph(HistogramConfig graph) {
     this.base = graph;
     pnlGraphProperties.loadGraph(graph);
@@ -205,9 +198,7 @@ public class HistogramWizardDialog extends JDialog
     return config;
   }
 
-  /**
-   * @return The currently loaded graph without any non-applied changes
-   */
+  @Override
   public HistogramConfig getGraph() {
     return base;
   }
