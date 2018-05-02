@@ -141,7 +141,7 @@ public class StatisticManagerPanel extends JPanel {
     // Listen for changes in workspace statistics, updating list if required
     controller.workspace.addListener(type -> {
       if (type == WorkspaceListener.Type.WORKSPACE || type == WorkspaceListener.Type.STATISTICS) {
-        SwingUtilities.invokeLater(() -> refreshStatisics());
+        SwingUtilities.invokeLater(this::refreshStatisics);
       }
     });
 

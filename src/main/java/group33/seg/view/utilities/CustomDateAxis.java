@@ -142,4 +142,4 @@ class HiddenNumberFormat extends NumberFormat {
   public StringBuffer format(double number, StringBuffer toAppendTo, FieldPosition pos) {
     return new StringBuffer();
   }
-};
+}

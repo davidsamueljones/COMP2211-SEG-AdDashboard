@@ -57,7 +57,7 @@ public class Utilities {
    * @param component Component to request focus
    */
   public static void focusRequest(Component component) {
-    EventQueue.invokeLater(() -> component.requestFocusInWindow());
+    EventQueue.invokeLater(component::requestFocusInWindow);
   }
 
 }

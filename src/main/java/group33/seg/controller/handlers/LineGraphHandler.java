@@ -71,7 +71,7 @@ public class LineGraphHandler implements GraphHandlerInterface<LineGraphConfig> 
   public void clearGraph() {
     mvc.controller.graphs.updateProgress("Clearing graph...");
     this.graph = null;
-    EventQueue.invokeLater(() -> view.clearGraph());
+    EventQueue.invokeLater(view::clearGraph);
   }
 
   /**

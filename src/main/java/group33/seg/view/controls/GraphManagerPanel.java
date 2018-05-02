@@ -157,7 +157,7 @@ public class GraphManagerPanel extends JPanel {
     // Listen for changes in workspace graphs, updating list if required
     controller.workspace.addListener(type -> {
       if (type == WorkspaceListener.Type.WORKSPACE || type == WorkspaceListener.Type.GRAPHS) {
-        SwingUtilities.invokeLater(() -> refreshGraphs());
+        SwingUtilities.invokeLater(this::refreshGraphs);
       }
     });
 

@@ -50,7 +50,7 @@ public class HistogramConfig extends GraphConfig {
    */
   public static List<Double> getNormalisedBins(List<Integer> bins) {
 
-    List<Double> normalised = new ArrayList<Double>();
+    List<Double> normalised = new ArrayList<>();
     if (bins != null) {
       int sum = 0;
       for (Integer weight : bins) {

@@ -51,13 +51,7 @@ public class WorkspaceHandler {
   public WorkspaceHandler(DashboardMVC mvc) {
     this.mvc = mvc;
 
-    addListener(type -> {
-      if (type == Type.WORKSPACE) {
-        unstoredChanges = false;
-      } else {
-        unstoredChanges = true;
-      }
-    });
+    addListener(type -> unstoredChanges = type != Type.WORKSPACE);
   }
 
   /**
@@ -640,8 +634,8 @@ public class WorkspaceHandler {
     /**
      * Enumeration of types of workspace state update.
      */
-    public enum Type {
-      WORKSPACE, CURRENT_GRAPH, CAMPAIGNS, GRAPHS, STATISTICS;
+    enum Type {
+      WORKSPACE, CURRENT_GRAPH, CAMPAIGNS, GRAPHS, STATISTICS
     }
 
   }

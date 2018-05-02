@@ -40,7 +40,7 @@ public class HistogramBinsPanel extends JPanel {
   private JButton btnUseDefaults;
   private JPanel pnlBins;
 
-  private List<BinPanel> bins = new ArrayList<BinPanel>();
+  private List<BinPanel> bins = new ArrayList<>();
 
   private HistogramConfig base = null;
 
