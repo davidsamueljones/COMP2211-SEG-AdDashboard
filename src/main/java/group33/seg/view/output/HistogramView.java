@@ -67,14 +67,7 @@ public class HistogramView extends XYGraphView {
     plot.setRangeGridlinePaint(colGridlines);
     plot.getDomainAxis().setLabel(graph.xAxisTitle);
     plot.getRangeAxis().setLabel(graph.yAxisTitle);
-
-    Color[] color = {graph.barColor};
-    plot.setDrawingSupplier(
-        new DefaultDrawingSupplier(color, DefaultDrawingSupplier.DEFAULT_FILL_PAINT_SEQUENCE,
-            DefaultDrawingSupplier.DEFAULT_OUTLINE_PAINT_SEQUENCE,
-            DefaultDrawingSupplier.DEFAULT_STROKE_SEQUENCE,
-            DefaultDrawingSupplier.DEFAULT_OUTLINE_STROKE_SEQUENCE,
-            DefaultDrawingSupplier.DEFAULT_SHAPE_SEQUENCE));
+    renderer.setSeriesPaint(0, graph.barColor);
   }
 
   /**
