@@ -1,10 +1,8 @@
 package group33.seg.view.definitions;
 
 import javax.swing.BorderFactory;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.border.Border;
-import java.awt.Window.Type;
 
 public class DefinitionFrame extends JFrame {
   private static final long serialVersionUID = -499578074273448909L;

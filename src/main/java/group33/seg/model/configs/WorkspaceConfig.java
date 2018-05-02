@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import group33.seg.controller.database.DatabaseConfig;
 import group33.seg.lib.Pair;
-import group33.seg.model.types.Metric;
 
 public class WorkspaceConfig implements Serializable {
   private static final long serialVersionUID = 3581124779235508070L;

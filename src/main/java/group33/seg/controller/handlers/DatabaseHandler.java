@@ -6,12 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import group33.seg.controller.DashboardController.DashboardMVC;
@@ -20,16 +17,10 @@ import group33.seg.controller.database.DatabaseConnection;
 import group33.seg.controller.database.DatabaseQueryFactory;
 import group33.seg.controller.database.DatabaseQueryFactory.MalformedFilterException;
 import group33.seg.controller.types.MetricQueryResponse;
-import group33.seg.controller.utilities.GraphVisitor;
 import group33.seg.lib.Pair;
-import group33.seg.model.configs.GraphConfig;
-import group33.seg.model.configs.HistogramConfig;
-import group33.seg.model.configs.LineConfig;
-import group33.seg.model.configs.LineGraphConfig;
 import group33.seg.model.configs.MetricQuery;
 import group33.seg.model.configs.StatisticConfig;
 import group33.seg.model.configs.WorkspaceConfig;
-import group33.seg.model.types.Metric;
 
 public class DatabaseHandler {
 

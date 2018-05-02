@@ -1,29 +1,13 @@
 package group33.seg.view.output;
 
 import java.awt.BasicStroke;
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Stroke;
-import java.awt.Toolkit;
-import java.awt.event.InputEvent;
-import java.awt.event.MouseEvent;
-import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JToolBar;
-import javax.swing.SwingUtilities;
-import org.jfree.chart.ChartMouseEvent;
-import org.jfree.chart.ChartMouseListener;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.LegendItem;
 import org.jfree.chart.LegendItemCollection;
-import org.jfree.chart.StandardChartTheme;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
@@ -37,7 +21,6 @@ import group33.seg.lib.Pair;
 import group33.seg.model.configs.LineConfig;
 import group33.seg.model.configs.LineGraphConfig;
 import group33.seg.model.configs.LineGraphConfig.Mode;
-import group33.seg.view.utilities.Accessibility;
 import group33.seg.view.utilities.CustomChartPanel;
 import group33.seg.view.utilities.CustomDateAxis;
 

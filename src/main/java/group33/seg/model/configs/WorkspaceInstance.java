@@ -1,11 +1,7 @@
 package group33.seg.model.configs;
 
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.LinkOption;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import group33.seg.controller.utilities.ErrorBuilder;
 
 public class WorkspaceInstance {
   public static final String WORKSPACE_EXT = "adw";

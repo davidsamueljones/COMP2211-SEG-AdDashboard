@@ -1,17 +1,13 @@
 package group33.seg.view.output;
 
-import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JToolBar;
 import group33.seg.controller.DashboardController;
 import group33.seg.controller.handlers.SettingsHandler;
-import group33.seg.controller.handlers.WorkspaceHandler.WorkspaceListener.Type;
 import group33.seg.controller.utilities.GraphVisitor;
 import group33.seg.model.configs.GraphConfig;
 import group33.seg.model.configs.HistogramConfig;

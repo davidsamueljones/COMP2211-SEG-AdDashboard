@@ -16,7 +16,6 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JToolTip;
 import javax.swing.border.BevelBorder;
 import group33.seg.controller.DashboardController;
 import group33.seg.model.configs.StatisticConfig;

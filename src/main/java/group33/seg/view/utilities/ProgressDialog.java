@@ -1,19 +1,19 @@
 package group33.seg.view.utilities;
 
-import javax.swing.BorderFactory;
-import javax.swing.JDialog;
-import java.awt.GridBagLayout;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Window;
+import javax.swing.BorderFactory;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import group33.seg.controller.utilities.ProgressListener;
-import java.awt.Insets;
-import java.awt.Window;
-import javax.swing.SwingConstants;
 
 public class ProgressDialog extends JDialog {
   private static final long serialVersionUID = -861297834109653112L;

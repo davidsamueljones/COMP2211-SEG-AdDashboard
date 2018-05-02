@@ -1,8 +1,5 @@
 package group33.seg.view.output;
 
-import static group33.seg.view.output.XYGraphView.setPanModifier;
-import static group33.seg.view.output.XYGraphView.useBoxZoom;
-import static group33.seg.view.output.XYGraphView.useScrollZoom;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.Toolkit;

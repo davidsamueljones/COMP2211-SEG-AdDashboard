@@ -1,8 +1,10 @@
 package group33.seg.view.output;
 
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Window;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,20 +19,14 @@ import javax.swing.JTable;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListModel;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import group33.seg.controller.DashboardController;
-import group33.seg.controller.handlers.WorkspaceHandler.WorkspaceListener;
 import group33.seg.lib.Pair;
 import group33.seg.model.configs.StatisticConfig;
 import group33.seg.model.types.Metric;
-import group33.seg.view.utilities.ProgressDialog;
-import java.awt.CardLayout;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
 
 public class StatisticsView extends JPanel {
   private static final long serialVersionUID = 7755954237883396302L;

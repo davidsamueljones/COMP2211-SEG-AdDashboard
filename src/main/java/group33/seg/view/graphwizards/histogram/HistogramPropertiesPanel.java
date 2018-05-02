@@ -1,19 +1,14 @@
 package group33.seg.view.graphwizards.histogram;
 
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import group33.seg.controller.DashboardController;
 import group33.seg.model.configs.HistogramConfig;
 import group33.seg.view.graphwizards.GeneralGraphPropertiesPanel;
-import group33.seg.view.utilities.JDynamicScrollPane;
 
 public class HistogramPropertiesPanel extends JScrollPane {
   private static final long serialVersionUID = -7939485328852855457L;

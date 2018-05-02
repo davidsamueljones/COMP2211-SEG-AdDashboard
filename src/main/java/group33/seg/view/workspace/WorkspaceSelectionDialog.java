@@ -2,7 +2,6 @@ package group33.seg.view.workspace;
 
 import java.awt.CardLayout;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;

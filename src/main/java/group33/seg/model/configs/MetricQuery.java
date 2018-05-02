@@ -1,7 +1,6 @@
 package group33.seg.model.configs;
 
 import java.io.Serializable;
-import group33.seg.controller.utilities.ErrorBuilder;
 import group33.seg.model.types.Interval;
 import group33.seg.model.types.Metric;
 

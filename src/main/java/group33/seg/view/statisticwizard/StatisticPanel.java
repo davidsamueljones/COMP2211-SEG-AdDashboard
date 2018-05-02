@@ -6,7 +6,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import javax.swing.DefaultListCellRenderer;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -17,8 +16,6 @@ import group33.seg.controller.DashboardController;
 import group33.seg.model.configs.CampaignConfig;
 import group33.seg.model.configs.MetricQuery;
 import group33.seg.model.configs.StatisticConfig;
-import group33.seg.model.types.Interval;
-import group33.seg.model.types.Metric;
 import group33.seg.view.controls.BounceDefinitionPanel;
 import group33.seg.view.controls.FilterViewPanel;
 

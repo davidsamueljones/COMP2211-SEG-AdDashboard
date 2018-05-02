@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,8 +13,6 @@ import java.util.Properties;
 import group33.seg.controller.utilities.ErrorBuilder;
 import group33.seg.controller.utilities.SerializationUtils;
 import group33.seg.lib.Pair;
-import group33.seg.model.configs.WorkspaceConfig;
-import group33.seg.model.configs.WorkspaceInstance;
 
 public class DatabaseConfig implements Serializable {
   private static final long serialVersionUID = -1279471354579637690L;
