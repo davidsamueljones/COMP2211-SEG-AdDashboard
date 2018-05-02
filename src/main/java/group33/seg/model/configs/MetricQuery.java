@@ -86,12 +86,12 @@ public class MetricQuery implements Serializable {
    * @param other Other instance to compare against
    * @return Whether instances are the same
    */
-  public boolean isEquals(MetricQuery other) {
+  public boolean isEqual(MetricQuery other) {
     boolean equal = true;
     equal &= (campaign == null ? (other.campaign == null) : campaign.equals(other.campaign));
     equal &= (metric == null ? (other.metric == null) : metric.equals(other.metric));
     equal &= (interval == null ? (other.interval == null) : interval.equals(other.interval));
-    equal &= (filter == null ? (other.filter == null) : filter.isEquals(other.filter));
+    equal &= (filter == null ? (other.filter == null) : filter.isEqual(other.filter));
     if (MetricQuery.needBounceDef(metric)) {
       equal &= (bounceDef == null ? (other.bounceDef == null) : bounceDef.isEqual(other.bounceDef));
     }

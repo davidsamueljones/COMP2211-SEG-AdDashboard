@@ -143,7 +143,7 @@ public class FilterConfig implements Serializable {
    * @param other Other instance to compare against
    * @return Whether instances are the same
    */
-  public boolean isEquals(FilterConfig other) {
+  public boolean isEqual(FilterConfig other) {
     boolean equal = true;
     equal &= (ages == null ? (other.ages == null) : ages.equals(other.ages));
     equal &= (genders == null ? (other.genders == null) : genders.equals(other.genders));

@@ -118,7 +118,7 @@ public class HistogramHandler implements GraphHandlerInterface<HistogramConfig> 
       return true;
     }
     return (original.query == null ? (updated.query == null)
-        : original.query.isEquals(updated.query));
+        : original.query.isEqual(updated.query));
   }
 
   /**
