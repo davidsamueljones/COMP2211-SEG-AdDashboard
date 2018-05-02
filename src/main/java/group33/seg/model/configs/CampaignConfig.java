@@ -3,8 +3,8 @@ package group33.seg.model.configs;
 import java.io.Serializable;
 
 /**
- * Structure-like class for constructing a campaign configuration. All variables are public to
- * allow for easy structure access.
+ * Structure-like class for constructing a campaign configuration. All variables are public to allow
+ * for easy structure access.
  */
 public class CampaignConfig implements Serializable {
   private static final long serialVersionUID = -8457304669992747494L;
@@ -18,7 +18,7 @@ public class CampaignConfig implements Serializable {
   public CampaignConfig(int uid) {
     this.uid = uid;
   }
-  
+
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -38,5 +38,5 @@ public class CampaignConfig implements Serializable {
     CampaignConfig other = (CampaignConfig) obj;
     return uid == other.uid;
   }
-  
+
 }

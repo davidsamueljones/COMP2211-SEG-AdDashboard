@@ -26,7 +26,7 @@ public class HistogramWizardDialog extends JDialog
 
   private HistogramPropertiesPanel pnlGraphProperties;
   private HistogramDataPanel pnlData;
-  
+
   /** Last loaded (or updated) graph */
   private HistogramConfig base;
 

@@ -13,8 +13,8 @@ public class DefinitionFrame extends JFrame {
   public DefinitionFrame() {
     initGUI();
   }
-  
-  private void initGUI() {  
+
+  private void initGUI() {
     this.setTitle("Definitions");
     this.setBounds(100, 100, 541, 401);
     DefinitionPanel pnlDefinitionPanel = new DefinitionPanel();

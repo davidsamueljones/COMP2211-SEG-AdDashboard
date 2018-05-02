@@ -39,7 +39,7 @@ public class HistogramBinsPanel extends JPanel {
   private JButton btnResetBins;
   private JButton btnUseDefaults;
   private JPanel pnlBins;
-  
+
   private List<BinPanel> bins = new ArrayList<BinPanel>();
 
   private HistogramConfig base = null;

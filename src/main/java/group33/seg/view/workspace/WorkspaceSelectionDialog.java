@@ -53,12 +53,12 @@ public class WorkspaceSelectionDialog extends JDialog {
 
     // Apply dialog properties
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-    
+
     if (controller.settings.getRecentWorkspaces().isEmpty()) {
       loadView(View.NEW);
     } else {
       loadView(View.RECENT);
-    }  
+    }
   }
 
   /**
@@ -143,7 +143,7 @@ public class WorkspaceSelectionDialog extends JDialog {
     gbc_btnClose.gridx = 0;
     gbc_btnClose.gridy = 3;
     pnlNavigation.add(btnClose, gbc_btnClose);
-    
+
     // Controls Panel
     cl_pnlControls = new CardLayout();
     pnlControls = new JPanel(cl_pnlControls);

@@ -75,7 +75,7 @@ public class RecentWorkspacesPanel extends JPanel {
     add(btnOpen, gbc_btnOpen);
 
     btnOpen.addActionListener(e -> loadWorkspace());
-    
+
     lstWorkspaces.addListSelectionListener(e -> {
       btnOpen.setEnabled(lstWorkspaces.getSelectedValue() != null);
     });

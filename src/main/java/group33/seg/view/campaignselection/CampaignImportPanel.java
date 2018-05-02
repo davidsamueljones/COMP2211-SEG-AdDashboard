@@ -52,8 +52,8 @@ public class CampaignImportPanel extends JPanel {
   private JPanel pnlControls;
 
   private CampaignConfig base;
-  
-  /**   
+
+  /**
    * Create the panel.
    * 
    * @param controller Controller for this view object
@@ -61,7 +61,7 @@ public class CampaignImportPanel extends JPanel {
   public CampaignImportPanel(DashboardController controller, CampaignConfig base) {
     this.controller = controller;
     this.base = base;
-    
+
     initGUI();
     // Set the current view
     showView(View.CONTROLS);
@@ -326,11 +326,12 @@ public class CampaignImportPanel extends JPanel {
     btnImportCampaign.addActionListener(e -> {
       // Create configuration based off user input
       CampaignImportConfig config;
-      for (CampaignConfig c: controller.imports.getAvailableCampaigns()) {
+      for (CampaignConfig c : controller.imports.getAvailableCampaigns()) {
         if (txtCampaignName.getText().equals(c.name)) {
           ErrorBuilder eb = controller.imports.getErrors();
-          JOptionPane.showMessageDialog(null, eb.listComments("Campaign with this name already exists"),
-                  "Invalid Campaign Name", JOptionPane.ERROR_MESSAGE);
+          JOptionPane.showMessageDialog(null,
+              eb.listComments("Campaign with this name already exists"), "Invalid Campaign Name",
+              JOptionPane.ERROR_MESSAGE);
           return;
         }
       }
@@ -376,7 +377,7 @@ public class CampaignImportPanel extends JPanel {
           } else {
             controller.workspace.replaceCampaign(base, config);
           }
-          
+
           JOptionPane.showMessageDialog(null, "Import Successful", "Import Successful",
               JOptionPane.INFORMATION_MESSAGE);
         } else {

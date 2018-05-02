@@ -174,7 +174,7 @@ public class StatisticManagerPanel extends JPanel {
    * 
    * @param config Statistic configuration to display in wizard
    */
-  public void displayWizard(StatisticConfig config) {   
+  public void displayWizard(StatisticConfig config) {
     Window frmCurrent = SwingUtilities.getWindowAncestor(StatisticManagerPanel.this);
     StatisticWizardDialog wizard = new StatisticWizardDialog(frmCurrent, controller, config);
     wizard.setModalityType(ModalityType.APPLICATION_MODAL);

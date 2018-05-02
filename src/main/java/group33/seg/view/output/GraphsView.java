@@ -15,9 +15,9 @@ import group33.seg.model.configs.LineGraphConfig;
 
 public class GraphsView extends JPanel {
   private static final long serialVersionUID = 6541885932864334941L;
-  
+
   public static Color DEFAULT_BACKGROUND = Color.getHSBColor(0, 0, (float) 0.9);
-  
+
   private static final String NO_GRAPH_VIEW = "NO_GRAPH";
   private static final String LINE_GRAPH_VIEW = "LINE_GRAPH";
   private static final String HISTOGRAM_VIEW = "HISTOGRAM";
@@ -107,7 +107,7 @@ public class GraphsView extends JPanel {
       });
     }
   }
-  
+
   /**
    * Get the gridline colour that a view instance would use for the given background colour.
    * 
@@ -130,5 +130,5 @@ public class GraphsView extends JPanel {
     }
     return Color.getHSBColor(bgHSB[0], bgHSB[1], fgBrightness);
   }
-  
+
 }

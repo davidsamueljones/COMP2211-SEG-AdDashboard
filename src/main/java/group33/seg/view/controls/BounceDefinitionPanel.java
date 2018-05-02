@@ -126,9 +126,9 @@ public class BounceDefinitionPanel extends JPanel {
         break;
       default:
         break;
-    }   
+    }
   }
-  
+
   public void clear() {
     nudTime.setValue(0);
     nudPageCount.setValue(0);
@@ -136,7 +136,7 @@ public class BounceDefinitionPanel extends JPanel {
   }
 
   public BounceConfig getBounceDef() {
-    BounceConfig config = new BounceConfig();   
+    BounceConfig config = new BounceConfig();
     if (radPageCount.isSelected()) {
       config.type = Type.PAGES;
       config.value = (Integer) nudPageCount.getValue();

@@ -14,7 +14,7 @@ public class LineGraphPropertiesPanel extends JScrollPane {
   private static final long serialVersionUID = 3622228245996396838L;
 
   private DashboardController controller;
-  
+
   protected GeneralGraphPropertiesPanel pnlGeneralProperties;
   protected LineGraphModePanel pnlPlottingMode;
 

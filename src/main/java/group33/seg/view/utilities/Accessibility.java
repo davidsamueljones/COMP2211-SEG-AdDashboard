@@ -16,7 +16,7 @@ public class Accessibility {
   public static final double DEFAULT_SCALING = 1;
 
   public static double currentScaling = DEFAULT_SCALING;
-  
+
   /**
    * Set system wide look and feel options using an appearance selection. OS specific rules/flags
    * should be applied here.
@@ -63,7 +63,7 @@ public class Accessibility {
     double temp = currentScaling;
     currentScaling = scale;
     scale /= temp;
-    
+
     // Iterate over all UI object types
     Set<Object> objects = UIManager.getLookAndFeelDefaults().keySet();
     for (Object object : objects) {
@@ -104,8 +104,8 @@ public class Accessibility {
   public static Font stripLaF(Font font) {
     return new Font(font.getAttributes());
   }
-  
-  
+
+
   /**
    * Scale a font by a given scaling factor.
    *
@@ -116,7 +116,7 @@ public class Accessibility {
   public static Font scaleFont(Font font, double scale) {
     return font.deriveFont((float) (font.getSize() * scale));
   }
-  
+
   /**
    * Get a a font reduced by a given scaling factor.
    *
@@ -130,8 +130,7 @@ public class Accessibility {
 
   /** Enumeration of valid appearance options. */
   public enum Appearance {
-    PLATFORM,
-    NIMBUS
+    PLATFORM, NIMBUS
   }
-  
+
 }

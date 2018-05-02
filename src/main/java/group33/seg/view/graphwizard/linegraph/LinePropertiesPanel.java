@@ -131,7 +131,7 @@ public class LinePropertiesPanel extends JPanel {
     gbc_pnlPreview.gridx = 1;
     gbc_pnlPreview.gridy = 2;
     add(pnlPreview, gbc_pnlPreview);
-    
+
     chckbxHideFromPlot = new JCheckBox("Hide from plot");
     GridBagConstraints gbc_chckbxHideFromPlot = new GridBagConstraints();
     gbc_chckbxHideFromPlot.insets = new Insets(0, 0, 0, 5);

@@ -121,6 +121,7 @@ public class CustomDateAxis extends DateAxis {
 
 }
 
+
 /**
  * Helper class that hides any number input.
  */

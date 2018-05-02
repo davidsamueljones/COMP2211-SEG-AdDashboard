@@ -245,7 +245,7 @@ public class DatabaseHandler {
       ps.executeQuery();
       ResultSet rs = ps.getResultSet();
       rs.next();
-        return rs.getInt(1);
+      return rs.getInt(1);
     } catch (SQLException e) {
       return -1;
     }

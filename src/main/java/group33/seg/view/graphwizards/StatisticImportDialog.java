@@ -29,7 +29,7 @@ public class StatisticImportDialog extends JDialog {
   private DefaultListModel<StatisticConfig> mdl_lstStatistics;
 
   private StatisticConfig selected = null;
-  
+
   /**
    * Create the dialog.
    *
@@ -44,7 +44,7 @@ public class StatisticImportDialog extends JDialog {
     // Initialise GUI
     initGUI();
     refreshStatisics();
-    
+
     // Determine sizing
     pack();
     // Determine positioning
@@ -111,19 +111,19 @@ public class StatisticImportDialog extends JDialog {
     gbc_btnSelect.gridx = 1;
     gbc_btnSelect.gridy = 1;
     pnlContent.add(btnSelect, gbc_btnSelect);
-    
+
     // Hide panel
     btnCancel.addActionListener(e -> {
       setVisible(false);
       dispose();
     });
-    
+
     // Set the selected
     btnSelect.addActionListener(e -> {
       selected = lstStatistics.getSelectedValue();
       if (selected == null) {
-        JOptionPane.showMessageDialog(null, "No statistic selected",
-            "Selection Error", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(null, "No statistic selected", "Selection Error",
+            JOptionPane.ERROR_MESSAGE);
         return;
       } else {
         setVisible(false);
@@ -131,7 +131,7 @@ public class StatisticImportDialog extends JDialog {
       }
     });
   }
-  
+
   /**
    * Fetch the workspace statistics, replacing those displayed in the list.
    */

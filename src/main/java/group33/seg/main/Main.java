@@ -11,7 +11,7 @@ public class Main {
     DashboardModel model = new DashboardModel();
     DashboardView view = new DashboardView();
     DashboardController controller = new DashboardController(model, view);
-    
+
     // Start view's dashboard
     controller.display.openDashboard();
   }

@@ -26,13 +26,13 @@ import group33.seg.view.utilities.CustomDateAxis;
 
 public class LineGraphView extends XYGraphView {
   private static final long serialVersionUID = -7920465975957290150L;
-  
+
   public static float MIN_THICKNESS = 1.0f;
   public static float MAX_THICKNESS = 5.0f;
 
   /** Local reference to the chart as a custom chart panel */
   private CustomChartPanel customChart;
-  
+
   /** Domain axis (main one that is displayed only) */
   private CustomDateAxis timeAxis;
 
@@ -135,7 +135,8 @@ public class LineGraphView extends XYGraphView {
 
   /**
    * For a given line configuration, update its respective line plot's data, using the provided data
-   * set. The line must have been added using {@link LineGraphView#addLine(LineConfig)}  for this to be successful.
+   * set. The line must have been added using {@link LineGraphView#addLine(LineConfig)} for this to
+   * be successful.
    * 
    * @param line Line configuration for which to modify
    * @param data Dataset to replace existing with
@@ -428,7 +429,7 @@ public class LineGraphView extends XYGraphView {
   @Override
   protected void enableGlobalBehaviour() {
     super.enableGlobalBehaviour();
-    
+
     // Redraw legends manually for any events that could affect them
     dataset.addChangeListener(arg0 -> redrawLegend());
     renderer.addChangeListener(arg0 -> redrawLegend());

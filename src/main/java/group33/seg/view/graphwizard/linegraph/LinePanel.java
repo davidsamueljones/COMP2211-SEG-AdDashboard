@@ -14,7 +14,7 @@ public class LinePanel extends JScrollPane {
   private static final long serialVersionUID = 5600109072945686314L;
 
   private DashboardController controller;
-  
+
   protected LineDataPanel pnlLineData;
   protected LinePropertiesPanel pnlLineProperties;
 

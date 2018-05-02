@@ -48,8 +48,9 @@ public class TableImportHandler {
 
   /**
    * Start a managed import for the given file using the given table type. This has the same
-   * behaviour as calling {@link TableImportHandler#start(String, DatabaseTable, int)} on a new thread but interrupting this call thread will cause
-   * a cancellation request to occur automatically.
+   * behaviour as calling {@link TableImportHandler#start(String, DatabaseTable, int)} on a new
+   * thread but interrupting this call thread will cause a cancellation request to occur
+   * automatically.
    * 
    * @param path Path to file for import
    * @param table Table type to handle input data as

@@ -18,12 +18,12 @@ import group33.seg.model.configs.FilterConfig;
 
 public class FilterViewPanel extends JPanel {
   private static final long serialVersionUID = 8739821651130799927L;
-  
+
   private JTextPane txtFilter;
   private JButton btnModifyFilter;
 
   private FilterConfig filter = null;
-  
+
   /**
    * Create the panel.
    */
@@ -45,7 +45,7 @@ public class FilterViewPanel extends JPanel {
           BorderFactory.createEmptyBorder(5, 5, 5, 5));
       this.setBorder(border);
     }
-    
+
     loadFilter(null);
   }
 
@@ -102,7 +102,7 @@ public class FilterViewPanel extends JPanel {
       loadFilter(dialog.getFilter());
     });
   }
-  
+
   public void loadFilter(FilterConfig filter) {
     this.filter = filter;
     if (filter != null) {

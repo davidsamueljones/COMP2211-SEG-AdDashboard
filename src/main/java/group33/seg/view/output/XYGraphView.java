@@ -28,7 +28,7 @@ public abstract class XYGraphView extends JPanel {
 
   protected JFreeChart chart;
   protected XYPlot plot;
-  
+
   /**
    * Fully configure an empty chart and its controls.
    */
@@ -37,7 +37,7 @@ public abstract class XYGraphView extends JPanel {
     initGUI(useBuffer);
     initControlScheme();
   }
-  
+
   /**
    * Initialise the GUI and any event listeners.
    */
@@ -130,7 +130,7 @@ public abstract class XYGraphView extends JPanel {
    * Initialise an empty chart.
    */
   protected abstract void initChart();
-  
+
   /**
    * Initialise the default control scheme of the chart.
    */
@@ -139,8 +139,8 @@ public abstract class XYGraphView extends JPanel {
     // Enable zoom using scroll as default
     enablePanMode();
   }
-  
-  
+
+
   /**
    * Enable mouse drag pan and scroll zoom behaviour for the current chart panel.
    */
@@ -156,7 +156,7 @@ public abstract class XYGraphView extends JPanel {
     setPanModifier(pnlChart, InputEvent.ALT_MASK | InputEvent.BUTTON1_MASK);
     useBoxZoom(pnlChart);
   }
-  
+
   /**
    * Enable any settings that are consistent throughout all behaviours.
    */
@@ -193,7 +193,7 @@ public abstract class XYGraphView extends JPanel {
       }
     });
   }
-  
+
   /**
    * For the given chart panel, set it up to use the pointer for zooming using a drag-box. This will
    * reverse effects of using scroll zoom due to incompatibilities between using both at the same
@@ -236,7 +236,7 @@ public abstract class XYGraphView extends JPanel {
       System.err.println("Unable to set pan modifier");
     }
   }
-  
+
   /**
    * Using a new font scheme apply the given scaling to all textual components of the histogram
    * graph view.
@@ -259,5 +259,5 @@ public abstract class XYGraphView extends JPanel {
     // Apply theme
     theme.apply(chart);
   }
-  
+
 }

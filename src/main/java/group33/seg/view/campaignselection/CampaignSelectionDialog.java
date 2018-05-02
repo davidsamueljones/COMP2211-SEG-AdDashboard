@@ -40,7 +40,7 @@ public class CampaignSelectionDialog extends JDialog {
   public CampaignSelectionDialog(Window parent, DashboardController controller) {
     this(parent, controller, null);
   }
-  
+
   /**
    * Create the dialog.
    *
@@ -54,7 +54,7 @@ public class CampaignSelectionDialog extends JDialog {
 
     this.controller = controller;
     this.base = campaign;
-    
+
     // Initialise GUI
     initGUI();
 

@@ -21,15 +21,15 @@ import group33.seg.view.controls.FilterViewPanel;
 
 public class StatisticPanel extends JPanel {
   private static final long serialVersionUID = 5602951595852368687L;
-  
+
   private DashboardController controller;
-  
+
   protected JTextField txtIdentifier;
   protected JComboBox<CampaignConfig> cboCampaign;
   protected FilterViewPanel pnlFilter;
   protected BounceDefinitionPanel pnlBounceRate;
   protected JCheckBox chckbxHideStatistic;
-  
+
   /**
    * Create the panel.
    *
@@ -80,7 +80,7 @@ public class StatisticPanel extends JPanel {
     }
     cboCampaign.setRenderer(new DefaultListCellRenderer() {
       private static final long serialVersionUID = 1L;
-      
+
       @Override
       public Component getListCellRendererComponent(JList<?> list, Object value, int index,
           boolean isSelected, boolean cellHasFocus) {
@@ -99,7 +99,7 @@ public class StatisticPanel extends JPanel {
     gbc_cboCampaign.gridx = 1;
     gbc_cboCampaign.gridy = 1;
     add(cboCampaign, gbc_cboCampaign);
-    
+
     pnlFilter = new FilterViewPanel();
     pnlFilter.setPreferredSize(new Dimension(pnlFilter.getPreferredSize().width, 150));
     GridBagConstraints gbc_pnlFilter = new GridBagConstraints();

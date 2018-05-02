@@ -135,7 +135,7 @@ public class FilterConfig implements Serializable {
     }
     return eb;
   }
-  
+
   /**
    * Equality check between this instance and another instance. This equality check compares all
    * fields including non-final.
