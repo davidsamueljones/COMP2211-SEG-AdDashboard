@@ -1,83 +1,143 @@
 package group33.seg.view.output;
 
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JToolBar;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import group33.seg.model.configs.HistogramConfig;
-import group33.seg.view.utilities.CustomChartPanel;
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.io.IOException;
+import java.text.DecimalFormat;
+import java.util.Collections;
+import java.util.List;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.DefaultDrawingSupplier;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.StandardXYBarPainter;
+import org.jfree.chart.renderer.xy.XYBarRenderer;
+import org.jfree.data.statistics.SimpleHistogramBin;
+import org.jfree.data.statistics.SimpleHistogramDataset;
+import group33.seg.lib.Range;
+import group33.seg.model.configs.HistogramConfig;
 
-public class HistogramView extends JPanel {
-  
-  public static Color DEFAULT_FOREGROUND = Color.getHSBColor(0.556f, 1, 0.9f);
-  
-  private CustomChartPanel pnlChart;
-
-  private JFreeChart chart;
-  
-  public HistogramView() {
-    initGUI();
-  }
-
-  private void initGUI() {
-    setLayout(new BorderLayout(0, 0));
-
-    // Chart panel
-    ChartPanel pnlChart = new ChartPanel(null);
-    this.add(pnlChart, BorderLayout.CENTER);
-    
-    // Chart controls
-    JToolBar tlbControls = new JToolBar();
-    tlbControls.setRollover(true);
-    add(tlbControls, BorderLayout.SOUTH);
-
-    JButton btnSave = new JButton();
-    btnSave.setToolTipText("Export the currently displayed graph as an image.");
-    btnSave.setIcon(new ImageIcon(getClass().getResource("/icons/save.png")));
-    tlbControls.add(btnSave);
-
-    JButton btnPrint = new JButton();
-    btnPrint.setToolTipText("Print the currently displayed graph.");
-    btnPrint.setIcon(new ImageIcon(getClass().getResource("/icons/print.png")));
-    tlbControls.add(btnPrint);
-
-    tlbControls.addSeparator();
-
-    // Display user save option
-    btnSave.addActionListener(e -> {
-//      try {
-//        pnlChart.doSaveAs();
-//      } catch (IOException e1) {
-//        System.err.println("Unable to save image");
-//      }
-    });
-
-    // Display user print option
-    btnPrint.addActionListener(e -> {
-      //pnlChart.createChartPrintJob();
-    });
-  }
-
+public class HistogramView extends XYGraphView {
   private static final long serialVersionUID = 794738588952920667L;
 
-  public void applyFontScale(double scale) {
-    // TODO Auto-generated method stub
+  public static Color DEFAULT_FOREGROUND = Color.getHSBColor(0.583f, 1, 0.8f);
 
+  private XYBarRenderer renderer;
+
+  private SimpleHistogramDataset dataset;
+
+  private List<Double> values;
+  private List<Double> bins;
+  private Range<Double> range;
+
+  /**
+   * Fully configure an empty chart and its controls.
+   */
+  public HistogramView(boolean useBuffer) {
+    super(useBuffer);
   }
 
-  public Object clearGraph() {
-    // TODO Auto-generated method stub
-    return null;
+  @Override
+  protected void initChart() {
+    dataset = new SimpleHistogramDataset("Bins");
+    dataset.setAdjustForBinSize(false);
+    NumberAxis frequencyAxis = new NumberAxis();
+    frequencyAxis.setNumberFormatOverride(new DecimalFormat("0"));
+    NumberAxis valueAxis = new NumberAxis();
+    valueAxis.setAutoRangeIncludesZero(false);
+
+    renderer = new XYBarRenderer();
+    renderer.setBarPainter(new StandardXYBarPainter());
+    plot = new XYPlot(dataset, valueAxis, frequencyAxis, renderer);
+    plot.setDomainZeroBaselineVisible(true);
+    plot.setRangeZeroBaselineVisible(true);
+
+    chart = new JFreeChart("", JFreeChart.DEFAULT_TITLE_FONT, plot, false);
   }
 
-  public Object setGraphProperties(HistogramConfig graph) {
-    // TODO Auto-generated method stub
-    return null;
+  /**
+   * Set the graph's properties based off the given configuration.
+   * 
+   * @param graph Configuration to use for set
+   */
+  public void setGraphProperties(HistogramConfig graph) {
+    pnlChart.setChart(chart);
+    chart.setTitle(graph.title);
+    plot.setBackgroundPaint(graph.background);
+    Color colGridlines = GraphsView.getGridlineColor(graph.background);
+    plot.setDomainGridlinePaint(colGridlines);
+    plot.setRangeGridlinePaint(colGridlines);
+    plot.getDomainAxis().setLabel(graph.xAxisTitle);
+    plot.getRangeAxis().setLabel(graph.yAxisTitle);
+
+    Color[] color = {graph.barColor};
+    plot.setDrawingSupplier(
+        new DefaultDrawingSupplier(color, DefaultDrawingSupplier.DEFAULT_FILL_PAINT_SEQUENCE,
+            DefaultDrawingSupplier.DEFAULT_OUTLINE_PAINT_SEQUENCE,
+            DefaultDrawingSupplier.DEFAULT_STROKE_SEQUENCE,
+            DefaultDrawingSupplier.DEFAULT_OUTLINE_STROKE_SEQUENCE,
+            DefaultDrawingSupplier.DEFAULT_SHAPE_SEQUENCE));
+  }
+
+  /**
+   * Remove all plotted data from the graph and reset the title and axis labels.
+   */
+  public void clearGraph() {
+    chart.setTitle("");
+    plot.getDomainAxis().setLabel("");
+    plot.getRangeAxis().setLabel("");
+    plot.setBackgroundPaint(GraphsView.DEFAULT_BACKGROUND);
+    dataset.clearObservations();
+  }
+
+  /**
+   * Load the given data into the graph. Update bins if required due to a change of range.
+   * 
+   * @param data Data to load
+   */
+  public void setGraphData(List<Double> data) {
+    dataset.clearObservations();
+    Range<Double> range = null;
+    if (data != null) {
+      range = new Range<>(Collections.min(data), Collections.max(data));
+      if (!range.equals(this.range)) {
+        this.range = range;
+        makeBins(bins, true);
+      }
+      for (Double value : data) {
+        try {
+          dataset.addObservation(value);
+        } catch (Exception e) {
+          System.err.println("No bin for " + value);
+        }
+      }
+    }
+    this.range = range;
+    this.values = data;
+  }
+
+  /**
+   * Set the graphs bins using a set of weights. This clears all data so it will reload it from a
+   * reference set. This can optionally be turned off.
+   * 
+   * @param bins Weights of bins
+   * @param clear Whether to keep data cleared
+   */
+  public void makeBins(List<Double> bins, boolean clear) {
+    dataset.removeAllBins();
+    dataset.setAdjustForBinSize(true);
+    this.bins = bins;
+    if (this.bins != null && this.range != null) {
+      double width = range.max - range.min;
+      double lower = range.min;
+      for (Double weight : bins) {
+        double upper = lower + weight * width;
+        SimpleHistogramBin bin = new SimpleHistogramBin(lower, upper, true, true);
+        dataset.addBin(bin);
+        lower = upper + 0.000000001;
+      }
+      if (!clear) {
+        setGraphData(values);
+      }
+    }
   }
 
 }

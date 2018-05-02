@@ -83,7 +83,7 @@ public class GraphsView extends JPanel {
     add(lineGraph, LINE_GRAPH_VIEW);
 
     // Create histogram
-    histogram = new HistogramView();
+    histogram = new HistogramView(useBuffer);
     add(histogram, HISTOGRAM_VIEW);
   }
 
