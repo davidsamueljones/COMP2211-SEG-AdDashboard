@@ -84,9 +84,10 @@ CREATE DATABASE <DB_NAME>;
    * Make sure that the ``config.properties`` file is in the same folder as the .jar file.
    * Execute the *.jar* file by running: ``java -jar SEG.jar``
    
-###Running the tests
+### Running the tests
    
    * To run the tests use ``mvn test`` (You should have Maven installed)
+   * Make sure that the test.properties file in the test directory is correctly configured with your database credentials
    
 ## Built With
 * [TravisCI](http://www.dropwizard.io/1.0.2/docs/) - Distributed Continuous Integration Service
